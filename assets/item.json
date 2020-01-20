@@ -1,0 +1,21 @@
+{
+    "prototype"      : "generic",
+    "texture_file"   : "textures/keys.json",
+    "texture_offset" : [0, 0],
+    "collision_area" : [0, 0],
+    "model_name"     : "Item",
+    
+    "texture_data"   : {
+        "default"      : [
+          {
+            "duration":10,
+            "tileid":0
+          },
+          {
+            "duration":0,
+            "tileid":1
+          }
+        ]
+      }
+    
+}

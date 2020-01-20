@@ -1,0 +1,23 @@
+{
+  "prototype"      : "char_prototype",
+  "model_name"     : "dark male",
+
+  "texture_file"   : "tex_darkmale.json",
+
+  "texture_data"   : {
+    "default"      : [
+      {
+        "duration":0,
+        "tileid":0
+      },
+      {
+        "duration":0,
+        "tileid":1
+      },
+      {       
+        "duration":0,
+        "tileid":3
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+	"type"          : "MapScreen2D",
+	"id"			: "player_screen_1",
+	"dim"     		: [500, 500],
+	"pos"      		: [10, 10],
+	"textures"      : 1
+}

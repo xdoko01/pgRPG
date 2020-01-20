@@ -1,0 +1,221 @@
+{
+	"quest01" : {
+
+		"name" : "Test Quest",
+		"id" : "quest01",
+		"description" : "Once upon the time there was a merchant who had problem with rats in his cellar.",
+		"objective" : "Kill all	 the rats in the cellar.",
+		"init_phase" : "q01_p01",
+
+		"phases" : [			
+			{
+				"name" : "Meeting the merchant",
+				"id" : "q01_p01",
+				"objective" : "Speak to the merchant and get the key to the cellar",
+				"maps" : "map01",
+				
+				"cleanup" : [],
+
+				"entities" : {
+
+					"items" : [
+						{
+							"name" : "Key to the merchant's cellar",
+							"id" : "q01_p01_i01",						
+							"type" : "grey_key",
+
+							"map" : "map01",
+							"pos" : "1.5, 1.5"
+						}
+					],
+
+					"characters" : [
+						{
+							"name" : "Merchant",
+							"id" : "q01_p01_n01",
+							"type" : "npc_merchant",	
+
+							"map" : "map01",
+							"pos" : "5.5, 5.5",
+							"m_vect" : "-1, 0",
+							"m_speed" : "0.1",
+
+							"items" : [
+								"q01_p01_i01"
+							],
+
+							"wearables" : {
+								"torso" : "lpcfemalegoldenplate",
+								"head"  : "lpcfemalegoldenhelm",
+								"hands" : "lpcfemalegoldenspaulders",
+								"feet"  : "lpcfemalegoldenboots",
+								"legs"  : "lpcfemalegoldengreaves"
+							},
+
+							"memory" : [
+								"default,0,2,goto,",
+								"default,1,1,wait,2000",
+								"default,2,4,move,0,0,-1,0",
+								"default,3,2,goto,",
+								"default,4,6,move,0,0,0,1",
+								"default,5,4,goto,",
+								"default,6,-1,goto,"
+							]
+						}
+					],
+				},
+
+				"event_handling" : {
+
+					"onInteraction" : {
+
+						"q01_p01_n01" : [
+							{
+								"condition" : "event.parameters == 'player'",
+								"action" : ["event.object.memory.add()", "event.object.give_item('q01_p01_i01')"]
+							}
+						]
+					}
+				},
+
+				"is_completed" : [
+					{
+						"condition" : "player.hasItem('q01_p01_i01')",
+						"action"  : "quest.phase = q01_p02"
+					}
+				],
+
+				"after_steps" : [
+					{
+						"erase" : ""
+					}
+				]
+			},
+
+			{
+				"name" : "Killing the rats",
+				"id" : "q01_p02",
+				"objective" : "Get to the cellar and kill the rats",
+				"maps" : "map01, map02",
+
+				"teleports" : [
+					{
+						"name" : "Entrance to merchant's cellar",
+						"id" : "q01_p02_t01",
+						"type" : "transparent",
+
+						"position_from" : {
+							"map" : "map01",
+							"pos" : "10, 10"
+						},
+
+						"position_to" : {
+							"map" : "map02",
+							"pos" : "1, 5"
+						},
+
+						"key" : "q01_p01_i01"
+					},
+					
+					{
+						"name" : "Exit from merchant's cellar",
+						"id" : "q01_p02_t02",						
+						"type" : "transparent",
+
+						"position_from" : {
+							"map" : "map01",
+							"pos" : "10, 10"
+						},
+
+						"position_to" : {
+							"map" : "map02",
+							"pos" : "1, 5"
+						}
+					}
+				],
+
+				"npcs" : [
+					{
+						"name" : "Rat 1",
+						"id" : "q01_p02_n01",
+						"type" : "npc_rat",
+
+						"position" : {
+							"map" : "map02",
+							"pos" : "5.5, 5.5",
+							"m_vect" : "-1, 0",
+							"m_speed" : "0.1"
+						},
+					},
+					{
+						"name" : "Rat 2",
+						"id" : "q01_p02_n02",
+						"type" : "npc_rat",
+
+						"position" : {
+							"map" : "map02",
+							"pos" : "6.5, 6.5",
+							"m_vect" : "-1, 0",
+							"m_speed" : "0.1"
+						},
+					},
+					{
+						"name" : "Rat 3",
+						"id" : "q01_p02_n03",
+						"type" : "npc_rat",
+
+						"position" : {
+							"map" : "map02",
+							"pos" : "4.5, 7.5",
+							"m_vect" : "-1, 0",
+							"m_speed" : "0.1"
+						},
+					}					
+				],				
+
+				"event_handling" : {
+
+					"onInteraction" : {
+
+						"q01_p01_n01" : [
+							{
+								"condition" : "event.parameters == 'player'",
+								"action" : ["event.object.dialog('You know what to do, kill the rats!')"]
+							}
+						]
+					},
+
+					"onAttack" : {
+
+						"q01_p02_n01" : [
+							{
+								"condition" : "event.object.health > 80",
+								"action" : ["event.object.dialog('Squeek!')"]
+							},
+							{
+								"condition" : "event.object.health < 10",
+								"action" : ["event.object.dialog('Squeeeeeeeeeeeeeek!')"]
+							},
+						]
+					},
+				},
+
+				"is_completed" : [
+					{
+						"condition" : "q01_p02_n01.status = 'die' and q01_p02_n02.status = 'die' and q01_p02_n03.status = 'die'",
+						"action"  : "quest.phase = q01_p03"
+					}
+				],
+
+				"after_steps" : [
+					{
+						"erase" : "q01_p02_n01, q01_p02_n02, q01_p02_n03"
+					}
+				]
+
+
+
+			}
+		]
+	}
+}	

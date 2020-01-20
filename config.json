@@ -1,0 +1,68 @@
+{
+	"paths" : {
+		"model_path" : "pyrpg/resources/models/",
+		"map_path" :  "pyrpg/resources/maps/",
+		"quest_path" :  "pyrpg/resources/quests/",
+		"font_path" :  "pyrpg/resources/fonts/"
+	},	
+
+	"display" : {
+		"tile_res" : [64, 64],
+		"resolution" : [1024, 768],
+		"fullscreen" : false,
+		"fps" : 30,
+		"show_fps" : true,
+		"collision_map" : false,
+		"raycasting" : false,
+		"window_title": "PyRPG",
+		"font_file" : "my_courier.ttf",
+		"font_size" : 16
+	},
+
+	"sound" : {
+		"sound_volume": 0,
+		"music_volume" : 0		
+	},
+
+	"game" : {
+		"cli_enabled" : true,
+		"cli_module" : "pyrpg.core.engine",
+		"starting_quest": "main_quest"
+	},
+
+	"logging" :	{
+		"version" : 1.0,
+		"disable_existing_loggers": true,
+
+		"formatters": {
+			"simple": {
+				"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+			},
+			"extra": {
+				"format":"%(asctime)-16s %(name)-8s %(filename)-12s %(lineno)-6s %(funcName)-6s %(levelname)-6s %(message)s",
+				"datefmt":"%m-%d %H:%M:%S"
+			}
+		},
+	
+		"handlers": {
+			"console": {
+				"class": "logging.StreamHandler",
+				"level": "DEBUG",
+				"formatter": "extra",
+				"stream": "ext://sys.stdout"
+			}       
+		},
+	
+		"loggers" : {
+			"console_logger" : {
+				"level" : "DEBUG",
+				"handlers" : ["console"]
+			}
+		},
+		
+		"root" : {
+			"level" : "DEBUG",
+			"handlers" : ["console"]
+		}	
+	}
+}

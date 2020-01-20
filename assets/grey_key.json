@@ -1,0 +1,21 @@
+{
+  "prototype"      : "key",
+  "model_name"     : "Grey key",
+  
+  "texture_data"   : {
+    "default"      : [
+      {
+        "duration":0,
+        "tileid":0
+      },
+      {
+        "duration":0,
+        "tileid":1
+      },
+      {       
+        "duration":0,
+        "tileid":3
+      }
+    ]
+  }
+}

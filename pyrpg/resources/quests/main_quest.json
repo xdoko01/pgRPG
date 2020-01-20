@@ -1,0 +1,89 @@
+{
+	"id" : "q00",
+	"name" : "Welcome to Paradise",
+	"description" : "",
+	"objective" : "",
+	"init_phase" : "q00_p01",
+
+	"phases" : {			
+		
+		"q00_p01" :{
+
+			"name" : "Here we go",
+			"objective" : "",
+
+			"prerequisities" : {
+
+				"cleanup" : {
+					"maps" : [],
+					"screens" :[],
+					"entities" : []
+				},
+
+				"create" : {
+					"maps" : ["map01"],
+					"screens" : [
+						{
+							"type"          : "MapScreen2D",
+							"id"			: "player_screen_1",
+							"dim"     		: [500, 500],
+							"pos"      		: [10, 10],
+							"textures"      : true
+						}
+					]
+				}
+
+			},
+
+			"entities" : {
+
+				"items" : [],
+
+				"characters" : [],
+
+				"players" : [
+					{
+						"name" : "Player01",
+						"id" : "q00_p01_p01",
+						"type" : "dark_male",	
+
+						"map" : "map01",
+						"screen" : "player_screen_1",
+						"pos" : [5.5, 5.5],
+
+						"inventory" : {},
+
+						"control_keys" : {
+							"key_move_left" : "97",
+							"key_move_right": "100",
+							"key_move_up"   : "119",
+							"key_move_down" : "115",
+							"key_attack"    : "113"
+						}
+					}
+				]
+			},
+
+			"event_handling" : {},
+
+			"is_completed" : [],
+
+			"postrequisities" : {
+
+				"cleanup" : {
+					"maps" : [],
+					"screens" :[],
+					"players" : [],
+					"entities" : []
+				},
+
+				"create" : {
+					"maps" : [],
+					"screens" :[],
+					"players" : []
+				}
+
+			}
+		}
+	}
+}	
