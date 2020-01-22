@@ -158,7 +158,6 @@ class CommandLineProcessor(cmd.Cmd):
 			self.output.write(str(E))
 			return -1
 
-
 class Header:
 	def __init__(self,
 				console,	# Reference to parent Console instance
@@ -777,7 +776,7 @@ class Console(pygame.Surface):
 						},
 					'header' : {
 						'text' : 'Console v0.1. Position: {} Time: {}',
-						'text_params' : ['cons_get_time','cons_get_pos'],												
+						'text_params' : ['cons_get_pos','cons_get_time'],												
 						'layout' : 'TEXT_CENTRE',
 						'padding' :(10,10,10,10),
 						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
