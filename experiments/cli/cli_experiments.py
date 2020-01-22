@@ -23,7 +23,6 @@
 		-	scrolling text in header/footer
 		-	fix error with input buffer
 		-	fix so that program does not quit upon incorrect move command
-		-	fix text input alignment + implement self.line_spacing
 		-	breaking the text in text output - to support big outputs		
 		-	fix cursor not showing when moving around the text
 		-	nicer show/hide animation of the console
@@ -389,7 +388,6 @@ class TextOutput:
 
 	def show(self, surf, pos=(0,0)):
 		
-
 		# Blit output background
 		surf.blit(self.surface, pos)
 
@@ -405,13 +403,13 @@ class TextOutput:
 				
 				# The position is calculated so that individual lines are aligned to the centre of the line
 				surf.blit(text_bckgrnd, 
-						(pos[0] + self.padding[0], 
+						(pos[0] + self.padding[2], 
 						pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
 
 			# Blit font text
 			# The position is calculated so that individual lines are aligned to the centre of the line
 			surf.blit(line_surface, 
-					(pos[0] + self.padding[0], 
+					(pos[0] + self.padding[2], 
 					pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
 
 			# If no spacing is defined, use the height of the line surface rect
@@ -423,8 +421,8 @@ class TextOutput:
 		self.surface_height = height + self.padding[1]
 
 	def prepare_surface(self):
-		''' Handles proper generation of the buffer on the textoutput
-		surface.
+		''' Takes the log and based on the log genertes output lines (self.surface_line) and
+		surface (self.surface). Those are used in show function to blit to the screen.
 		'''
 		print('Called Output prepare_surface ...') # only if return PgUp, pgDown pressed
 
@@ -578,8 +576,12 @@ class TextInput:
 		(_, rect_tmp) = self.font_object.render('|', self.font_color, None )
 		self.line_spacing= rect_tmp.height
 
+		# Initiate cursor dimensions
+		#self.cursor_dim = (int(self.font_size / 20 + 1), self.line_spacing)
+		self.cursor_dim = (int(self.font_size / 2 + 1), self.line_spacing)
+
 		# Init Surface from prompt -  it is necessary to calculate height of the whole console
-		(self.text_surface, _rect)  = self.font_object.render(' ' if not self.prompt else self.prompt, self.font_color, None)
+		(self.text_surface, _)  = self.font_object.render(' ' if not self.prompt else self.prompt, self.font_color, None)
 		self.surface = pygame.Surface((self.width, self.padding[0] + self.line_spacing + self.padding[1]))
 	
 		# Vars to make keydowns repeat after user pressed a key for some time:
@@ -591,8 +593,11 @@ class TextInput:
 
 		# Things cursor:
 		#self.cursor_surface = pygame.Surface((int(self.font_size / 20 + 1), self.font_size))
-		self.cursor_surface = pygame.Surface((int(self.font_size), self.font_size*2))
+		self.cursor_surface = pygame.Surface(self.cursor_dim)
 		self.cursor_surface.fill(self.font_color)
+		# This is same rect as for text_input but it ends at the position of the cursor
+		self.cursor_rect = pygame.Rect((0,0,0,0))
+
 		self.cursor_position = len(self.prompt)  # Inside text
 		self.cursor_visible = True  # Switches every self.cursor_switch_ms ms
 		self.cursor_switch_ms = 500  # /|\
@@ -603,6 +608,9 @@ class TextInput:
 		return self.surface.get_height()
 
 	def update(self, events):
+		''' Processes keys pressed events
+		'''
+
 		for event in events:
 			if event.type == pygame.KEYDOWN:
 				self.cursor_visible = True  # So the user sees where he writes
@@ -643,16 +651,20 @@ class TextInput:
 				elif event.key == pl.K_RIGHT:
 					# Add one to cursor_pos, but do not exceed len(input_string)
 					self.cursor_position = min(self.cursor_position + 1, len(self.input_string))
+					print(self.cursor_position)
 
 				elif event.key == pl.K_LEFT:
 					# Subtract one from cursor_pos, but do not go below zero:
 					self.cursor_position = max(self.cursor_position - 1, 0)
+					print(self.cursor_position)
 
 				elif event.key == pl.K_END:
 					self.cursor_position = len(self.input_string)
+					print(self.cursor_position)
 
 				elif event.key == pl.K_HOME:
 					self.cursor_position = 0
+					print(self.cursor_position)
 
 				# Scroll the buffer - to the history
 				elif event.key == pl.K_UP:
@@ -664,6 +676,7 @@ class TextInput:
 					self.input_string = self.buffer[self.buffer_position]
 					# set cursor possition at the end of the string
 					self.cursor_position = len(self.input_string)
+					print(self.cursor_position)
 
 				# Scroll the buffer - to the future
 				elif event.key == pl.K_DOWN:
@@ -674,6 +687,7 @@ class TextInput:
 						self.input_string = self.buffer[self.buffer_position]
 						# set cursor possition at the end of the string
 						self.cursor_position = len(self.input_string)
+						print(self.cursor_position)
 		
 				elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
 					# If no special key is pressed, add unicode of key to input_string
@@ -683,6 +697,7 @@ class TextInput:
 						+ self.input_string[self.cursor_position:]
 					)
 					self.cursor_position += len(event.unicode)  # Some are empty, e.g. K_UP
+					print(self.cursor_position)
 
 			elif event.type == pl.KEYUP:
 				# *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
@@ -716,27 +731,45 @@ class TextInput:
 			self.cursor_ms_counter %= self.cursor_switch_ms
 			self.cursor_visible = not self.cursor_visible
 		
-		if self.cursor_visible:
-			cursor_y_pos = _rect.width
-			# Without this, the cursor is invisible when self.cursor_position > 0:
-			if self.cursor_position > 0:
-				cursor_y_pos -= self.cursor_surface.get_width()
-			self.text_surface.blit(self.cursor_surface, (cursor_y_pos, 0))
+		# Update self.cursor_x_pos = prompt + text_input width rounded to self.cursor_position characters
+		( _ , self.cursor_rect) = self.font_object.render (self.prompt + self.input_string[:self.cursor_position], self.font_color, None) 
+		# TODO - this must be moved to show function 
+		#if self.cursor_visible:
+		#	cursor_y_pos = _rect.width
+		#	# Without this, the cursor is invisible when self.cursor_position > 0:
+		#	if self.cursor_position > 0:
+		#		cursor_y_pos -= self.cursor_surface.get_width()
+		#	self.text_surface.blit(self.cursor_surface, (cursor_y_pos, 0))
 		
 		# self.surface.blit(self.text_surface, (self.padding[2], self.padding[0]))
 		
-		#self.clock.tick()
+		# clock must tick in order to see blinking cursor!
+		self.clock.tick()
 		return False
 
 	def show(self, surf, pos=(0,0)):
 
+		# Background
 		surf.blit(self.surface, pos)
+		
+		# Input text
 		surf.blit(self.text_surface, 
 				(pos[0] + self.padding[2], 
-				pos[1] + self.padding[0] - ((self.line_spacing - self.text_surface.get_height()) // 2 ) - self.text_surface.get_height()))
+				pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
+		
+		# Cursor
+		if self.cursor_visible:
+			cursor_y_pos = self.cursor_rect.width
+			# Without this, the cursor is invisible when self.cursor_position > 0:
+			#if self.cursor_position > 0:
+			#	cursor_y_pos -= self.cursor_surface.get_width()
+			#self.text_surface.blit(self.cursor_surface, (cursor_y_pos, 0))
+			surf.blit(self.cursor_surface,
+					(pos[0] + self.padding[2] + cursor_y_pos, 
+					pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
 
-
-	def get_surface(self):
+	def get_surface(
+		self):
 		return self.surface
 
 	def get_text(self):
@@ -894,9 +927,6 @@ class Console(pygame.Surface):
 		# Put the initial text on the console
 		self.write(self.welcome_msg)
 
-	def setup_header_fnc(self, func):
-		self.console_header.setup_header_func(func)
-
 	def update(self, events):
 		''' Generate console events
 		'''
@@ -954,14 +984,6 @@ class Console(pygame.Surface):
 			pos[1] + self.header_position[1])
 			)
 
-		'''
-		surf.blit(
-			self.console_header.get_surface(), 
-			(pos[0] + self.header_position[0],
-			pos[1] + self.header_position[1])
-			)
-		'''
-
 		# Blit output onto the surface
 		# Based on parameter text_input_position either on top or at the bottom of the console
 		self.console_output.show(
@@ -970,29 +992,13 @@ class Console(pygame.Surface):
 			pos[1] + self.text_output_position[1])
 			)
 		
-		'''
-		surf.blit(
-			self.console_output.get_surface(), 
-			(pos[0] + self.text_output_position[0],
-			pos[1] + self.text_output_position[1])
-			)
-		'''
-
 		# Blit input surface onto the surface
 		# Based on parameter text_input_position either on top or at the bottom of the console
 		self.console_input.show(
 			surf,
 			(pos[0] + self.text_input_position[0],
 			pos[1] + self.text_input_position[1])
-			)
-		
-		'''
-		surf.blit(
-			self.console_input.get_surface(), 
-			(pos[0] + self.text_input_position[0], 
-			pos[1] + self.text_input_position[1])
-			)
-		'''
+			)		
 
 		# Blit footer onto the surface
 		self.console_footer.show(
@@ -1000,14 +1006,6 @@ class Console(pygame.Surface):
 			(pos[0] + self.footer_position[0],
 			pos[1] + self.footer_position[1])
 			)
-		
-		'''
-		surf.blit(
-			self.console_footer.get_surface(), 
-			(pos[0] + self.footer_position[0],
-			pos[1] + self.footer_position[1])
-			)
-		'''
 	
 	def write(self, text):
 		''' Put some text onto a console by calling this function
