@@ -16,15 +16,13 @@
 
 	TODO
 	****
+		-	in text input - clear the code concerning cursor
 		-	colors in text output - commands with different color than script lines and results
 		-	directory with scripts as console parameter
 		-	handling tabs as spaces
 		-	text input supports more than one line
 		-	scrolling text in header/footer
-		-	fix error with input buffer
-		-	fix so that program does not quit upon incorrect move command
 		-	breaking the text in text output - to support big outputs		
-		-	fix cursor not showing when moving around the text
 		-	nicer show/hide animation of the console
 
 	How to incorporate in the code
@@ -521,18 +519,7 @@ class TextInput:
 				'repeat_keys_interval_ms' :35
 				}):
 
-		'''
-		initial_string='',
-		font_file='',
-		font_size=12,
-		antialias=True,
-		text_color=(0, 0, 0),
-		cursor_color=(0, 0, 0),
-		repeat_keys_initial_ms=400,
-		repeat_keys_interval_ms=35,
-		max_string_length=-1,
-		buffer_size=10):
-		'''
+
 		"""
 		:param initial_string: Initial text to be displayed
 		:param font_family: name or list of names for font (see pygame.font.match_font for precise format)
@@ -652,11 +639,14 @@ class TextInput:
 					# Add one to cursor_pos, but do not exceed len(input_string)
 					self.cursor_position = min(self.cursor_position + 1, len(self.input_string))
 					print(self.cursor_position)
+					print('Right key pressed')
+
 
 				elif event.key == pl.K_LEFT:
 					# Subtract one from cursor_pos, but do not go below zero:
 					self.cursor_position = max(self.cursor_position - 1, 0)
 					print(self.cursor_position)
+					print('Left key pressed')
 
 				elif event.key == pl.K_END:
 					self.cursor_position = len(self.input_string)
@@ -667,19 +657,24 @@ class TextInput:
 					print(self.cursor_position)
 
 				# Scroll the buffer - to the history
-				elif event.key == pl.K_UP:
-					# Calc new buffer position
-					if self.buffer_position >= 1:
-						self.buffer_position = self.buffer_position - 1
-					# restore previous input string - last in buffer
-					print(self.buffer_position)
-					self.input_string = self.buffer[self.buffer_position]
-					# set cursor possition at the end of the string
-					self.cursor_position = len(self.input_string)
-					print(self.cursor_position)
+				elif event.key == pl.K_UP:					
+					
+					# Only scroll if there is something in the buffer
+					if len(self.buffer) > 0:
+						# Calc new buffer position
+						if self.buffer_position >= 1:						
+							self.buffer_position = self.buffer_position - 1						
+
+						# restore previous input string - last in buffer
+						self.input_string = self.buffer[self.buffer_position]
+						
+						# set cursor possition at the end of the string
+						self.cursor_position = len(self.input_string)
+						
 
 				# Scroll the buffer - to the future
 				elif event.key == pl.K_DOWN:
+
 					# Calc new buffer position
 					if self.buffer_position < len(self.buffer) - 1:
 						self.buffer_position = self.buffer_position + 1
@@ -687,7 +682,6 @@ class TextInput:
 						self.input_string = self.buffer[self.buffer_position]
 						# set cursor possition at the end of the string
 						self.cursor_position = len(self.input_string)
-						print(self.cursor_position)
 		
 				elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
 					# If no special key is pressed, add unicode of key to input_string
