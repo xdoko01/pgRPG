@@ -16,8 +16,13 @@
 
 	TODO
 	****
-		-	in text input - clear the code concerning cursor
+
+		-	in text input - clear the code concerning cursor + implement prepare_surface if needed
+			
 		-	colors in text output - commands with different color than script lines and results
+			-	output text buffer is list of touples - text + color
+			-	color is taken from text input properties
+
 		-	directory with scripts as console parameter
 		-	handling tabs as spaces
 		-	text input supports more than one line
@@ -279,17 +284,6 @@ class TextOutput:
 					'display_columns' : 80,
 					'line_spacing' : None}):
 
-		'''	
-		initial_string='',
-		font_file='',
-		font_size=12,
-		antialias=True,
-		text_color=(0, 0, 0),
-		buffer_size=20,
-		lines_to_display=10,
-		line_spacing=20,
-		columns_to_display=80):
-		'''
 
 		# Save the params 		
 		for key in config: setattr(self, key, config.get(key))
@@ -441,9 +435,15 @@ class TextOutput:
 		# for height get sum of all heights of surface lines in surface_line list 
 		#if not self.line_spacing: surf_height =  int(sum([i.height for (j,i) in self.surface_line]) + self.padding[0] + self.padding[1])
 		#else: surf_height = (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
-		surf_height = (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
+
+		# Following fixes always output surface as if all lines are displayed
+		#surf_height = (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
+
+		# Following calculates output surface height based on number of output lines that are displayed
+		surf_height = (self.line_spacing * len(self.surface_line)) + self.padding[0] + self.padding[1]
 
 		self.dim = (self.width, surf_height)
+
 		self.surface = pygame.Surface( #(
 			#int(max([i.width for (j,i) in self.surface_line])), 
 			#self.width,
@@ -956,7 +956,7 @@ class Console(pygame.Surface):
 		if self.layout == 'INPUT_BOTTOM':
 			self.header_position = (self.padding[2], self.padding[0])
 			self.text_output_position = (self.padding[2], self.header_position[1] + self.console_header.get_height())
-			self.text_input_position = (self.padding[2], self.text_output_position[1] + self.console_output.get_height())			
+			self.text_input_position = (self.padding[2], self.text_output_position[1] + self.console_output.get_height())
 			self.footer_position = (self.padding[2], self.dim[1] - self.padding[1] - self.console_footer.get_height())
 
 		# TODO - here implement other layouts such as INPUT_TOP etc.
