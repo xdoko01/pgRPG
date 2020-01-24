@@ -13,15 +13,14 @@
 		-	transparent header, output, input - by implementing show function in header, textoutput etc
 		-	header and footer can display dynamic data from app reference - time, position, fps, ...
 		-	possibility to run scripts
+		-	support for colors in console (+ commands are stored in input color on the output)
 
 	TODO
 	****
 
 		-	in text input - clear the code concerning cursor + implement prepare_surface if needed
+		- 	still problem with scrolling input - put several output lines, put something on input and not commit - scroll pgUp and pgDown - press up arrow
 			
-		-	colors in text output - commands with different color than script lines and results
-			-	output text buffer is list of touples - text + color
-			-	color is taken from text input properties
 
 		-	directory with scripts as console parameter
 		-	handling tabs as spaces
@@ -292,10 +291,12 @@ class TextOutput:
 		self.width = width
 
 		# Additional vars
-		self.log = []
+		self.buffer = []
 		#self.buffer_size = buffer_size
 		#self.lines_to_display = lines_to_display
 		#self.columns_to_display = columns_to_display
+
+		# Necessary for implemetation of scrolling in the output buffer (PgUp, PgDown)
 		self.offset_position = 0	
 
 		#self.font_size = font_size
@@ -322,10 +323,13 @@ class TextOutput:
 		self.surface = pygame.Surface((0,0))
 		self.surface_height = self.surface.get_height()
 
-	def write(self, text):
-		''' Handles adding output text into textoutput buffer
-		and shifting of the buffer
+	def write(self, text, color=None):
+		''' Handles adding output text into textoutput buffer in given color
+		and shifting of the buffer.
 		'''
+
+		# If color of the putput text is not specifically given, use predefined color
+		if not color: color = self.font_color
 
 		# Remove newline at the end
 		text.rstrip()
@@ -335,14 +339,14 @@ class TextOutput:
 			
 			# Only print if there is something to print
 			if text_line:
-				self.log.append(text_line)
+				self.buffer.append((text_line, color))
 
 				# Remove old rows from the buffer
-				if len(self.log) > self.buffer_size:
+				if len(self.buffer) > self.buffer_size:
 					# Shift the log
-					for i in range(1,len(self.log)):
-						self.log[i-1] = self.log[i]
-					del self.log[len(self.log)-1]
+					for i in range(1,len(self.buffer)):
+						self.buffer[i-1] = self.buffer[i]
+					del self.buffer[len(self.buffer)-1]
 
 	def get_surface(self):
 		return self.surface
@@ -371,11 +375,11 @@ class TextOutput:
 					self.prepare_surface()
 
 				elif event.key == pl.K_PAGEDOWN:
-					self.offset_position = min([max([0, len(self.log) - self.display_lines]), self.offset_position + self.display_lines])
+					self.offset_position = min([max([0, len(self.buffer) - self.display_lines]), self.offset_position + self.display_lines])
 					self.prepare_surface()
 
 				elif event.key == pl.K_RETURN:
-					self.offset_position = max([0, len(self.log) - self.display_lines])
+					self.offset_position = max([0, len(self.buffer) - self.display_lines])
 					self.prepare_surface()
 
 	def show(self, surf, pos=(0,0)):
@@ -426,8 +430,9 @@ class TextOutput:
 		# print('From:' + str(self.offset_position) + ' To: ' + str(min([len(self.log), self.offset_position + self.lines_to_display])))
 		# print('Len(self.log): ' + str(len(self.log)))
 
-		for i in range(self.offset_position, min([len(self.log), self.offset_position + self.display_lines])):
-			(surface_line_tmp, rect_tmp) = self.font_object.render(self.prompt + self.log[i], self.font_color, None )
+		for i in range(self.offset_position, min([len(self.buffer), self.offset_position + self.display_lines])):
+			# Create font object with given text and given color
+			(surface_line_tmp, rect_tmp) = self.font_object.render(self.prompt + self.buffer[i][0], self.buffer[i][1], None)
 			self.surface_line.append( (surface_line_tmp, rect_tmp) )
 
 		# Re-render text surface, calc how big it is from individual linesurfaces
@@ -918,8 +923,8 @@ class Console(pygame.Surface):
 		# Set Console transparency
 		self.set_alpha(self.bck_alpha)
 
-		# Put the initial text on the console
-		self.write(self.welcome_msg)
+		# Put the initial text on the console in green
+		self.write(self.welcome_msg, (0,255,0))
 
 	def update(self, events):
 		''' Generate console events
@@ -930,7 +935,7 @@ class Console(pygame.Surface):
 		# If enter is pressed (entering command into the console)
 		if self.console_input.update(events):
 			# Put it into the textoutput
-			self.console_output.write(self.console_input.get_text())
+			self.console_output.write(self.console_input.get_text(), self.console_input.font_color)
 
 			# Process the entered line by CLI instance
 			self.cli.onecmd(self.console_input.get_text())
@@ -1001,10 +1006,10 @@ class Console(pygame.Surface):
 			pos[1] + self.footer_position[1])
 			)
 	
-	def write(self, text):
+	def write(self, text, color=None):
 		''' Put some text onto a console by calling this function
 		'''
-		self.console_output.write(text)
+		self.console_output.write(text, color)
 
 		# Without calling prepare_surface the text will not be shown immediatelly
 		self.console_output.prepare_surface()
