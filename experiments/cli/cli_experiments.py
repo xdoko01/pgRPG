@@ -14,20 +14,28 @@
 		-	header and footer can display dynamic data from app reference - time, position, fps, ...
 		-	possibility to run scripts
 		-	support for colors in console (+ commands are stored in input color on the output)
+		-	updated help for the commands
+		-	breaking the text in text output - support big outputs		
+		-	cutting the text of text input
 
 	TODO
 	****
 
-		-	in text input - clear the code concerning cursor + implement prepare_surface if needed
+		-	in text input - create cut surface - same as text output
+		-	in text input - clear the code concerning cursor + implement prepare_surface if needed + unnecessary generation of new surface when already once created (emove)
+
+		-	text input is not limited and scrolls automatically to the left.
+			- if above is complicated then support more than one line 
+
+		-	in text input - backspace deletion is sometimes not working
+
 		- 	still problem with scrolling input - put several output lines, put something on input and not commit - scroll pgUp and pgDown - press up arrow
 			
-
 		-	directory with scripts as console parameter
-		-	handling tabs as spaces
-		-	text input supports more than one line
+		-	handling tabs as spaces - it somehow does not work
+
 		-	scrolling text in header/footer
-		-	breaking the text in text output - to support big outputs		
-		-	nicer show/hide animation of the console
+		-	nicer show/hide animation of the console - what about to have it similar to show fnc where surface is handed as a parameter
 
 	How to incorporate in the code
 	******************************
@@ -85,15 +93,15 @@ class CommandLineProcessor(cmd.Cmd):
 		self.do_quit(line)
 		return True
 
-	def do_py(self, line):
+	def do_shell(self, line):
 		''' Executes python commands in the console. App entity can be accessed
 		by referencing self. See examples of possible usage below:
 		 
-		 - py print('Hello world') ... prints Hello World at the console
-		 - py game ... prints reference to main game instance TestObject
-		 - py game.pos = [200, 200] ... assignes new position to the game rect
-		 - py game.surf.fill((0,0,0)) ... changes the color of the game rect to black
-		 - py game.console.padding = (20,20,20,20) ... changes padding on the console
+		 - !print('Hello world') ... prints Hello World at the console
+		 - !game ... prints reference to main game instance TestObject
+		 - !game.pos = [200, 200] ... assignes new position to the game rect
+		 - !game.surf.fill((0,0,0)) ... changes the color of the game rect to black
+		 - !game.console.padding = (20,20,20,20) ... changes padding on the console
 		'''
 		
 		console_out = sys.stdout = StringIO()
@@ -116,18 +124,19 @@ class CommandLineProcessor(cmd.Cmd):
 			if Result: self.output.write(str(Result))
 			sys.stdout = sys.__stdout__
 
-	def do_script(self, script_file):
+	def do_script(self, param):
 		''' Run custom scripts that contain commands implemented in this class.
 
 		Script example:
 			move 300,300
-			py print('I have moved the brick')
-			py game.surf.fill((0,0,0))
-			py print('I have colored the brick')
+			!print('I have moved the brick')
+			!game.surf.fill((0,0,0))
+			!print('I have colored the brick')
 		'''
+
 		try:
 			# Open script file
-			with open(script_file) as f:
+			with open(param) as f:
 				# For each line execute self.onecmd(line)
 				self.output.write('>S>Script ' + script_file + ' started.')
 
@@ -149,7 +158,7 @@ class CommandLineProcessor(cmd.Cmd):
 			return -1
 
 	def do_move(self, arg):
-		''' Example of custom command implementation
+		''' Example of custom command implementation	
 		It is important to return True if success and False
 		'''
 		try:
@@ -326,27 +335,34 @@ class TextOutput:
 	def write(self, text, color=None):
 		''' Handles adding output text into textoutput buffer in given color
 		and shifting of the buffer.
-		'''
+		'''	
 
 		# If color of the putput text is not specifically given, use predefined color
 		if not color: color = self.font_color
 
 		# Remove newline at the end
 		text.rstrip()
-
+	
 		# Based on newline character put every output line on separate row
 		for text_line in text.split('\n'):
 			
 			# Only print if there is something to print
 			if text_line:
-				self.buffer.append((text_line, color))
+				
+				# Split text_line to the list of strings based on number of displayable characters
+				text_line_parts = [text_line[i:i+self.display_columns] for i in range(0, len(text_line), self.display_columns)]	
 
-				# Remove old rows from the buffer
-				if len(self.buffer) > self.buffer_size:
-					# Shift the log
-					for i in range(1,len(self.buffer)):
-						self.buffer[i-1] = self.buffer[i]
-					del self.buffer[len(self.buffer)-1]
+				# Add every splitted string into the output buffer
+				for text_line_part in text_line_parts:
+					
+					self.buffer.append((text_line_part, color))
+
+					# Remove old rows from the buffer
+					if len(self.buffer) > self.buffer_size:
+						# Shift the log
+						for i in range(1,len(self.buffer)):
+							self.buffer[i-1] = self.buffer[i]
+						del self.buffer[len(self.buffer)-1]
 
 	def get_surface(self):
 		return self.surface
@@ -387,8 +403,18 @@ class TextOutput:
 		# Blit output background
 		surf.blit(self.surface, pos)
 
+		# Create temporary background (completely transparent)
+		# on which the text lines are blitted. The reason is to cut 
+		# the text so that it is not going over the borders.
+		# This surface's dimensions are adjusted by padding
+		text_cut_surf = pygame.Surface(
+							(self.dim[0] - self.padding[2] - self.padding[3],
+							self.dim[1] - self.padding[0] - self.padding[1]),
+							 pygame.SRCALPHA)
+
 		# Blit all the line surfaces to the surface
-		height = self.padding[0]
+		#height = self.padding[0]
+		height = 0
 		for i in range(len(self.surface_line)):
 			(line_surface, line_rect) = self.surface_line[i]
 			
@@ -398,15 +424,23 @@ class TextOutput:
 				text_bckgrnd.fill(self.font_bck_color)
 				
 				# The position is calculated so that individual lines are aligned to the centre of the line
-				surf.blit(text_bckgrnd, 
-						(pos[0] + self.padding[2], 
-						pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
+				#surf.blit(text_bckgrnd, 
+				#		(pos[0] + self.padding[2], 
+				#		pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
+
+				text_cut_surf.blit(text_bckgrnd,
+						(0,
+						height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
 
 			# Blit font text
 			# The position is calculated so that individual lines are aligned to the centre of the line
-			surf.blit(line_surface, 
-					(pos[0] + self.padding[2], 
-					pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
+			#surf.blit(line_surface,
+			#		(pos[0] + self.padding[2], 
+			#		pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
+			
+			text_cut_surf.blit(line_surface, 
+						(0,
+						height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
 
 			# If no spacing is defined, use the height of the line surface rect
 			# Otherwise use the parameter
@@ -414,6 +448,11 @@ class TextOutput:
 			#else: height = height + line_rect.height
 			height = height + self.line_spacing
 		
+		# Blit text surface to surf - take account text padding
+		surf.blit(text_cut_surf, 
+				(pos[0] + self.padding[2],
+				pos[1] + self.padding[0]))
+
 		self.surface_height = height + self.padding[1]
 
 	def prepare_surface(self):
@@ -519,7 +558,7 @@ class TextInput:
 				'bck_alpha' : 150,
 				'buffer_size' : 10,
 				'prompt' : '>>>',
-				'max_string_length' : 70,
+				'max_string_length' : 10,
 				'repeat_keys_initial_ms' : 400,
 				'repeat_keys_interval_ms' :35
 				}):
@@ -568,13 +607,18 @@ class TextInput:
 		(_, rect_tmp) = self.font_object.render('|', self.font_color, None )
 		self.line_spacing= rect_tmp.height
 
+		# Dimensions of the text input element
+		self.dim = ((self.width, self.padding[0] + self.line_spacing + self.padding[1]))
+		
 		# Initiate cursor dimensions
 		#self.cursor_dim = (int(self.font_size / 20 + 1), self.line_spacing)
 		self.cursor_dim = (int(self.font_size / 2 + 1), self.line_spacing)
 
 		# Init Surface from prompt -  it is necessary to calculate height of the whole console
 		(self.text_surface, _)  = self.font_object.render(' ' if not self.prompt else self.prompt, self.font_color, None)
-		self.surface = pygame.Surface((self.width, self.padding[0] + self.line_spacing + self.padding[1]))
+		self.surface = pygame.Surface(self.dim)
+
+		self.text_surface_dim = (_.width, _.height)
 	
 		# Vars to make keydowns repeat after user pressed a key for some time:
 		self.keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
@@ -688,7 +732,8 @@ class TextInput:
 						# set cursor possition at the end of the string
 						self.cursor_position = len(self.input_string)
 		
-				elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
+				#elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
+				elif len(self.input_string) < 1000:					
 					# If no special key is pressed, add unicode of key to input_string
 					self.input_string = (
 						self.input_string[:self.cursor_position]
@@ -719,6 +764,7 @@ class TextInput:
 
 		# Re-render text surface:
 		(self.text_surface, _rect)  = self.font_object.render(self.prompt + self.input_string, self.font_color, None)
+		self.text_surface_dim = (_rect.width, _rect.height)
 
 		# Re-render the background surface
 		self.surface = pygame.Surface((self.width, self.padding[0] + self.line_spacing + self.padding[1]))
@@ -748,24 +794,56 @@ class TextInput:
 
 	def show(self, surf, pos=(0,0)):
 
-		# Background
+		# Background surface blit
 		surf.blit(self.surface, pos)
 		
-		# Input text
-		surf.blit(self.text_surface, 
-				(pos[0] + self.padding[2], 
-				pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
-		
-		# Cursor
+		# Create temporary background (completely transparent)
+		# on which the text line is blitted. The reason is to cut 
+		# the text so that it is not going over the borders.
+		# This surface's dimensions are adjusted by padding
+		text_cut_surf = pygame.Surface(
+							(self.dim[0] - self.padding[2] - self.padding[3],
+							self.dim[1] - self.padding[0] - self.padding[1]),
+							 pygame.SRCALPHA)
+
+
+		# Input text background blit
+		if self.font_bck_color:
+			text_bckgrnd = pygame.Surface(self.text_surface_dim)
+			text_bckgrnd.fill(self.font_bck_color)
+			
+			text_cut_surf.blit(text_bckgrnd,
+					(0,
+					self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
+
+
+		# Input text blit
+		#surf.blit(self.text_surface, 
+		#		(pos[0] + self.padding[2], 
+		#		pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
+		text_cut_surf.blit(self.text_surface, 
+						(0,
+						self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
+
+		# Cursor blit
 		if self.cursor_visible:
 			cursor_y_pos = self.cursor_rect.width
 			# Without this, the cursor is invisible when self.cursor_position > 0:
 			#if self.cursor_position > 0:
 			#	cursor_y_pos -= self.cursor_surface.get_width()
 			#self.text_surface.blit(self.cursor_surface, (cursor_y_pos, 0))
-			surf.blit(self.cursor_surface,
-					(pos[0] + self.padding[2] + cursor_y_pos, 
-					pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
+			#surf.blit(self.cursor_surface,
+			#		(pos[0] + self.padding[2] + cursor_y_pos, 
+			#		pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
+			text_cut_surf.blit(self.cursor_surface, 
+						(0 + cursor_y_pos,
+						self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
+
+		# Cutted text blit
+		surf.blit(text_cut_surf, 
+				(pos[0] + self.padding[2],
+				pos[1] + self.padding[0]))
+
 
 	def get_surface(
 		self):
@@ -804,7 +882,8 @@ class Console(pygame.Surface):
 						'bck_image' : 'experiments/cli/bckground/quake.png',
 						'bck_image_resize' : True,
 						'bck_alpha' : 150,
-						'welcome_msg' : 'Welcome to pyRPG\n***************\nType "exit" to quit.'
+						'welcome_msg' : 'Welcome to pyRPG\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
+						'welcome_msg_color' : (0,255,0),
 						},
 					'header' : {
 						'text' : 'Console v0.1. Position: {} Time: {}',
@@ -833,8 +912,11 @@ class Console(pygame.Surface):
 						'buffer_size' : 100,
 						'prompt' : '',
 						'display_lines' : 20,
-						'display_columns' : 80,
-						'line_spacing' : None
+						'display_columns' : 100,
+						'line_spacing' : None,
+						'char_subst' : { 
+							'\t' : '->'
+							}
 						},
 					'input' : {
 						'padding' : (10,10,10,10),
@@ -847,7 +929,7 @@ class Console(pygame.Surface):
 						'bck_alpha' : 150,
 						'buffer_size' : 10,
 						'prompt' : '>>>',
-						'max_string_length' : 70,
+						'max_string_length' : 10,
 						'repeat_keys_initial_ms' : 400,
 						'repeat_keys_interval_ms' :35
 						},
@@ -923,8 +1005,8 @@ class Console(pygame.Surface):
 		# Set Console transparency
 		self.set_alpha(self.bck_alpha)
 
-		# Put the initial text on the console in green
-		self.write(self.welcome_msg, (0,255,0))
+		# Put the initial text on the console in given color
+		self.write(self.welcome_msg, self.welcome_msg_color)
 
 	def update(self, events):
 		''' Generate console events
