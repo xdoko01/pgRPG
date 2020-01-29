@@ -17,18 +17,16 @@
 		-	updated help for the commands
 		-	breaking the text in text output - support big outputs		
 		-	cutting the text of text input
+		-	text input is not limited and scrolls automatically to the left.
 
 	TODO
 	****
+		-	show some console details in footer - buffer info, position, etc
+			- 
+		-	implement str func on console
 
-		-	in text input - create cut surface - same as text output
 		-	in text input - clear the code concerning cursor + implement prepare_surface if needed + unnecessary generation of new surface when already once created (emove)
-
-		-	text input is not limited and scrolls automatically to the left.
-			- if above is complicated then support more than one line 
-
 		-	in text input - backspace deletion is sometimes not working
-
 		- 	still problem with scrolling input - put several output lines, put something on input and not commit - scroll pgUp and pgDown - press up arrow
 			
 		-	directory with scripts as console parameter
@@ -806,6 +804,19 @@ class TextInput:
 							self.dim[1] - self.padding[0] - self.padding[1]),
 							 pygame.SRCALPHA)
 
+		''' Following 3 blits must be changed in order to enable continuous scrolling input on one line 
+		Somehow calculate the blit x position
+
+		if self.text_surface.get_width <= text_cut_surface.get_width 
+			x_pos = 0
+		else
+			# when following number is positive then 0
+			# when following number is negative then negative
+			x_pos = min(0, text_cut_surface.get_width - self.text_surface.get_width)
+		'''
+		# Make this nicer - use dims instead calling functions
+		space_left = int(text_cut_surf.get_width() - self.text_surface.get_width() - self.cursor_dim[0])
+		x_offset =  min(0, space_left)
 
 		# Input text background blit
 		if self.font_bck_color:
@@ -813,7 +824,7 @@ class TextInput:
 			text_bckgrnd.fill(self.font_bck_color)
 			
 			text_cut_surf.blit(text_bckgrnd,
-					(0,
+					(x_offset,
 					self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
 
 
@@ -822,7 +833,7 @@ class TextInput:
 		#		(pos[0] + self.padding[2], 
 		#		pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
 		text_cut_surf.blit(self.text_surface, 
-						(0,
+						(x_offset,
 						self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
 
 		# Cursor blit
@@ -836,7 +847,7 @@ class TextInput:
 			#		(pos[0] + self.padding[2] + cursor_y_pos, 
 			#		pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
 			text_cut_surf.blit(self.cursor_surface, 
-						(0 + cursor_y_pos,
+						(x_offset + cursor_y_pos,
 						self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
 
 		# Cutted text blit
