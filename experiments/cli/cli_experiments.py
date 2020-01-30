@@ -21,9 +21,6 @@
 
 	TODO
 	****
-		-	show some console details in footer - buffer info, position, etc
-			- 
-		-	implement str func on console
 
 		-	in text input - clear the code concerning cursor + implement prepare_surface if needed + unnecessary generation of new surface when already once created (emove)
 		-	in text input - backspace deletion is sometimes not working
@@ -211,7 +208,7 @@ class Header:
 			self.font_bckgrnd.fill(self.font_bck_color)
 
 		# Calculate the dimensions of header - you must have font surface
-		self.dim = (width, self.line_spacing+ self.padding[0] + self.padding[1])
+		self.dim = (width, self.line_spacing + self.padding[0] + self.padding[1])
 
 		# Create header surface
 		self.surface = pygame.Surface(self.dim)
@@ -244,25 +241,49 @@ class Header:
 
 			# generate the new text in self.text_surface object
 			(self.text_surface, self.text_rect) = self.font_object.render(text, self.font_color, None )
-
+			
 
 	def show(self, surf, pos=(0, 0)):
 		
 		# Blit the surface background
 		surf.blit(self.surface, pos)
 
+		# Here prepare cut surface on which blit the rest
+		# TODO - calculate the dimof text_cut_surf only once in init and create it also only in init
+		#  here only clean the text_cut_surf 
+		text_cut_surf = pygame.Surface(
+							(self.dim[0] - self.padding[2] - self.padding[3],
+							self.dim[1] - self.padding[0] - self.padding[1]),
+							 pygame.SRCALPHA)
+
 		# Blit text background and text on the right spot based on layout
 		if self.layout == 'TEXT_RIGHT':
-			if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.width - self.padding[3] - self.text_rect.width, pos[1] + self.padding[0]))
-			surf.blit(self.text_surface, (pos[0] + self.width - self.padding[3] - self.text_rect.width, pos[1] + self.padding[0]))
+			#if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.width - self.padding[3] - self.text_rect.width, pos[1] + self.padding[0]))
+			#surf.blit(self.text_surface, (pos[0] + self.width - self.padding[3] - self.text_rect.width, pos[1] + self.padding[0]))
+			if self.font_bck_color: text_cut_surf.blit(self.font_bckgrnd, (text_cut_surf.get_width() - self.text_rect.width, 0))
+			# TODO - get rid of get_with() call
+			text_cut_surf.blit(self.text_surface, (text_cut_surf.get_width() - self.text_rect.width, 0))			
+
 		if self.layout == 'TEXT_LEFT':
-			if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.padding[2], pos[1] + self.padding[0]))
-			surf.blit(self.text_surface, (pos[0] + self.padding[2], pos[1] + self.padding[0]))
+			#if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.padding[2], pos[1] + self.padding[0]))
+			#surf.blit(self.text_surface, (pos[0] + self.padding[2], pos[1] + self.padding[0]))
+			if self.font_bck_color: text_cut_surf.blit(self.font_bckgrnd, (0, 0))
+			text_cut_surf.blit(self.text_surface, (0, 0))
+
 		if self.layout == 'TEXT_CENTRE':
-			if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.width // 2 - self.text_rect.width // 2, pos[1] + self.padding[0]))
-			surf.blit(self.text_surface, (pos[0] + self.width // 2 - self.text_rect.width // 2, pos[1] + self.padding[0]))
-		
-		# TODO - more layouts such as running text 	
+			#if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.width // 2 - self.text_rect.width // 2, pos[1] + self.padding[0]))
+			#surf.blit(self.text_surface, (pos[0] + self.width // 2 - self.text_rect.width // 2, pos[1] + self.padding[0]))
+			if self.font_bck_color: text_cut_surf.blit(self.font_bckgrnd, (text_cut_surf.get_width() // 2 - self.text_rect.width // 2, 0))
+			text_cut_surf.blit(self.text_surface, (text_cut_surf.get_width() // 2 - self.text_rect.width // 2, 0))
+
+		if self.layout == 'SCROLL_LEFT':
+			pass
+	
+		# Blit text surface to surf - take account text padding
+		surf.blit(text_cut_surf, 
+				(pos[0] + self.padding[2],
+				pos[1] + self.padding[0]))
+
 
 	def get_height(self):
 		return self.surface.get_height()
@@ -944,9 +965,9 @@ class Console(pygame.Surface):
 						'repeat_keys_initial_ms' : 400,
 						'repeat_keys_interval_ms' :35
 						},
-					'footer' : {
-						'text' : 'Copyright by pyRPG 2020',
-						'text_params' : None,
+					'footer' : {						
+						'text' : 'Statistics {}',
+						'text_params' : ['cons_get_details'],
 						'layout' : 'TEXT_RIGHT',
 						'padding' : (10,10,10,10),
 						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
@@ -1231,6 +1252,13 @@ if __name__ == "__main__":
 			data in the console
 			'''
 			return str(datetime.now())
+
+		def cons_get_details(self):
+			''' Example of function that can be passed to console to show dynamic
+			data in the console
+			'''
+			
+			return str('Input text buffer possition: ' + str(self.console.console_input.buffer_position) + ' Input text position: ' + str(len(self.console.console_input.input_string)))
 
 	# Initiate testing 'game'
 	t = TestObject()
