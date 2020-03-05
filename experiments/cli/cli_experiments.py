@@ -24,6 +24,7 @@
 	TODO
 	****
 		
+		-	All animation related params into Console class as config
 		-	Better scripts - directory with scripts as console parameter
 		-	handling tabs as spaces - it somehow does not work
 
@@ -1105,7 +1106,10 @@ class Console(pygame.Surface):
 	'''
 
 	# List of available layouts for the console. If error, INPUT_BOTTOM is used as default.
-	LAYOUTS = [ 'INPUT_BOTTOM']
+	LAYOUTS = ['INPUT_BOTTOM', 'INPUT_TOP']
+
+	# List of available animations for the console. If error, TOP is used as default.
+	ANIMATIONS = ['TOP', 'BOTTOM']
 
 
 	def __init__(self, app, width, config={}):
@@ -1115,6 +1119,8 @@ class Console(pygame.Surface):
 		:param config: Dictionary storing all the configs necessary for correct display of console. See keys explanation below:
 			
 			global (mandatory section, see defaults below): Parameters that govern global console configuration.
+				animation (optional, default None) : Determines if displaying of the console is animated or not. 
+					Possible values are None (no animation - blit on position), ['TOP', 1500] ... animation type and number of ms for showing console. ['TOP'] ... default 100ms will be used
 				layout (optional, default 'INPUT_BOTTOM') : Determines the layout of header, footer, input and output part.
 				padding (optional, default (0,0,0,0)): Specifies padding around the console window and console items. The padding order is UP, DOWN, LEFT, RIGHT
 				bck_color (optional, default (0,0,0)): Color of the console background as tuple with 3 values.  Eg. (255,255,255) for white.
@@ -1135,6 +1141,7 @@ class Console(pygame.Surface):
 
 		# Dictionary with default values
 		default_config = {
+						'animation' : None,
 						'layout' : 'INPUT_BOTTOM',
 						'padding' : (0,0,0,0),
 						'bck_color' : (0,0,0),
@@ -1184,7 +1191,7 @@ class Console(pygame.Surface):
 		super().__init__(self.dim) 
 
 		# If layout is not specified, use INPUT_BOTTOM layout as default
-		self.layout = 'INPUT_BOTTOM' if self.layout not in Header.LAYOUTS else self.layout
+		self.layout = ('INPUT_BOTTOM' if self.layout not in Console.LAYOUTS else self.layout)
 
 		# Prepare console background image
 		if self.bck_image:
@@ -1198,90 +1205,193 @@ class Console(pygame.Surface):
 		# Put the initial text on the console in given color
 		if self.console_output: self.write(self.welcome_msg, self.welcome_msg_color)
 
+		''' Animation part - Prepare variables managing animation, if animation is enabled 
+		'''
+		if self.animation:
+			# If specified animation layout is not found, 'TOP' layout will be used as default
+			self.anim_layout = self.animation[0] if len(self.animation) > 0 and self.animation[0] in Console.ANIMATIONS else 'TOP'
+			# If animation time is not specified use 100 ms
+			self.anim_time = self.animation[1] if len(self.animation) > 1 else 100
+			# Calculate animation velocity based on the console dimensions (height)
+			self.anim_velocity = self.dim[1] / self.anim_time
+			# Initiate variable for remembering the time
+			self.anim_last_time = 0
+			# Initiate variable for storing percentage of shown console surface (0 nothing shown, 100 all shown)
+			self.anim_perc = 0
+
+		# By default console is disabled
+		self.enabled = False
+
 	def update(self, events):
-		''' Generate console events
+		''' Call updates of relevant console parts. If ENTER was pressed, process the command.
+		Only process if console is enabled.
 		'''
-		# pass dynamic value to header
-		#self.console_header.update()
-
-		# If console has defined input and enter is pressed (entering command into the console)
-		if self.console_input and self.console_input.update(events):
-			
-			# Put it into the textoutput - if output is defined
-			if self.console_output: self.console_output.write(self.console_input.get_text(), self.console_input.font_color)
-
-			# Process the entered line by CLI instance
-			self.cli.onecmd(self.console_input.get_text())
-			
-			# Reset the text, so that new one can be entered
-			self.console_input.clear_text()
-
-		# Check if text output keys for scrolling the buffer were used
-		if self.console_output: self.console_output.update(events)
-
-		# Update the header - in order to update the dynamic values shown in the header
-		if self.console_header: self.console_header.update()
-
-		# Update the footer - in order to update the dynamic values shown in the footer
-		if self.console_footer: self.console_footer.update()
-
-	def show(self, surf, pos=(0, 0)):
-		''' Manages bliting of console (background, textoutput, textinput)
-		to the given surf surface and on given pos position.
-		'''
-
-		# Calculate position of layout items on the console based on the layout	must be done here as the console output height is changing
-		if self.layout == 'INPUT_BOTTOM':
-			self.header_position = (self.padding.left, self.padding.up)
-			self.text_output_position = (self.padding.left, self.header_position[1] + (self.console_header.get_height() if self.console_header else 0))
-			self.text_input_position = (self.padding.left, self.text_output_position[1] + (self.console_output.get_height() if self.console_output else 0))
-			self.footer_position = (self.padding.left, self.dim[1] - self.padding.down - (self.console_footer.get_height() if self.console_footer else 0))		
-
-		# TODO - here implement other layouts such as INPUT_TOP etc.
-
-		# Clear COnsole background surface		
-		self.fill(self.bck_color)
-
-		# If background image is defined, paste it to console surface
-		if self.bck_image: self.blit(self.bck_image, (0, 0))
-
-		# Blit console background to the surface
-		surf.blit(self, pos)
-
-		# Blit header onto the surface - by calling show and not blitting directly enables
-		# transparent background and non transparent text displayed on it.
-		if self.console_header:
-			self.console_header.show(
-				surf,
-				(pos[0] + self.header_position[0],
-				pos[1] + self.header_position[1])
-				)
-
-		# Blit output onto the surface
-		# Based on parameter text_input_position either on top or at the bottom of the console
-		if self.console_output:
-			self.console_output.show(
-				surf,
-				(pos[0] + self.text_output_position[0],
-				pos[1] + self.text_output_position[1])
-				)
 		
-		# Blit input surface onto the surface
-		# Based on parameter text_input_position either on top or at the bottom of the console
-		if self.console_input:
-			self.console_input.show(
-				surf,
-				(pos[0] + self.text_input_position[0],
-				pos[1] + self.text_input_position[1])
-				)		
+		# Do update only if the console is active/enabled
+		if self.enabled:
 
-		# Blit footer onto the surface
-		if self.console_footer:
-			self.console_footer.show(
-				surf,
-				(pos[0] + self.footer_position[0],
-				pos[1] + self.footer_position[1])
-				)
+			# If console has defined input and enter is pressed (entering command into the console)
+			if self.console_input and self.console_input.update(events):
+				
+				# Put it into the textoutput - if output is defined
+				if self.console_output: self.console_output.write(self.console_input.get_text(), self.console_input.font_color)
+
+				# Process the entered line by CLI instance
+				self.cli.onecmd(self.console_input.get_text())
+				
+				# Reset the text, so that new one can be entered
+				self.console_input.clear_text()
+
+			# Check if text output keys for scrolling the buffer were used
+			if self.console_output: self.console_output.update(events)
+
+			# Update the header - in order to update the dynamic values shown in the header
+			if self.console_header: self.console_header.update()
+
+			# Update the footer - in order to update the dynamic values shown in the footer
+			if self.console_footer: self.console_footer.update()
+
+	def show(self, surf, pos=None):
+		''' Manages bliting of console (background, textoutput, textinput)
+		to the given surf surface and on given pos position. Also manages displaying
+		of proper animation, if enabled by configuration.
+
+		If animation is enabled, possition of blitting of every part must be adjusted 
+		so that we reach required animation effect. The pos parameter is marking the final
+		origin where the fully displayed console is placed.
+		'''
+
+		#####
+		# Calculate the delta parameters for displaying animated console
+		#####		
+
+		# No animation required - no delta from original position. Console is either fully shown or fully hidden.
+		if not self.animation:
+			
+			# In no position is entered go for upper left corner
+			pos = (0,0) if not pos else pos
+
+			anim_dx = 0		
+			anim_dy = 0
+
+			if self.enabled: self.anim_perc = 100
+			else: self.anim_perc = 0
+
+		# Animation required - based on animation parameters calculate the portion of the console to be displayed
+		# expressed by delta parameters anim_dx and anim_dy.
+		else:
+	
+			current_time = pygame.time.get_ticks()
+
+			#####
+			# Update percentage of animation shown and the time
+			#####
+
+			# If console is enabled, I need to continue animation or show full console if animation is finished or no animation is requested.
+			# If console is disabled, I need to continue hiding animation or fully hide the console if animation is finished
+			if (self.enabled and self.anim_perc < 100) or (not self.enabled and self.anim_perc > 0):
+				self.anim_perc = self.anim_perc + (1 if self.enabled else -1) * (current_time - self.anim_last_time) * self.anim_velocity 
+				self.anim_last_time = current_time 
+
+			# Do correction in case that console is fully displayed or fully hidden
+			self.anim_perc = 100 if self.anim_perc > 100 else self.anim_perc
+			self.anim_perc = 0 if self.anim_perc < 0 else self.anim_perc
+
+			#####
+			# Prepare the coordinates for animation based on animation layout
+			#####
+
+			# Pos parameter that is passed to show function should refer to the top edge of the surface
+			if self.anim_layout == 'TOP':
+				# For the best results TOP animation should happen from the upper edge of the screen  (surface)
+				pos = (0,0) if not pos else pos
+				# Movement is only on Y axis, hence no need to adjust X axis
+				anim_dx = 0
+				# Correction of Y coordinate base on percentage of console that we need to display
+				anim_dy =  -self.dim[1] * (1 - self.anim_perc / 100)
+
+			# Pos parameter that is passed to the show function should refer to the bottom edge of the surface
+			if self.anim_layout == 'BOTTOM':
+				# For the best results TOP animation should happen from the bottom edge of the screen (surface)
+				pos = (0,surf.get_height()) if not pos else pos
+				# Movement is only on Y axis, hence no need to adjust X axis
+				anim_dx = 0
+				# Correction of Y coordinate base on percentage of console that we need to display
+				anim_dy =  -self.dim[1] * (1 - (100 - self.anim_perc) / 100)
+
+
+		#####
+		# Display the console to the surface, if needed - anim_perc > 0
+		#####		
+
+		# This happens when console is either enabled or disabled and is being hidden
+		if self.anim_perc > 0:
+
+			#####
+			# Prepare the individual console components coordinates based on the layout. More layouts can be added here.
+			#####
+
+			# Calculate position of layout items on the console based on the layout	must be done here as the console output height is changing
+			# based on lines displayed on the output.
+			if self.layout == 'INPUT_BOTTOM':
+				self.header_position = (self.padding.left, self.padding.up)
+				self.text_output_position = (self.padding.left, self.header_position[1] + (self.console_header.get_height() if self.console_header else 0))
+				self.text_input_position = (self.padding.left, self.text_output_position[1] + (self.console_output.get_height() if self.console_output else 0))
+				self.footer_position = (self.padding.left, self.dim[1] - self.padding.down - (self.console_footer.get_height() if self.console_footer else 0))		
+
+			if self.layout == 'INPUT_TOP':
+				self.header_position = (self.padding.left, self.padding.up)
+				self.text_input_position = (self.padding.left, self.header_position[1] + (self.console_header.get_height() if self.console_header else 0))
+				self.text_output_position = (self.padding.left, self.text_input_position[1] + (self.console_input.get_height() if self.console_input else 0))
+				self.footer_position = (self.padding.left, self.dim[1] - self.padding.down - (self.console_footer.get_height() if self.console_footer else 0))		
+
+			#####
+			# Blit everything with the corrections
+			#####
+
+			# Clear Console background surface		
+			self.fill(self.bck_color)
+
+			# If background image is defined, paste it to console surface
+			if self.bck_image: self.blit(self.bck_image, (0, 0))
+
+			# Blit console background to the surface
+			surf.blit(self, (pos[0] + anim_dx, pos[1] + anim_dy))
+
+			# Blit header onto the surface - by calling show and not blitting directly enables
+			# transparent background and non transparent text displayed on it.
+			if self.console_header:
+				self.console_header.show(
+					surf,
+					(pos[0] + anim_dx + self.header_position[0],
+					pos[1] + anim_dy + self.header_position[1])
+					)
+
+			# Blit output onto the surface
+			# Based on parameter text_input_position either on top or at the bottom of the console
+			if self.console_output:
+				self.console_output.show(
+					surf,
+					(pos[0] + anim_dx + self.text_output_position[0],
+					pos[1] + anim_dy + self.text_output_position[1])
+					)
+			
+			# Blit input surface onto the surface
+			# Based on parameter text_input_position either on top or at the bottom of the console
+			if self.console_input:
+				self.console_input.show(
+					surf,
+					(pos[0] + anim_dx + self.text_input_position[0],
+					pos[1] + anim_dy + self.text_input_position[1])
+					)		
+
+			# Blit footer onto the surface
+			if self.console_footer:
+				self.console_footer.show(
+					surf,
+					(pos[0] + anim_dx + self.footer_position[0],
+					pos[1] + anim_dy + self.footer_position[1])
+					)
 	
 	def write(self, text, color=None):
 		''' Put some text onto a console by calling this function
@@ -1290,6 +1400,16 @@ class Console(pygame.Surface):
 
 		# Without calling prepare_surface the text will not be shown immediatelly
 		self.console_output.prepare_surface()
+
+	def toggle(self):
+		''' Toggle on/off the console. Influences if updade and show console functions are 
+		working.
+		'''
+		# Toggle on/off the console
+		self.enabled = not self.enabled
+
+		# Remember toggle time for smooth animation purposes
+		if self.animation: self.anim_last_time = pygame.time.get_ticks()
 
 	def reset(self):
 		''' Method that reloads and resets the console
@@ -1331,28 +1451,15 @@ if __name__ == "__main__":
 				********************************
 			'''
 			# Generate random console config
-			console_config = self.get_console_config(1)
+			console_config = self.get_console_config()
 
+			# Create console based on th config
 			self.console = Console(self, 
 									self.screen.get_width(), 
 									console_config
 									)
-
-			# Console will be disabled after game start
-			self.console_enabled = False
-			# Percentage of console surface shown - used for smooth animation
-			# 0 completely hidden, 100 completely shown
-			self.console_anim = 0
-			# How many ms should it take to completely show/hide cons
-			self.console_anim_speed_ms =  10000
-			# Time when console anim last updated
-			self.console_anim_last_time = 0
-			# Velocity
-			self.console_anim_velocity = self.console.get_height() / self.console_anim_speed_ms
-
-
 			''' Console integration code - END
-				******************************
+				********************************
 			'''
 
 		def update(self):
@@ -1381,32 +1488,20 @@ if __name__ == "__main__":
 					if event.type == pygame.QUIT: self.exit = True
 					elif event.type == pygame.KEYDOWN:
 						if event.key == pygame.K_ESCAPE: self.exit = True
-					elif event.type == pygame.KEYUP:
-						
-						# Toggle console - very smooth animation - does not stop the game until console shown/hidden								
+					elif event.type == pygame.KEYUP:						
+						# Toggle console on/off the console							
 						if event.key == pygame.K_F1: 						
-							
-							# Toggle the console
-							self.console_enabled = False if self.console_enabled else True
-
-							# Remember the time if animation is enabled
-							self.console_anim_last_update = pygame.time.get_ticks()
-
+							# Toggle the console - if on then off if off then on
+							self.console.toggle()
 
 				# Update the game situation - blit square on screen and position
 				self.screen.blit(self.surf, self.pos)
 
-				''' Update and display animated console '''
-				# Update the console if enabled (key pressed)
-				if self.console_enabled: self.console.update(events)	
+				# Read and process events related to the console in case console is enabled
+				self.console.update(events)	
 
-				# Update console animation progress
-				if (self.console_enabled and self.console_anim < 100) or (not self.console_enabled and self.console_anim > 0):
-					self.console_anim = self.console_anim + (1 if self.console_enabled else -1) * (pygame.time.get_ticks() - self.console_anim_last_update) * self.console_anim_velocity 
-					self.console_anim_last_update = pygame.time.get_ticks() 
-
-				# If there is still something to show from the console
-				if self.console_anim > 0: self.console.show(self.screen, (0, -1 * self.console.get_height() + (self.console_anim if self.console_anim<=100 else 100) / 100 * self.console.get_height()))
+				# Display the console if enabled or animation is still in progress
+				self.console.show(self.screen)
 
 				pygame.display.update()
 				self.clock.tick(30)
@@ -1443,22 +1538,23 @@ if __name__ == "__main__":
 				' Cursor pos: ' + str(self.console.console_input.cursor_position) +
 				' Buffer pos: ' + str(self.console.console_input.buffer_offset))
 
-		def get_console_config(self, sample=-1):
+		def get_console_config(self, sample=None):
 			
 			# Select random console from 1 to 6
-			if sample == -1: sample = randint(1,6)
+			if not sample: sample = randint(1,6)
 			
-			# Sample 1: Full console features
+			# Sample 1: Full console features + top animation with 2s timing
 			if sample == 1:
 				return {
 						'global' : {
+							'animation': ['TOP', 2000],
 							'layout' : 'INPUT_BOTTOM',
 							'padding' : (10,10,20,20),
 							'bck_color' : (125,125,125),
 							'bck_image' : 'experiments/cli/bckground/quake.png',
 							'bck_image_resize' : True,
 							'bck_alpha' : 150,
-							'welcome_msg' : 'Sample 1: Full feature console\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
+							'welcome_msg' : 'Sample 1: Full feature console + top animation with 2s timing\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
 							'welcome_msg_color' : (0,255,0),
 							},
 						'header' : {
@@ -1524,17 +1620,18 @@ if __name__ == "__main__":
 							}
 						}
 
-			# Sample 2: Full featured - no footer, no header
+			# Sample 2: Full featured - no footer, no header + bottom animation with default timing and INPUT_TOP layout
 			if sample == 2:
 				return {
 						'global' : {
-							'layout' : 'INPUT_BOTTOM',
+							'animation' : ['BOTTOM'],
+							'layout' : 'INPUT_TOP',
 							'padding' : (10,10,20,20),
 							'bck_color' : (125,125,125),
 							'bck_image' : 'experiments/cli/bckground/quake.png',
 							'bck_image_resize' : True,
 							'bck_alpha' : 150,
-							'welcome_msg' : 'Sample 2: Full featured, no footer, no header\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
+							'welcome_msg' : 'Sample 2: Full featured, no footer, no header + bottom animation + Input top layout\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
 							'welcome_msg_color' : (0,255,0),
 							},
 						'output' : {
