@@ -18,19 +18,22 @@
 		-	breaking the text in text output - support big outputs		
 		-	cutting the text of text input
 		-	text input is not limited and scrolls automatically to the left.
+		-	in text input fix jumping text line when '1' or 'q' is input - this is the best solution, use different font if not satisfied
+		-	console does not need to contain header/footer/input/output - based on json config
 
 	TODO
 	****
-
-		-	in text input - clear the code concerning cursor + implement prepare_surface if needed + unnecessary generation of new surface when already once created (emove)
-		-	in text input - backspace deletion is sometimes not working
-		- 	still problem with scrolling input - put several output lines, put something on input and not commit - scroll pgUp and pgDown - press up arrow
-			
-		-	directory with scripts as console parameter
+		
+		-	Better scripts - directory with scripts as console parameter
 		-	handling tabs as spaces - it somehow does not work
 
-		-	scrolling text in header/footer
-		-	nicer show/hide animation of the console - what about to have it similar to show fnc where surface is handed as a parameter
+		-	merge to GITanim
+		-	put on forums
+
+	TEST CASES
+	**********
+		- test all header layouts with and without optional parameters + not existing layout names
+
 
 	How to incorporate in the code
 	******************************
@@ -48,6 +51,28 @@ import pygame.freetype # for all the fonts
 import pygame.locals as pl # for key names
 import cmd	# for command line support https://docs.python.org/3/library/cmd.html
 
+class Padding(tuple):
+	''' Class to facilitate easier and more understandable work 
+	with console paddings that are tuples (indexing). Items of this class
+	can be accessed by either indexing or by name.
+
+	e.g. 
+		pad = Padding((1,2,3,4))	
+		pad[0] returns 1
+		pad.up returns also 1
+	'''
+
+	def __init__(self, padding=(0,0,0,0)):
+		''' Init the padding and translate the tupple into 
+		readable padding properties.
+		'''
+
+		# Missing values during initiation are substituted by 0
+		self.up = padding[0] if len(padding) > 0 else 0
+		self.down = padding[1] if len(padding) > 1 else 0
+		self.left = padding[2] if len(padding) > 2 else 0
+		self.right = padding[3] if len(padding) > 3 else 0
+
 class CommandLineProcessor(cmd.Cmd):
 	''' Class implementing the logic behind console commands.
 	Code was taken, modified and adjsuted from original Tuxemon game 
@@ -64,31 +89,30 @@ class CommandLineProcessor(cmd.Cmd):
 		cmd.Cmd.__init__(self, stdin=input, stdout=output)
 		self.app = app
 		self.output = output
+		self.input = input
 
 	def emptyline(self):
 		''' In case empty line is entered, nothing happens
 		'''
 		pass
 
-	def do_exit(self, line):
+	def do_exit(self, params):
 		''' If "exit" was typed on the command line, set the app's exit variable to True.
 		'''
 		self.app.exit = True
 		return True
 
-	def do_quit(self, line):
+	def do_quit(self, params):
 		'''If "quit" was typed on the command line, set the app's exit variable to True.
 		'''
-		self.app.exit = True
-		return True
+		return self.do_exit(params)		
 	
-	def do_EOF(self, line):
+	def do_EOF(self, params):
 		'''If you press CTRL-D on the command line, set the app's exit variable to True.
 		'''
-		self.do_quit(line)
-		return True
+		return self.do_exit(params)
 
-	def do_shell(self, line):
+	def do_shell(self, params):
 		''' Executes python commands in the console. App entity can be accessed
 		by referencing self. See examples of possible usage below:
 		 
@@ -110,16 +134,17 @@ class CommandLineProcessor(cmd.Cmd):
 		Result = None
 
 		try:
-			exec('Result = ' + line, globals_param, locals_param)
+			exec('Result = ' + params, globals_param, locals_param)
 			Result = locals_param.get('Result')			
 		except Exception as E:
 			self.output.write(str(E))
+			return -1
 		finally:
 			self.output.write(str(console_out.getvalue()))
 			if Result: self.output.write(str(Result))
 			sys.stdout = sys.__stdout__
 
-	def do_script(self, param):
+	def do_script(self, params):
 		''' Run custom scripts that contain commands implemented in this class.
 
 		Script example:
@@ -129,15 +154,19 @@ class CommandLineProcessor(cmd.Cmd):
 			!print('I have colored the brick')
 		'''
 
+		
+		script_line = None
+		script_line_no = None
+		error = None
+
 		try:
 			# Open script file
-			with open(param) as f:
+			with open(params) as f:
 				# For each line execute self.onecmd(line)
-				self.output.write('>S>Script ' + script_file + ' started.')
+				self.output.write('>S>Script ' + params + ' started.')
 
 				script_line = f.readline()
 				script_line_no = 1
-				error = None
 
 				while script_line:
 					error = self.onecmd(script_line.strip())
@@ -148,89 +177,180 @@ class CommandLineProcessor(cmd.Cmd):
 			self.output.write('>S>Script finished successfully.')
 			return None
 
+		except FileNotFoundError:
+			self.output.write('Script file "' + str(params) + '" not found.')
+			return -1
 		except:
-			self.output.write('Error (' + str(error) + ') on line '+ str(script_line_no) + '. Command: ' + str(script_line.strip()))
+			if not script_line: 
+				self.output.write('Error loading script file "' + str(params) + '".')
+			else:
+				self.output.write('Error (' + str(error) + ') on line '+ str(script_line_no) + '. Command: ' + str(script_line.strip()))
 			return -1
 
-	def do_move(self, arg):
+	def do_move(self, params):
 		''' Example of custom command implementation	
 		It is important to return True if success and False
 		'''
 		try:
-			self.app.move(arg)
+			self.app.move(params)
 			return None
 		except Exception as E:
 			self.output.write(str(E))
 			return -1
 
 class Header:
-	def __init__(self,
-				console,	# Reference to parent Console instance
-				width,
-				config={
-					'text' : 'Console v0.1. Position: {}',
-					'text_params' : ['get_pos'],					
-					'layout' : 'TEXT_RIGHT',
+	''' Class specifying properties of Console header and/or footer.
+	It supports different one-line text features, such as scrolling 
+	and displaying dynamic data by passing function results.
+	'''
+
+	# List of available layouts for the header. If error, TEXT_LEFT is used as default.
+	LAYOUTS = [ 'TEXT_LEFT', 'TEXT_RIGHT', 'TEXT_CENTRE', 'SCROLL_LEFT', 'SCROLL_RIGHT', 
+				'SCROLL_LEFT_CONTINUOUS', 'SCROLL_RIGHT_CONTINUOUS']
+
+	def __init__(self, console, width, config={}):
+		'''
+		:param console: Reference to the parrent instance of Console class
+		:param width: Required width of the header. It is usually determined by Console instance at the time of console init.  
+		:param config: Dictionary storing all the configs necessary for correct display of header. See keys explanation below:
+
+			text: (optional, default '') Text displayed in the header. Can contain dynamic data by referencing {}. 
+				Function for dynamic data are contained in text_params list. See further.
+			text_params: (optional, default []) List of functions that are mapped to {} in text parameters. Function must exist in console.app
+				instance (app reference to application instance).
+			layout (optional, default ['TEXT_LEFT']): Specifies formating of the text in the header. List contains 3 parameters. Second and third parameters
+				are optional. First param specifies layout. Second specifies time in ms for scrolling text. Third param specifies
+				movement speed in pixels.
+			padding (optional, default (0,0,0,0)): Specifies padding between header borders and text in the header. The padding order is UP, DOWN, LEFT, RIGHT
+			font_file (mandatory): Path to the font file
+			font_size (optional, default 12): Font size
+			font_antialias (optional, default True): Font antialias (True/False)
+			font_color (optional, default (255,255,255)): Font color as tuple with 3 values. Eg. (255,255,255) for white.
+			font_bck_color (optional, default None): Font text background color as tuple with 3 values. Eg. (255,255,255) for white.
+			bck_color (optional, default (0,0,0)): Color of the header background as tuple with 3 values.  Eg. (255,255,255) for white.
+			bck_image (optional, default None): Path to image displayed on the Header background.
+			bck_image_resize (optional, default True): True/False, if image should be adjusted to header dimensions.
+			bck_alpha (optional, default 255): 0-255, if header background should be transparent
+		'''
+
+		self.width = width
+		self.console = console
+
+		# Dictionary with default values
+		default_config = {
+					'text' : '',
+					'text_params' : [],
+					'layout' : ['TEXT_LEFT'],
 					'padding' : (0,0,0,0),
-					'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-					'font_size' : 16,
+					'font_size' : 14,
 					'font_antialias' : True,
 					'font_color' : (255,255,255),
 					'font_bck_color' : None,
-					'bck_color' : (255,0,0),
+					'bck_color' : (0,0,0),
 					'bck_image' : None,
 					'bck_image_resize' : True,
-					'bck_alpha' : 0
-				}):
-		
-		# Save the params 		
-		for key in config: setattr(self, key, config.get(key))
-		
-		self.width = width
-		self.console = console
-		
-		# TODO - maybe check here if already initiated??
-		pygame.freetype.init()
-		self.font_object = pygame.freetype.Font(
-			 self.font_file,
-			 self.font_size)
+					'bck_alpha' : 128
+		}
 
-		# Get the hight of the text font line and store it in line_spacing
-		(_, rect_tmp) = self.font_object.render('|', self.font_color, None )
+		# Merge default values with given values - overwrite defaults by config dict
+		config = {**default_config, **config}
+
+		# Save the params from the config dict
+		for key in config: setattr(self, key, config.get(key))
+
+		# Instantiate padding for further use
+		self.padding = Padding(self.padding)
+
+		''' Layout related params (scrolling) 
+		'''
+		self.layout_name = self.layout[0] if len(self.layout) > 0 and self.layout[0] in Header.LAYOUTS else 'TEXT_LEFT'
+		self.scroll_last_time = pygame.time.get_ticks()
+		self.scroll_offset = 0
+		self.scroll_offset_speed_ms = self.layout[1] if len(self.layout) > 1 else 1
+		self.scroll_offset_speed_px = self.layout[2] if len(self.layout) > 2 else 1
+
+		''' Font and surface related params
+			*******************************
+			- surf ... basic surface of header, footer, input and output
+			- surf_dim ... dimension (Rect) of the basic surface 
+			- txt_surf ... surface to display text, applies padding to surface, cuts the text. It is transparent. and 
+			               it is blitted to the main surface
+			- txt_surf_dim ... dimension (Rect) of the text surface
+			- fnt_txt_surf ... surface for displaying front font text. It is being blitted to txt_surf in order to cut
+								the text so it does not cross the console borders
+			- fnt_txt_surf_dim ... dimension (Rect) of the front font end surface
+			- fnt_bck_surf ... surface for displaying backgound of the font text. It is being blitted to txt_surf in order to cut
+								the text so it does not cross the console borders
+			- fnt_bck_surf_dim ... dimensions (Rect) of the text background
+		''' 
+
+		if not pygame.freetype.was_init(): pygame.freetype.init() 
+		self.font_object = pygame.freetype.Font(self.font_file, self.font_size)
+
+		# Get the height of the text font line and store it in line_spacing
+		# This is necessary so that the hight of the row spacing is not
+		# dynamicaly changing based on text height with TrueType fonts.
+		(_, rect_tmp) = self.font_object.render('|q', self.font_color, None )
 		self.line_spacing = rect_tmp.height
 
-		# Create surface for text
-		(self.text_surface, self.text_rect) = self.font_object.render(self.text, self.font_color, None )
-
-		# Prepare surface for text background if needed
-		if self.font_bck_color:
-			self.font_bckgrnd = pygame.Surface((self.text_rect.width, self.line_spacing))
-			self.font_bckgrnd.fill(self.font_bck_color)
-
-		# Calculate the dimensions of header - you must have font surface
-		self.dim = (width, self.line_spacing + self.padding[0] + self.padding[1])
-
-		# Create header surface
-		self.surface = pygame.Surface(self.dim)
+		#####
+		# Create the main header surface
+		#####
+		self.surf_dim = pygame.Rect(0, 0, self.width, self.line_spacing + self.padding[0] + self.padding[1])
+		self.surf = pygame.Surface((self.surf_dim.width, self.surf_dim.height))
 
 		# Fill the header surface with background color
-		self.surface.fill(self.bck_color)
+		self.surf.fill(self.bck_color)
 		
 		# Fill the surface with picture	if necessary
 		if self.bck_image:
 			self.bck_image = pygame.image.load(self.bck_image).convert()
 			if self.bck_image_resize:
-				self.bck_image = pygame.transform.scale(self.bck_image, (self.dim))
+				self.bck_image = pygame.transform.scale(self.bck_image, (self.surf_dim.width, self.surf_dim.height))
 			
 			# Blit the background picture on the header surface
-			self.surface.blit(self.bck_image, (0, 0))
+			self.surf.blit(self.bck_image, (0, 0))
 
 		# Set alpha of the header surface
-		self.surface.set_alpha(self.bck_alpha)
+		self.surf.set_alpha(self.bck_alpha)
+
+		#####
+		# Create surface for text area - necessary for proper cutting of the text
+		#####
+		self.txt_surf_dim = pygame.Rect(
+						0,
+						0,
+						self.surf_dim.width - self.padding.left - self.padding.right,
+						self.surf_dim.height - self.padding.up - self.padding.down
+						)
+
+		self.txt_surf = pygame.Surface(
+							(self.txt_surf_dim.width, self.txt_surf_dim.height),
+							pygame.SRCALPHA)
+		
+		#####
+		# Create surface for text and store its dimensions
+		#####
+		(self.fnt_txt_surf, self.fnt_txt_surf_dim) = self.font_object.render(self.text, self.font_color, None)
+
+		#####
+		# Create surface for text background if needed
+		#####
+		if self.font_bck_color:
+			self.fnt_bck_surf_dim = self.fnt_txt_surf_dim
+			self.fnt_bck_surf = pygame.Surface((self.fnt_txt_surf_dim.width, self.line_spacing))
+			self.fnt_bck_surf.fill(self.font_bck_color)
+
+		#####
+		# Scrolling parameters
+		#####
+		# How many times the text for scrolling must be blitted to create the continuation effect
+		if self.layout_name in ['SCROLL_LEFT_CONTINUOUS', 'SCROLL_RIGHT_CONTINUOUS']:
+			self.scroll_repeats = (self.txt_surf_dim.width // self.fnt_txt_surf_dim.width) + 2
 
 	def update(self):
 		''' Called from console update function in order to generate the dynamic
-		text in the header.
+		text in the header and adjust the surface, if needed.
 		'''
 
 		# Only do something if dynamic params are needed. Otherwise, it is not necessary
@@ -240,116 +360,305 @@ class Header:
 			text = self.text.format(*[getattr(self.console.app, method_name)() for method_name in self.text_params])
 
 			# generate the new text in self.text_surface object
-			(self.text_surface, self.text_rect) = self.font_object.render(text, self.font_color, None )
-			
+			(self.fnt_txt_surf, self.fnt_txt_surf_dim) = self.font_object.render(text, self.font_color, None )
+
+			# How many times the text for scrolling must be blitted to create the continuation effect
+			if self.layout_name in ['SCROLL_LEFT_CONTINUOUS', 'SCROLL_RIGHT_CONTINUOUS']:
+				self.scroll_repeats = (self.txt_surf_dim.width // self.fnt_txt_surf_dim.width) + 2
 
 	def show(self, surf, pos=(0, 0)):
+		''' Blit the surfaces to the main Header surface (surf).
+		'''
+
+		# Blit the main header surface to background
+		surf.blit(self.surf, pos)
+
+		# Clear the main text surface on which the actual text is blitted
+		self.txt_surf.fill((0,0,0,0)) # Last 0 indicates alpha, i.e. full transparency
+
+		if self.layout_name == 'TEXT_RIGHT':
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (self.txt_surf_dim.width - self.fnt_txt_surf_dim.width, 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (self.txt_surf_dim.width - self.fnt_txt_surf_dim.width, 0))			
+
+		if self.layout_name == 'TEXT_LEFT':
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (0, 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (0, 0))
+
+		if self.layout_name == 'TEXT_CENTRE':
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (self.txt_surf_dim.width // 2 - self.fnt_text_surf_dim.width // 2, 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (self.txt_surf_dim.width // 2 - self.fnt_txt_surf_dim.width // 2, 0))
+
+		if self.layout_name == 'SCROLL_LEFT':
+			if self.scroll_offset > -1 * self.fnt_txt_surf_dim.width:
+				self.scroll_offset = (self.scroll_offset - self.scroll_offset_speed)  
+			else: 
+				self.scroll_offset = self.txt_surf_dim.width
+
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (int(self.scroll_offset), 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (int(self.scroll_offset), 0))
+
+		if self.layout_name == 'SCROLL_RIGHT':
+			if self.scroll_offset < 1 * self.txt_surf_dim.width:
+				self.scroll_offset = (self.scroll_offset + self.scroll_offset_speed)
+			else: 
+				self.scroll_offset = -1 * self.fnt_txt_surf_dim.width
+
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (int(self.scroll_offset), 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (int(self.scroll_offset), 0))
+
+		if self.layout_name == 'SCROLL_LEFT_CONTINUOUS':
+
+			# If the time for scrolling comes
+			current_time = pygame.time.get_ticks()
+
+			# Calculate how much time has passed since last time (ms)
+			delay = current_time - self.scroll_last_time
+
+			if delay >= self.scroll_offset_speed_ms:
+				
+				# Reset the scrolling time check
+				self.scroll_last_time = current_time
+				
+				# Increase the offset by given number of pixels
+				self.scroll_offset = (self.scroll_offset - self.scroll_offset_speed_px)
+
+				# Check if scrolling needs to be reset and reset if necessary
+				if self.scroll_offset < -1 * self.fnt_txt_surf_dim.width:
+					self.scroll_offset = 0
+
+			for i in range(self.scroll_repeats): 
+				if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (int(i * self.fnt_txt_surf_dim.width + self.scroll_offset), 0))
+				self.txt_surf.blit(self.fnt_txt_surf, (int(i * self.fnt_txt_surf_dim.width + self.scroll_offset), 0))
+
+		if self.layout_name == 'SCROLL_RIGHT_CONTINUOUS':
+
+			# If the time for scrolling comes
+			current_time = pygame.time.get_ticks()
+
+			# Calculate how much time has passed since last time (ms)
+			delay = current_time - self.scroll_last_time
+
+			if delay >= self.scroll_offset_speed_ms:
+				
+				# Reset the scrolling time check
+				self.scroll_last_time = current_time
+				
+				# Increase the offset by given number of pixels
+				self.scroll_offset = (self.scroll_offset + self.scroll_offset_speed_px)
+
+				# Check if scrolling needs to be reset and reset if necessary
+				if self.scroll_offset > self.fnt_txt_surf_dim.width:
+					self.scroll_offset = 0
+
+			for i in range(self.scroll_repeats): 
+				# blit the text to the right border. Then subtract text width and blit again as many times as needed
+				if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (int(self.txt_surf_dim.width - (i+1) * self.fnt_txt_surf_dim.width + self.scroll_offset), 0))
+				self.txt_surf.blit(self.fnt_txt_surf, (int(self.txt_surf_dim.width - (i+1) * self.fnt_txt_surf_dim.width + self.scroll_offset), 0))
+
 		
-		# Blit the surface background
-		surf.blit(self.surface, pos)
-
-		# Here prepare cut surface on which blit the rest
-		# TODO - calculate the dimof text_cut_surf only once in init and create it also only in init
-		#  here only clean the text_cut_surf 
-		text_cut_surf = pygame.Surface(
-							(self.dim[0] - self.padding[2] - self.padding[3],
-							self.dim[1] - self.padding[0] - self.padding[1]),
-							 pygame.SRCALPHA)
-
-		# Blit text background and text on the right spot based on layout
-		if self.layout == 'TEXT_RIGHT':
-			#if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.width - self.padding[3] - self.text_rect.width, pos[1] + self.padding[0]))
-			#surf.blit(self.text_surface, (pos[0] + self.width - self.padding[3] - self.text_rect.width, pos[1] + self.padding[0]))
-			if self.font_bck_color: text_cut_surf.blit(self.font_bckgrnd, (text_cut_surf.get_width() - self.text_rect.width, 0))
-			# TODO - get rid of get_with() call
-			text_cut_surf.blit(self.text_surface, (text_cut_surf.get_width() - self.text_rect.width, 0))			
-
-		if self.layout == 'TEXT_LEFT':
-			#if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.padding[2], pos[1] + self.padding[0]))
-			#surf.blit(self.text_surface, (pos[0] + self.padding[2], pos[1] + self.padding[0]))
-			if self.font_bck_color: text_cut_surf.blit(self.font_bckgrnd, (0, 0))
-			text_cut_surf.blit(self.text_surface, (0, 0))
-
-		if self.layout == 'TEXT_CENTRE':
-			#if self.font_bck_color: surf.blit(self.font_bckgrnd, (pos[0] + self.width // 2 - self.text_rect.width // 2, pos[1] + self.padding[0]))
-			#surf.blit(self.text_surface, (pos[0] + self.width // 2 - self.text_rect.width // 2, pos[1] + self.padding[0]))
-			if self.font_bck_color: text_cut_surf.blit(self.font_bckgrnd, (text_cut_surf.get_width() // 2 - self.text_rect.width // 2, 0))
-			text_cut_surf.blit(self.text_surface, (text_cut_surf.get_width() // 2 - self.text_rect.width // 2, 0))
-
-		if self.layout == 'SCROLL_LEFT':
-			pass
-	
 		# Blit text surface to surf - take account text padding
-		surf.blit(text_cut_surf, 
-				(pos[0] + self.padding[2],
-				pos[1] + self.padding[0]))
-
+		surf.blit(self.txt_surf, 
+				(pos[0] + self.padding.left,
+				pos[1] + self.padding.up))
 
 	def get_height(self):
-		return self.surface.get_height()
-	
-	def get_surface(self):
-		return self.surface
+		''' Returns hight of the header surface. Called from Console instance in order
+		to construct all elements of console and display correctly.
+		'''
+		return self.surf_dim.height
 
 class TextOutput:
+	''' Class specifying properties of Console main text output part
+	where command replies are written. It supports output history and
+	scrolling throug it using PgUp and PgDown keys.
+	'''
 
-	def __init__(self,
-				console,	# Reference to parent Console instance
-				width,
-				config={
+	def __init__(self, console, width, config={}):
+		'''
+		:param console: Reference to the parrent instance of Console class
+		:param width: Required width of the text output. It is usually determined by Console instance at the time of console init.  
+		:param config: Dictionary storing all the configs necessary for correct display of text output. See keys explanation below:
+			
+			padding (optional, default (0,0,0,0)): Specifies padding between text output borders and text. The padding order is UP, DOWN, LEFT, RIGHT
+			font_file (mandatory): Path to the font file
+			font_size (optional, default 12): Font size
+			font_antialias (optional, default True): Font antialias (True/False)
+			font_color (optional, default (255,255,255)): Font color as tuple with 3 values. Eg. (255,255,255) for white.
+			font_bck_color (optional, default None): Font text background color as tuple with 3 values. Eg. (255,255,255) for white.
+			bck_color (optional, default (0,0,0)): Color of the text output background as tuple with 3 values.  Eg. (255,255,255) for white.
+			bck_alpha (optional, default 255): 0-255, if header background should be transparent
+			prompt (optional, default ''): Characters printed on the beginning of every output line.
+			buffer_size (optional, default 100): How many lines of output should be stored as history.
+			display_lines (mandatory): How many lines of output should be displayed on console at the same time. Defines height of the console.
+			display_columns (mandatory): After how many characters the output needs to be wrapped to the new line.
+			line_spacing (optional, default None): How big line spacing should there be between text output lines.
+		'''		
+		# Dictionary with default values
+		default_config = {
 					'padding' : (0,0,0,0),
-					'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
 					'font_size' : 16,
 					'font_antialias' : True,
 					'font_color' : (255,255,255),
 					'font_bck_color' : None,
-					'bck_color' : (255,0,0),
-					'bck_alpha' : 120,
-					'buffer_size' : 100,
-					'prompt' : None,
-					'display_lines' : 13,
-					'display_columns' : 80,
-					'line_spacing' : None}):
+					'bck_color' : (0,0,0),
+					'bck_alpha' : 255,
+					'prompt'	: '',
+					'buffer_size': 100,
+					'line_spacing': None
+		}
 
+		# Merge default values with given values - overwrite defaults by config dict
+		config = {**default_config, **config}
 
-		# Save the params 		
+		self.width = width
+		self.console = console
+
+		# Save the params from the config dict
 		for key in config: setattr(self, key, config.get(key))
 
-		# Save the required width
-		self.width = width
+		# Instantiate padding for further use
+		self.padding = Padding(self.padding)
 
-		# Additional vars
+		''' Buffer related parameters
+		'''
+		# Stores list of past commands
 		self.buffer = []
-		#self.buffer_size = buffer_size
-		#self.lines_to_display = lines_to_display
-		#self.columns_to_display = columns_to_display
-
 		# Necessary for implemetation of scrolling in the output buffer (PgUp, PgDown)
-		self.offset_position = 0	
+		self.buffer_offset = 0	
 
-		#self.font_size = font_size
-		#self.font_file = font_file
-		#self.initial_string = initial_string
-		#self.antialias = antialias
-		#self.text_color = text_color
-		#self.line_spacing = line_spacing
+		''' Font and surface related params - part of prepare_surface and show functions
+			*******************************
+			- surf ... basic surface of header, footer, input and output
+			- surf_dim ... dimension (Rect) of the basic surface 
+			- txt_surf ... surface to display text, applies padding to surface, cuts the text. It is transparent. and 
+			               it is blitted to the main surface
+			- txt_surf_dim ... dimension (Rect) of the text surface
+			- fnt_txt_surf ... surface for displaying front font text. It is being blitted to txt_surf in order to cut
+								the text so it does not cross the console borders
+			- fnt_txt_surf_dim ... dimension (Rect) of the front font end surface
+			- fnt_bck_surf ... surface for displaying backgound of the font text. It is being blitted to txt_surf in order to cut
+								the text so it does not cross the console borders
+			- fnt_bck_surf_dim ... dimensions (Rect) of the text background
+		''' 
 
-		pygame.freetype.init()
-		self.font_object = pygame.freetype.Font(
-			 self.font_file,
-			 self.font_size)
+		if not pygame.freetype.was_init(): pygame.freetype.init() 
+		self.font_object = pygame.freetype.Font(self.font_file, self.font_size)
 
-		# Determine automatically the hight of the row - height of '|' character
-		# in case the spacing is not given
+		# Get the height of the text font line and store it in line_spacing
+		# This is necessary so that the hight of the row spacing is not
+		# dynamicaly changing based on text height with TrueType fonts.
 		if not self.line_spacing:
-			(_, rect_tmp) = self.font_object.render('|', self.font_color, None )
+			(_, rect_tmp) = self.font_object.render('|q', self.font_color, None)
 			self.line_spacing = rect_tmp.height
 
-		# Every output line is stored as a separate surface. 
-		# Final output surface consists of those lines
-		self.surface_line = []
-		self.surface = pygame.Surface((0,0))
-		self.surface_height = self.surface.get_height()
+		# Create the main surface and tex_surf
+		self.prepare_surface()
+
+	def prepare_surface(self):
+		''' Takes the buffer and based on the buffer offset (position) genertes output 
+		lines surfaces (self.surf_lines) and surface (self.surf). Those are used in show 
+		function to blit to the screen.
+		'''
+
+		# First we need to clear all the buffer surfaces
+		self.surf_lines = []
+
+		# We fill the surf_lines list with buffer lines surfaces based on buffer offset and 
+		# number of lines that we want to display
+		for i in range(self.buffer_offset, min([len(self.buffer), self.buffer_offset + self.display_lines])):
+			# Create font object with given text and given color
+			# TODO - to check if the self.prompt must be on the line below???
+			(surface_line_tmp, rect_tmp) = self.font_object.render(self.prompt + self.buffer[i][0], self.buffer[i][1], None)
+			self.surf_lines.append( (surface_line_tmp, rect_tmp) )
+
+		# Calculate the dimensions of test output surface
+		self.surf_dim = pygame.Rect(
+									0,
+									0,
+									self.width,
+									(self.line_spacing * len(self.surf_lines)) + self.padding.up + self.padding.down
+		)
+
+		# And create the surface from scratch again
+		self.surf = pygame.Surface((self.surf_dim.width, self.surf_dim.height))
+
+		# Fill the output surface with background color
+		self.surf.fill(self.bck_color)
+		
+		# Set alpha of the header surface
+		self.surf.set_alpha(self.bck_alpha)
+
+		# Create background (completely transparent)
+		# on which the text lines are blitted. The reason is to cut 
+		# the text so that it is not going over the borders.
+		# This surface's dimensions are adjusted by padding
+		self.txt_surf_dim = pygame.Rect(
+									0,
+									0,
+									self.surf_dim.width - self.padding.left - self.padding.right,
+									self.surf_dim.height - self.padding.up - self.padding.down
+		)
+
+		self.txt_surf = pygame.Surface((self.txt_surf_dim.width, self.txt_surf_dim.height), pygame.SRCALPHA)
+
+	def show(self, surf, pos=(0,0)):
+		''' Blits main surface, text cut surface and all individual lines to
+		the given surface.
+		'''		
+		
+		# Blit output background
+		surf.blit(self.surf, pos)
+
+		# Clear the main text input surf on which the actual text is blitted
+		self.txt_surf.fill((0,0,0,0)) # Last 0 indicates alpha, i.e. full transparency
+
+		# Blit all the line surfaces to the txt_surface
+		height = 0
+		for i in range(len(self.surf_lines)):
+			
+			# Get the line surface from the list
+			(fnt_txt_surf, fnt_txt_surf_dim) = self.surf_lines[i]
+
+			# Blit font background
+			if self.font_bck_color:
+				fnt_bck_surf = pygame.Surface((fnt_txt_surf_dim.width, fnt_txt_surf_dim.height))
+				fnt_bck_surf.fill(self.font_bck_color)
+				
+				self.txt_surf.blit(fnt_bck_surf,
+						(0,
+						height + self.line_spacing - (( self.line_spacing - fnt_txt_surf_dim.height) // 2) - fnt_txt_surf_dim.height))
+
+			self.txt_surf.blit(fnt_txt_surf, 
+						(0,
+						height + self.line_spacing - (( self.line_spacing - fnt_txt_surf_dim.height) // 2) - fnt_txt_surf_dim.height))
+
+			height = height + self.line_spacing
+		
+		# Blit text surface to surf - take account text padding
+		surf.blit(self.txt_surf, 
+				(pos[0] + self.padding.left,
+				pos[1] + self.padding.up))
+
+	def update(self, events):
+		''' Handles scrolling the output buffer by pressing pgUP and pgDOWN keys.
+		After pressing of those keys and also RETURN key, it is necessary to run
+		prepare_surface function in order to generate new surfaces.
+		'''
+
+		for event in events:
+			if event.type == pygame.KEYDOWN:
+
+				if event.key == pl.K_PAGEUP:
+					self.buffer_offset = max([0, self.buffer_offset - self.display_lines])
+					self.prepare_surface()
+
+				elif event.key == pl.K_PAGEDOWN:
+					self.buffer_offset = min([max([0, len(self.buffer) - self.display_lines]), self.buffer_offset + self.display_lines])
+					self.prepare_surface()
+
+				elif event.key == pl.K_RETURN:
+					self.buffer_offset = max([0, len(self.buffer) - self.display_lines])
+					self.prepare_surface()
 
 	def write(self, text, color=None):
 		''' Handles adding output text into textoutput buffer in given color
@@ -378,400 +687,339 @@ class TextOutput:
 
 					# Remove old rows from the buffer
 					if len(self.buffer) > self.buffer_size:
-						# Shift the log
 						for i in range(1,len(self.buffer)):
 							self.buffer[i-1] = self.buffer[i]
 						del self.buffer[len(self.buffer)-1]
-
-	def get_surface(self):
-		return self.surface
 	
 	def get_height(self):
-		return self.surface.get_height()
+		''' Returns current height of the text output surface. 
+		Called from Console instance in order to construct all elements 
+		of console and display correctly text input part right below current
+		text output.
+		'''
+		return self.surf_dim.height
 	
 	def get_max_height(self):
-		return (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
-		#if not self.line_spacing: return (self.font_size * self.display_lines) + self.padding[0] + self.padding[1]
-		#else: return (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
-	
-	def get_max_width(self):
-		return self.width
-
-	def update(self, events):
-		''' Handles scrolling the output buffer by pressing
-		pgUP and pgDOWN keys
-		'''
-
-		for event in events:
-			if event.type == pygame.KEYDOWN:
-
-				if event.key == pl.K_PAGEUP:
-					self.offset_position = max([0, self.offset_position - self.display_lines])
-					self.prepare_surface()
-
-				elif event.key == pl.K_PAGEDOWN:
-					self.offset_position = min([max([0, len(self.buffer) - self.display_lines]), self.offset_position + self.display_lines])
-					self.prepare_surface()
-
-				elif event.key == pl.K_RETURN:
-					self.offset_position = max([0, len(self.buffer) - self.display_lines])
-					self.prepare_surface()
-
-	def show(self, surf, pos=(0,0)):
-		
-		# Blit output background
-		surf.blit(self.surface, pos)
-
-		# Create temporary background (completely transparent)
-		# on which the text lines are blitted. The reason is to cut 
-		# the text so that it is not going over the borders.
-		# This surface's dimensions are adjusted by padding
-		text_cut_surf = pygame.Surface(
-							(self.dim[0] - self.padding[2] - self.padding[3],
-							self.dim[1] - self.padding[0] - self.padding[1]),
-							 pygame.SRCALPHA)
-
-		# Blit all the line surfaces to the surface
-		#height = self.padding[0]
-		height = 0
-		for i in range(len(self.surface_line)):
-			(line_surface, line_rect) = self.surface_line[i]
-			
-			# Blit font background
-			if self.font_bck_color:
-				text_bckgrnd = pygame.Surface((line_rect.width, line_rect.height))
-				text_bckgrnd.fill(self.font_bck_color)
-				
-				# The position is calculated so that individual lines are aligned to the centre of the line
-				#surf.blit(text_bckgrnd, 
-				#		(pos[0] + self.padding[2], 
-				#		pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
-
-				text_cut_surf.blit(text_bckgrnd,
-						(0,
-						height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
-
-			# Blit font text
-			# The position is calculated so that individual lines are aligned to the centre of the line
-			#surf.blit(line_surface,
-			#		(pos[0] + self.padding[2], 
-			#		pos[1] + height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
-			
-			text_cut_surf.blit(line_surface, 
-						(0,
-						height + self.line_spacing - (( self.line_spacing - line_rect.height) // 2) - line_rect.height))
-
-			# If no spacing is defined, use the height of the line surface rect
-			# Otherwise use the parameter
-			#if self.line_spacing: height = height + self.line_spacing
-			#else: height = height + line_rect.height
-			height = height + self.line_spacing
-		
-		# Blit text surface to surf - take account text padding
-		surf.blit(text_cut_surf, 
-				(pos[0] + self.padding[2],
-				pos[1] + self.padding[0]))
-
-		self.surface_height = height + self.padding[1]
-
-	def prepare_surface(self):
-		''' Takes the log and based on the log genertes output lines (self.surface_line) and
-		surface (self.surface). Those are used in show function to blit to the screen.
-		'''
-		print('Called Output prepare_surface ...') # only if return PgUp, pgDown pressed
-
-		# First we need to clear all the buffer surfaces surfaces
-		self.surface_line = []
-
-		# We fill the surface_line list with log surfaces
-		# for i in range(max([0, len(self.log) - self.lines_to_display]), len(self.log)):
-		# print('From:' + str(self.offset_position) + ' To: ' + str(min([len(self.log), self.offset_position + self.lines_to_display])))
-		# print('Len(self.log): ' + str(len(self.log)))
-
-		for i in range(self.offset_position, min([len(self.buffer), self.offset_position + self.display_lines])):
-			# Create font object with given text and given color
-			(surface_line_tmp, rect_tmp) = self.font_object.render(self.prompt + self.buffer[i][0], self.buffer[i][1], None)
-			self.surface_line.append( (surface_line_tmp, rect_tmp) )
-
-		# Re-render text surface, calc how big it is from individual linesurfaces
-		# for width get maximal width from all surface_lines
-		# for height get sum of all heights of surface lines in surface_line list 
-		#if not self.line_spacing: surf_height =  int(sum([i.height for (j,i) in self.surface_line]) + self.padding[0] + self.padding[1])
-		#else: surf_height = (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
-
-		# Following fixes always output surface as if all lines are displayed
-		#surf_height = (self.line_spacing * self.display_lines) + self.padding[0] + self.padding[1]
-
-		# Following calculates output surface height based on number of output lines that are displayed
-		surf_height = (self.line_spacing * len(self.surface_line)) + self.padding[0] + self.padding[1]
-
-		self.dim = (self.width, surf_height)
-
-		self.surface = pygame.Surface( #(
-			#int(max([i.width for (j,i) in self.surface_line])), 
-			#self.width,
-			#surf_height),
-			self.dim
-			)
-
-		# Fill the output surface with background color
-		self.surface.fill(self.bck_color)
-		
-		# Set alpha of the header surface
-		self.surface.set_alpha(self.bck_alpha)
-
-		'''
-		# Blit all the line surfaces to the surface
-		height = self.padding[0]
-		for i in range(len(self.surface_line)):
-			(surface, _) = self.surface_line[i]
-			
-			if self.font_bck_color:
-				text_bckgrnd = pygame.Surface((_.width, _.height))
-				text_bckgrnd.fill(self.font_bck_color)
-				self.surface.blit(text_bckgrnd, (self.padding[0], height))
-
-			self.surface.blit(surface, (self.padding[0], height))
-			#height = height + self.font_object.get_sized_glyph_height()
-			# this is the only correct one as it is consistent with the total surface hight calculation 
-			# that is based on a rectancle
-
-			# If no spacing is defined, use the height of the line surface rect
-			# Otherwise use the parameter
-			if self.line_spacing: height = height + self.line_spacing
-			else: height = height + _.height
-			#height = height + self.font_object.get_sized_height()
-			#height = height + 10
-			#height = height + self.font_size
-		
-		self.surface_height = height + self.padding[1]
-		'''
+		''' Returns maximum possible height of the text output surface. 
+		Called from Console instance in order to define the total height
+		of the console.
+		'''				
+		return (self.line_spacing * self.display_lines) + self.padding.up + self.padding.down
 
 class TextInput:
-	"""
-	Copyright 2017, Silas Gyger, silasgyger@gmail.com, All rights reserved.
+	''' Copyright 2017, Silas Gyger, silasgyger@gmail.com, All rights reserved.
 	Borrowed from https://github.com/Nearoo/pygame-text-input under the MIT license.
 
-	Original above modified in the following way:
-		- color input parameters changed to RGB
-		- added font_file parameter/ removed font_family parameter
-		- added buffer parameter
-	
 	This class lets the user input a piece of text, e.g. a name or a message.
 	This class let's the user input a short, one-lines piece of text at a blinking cursor
 	that can be moved using the arrow-keys. Delete, home and end work as well.
-	"""
+
+	Original above modified heavilly in order to be used with the console.	
+	'''
 	
-	def __init__(
-			self,
-			console,	# Reference to parent Console instance
-			width,
-			config={
-				'padding' : (0,0,0,0),
-				'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-				'font_size' : 16,
-				'font_antialias' : True,
-				'font_color' : (255,0,0),
-				'font_bck_color' : None,
-				'bck_color' : (0,255,0),
-				'bck_alpha' : 150,
-				'buffer_size' : 10,
-				'prompt' : '>>>',
-				'max_string_length' : 10,
-				'repeat_keys_initial_ms' : 400,
-				'repeat_keys_interval_ms' :35
-				}):
+	def __init__(self, console, width, config={}):
+		'''
+		:param console: Reference to the parrent instance of Console class
+		:param width: Required width of the text input. It is usually determined by Console instance at the time of console init.
+		:param config: Dictionary storing all the configs necessary for correct display of text input. See keys explanation below:
 
+			padding (optional, default (0,0,0,0)): Specifies padding between text input borders and text itself. The padding order is UP, DOWN, LEFT, RIGHT.
+			font_file (mandatory): Path to the font file.
+			font_size (optional, default 12): Font size.
+			font_antialias (optional, default True): Font antialias (True/False).
+			font_color (optional, default (255,255,255)): Font color as tuple with 3 values. Eg. (255,255,255) for white.
+			font_bck_color (optional, default None): Font text background color as tuple with 3 values. Eg. (255,255,255) for white.
+			bck_color (optional, default (0,0,0)): Color of the header background as tuple with 3 values.  Eg. (255,255,255) for white.
+			bck_alpha (optional, default 255): 0-255, if text input background should be transparent.
+			prompt (optional, default '>'): Characters printed on the beginning of every input line.
+			buffer_size (optional, default 10): How many lines of input should be stored as the history.
+			max_string_length (optional, default -1 ): Allowed length of the input text.
+			repeat_keys_initial_ms (optional, default 400): Time in ms before keys are repeated when held.
+			repeat_keys_interval_ms (optional, default 35): Interval between key press repetition when held.
+			text (optional, default ''): Initial text on the input line.
+			max_input_text (optional, default 1000): Maximum amount of characters that can be entered on one line.
+		'''
+		
+		self.width = width
+		self.console = console
 
-		"""
-		:param initial_string: Initial text to be displayed
-		:param font_family: name or list of names for font (see pygame.font.match_font for precise format)
-		:param font_size:  Size of font in pixels
-		:param antialias: Determines if antialias is applied to font (uses more processing power)
-		:param text_color: Color of text (duh)
-		:param cursor_color: Color of cursor
-		:param repeat_keys_initial_ms: Time in ms before keys are repeated when held
-		:param repeat_keys_interval_ms: Interval between key press repetition when held
-		:param max_string_length: Allowed length of text
-		"""
+		# Dictionary with default values
+		default_config = {
+					'padding' : (0,0,0,0),
+					'font_size' : 16,
+					'font_antialias' : True,
+					'font_color' : (255,255,255),
+					'font_bck_color' : None,
+					'bck_color' : (0,0,0),
+					'bck_alpha' : 128,
+					'prompt'	: '>',
+					'buffer_size' : 10,
+					'max_string_length': -1,
+					'repeat_keys_initial_ms' : 400,
+					'repeat_keys_interval_ms': 35,
+					'text' : '',
+					'max_input_text' : 1000
+		}
+
+		# Merge default values with given values - overwrite defaults by config dict
+		config = {**default_config, **config}
 
 		# Save the params 
 		for key in config: setattr(self, key, config.get(key))
+
+		# Instantiate padding for further use
+		self.padding = Padding(self.padding)
 		
-		# Text related vars:
-		'''
-		self.antialias = antialias
-		self.text_color = text_color
-		self.font_file = font_file
-		self.font_size = font_size
-		self.max_string_length = max_string_length
-		self.input_string = ''
-		self.initial_string = initial_string
-		'''
+		# TODO- revise - Vars to make keydowns repeat after user pressed a key for some time:
+		self.keyrepeat_counters = {}
 
-		self.buffer = []
-		#self.buffer_size = buffer_size
-		self.buffer_position = 0
-		# Initiate input text
-		self.input_string = ''
-
-		self.width = width
-
-		pygame.freetype.init()
-		self.font_object = pygame.freetype.Font(self.font_file, self.font_size)
-
-		# Determine automatically the hight of the row - height of '|' character
-		# This prevents the surface to change its height upon different hight of 
-		# characters in input_string.
-		(_, rect_tmp) = self.font_object.render('|', self.font_color, None )
-		self.line_spacing= rect_tmp.height
-
-		# Dimensions of the text input element
-		self.dim = ((self.width, self.padding[0] + self.line_spacing + self.padding[1]))
-		
-		# Initiate cursor dimensions
-		#self.cursor_dim = (int(self.font_size / 20 + 1), self.line_spacing)
-		self.cursor_dim = (int(self.font_size / 2 + 1), self.line_spacing)
-
-		# Init Surface from prompt -  it is necessary to calculate height of the whole console
-		(self.text_surface, _)  = self.font_object.render(' ' if not self.prompt else self.prompt, self.font_color, None)
-		self.surface = pygame.Surface(self.dim)
-
-		self.text_surface_dim = (_.width, _.height)
-	
-		# Vars to make keydowns repeat after user pressed a key for some time:
-		self.keyrepeat_counters = {}  # {event.key: (counter_int, event.unicode)} (look for "***")
-		'''
-		self.keyrepeat_intial_interval_ms = repeat_keys_initial_ms
-		self.keyrepeat_interval_ms = repeat_keys_interval_ms
-		'''
-
-		# Things cursor:
-		#self.cursor_surface = pygame.Surface((int(self.font_size / 20 + 1), self.font_size))
-		self.cursor_surface = pygame.Surface(self.cursor_dim)
-		self.cursor_surface.fill(self.font_color)
-		# This is same rect as for text_input but it ends at the position of the cursor
-		self.cursor_rect = pygame.Rect((0,0,0,0))
-
-		self.cursor_position = len(self.prompt)  # Inside text
-		self.cursor_visible = True  # Switches every self.cursor_switch_ms ms
-		self.cursor_switch_ms = 500  # /|\
-		self.cursor_ms_counter = 0
+		# TODO - revise - cannot we use console clocks? pygame.time_get_ticks instead
 		self.clock = pygame.time.Clock()
 
-	def get_height(self):
-		return self.surface.get_height()
+		''' Buffer related parameters
+		'''
+		self.buffer = []
+		self.buffer_offset = 0
+
+		''' Font and surface related params
+			*******************************
+			- surf ... basic surface of header, footer, input and output
+			- surf_dim ... dimension (Rect) of the basic surface 
+			- txt_surf ... surface to display text, applies padding to surface, cuts the text. It is transparent. and 
+			               it is blitted to the main surface
+			- txt_surf_dim ... dimension (Rect) of the text surface
+			- cursor_surf ... surface for displaying the blinking cursor
+			- cursor_surf_dim ... dimensions (Rect) of the cursor
+			- fnt_txt_surf ... surface for displaying front font text. It is being blitted to txt_surf in order to cut
+								the text so it does not cross the console borders
+			- fnt_txt_surf_dim ... dimension (Rect) of the front font end surface
+			- fnt_bck_surf ... surface for displaying backgound of the font text. It is being blitted to txt_surf in order to cut
+								the text so it does not cross the console borders
+			- fnt_bck_surf_dim ... dimensions (Rect) of the text background
+		''' 
+		if not pygame.freetype.was_init(): pygame.freetype.init() 
+		self.font_object = pygame.freetype.Font(self.font_file, self.font_size)
+
+		# Determine automatically the hight of the row - height of '|q' string
+		# This prevents the surface to change its height upon different hight of 
+		# characters in input_string.
+		(_, rect_tmp) = self.font_object.render('|q', self.font_color, None)
+		self.line_spacing = rect_tmp.height
+
+		#####
+		# Create the main text input surface
+		##### 
+		self.surf_dim = pygame.Rect(0, 0, self.width, self.line_spacing + self.padding.up + self.padding.down)
+		self.surf = pygame.Surface((self.surf_dim.width, self.surf_dim.height))
+
+		# Fill the header surface with background color and set the transparency
+		self.surf.fill(self.bck_color)				
+		if self.bck_color: self.surf.set_alpha(self.bck_alpha)
+
+		#####
+		# Create surface for text area - necessary for proper cutting of the text
+		#####
+		self.txt_surf_dim = pygame.Rect(
+						0,
+						0,
+						self.surf_dim.width - self.padding.left - self.padding.right,
+						self.surf_dim.height - self.padding.up - self.padding.down
+						)
+
+		self.txt_surf = pygame.Surface(
+							(self.txt_surf_dim.width, self.txt_surf_dim.height),
+							pygame.SRCALPHA
+							)
+
+		#####
+		# Create surface for text and store its dimensions
+		#####
+		(self.fnt_txt_surf, self.fnt_txt_surf_dim) = self.font_object.render(self.prompt + self.text, self.font_color, None)
+
+		#####
+		# Create surface for text background if needed
+		#####
+		if self.font_bck_color:
+			self.fnt_bck_surf_dim = self.fnt_txt_surf_dim
+			self.fnt_bck_surf = pygame.Surface((self.fnt_bck_surf_dim.width, self.line_spacing))
+			self.fnt_bck_surf.fill(self.font_bck_color)
+
+		#####
+		# Create surface for the cursor + additional cursor parameters
+		#####
+		self.cursor_surf_dim = pygame.Rect(
+							0,
+							0,
+							int(self.font_size / 2 + 1), 
+							self.line_spacing
+							)
+
+		self.cursor_surf = pygame.Surface((self.cursor_surf_dim.width, self.cursor_surf_dim.height))
+		self.cursor_surf.fill(self.font_color)
+
+		# Additional cursor parameters
+		self.cursor_position = len(self.text) # set it at the end of the input line
+		self.cursor_visible = True  # used for cursor blinking
+		self.cursor_switch_ms = 500  # cursor blinks every 500ms
+		self.cursor_ms_counter = 0 
+
+		# Necessary to blit cursore surface to the correct position - TODO - do we need this?? This is same rect as for text_input but it ends at the position of the cursor
+		#( _ , self.cursor_rect) = self.font_object.render (self.prompt + self.text[:self.cursor_position], self.font_color, None) 
+		self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
+
+		#####
+		# Scrolling parameters
+		#####		
+		# Used for continuous seemless scrolling of input text if text is longer than viewable area
+		self.fnt_txt_scroll_offset =  min(0, int(self.txt_surf_dim.width - self.fnt_txt_surf_dim.width - self.cursor_surf_dim.width))
+
+	def prepare_surface(self):
+		''' After some text is entered it is necessary to regenerate
+		the text surfaces. This function is called from update method
+		where we handle text input and modification
+		'''
+		
+		# Re-render front and back text surface
+		(self.fnt_txt_surf, self.fnt_txt_surf_dim)  = self.font_object.render(self.prompt + self.text, self.font_color, None)
+
+		if self.font_bck_color:
+			self.fnt_bck_surf_dim = self.fnt_txt_surf_dim
+			self.fnt_bck_surf = pygame.Surface((self.fnt_bck_surf_dim.width, self.line_spacing))
+			self.fnt_bck_surf.fill(self.font_bck_color)
+
+		# Update scroll offset after input text is somehow modified
+		self.fnt_txt_scroll_offset =  min(0, int(self.txt_surf_dim.width - self.fnt_txt_surf_dim.width - self.cursor_surf_dim.width))
 
 	def update(self, events):
-		''' Processes keys pressed events
+		''' Handles pressing of the keys. After the press, it is necessary to run
+		prepare_surface function in order to update surfaces and their dimensions.
 		'''
 
+		#####
+		# Handle Key pressed
+		#####
 		for event in events:
 			if event.type == pygame.KEYDOWN:
-				self.cursor_visible = True  # So the user sees where he writes
+				
+				# If key is pressed, cursor must be ALWAYS visible so that person knows where to edit
+				self.cursor_visible = True
 
 				# If none exist, create counter for that key:
 				if event.key not in self.keyrepeat_counters:
 					self.keyrepeat_counters[event.key] = [0, event.unicode]
 
 				if event.key == pl.K_BACKSPACE:
-					self.input_string = (
-						self.input_string[:max(self.cursor_position - 1, 0)]
-						+ self.input_string[self.cursor_position:]
+					self.text = (
+						self.text[:max(self.cursor_position - 1, 0)]
+						+ self.text[self.cursor_position:]
 					)
 					# Subtract one from cursor_pos, but do not go below zero:
 					self.cursor_position = max(self.cursor_position - 1, 0)
+					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
+
+					# Regenerate text surfaces
+					self.prepare_surface()
 
 				elif event.key == pl.K_DELETE:
-					self.input_string = (
-						self.input_string[:self.cursor_position]
-						+ self.input_string[self.cursor_position + 1:]
+					self.text = (
+						self.text[:self.cursor_position]
+						+ self.text[self.cursor_position + 1:]
 					)
+					# Regenerate text surfaces
+					self.prepare_surface()
 
 				elif event.key == pl.K_RETURN:
 					# Only store if there is something to store
-					if self.input_string:
-						self.buffer.append(self.input_string)
-						self.buffer_position = len(self.buffer)
+					if self.text:
+						self.buffer.append(self.text)
+						self.buffer_offset = len(self.buffer)
 
 						# Remove old rows from the buffer
 						if len(self.buffer) > self.buffer_size:
-							# Shift the log
 							for i in range(1,len(self.buffer)):
 								self.buffer[i-1] = self.buffer[i]
 							del self.buffer[len(self.buffer)-1]
-					
+							# Adjust the buffer offset to point to the last item in the list
+							self.buffer_offset = len(self.buffer) - 1
+
+					# Important to return True so that console instance knows that it must process a command
 					return True
 
 				elif event.key == pl.K_RIGHT:
 					# Add one to cursor_pos, but do not exceed len(input_string)
-					self.cursor_position = min(self.cursor_position + 1, len(self.input_string))
-					print(self.cursor_position)
-					print('Right key pressed')
-
+					self.cursor_position = min(self.cursor_position + 1, len(self.text))
+					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
 
 				elif event.key == pl.K_LEFT:
 					# Subtract one from cursor_pos, but do not go below zero:
 					self.cursor_position = max(self.cursor_position - 1, 0)
-					print(self.cursor_position)
-					print('Left key pressed')
+					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
+
 
 				elif event.key == pl.K_END:
-					self.cursor_position = len(self.input_string)
-					print(self.cursor_position)
+					self.cursor_position = len(self.text)
+					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
 
 				elif event.key == pl.K_HOME:
 					self.cursor_position = 0
-					print(self.cursor_position)
+					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
 
 				# Scroll the buffer - to the history
-				elif event.key == pl.K_UP:					
-					
+				elif event.key == pl.K_UP:
 					# Only scroll if there is something in the buffer
 					if len(self.buffer) > 0:
 						# Calc new buffer position
-						if self.buffer_position >= 1:						
-							self.buffer_position = self.buffer_position - 1						
+						if self.buffer_offset >= 1: self.buffer_offset = self.buffer_offset - 1
+						# Restore previous input string - last in buffer
+						self.text = self.buffer[self.buffer_offset]						
+						# Set cursor possition at the end of the string
+						self.cursor_position = len(self.text)
+						self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
 
-						# restore previous input string - last in buffer
-						self.input_string = self.buffer[self.buffer_position]
-						
-						# set cursor possition at the end of the string
-						self.cursor_position = len(self.input_string)
-						
+						# Regenerate text surfaces
+						self.prepare_surface()
 
 				# Scroll the buffer - to the future
 				elif event.key == pl.K_DOWN:
-
 					# Calc new buffer position
-					if self.buffer_position < len(self.buffer) - 1:
-						self.buffer_position = self.buffer_position + 1
-						# restore previous input string - last in buffer
-						self.input_string = self.buffer[self.buffer_position]
-						# set cursor possition at the end of the string
-						self.cursor_position = len(self.input_string)
+					if self.buffer_offset < len(self.buffer) - 1:
+						self.buffer_offset = self.buffer_offset + 1
+						# Restore previous input string - last in buffer
+						self.text = self.buffer[self.buffer_offset]
+						# Set cursor possition at the end of the string
+						self.cursor_position = len(self.text)
+						self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
+
+						# Regenerate text surfaces
+						self.prepare_surface()
 		
-				#elif len(self.input_string) < self.max_string_length or self.max_string_length == -1:
-				elif len(self.input_string) < 1000:					
+				# Only add new characters if the max limit is not overreached
+				elif len(self.text) < self.max_input_text:					
 					# If no special key is pressed, add unicode of key to input_string
-					self.input_string = (
-						self.input_string[:self.cursor_position]
+					self.text = (
+						self.text[:self.cursor_position]
 						+ event.unicode
-						+ self.input_string[self.cursor_position:]
+						+ self.text[self.cursor_position:]
 					)
 					self.cursor_position += len(event.unicode)  # Some are empty, e.g. K_UP
-					print(self.cursor_position)
+					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
+
+					# Regenerate text surfaces
+					self.prepare_surface()
 
 			elif event.type == pl.KEYUP:
 				# *** Because KEYUP doesn't include event.unicode, this dict is stored in such a weird way
 				if event.key in self.keyrepeat_counters:
 					del self.keyrepeat_counters[event.key]
 
-		# Update key counters:
+		#####
+		# Update key pressed times
+		#####
+		# TODO - revise - Update key counters
 		for key in self.keyrepeat_counters:
-			self.keyrepeat_counters[key][0] += self.clock.get_time()  # Update clock
 
-			# Generate new key events if enough time has passed:
+			self.keyrepeat_counters[key][0] += self.clock.get_time()  # Update clock			
+
 			if self.keyrepeat_counters[key][0] >= self.repeat_keys_initial_ms:
 				self.keyrepeat_counters[key][0] = (
 					self.repeat_keys_initial_ms
@@ -781,254 +1029,164 @@ class TextInput:
 				event_key, event_unicode = key, self.keyrepeat_counters[key][1]
 				pygame.event.post(pygame.event.Event(pl.KEYDOWN, key=event_key, unicode=event_unicode))
 
-		# Re-render text surface:
-		(self.text_surface, _rect)  = self.font_object.render(self.prompt + self.input_string, self.font_color, None)
-		self.text_surface_dim = (_rect.width, _rect.height)
 
-		# Re-render the background surface
-		self.surface = pygame.Surface((self.width, self.padding[0] + self.line_spacing + self.padding[1]))
-		if self.bck_color: self.surface.set_alpha(self.bck_alpha)
-
-		# Update self.cursor_visible
+		#####
+		# Update cursor blink - TODO - revise - use console clock
+		#####
 		self.cursor_ms_counter += self.clock.get_time()
 		if self.cursor_ms_counter >= self.cursor_switch_ms:
 			self.cursor_ms_counter %= self.cursor_switch_ms
 			self.cursor_visible = not self.cursor_visible
-		
-		# Update self.cursor_x_pos = prompt + text_input width rounded to self.cursor_position characters
-		( _ , self.cursor_rect) = self.font_object.render (self.prompt + self.input_string[:self.cursor_position], self.font_color, None) 
-		# TODO - this must be moved to show function 
-		#if self.cursor_visible:
-		#	cursor_y_pos = _rect.width
-		#	# Without this, the cursor is invisible when self.cursor_position > 0:
-		#	if self.cursor_position > 0:
-		#		cursor_y_pos -= self.cursor_surface.get_width()
-		#	self.text_surface.blit(self.cursor_surface, (cursor_y_pos, 0))
-		
-		# self.surface.blit(self.text_surface, (self.padding[2], self.padding[0]))
-		
-		# clock must tick in order to see blinking cursor!
+				
+		# TODO - revise - use console clock - clock must tick in order to see blinking cursor!
 		self.clock.tick()
+		
+		# Only if enter is pressed then True is returned, else False - important for the Console instance
 		return False
 
 	def show(self, surf, pos=(0,0)):
+		''' Blits main surface, text cut surface, text line and cursor to
+		the given surface.
+		'''
 
 		# Background surface blit
-		surf.blit(self.surface, pos)
+		surf.blit(self.surf, pos)
 		
-		# Create temporary background (completely transparent)
-		# on which the text line is blitted. The reason is to cut 
-		# the text so that it is not going over the borders.
-		# This surface's dimensions are adjusted by padding
-		text_cut_surf = pygame.Surface(
-							(self.dim[0] - self.padding[2] - self.padding[3],
-							self.dim[1] - self.padding[0] - self.padding[1]),
-							 pygame.SRCALPHA)
-
-		''' Following 3 blits must be changed in order to enable continuous scrolling input on one line 
-		Somehow calculate the blit x position
-
-		if self.text_surface.get_width <= text_cut_surface.get_width 
-			x_pos = 0
-		else
-			# when following number is positive then 0
-			# when following number is negative then negative
-			x_pos = min(0, text_cut_surface.get_width - self.text_surface.get_width)
-		'''
-		# Make this nicer - use dims instead calling functions
-		space_left = int(text_cut_surf.get_width() - self.text_surface.get_width() - self.cursor_dim[0])
-		x_offset =  min(0, space_left)
+		# Clear the main text input surf on which the actual text is blitted
+		self.txt_surf.fill((0,0,0,0)) # Last 0 indicates alpha, i.e. full transparency
 
 		# Input text background blit
-		if self.font_bck_color:
-			text_bckgrnd = pygame.Surface(self.text_surface_dim)
-			text_bckgrnd.fill(self.font_bck_color)
-			
-			text_cut_surf.blit(text_bckgrnd,
-					(x_offset,
-					self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
-
+		if self.font_bck_color:			
+			self.txt_surf.blit(self.fnt_bck_surf,
+					(self.fnt_txt_scroll_offset,
+					self.line_spacing - ((self.line_spacing - self.fnt_bck_surf_dim.height) // 2) - self.fnt_bck_surf_dim.height))
 
 		# Input text blit
-		#surf.blit(self.text_surface, 
-		#		(pos[0] + self.padding[2], 
-		#		pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
-		text_cut_surf.blit(self.text_surface, 
-						(x_offset,
-						self.line_spacing - ((self.line_spacing - self.text_surface.get_height()) // 2) - self.text_surface.get_height()))
+		self.txt_surf.blit(self.fnt_txt_surf,
+						(self.fnt_txt_scroll_offset,
+						self.line_spacing - ((self.line_spacing - self.fnt_txt_surf_dim.height) // 2) - self.fnt_txt_surf_dim.height))
 
 		# Cursor blit
 		if self.cursor_visible:
-			cursor_y_pos = self.cursor_rect.width
-			# Without this, the cursor is invisible when self.cursor_position > 0:
-			#if self.cursor_position > 0:
-			#	cursor_y_pos -= self.cursor_surface.get_width()
-			#self.text_surface.blit(self.cursor_surface, (cursor_y_pos, 0))
-			#surf.blit(self.cursor_surface,
-			#		(pos[0] + self.padding[2] + cursor_y_pos, 
-			#		pos[1] + self.padding[0] + self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
-			text_cut_surf.blit(self.cursor_surface, 
-						(x_offset + cursor_y_pos,
-						self.line_spacing - ((self.line_spacing - self.cursor_surface.get_height()) // 2) - self.cursor_surface.get_height()))
+			self.txt_surf.blit(self.cursor_surf, 
+						(self.fnt_txt_scroll_offset + self.cursor_blit_position,
+						self.line_spacing - ((self.line_spacing - self.cursor_surf_dim.height) // 2) - self.cursor_surf_dim.height))
 
 		# Cutted text blit
-		surf.blit(text_cut_surf, 
-				(pos[0] + self.padding[2],
-				pos[1] + self.padding[0]))
+		surf.blit(self.txt_surf, 
+				(pos[0] + self.padding.left,
+				pos[1] + self.padding.up))
 
-
-	def get_surface(
-		self):
-		return self.surface
+	def get_height(self):
+		''' Returns current height of the text input surface. 
+		Called from Console instance in order to construct all elements 
+		of console and display correctly 
+		'''		
+		return self.surf_dim.height
 
 	def get_text(self):
-		return self.input_string
-
-	def get_cursor_position(self):
-		return self.cursor_position
-
-	def set_text_color(self, color):
-		self.text_color = color
-
-	def set_cursor_color(self, color):
-		self.cursor_surface.fill(color)
+		''' Method that reads the text and passs it to the console
+		'''
+		return self.text
 
 	def clear_text(self):
-		self.input_string = ""
-		self.cursor_position = 0
+		''' Called from console after enter is pressed to clear the text
+		on input and related parameters. 
+		'''
+		self.text = ''
+		self.cursor_position = 0		
+		self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
+		self.prepare_surface()
 
 class Console(pygame.Surface):
 	''' Class implementing the game console. Console is compraised by other 
-	objects such as header, footer, text input and output objects + class
-	that processes the input commands
+	objects header, footer, input and output objects. If component is present
+	or not in the console is defined by the config file.
 	'''
 
-	def __init__(self,
-				app, # Part of app accessible from console
-				dim=(0,0),	# Console window dimensions
-				config={
-					'global' : {
+	# List of available layouts for the console. If error, INPUT_BOTTOM is used as default.
+	LAYOUTS = [ 'INPUT_BOTTOM']
+
+
+	def __init__(self, app, width, config={}):
+		'''
+		:param app: Reference to the instance that is govern (is accessible) by/from the console
+		:param width: Required width of the console window. Height is determined by height of individual console parts.
+		:param config: Dictionary storing all the configs necessary for correct display of console. See keys explanation below:
+			
+			global (mandatory section, see defaults below): Parameters that govern global console configuration.
+				layout (optional, default 'INPUT_BOTTOM') : Determines the layout of header, footer, input and output part.
+				padding (optional, default (0,0,0,0)): Specifies padding around the console window and console items. The padding order is UP, DOWN, LEFT, RIGHT
+				bck_color (optional, default (0,0,0)): Color of the console background as tuple with 3 values.  Eg. (255,255,255) for white.
+				bck_image (optional, default None): Path to image displayed as the console background.
+				bck_image_resize (optional, default True): True/False, if image should be adjusted to the console dimensions.
+				bck_alpha (optional, default 255): 0-255, Transparency of console background.
+				welcome_msg (optional, default ''): Text displayed on console after console init.
+				welcome_msg_color (otional, default (255,255,255)): Color of the console welcome text as tuple with 3 values.
+
+			header (optional section, see Header class for details): Parameters that govern console header configuration.
+			output (optional section, see TextOutput class for details): Parameters that govern console output configuration.
+			input (optional section, see TextInput class for details): Parameters that govern console input configuration.
+			footer (optional section, see Header class for details): Parameters that govern console footer configuration.
+		'''
+
+		self.app = app
+		self.width = width
+
+		# Dictionary with default values
+		default_config = {
 						'layout' : 'INPUT_BOTTOM',
-						'padding' : (10,10,20,20),
-						'bck_color' : (125,125,125),
-						'bck_image' : 'experiments/cli/bckground/quake.png',
-						'bck_image_resize' : True,
-						'bck_alpha' : 150,
-						'welcome_msg' : 'Welcome to pyRPG\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
-						'welcome_msg_color' : (0,255,0),
-						},
-					'header' : {
-						'text' : 'Console v0.1. Position: {} Time: {}',
-						'text_params' : ['cons_get_pos','cons_get_time'],												
-						'layout' : 'TEXT_CENTRE',
-						'padding' :(10,10,10,10),
-						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-						'font_size' : 12,
-						'font_antialias' : True,
-						'font_color' : (255,255,255),
-						'font_bck_color' : None,
-						'bck_color' : (255,0,0),
-						'bck_image' : 'experiments/cli/bckground/quake.png',
-						'bck_image_resize' : True,
-						'bck_alpha' : 100
-						},
-					'output' : {
-						'padding' : (10,10,10,10),
-						'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-						'font_size' : 16,
-						'font_antialias' : True,
-						'font_color' : (255,255,255),
-						'font_bck_color' : (55,0,0),
-						'bck_color' : (55,0,0),
-						'bck_alpha' : 120,
-						'buffer_size' : 100,
-						'prompt' : '',
-						'display_lines' : 20,
-						'display_columns' : 100,
-						'line_spacing' : None,
-						'char_subst' : { 
-							'\t' : '->'
-							}
-						},
-					'input' : {
-						'padding' : (10,10,10,10),
-						'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-						'font_size' : 16,
-						'font_antialias' : True,
-						'font_color' : (255,0,0),
-						'font_bck_color' : None,
-						'bck_color' : (0,255,0),
-						'bck_alpha' : 150,
-						'buffer_size' : 10,
-						'prompt' : '>>>',
-						'max_string_length' : 10,
-						'repeat_keys_initial_ms' : 400,
-						'repeat_keys_interval_ms' :35
-						},
-					'footer' : {						
-						'text' : 'Statistics {}',
-						'text_params' : ['cons_get_details'],
-						'layout' : 'TEXT_RIGHT',
-						'padding' : (10,10,10,10),
-						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-						'font_size' : 10,
-						'font_antialias' : True,
-						'font_color' : (255,255,255),
-						'font_bck_color' : None,
+						'padding' : (0,0,0,0),
 						'bck_color' : (0,0,0),
 						'bck_image' : None,
 						'bck_image_resize' : True,
-						'bck_alpha' : 100
-						}
-					}):
+						'bck_alpha' : 128,
+						'welcome_msg' : '',
+						'welcome_msg_color' : (255,255,255)
+					}
+
+		# Merge default values with given values - overwrite defaults by config dict
+		global_config = {**default_config, **config.get('global', {})}
+
+		# Save the params from the config dict
+		for key in global_config: setattr(self, key, global_config.get(key))
+
+		# Instantiate padding for further use
+		self.padding = Padding(self.padding)
 
 		''' Initiates all console supporting objects - header, footer, 
 		text_input and text_output.
 		'''
-
-		# Save the root object that COnsole is managing
-		self.app = app
-	
-		# Save the params from config
-		global_config = config.get('global')
-		for key in global_config: setattr(self, key, global_config.get(key))
-
 		# Initiate header object, use defaults if header params are not passed during initiation
-		self.console_header = Header(self, (dim[0] - self.padding[2] - self.padding[3]), config.get('header')) if config.get('header', None) else None
+		self.console_header = Header(self, (self.width - self.padding.left - self.padding.right), config.get('header')) if config.get('header', None) else None
 
 		# Initiate input text object
-		self.console_input = TextInput(self, (dim[0] - self.padding[2] - self.padding[3]), config.get('input')) if config.get('input', None) else None
+		self.console_input = TextInput(self, (self.width - self.padding.left - self.padding.right), config.get('input')) if config.get('input', None) else None
 
 		# Initiate output text object
-		self.console_output = TextOutput(self, (dim[0] - self.padding[2] - self.padding[3]), config.get('output')) if config.get('output', None) else None
+		self.console_output = TextOutput(self, (self.width - self.padding.left - self.padding.right), config.get('output')) if config.get('output', None) else None
 
 		# Initiate footer object
-		self.console_footer = Header(self, dim[0] - self.padding[2] - self.padding[3], config.get('footer')) if config.get('footer', None) else None		
+		self.console_footer = Header(self, self.width - self.padding.left - self.padding.right, config.get('footer')) if config.get('footer', None) else None		
 
 		# Initiace object for processing console commands - output of the class is redirected
-		self.cli = CommandLineProcessor(self.app, output=self.console_output)
-
-		# Initiate console as a Surface - calculate dimensions based on number of required output lines
-		# TODO - Here I need to calculate the dimensions (height) based on required lines on the screen
-		# text_output_lines
-
-		#super().__init__(self.dim)
-		#if dim[0] != 0: console_width = dim[0]
-		#else: console_width = padding[2] + text_output_columns * self.console_output.get_max_width() + padding[3]
+		# if console_output is not defined then standard output is used (sustem text console)
+		self.cli = CommandLineProcessor(self.app, output=self.console_output) if self.console_output else CommandLineProcessor(self.app)
 
 		# Correct the height dimension so that all the text rows are displayable
-		self.dim = ( dim[0], self.padding[0] 
+		self.dim = (self.width, self.padding.up 
 							+ (self.console_header.get_height() if self.console_header else 0)
 							+ (self.console_output.get_max_height() if self.console_output else 0)
 							+ (self.console_input.get_height() if self.console_input else 0)
 							+ (self.console_footer.get_height() if self.console_footer else 0)
-							+ self.padding[1])
+							+ self.padding.down)
 		
-
-		#self.dim = (600, console_height) 
 		super().__init__(self.dim) 
 
-		# If image is defined	
+		# If layout is not specified, use INPUT_BOTTOM layout as default
+		self.layout = 'INPUT_BOTTOM' if self.layout not in Header.LAYOUTS else self.layout
+
+		# Prepare console background image
 		if self.bck_image:
 			self.bck_image = pygame.image.load(self.bck_image).convert()
 			if self.bck_image_resize:
@@ -1038,7 +1196,7 @@ class Console(pygame.Surface):
 		self.set_alpha(self.bck_alpha)
 
 		# Put the initial text on the console in given color
-		self.write(self.welcome_msg, self.welcome_msg_color)
+		if self.console_output: self.write(self.welcome_msg, self.welcome_msg_color)
 
 	def update(self, events):
 		''' Generate console events
@@ -1046,10 +1204,11 @@ class Console(pygame.Surface):
 		# pass dynamic value to header
 		#self.console_header.update()
 
-		# If enter is pressed (entering command into the console)
-		if self.console_input.update(events):
-			# Put it into the textoutput
-			self.console_output.write(self.console_input.get_text(), self.console_input.font_color)
+		# If console has defined input and enter is pressed (entering command into the console)
+		if self.console_input and self.console_input.update(events):
+			
+			# Put it into the textoutput - if output is defined
+			if self.console_output: self.console_output.write(self.console_input.get_text(), self.console_input.font_color)
 
 			# Process the entered line by CLI instance
 			self.cli.onecmd(self.console_input.get_text())
@@ -1058,25 +1217,25 @@ class Console(pygame.Surface):
 			self.console_input.clear_text()
 
 		# Check if text output keys for scrolling the buffer were used
-		self.console_output.update(events)
+		if self.console_output: self.console_output.update(events)
 
 		# Update the header - in order to update the dynamic values shown in the header
-		self.console_header.update()
+		if self.console_header: self.console_header.update()
 
 		# Update the footer - in order to update the dynamic values shown in the footer
-		self.console_footer.update()
+		if self.console_footer: self.console_footer.update()
 
 	def show(self, surf, pos=(0, 0)):
 		''' Manages bliting of console (background, textoutput, textinput)
 		to the given surf surface and on given pos position.
 		'''
 
-		# Set the location of input prompt - must include header position and footer position
+		# Calculate position of layout items on the console based on the layout	must be done here as the console output height is changing
 		if self.layout == 'INPUT_BOTTOM':
-			self.header_position = (self.padding[2], self.padding[0])
-			self.text_output_position = (self.padding[2], self.header_position[1] + self.console_header.get_height())
-			self.text_input_position = (self.padding[2], self.text_output_position[1] + self.console_output.get_height())
-			self.footer_position = (self.padding[2], self.dim[1] - self.padding[1] - self.console_footer.get_height())
+			self.header_position = (self.padding.left, self.padding.up)
+			self.text_output_position = (self.padding.left, self.header_position[1] + (self.console_header.get_height() if self.console_header else 0))
+			self.text_input_position = (self.padding.left, self.text_output_position[1] + (self.console_output.get_height() if self.console_output else 0))
+			self.footer_position = (self.padding.left, self.dim[1] - self.padding.down - (self.console_footer.get_height() if self.console_footer else 0))		
 
 		# TODO - here implement other layouts such as INPUT_TOP etc.
 
@@ -1091,34 +1250,38 @@ class Console(pygame.Surface):
 
 		# Blit header onto the surface - by calling show and not blitting directly enables
 		# transparent background and non transparent text displayed on it.
-		self.console_header.show(
-			surf,
-			(pos[0] + self.header_position[0],
-			pos[1] + self.header_position[1])
-			)
+		if self.console_header:
+			self.console_header.show(
+				surf,
+				(pos[0] + self.header_position[0],
+				pos[1] + self.header_position[1])
+				)
 
 		# Blit output onto the surface
 		# Based on parameter text_input_position either on top or at the bottom of the console
-		self.console_output.show(
-			surf,
-			(pos[0] + self.text_output_position[0],
-			pos[1] + self.text_output_position[1])
-			)
+		if self.console_output:
+			self.console_output.show(
+				surf,
+				(pos[0] + self.text_output_position[0],
+				pos[1] + self.text_output_position[1])
+				)
 		
 		# Blit input surface onto the surface
 		# Based on parameter text_input_position either on top or at the bottom of the console
-		self.console_input.show(
-			surf,
-			(pos[0] + self.text_input_position[0],
-			pos[1] + self.text_input_position[1])
-			)		
+		if self.console_input:
+			self.console_input.show(
+				surf,
+				(pos[0] + self.text_input_position[0],
+				pos[1] + self.text_input_position[1])
+				)		
 
 		# Blit footer onto the surface
-		self.console_footer.show(
-			surf,
-			(pos[0] + self.footer_position[0],
-			pos[1] + self.footer_position[1])
-			)
+		if self.console_footer:
+			self.console_footer.show(
+				surf,
+				(pos[0] + self.footer_position[0],
+				pos[1] + self.footer_position[1])
+				)
 	
 	def write(self, text, color=None):
 		''' Put some text onto a console by calling this function
@@ -1164,12 +1327,33 @@ if __name__ == "__main__":
 			self.surf = pygame.Surface((50, 50))
 			self.surf.fill((255,255,255))
 
+			''' Console integration code - START
+				********************************
+			'''
+			# Generate random console config
+			console_config = self.get_console_config(1)
+
 			self.console = Console(self, 
-									# Height can be 0 because it is calculated based on font and rows
-									dim=(self.screen.get_width(), 0), 
+									self.screen.get_width(), 
+									console_config
 									)
 
+			# Console will be disabled after game start
 			self.console_enabled = False
+			# Percentage of console surface shown - used for smooth animation
+			# 0 completely hidden, 100 completely shown
+			self.console_anim = 0
+			# How many ms should it take to completely show/hide cons
+			self.console_anim_speed_ms =  10000
+			# Time when console anim last updated
+			self.console_anim_last_time = 0
+			# Velocity
+			self.console_anim_velocity = self.console.get_height() / self.console_anim_speed_ms
+
+
+			''' Console integration code - END
+				******************************
+			'''
 
 		def update(self):
 			while not self.exit:
@@ -1196,27 +1380,33 @@ if __name__ == "__main__":
 					# Exit on closing of the window
 					if event.type == pygame.QUIT: self.exit = True
 					elif event.type == pygame.KEYDOWN:
-						# Escape is pressed
 						if event.key == pygame.K_ESCAPE: self.exit = True
 					elif event.type == pygame.KEYUP:
-						# Toggle console 
-						if event.key == pygame.K_F1: 
-							if not self.console_enabled:
-								self.console_enabled = True
-								self.show_anim_console()
-							else:
-								self.console_enabled = False
-								self.hide_anim_console()
+						
+						# Toggle console - very smooth animation - does not stop the game until console shown/hidden								
+						if event.key == pygame.K_F1: 						
+							
+							# Toggle the console
+							self.console_enabled = False if self.console_enabled else True
+
+							# Remember the time if animation is enabled
+							self.console_anim_last_update = pygame.time.get_ticks()
+
 
 				# Update the game situation - blit square on screen and position
 				self.screen.blit(self.surf, self.pos)
-				
-				# Update the console if enabled
-				if self.console_enabled:
-					self.console.update(events)
-					#self.console.convert_alpha()
-					self.console.show(self.screen, (0, 0))
-					#self.screen.blit(self.console, (20,300))
+
+				''' Update and display animated console '''
+				# Update the console if enabled (key pressed)
+				if self.console_enabled: self.console.update(events)	
+
+				# Update console animation progress
+				if (self.console_enabled and self.console_anim < 100) or (not self.console_enabled and self.console_anim > 0):
+					self.console_anim = self.console_anim + (1 if self.console_enabled else -1) * (pygame.time.get_ticks() - self.console_anim_last_update) * self.console_anim_velocity 
+					self.console_anim_last_update = pygame.time.get_ticks() 
+
+				# If there is still something to show from the console
+				if self.console_anim > 0: self.console.show(self.screen, (0, -1 * self.console.get_height() + (self.console_anim if self.console_anim<=100 else 100) / 100 * self.console.get_height()))
 
 				pygame.display.update()
 				self.clock.tick(30)
@@ -1228,18 +1418,6 @@ if __name__ == "__main__":
 			move_x, move_y = line.split(',')
 			self.pos[0] += int(move_x) 
 			self.pos[1] += int(move_y) 
-
-		def show_anim_console(self):
-			for anim_x in range(-self.console.get_height(), 0, 100):
-				self.console.show(self.screen, (0, anim_x))
-				pygame.display.update()
-				self.clock.tick(30)
-
-		def hide_anim_console(self):
-			for anim_x in range(0, -self.console.get_height(), -100):
-				self.console.show(self.screen, (0, anim_x))
-				pygame.display.update()
-				self.clock.tick(30)
 
 		def cons_get_pos(self):
 			''' Example of function that can be passed to console to show dynamic
@@ -1259,6 +1437,201 @@ if __name__ == "__main__":
 			'''
 			
 			return str('Input text buffer possition: ' + str(self.console.console_input.buffer_position) + ' Input text position: ' + str(len(self.console.console_input.input_string)))
+
+		def cons_get_input_spacing(self):
+			return str('TextInput spacing: ' + str(self.console.console_input.line_spacing) + 
+				' Cursor pos: ' + str(self.console.console_input.cursor_position) +
+				' Buffer pos: ' + str(self.console.console_input.buffer_offset))
+
+		def get_console_config(self, sample=-1):
+			
+			# Select random console from 1 to 6
+			if sample == -1: sample = randint(1,6)
+			
+			# Sample 1: Full console features
+			if sample == 1:
+				return {
+						'global' : {
+							'layout' : 'INPUT_BOTTOM',
+							'padding' : (10,10,20,20),
+							'bck_color' : (125,125,125),
+							'bck_image' : 'experiments/cli/bckground/quake.png',
+							'bck_image_resize' : True,
+							'bck_alpha' : 150,
+							'welcome_msg' : 'Sample 1: Full feature console\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
+							'welcome_msg_color' : (0,255,0),
+							},
+						'header' : {
+							'text' : 'Console v0.1. Position: {} Time: {} ',
+							'text_params' : ['cons_get_pos','cons_get_time'],												
+							'layout' : ['SCROLL_LEFT_CONTINUOUS', 0, 2],
+							'padding' :(10,10,10,10),
+							'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
+							'font_size' : 12,
+							'font_antialias' : True,
+							'font_color' : (255,255,255),
+							'font_bck_color' : None,
+							'bck_color' : (255,0,0),
+							'bck_image' : 'experiments/cli/bckground/quake.png',
+							'bck_image_resize' : True,
+							'bck_alpha' : 100
+							},
+						'output' : {
+							'padding' : (10,10,10,10),
+							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
+							'font_size' : 16,
+							'font_antialias' : True,
+							'font_color' : (255,255,255),
+							'font_bck_color' : (55,0,0),
+							'bck_color' : (55,0,0),
+							'bck_alpha' : 120,
+							'buffer_size' : 100,
+							'display_lines' : 20,
+							'display_columns' : 100,
+							'line_spacing' : None,
+							'char_subst' : { 
+								'\t' : '->'
+								}
+							},
+						'input' : {
+							'padding' : (10,10,10,10),
+							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
+							'font_size' : 16,
+							'font_antialias' : True,
+							'font_color' : (255,0,0),
+							'font_bck_color' : None,
+							'bck_color' : (0,255,0),
+							'bck_alpha' : 75,
+							'prompt' : '>>>',
+							'max_string_length' : 10,
+							'repeat_keys_initial_ms' : 400,
+							'repeat_keys_interval_ms' :35
+							},
+						'footer' : {						
+							'text' : '{} ',
+							'text_params' : ['cons_get_input_spacing'],
+							'layout' : ['SCROLL_RIGHT_CONTINUOUS',100,1],
+							'padding' : (10,10,10,10),
+							'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
+							'font_size' : 10,
+							'font_antialias' : True,
+							'font_color' : (255,255,255),
+							'font_bck_color' : None,
+							'bck_color' : (0,0,0),
+							'bck_image' : None,
+							'bck_image_resize' : True,
+							'bck_alpha' : 100
+							}
+						}
+
+			# Sample 2: Full featured - no footer, no header
+			if sample == 2:
+				return {
+						'global' : {
+							'layout' : 'INPUT_BOTTOM',
+							'padding' : (10,10,20,20),
+							'bck_color' : (125,125,125),
+							'bck_image' : 'experiments/cli/bckground/quake.png',
+							'bck_image_resize' : True,
+							'bck_alpha' : 150,
+							'welcome_msg' : 'Sample 2: Full featured, no footer, no header\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
+							'welcome_msg_color' : (0,255,0),
+							},
+						'output' : {
+							'padding' : (10,10,10,10),
+							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
+							'font_size' : 16,
+							'font_antialias' : True,
+							'font_color' : (255,255,255),
+							'font_bck_color' : (55,0,0),
+							'bck_color' : (55,0,0),
+							'bck_alpha' : 120,
+							'buffer_size' : 100,
+							'display_lines' : 20,
+							'display_columns' : 100,
+							'line_spacing' : None,
+							'char_subst' : { 
+								'\t' : '->'
+								}
+							},
+						'input' : {
+							'padding' : (10,10,10,10),
+							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
+							'font_size' : 16,
+							'font_antialias' : True,
+							'font_color' : (255,0,0),
+							'font_bck_color' : None,
+							'bck_color' : (0,255,0),
+							'bck_alpha' : 75,
+							'prompt' : '>>>',
+							'max_string_length' : 10,
+							'repeat_keys_initial_ms' : 400,
+							'repeat_keys_interval_ms' :35
+							}
+						}
+			
+			# Sample 3: Mimimal - only header
+			if sample == 3:
+				return {
+					'header' : {
+						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
+						'text' : 'Sample 3: Minimal - only header. Current Time: {} ',
+						'text_params' : ['cons_get_time'],												
+						'layout' : ['SCROLL_LEFT_CONTINUOUS', 0, 2],
+						}
+					}
+
+			# Sample 4: Mimimal - only header and footer
+			if sample == 4:
+				return {
+					'header' : {
+						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
+						'text' : 'Sample 4: Minimal - only header and footer. Current Position: {} ',
+						'text_params' : ['cons_get_pos'],												
+						'layout' : ['SCROLL_LEFT_CONTINUOUS', 0, 2]
+						},
+					'footer' : {						
+						'text' : 'Sample 4: Minimal - only header and footer ',
+						'layout' : ['SCROLL_RIGHT_CONTINUOUS',100,1],
+						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf'
+						}
+					}
+
+			# Sample 5: Mimimal - only header and input, output on stdout
+			if sample == 5:
+				return {
+					'header' : {
+						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
+						'text' : 'Sample 5: Minimal - only header and input, output on stdout. Current Pos: {} ',
+						'text_params' : ['cons_get_pos'],												
+						'layout' : ['TEXT_CENTRE']
+						},
+					'input' : {
+						'font_file' : 'experiments/cli/fonts/JackInput.ttf'
+						}
+					}
+
+			# Sample 6: Mimimal - only input and output, with transparency and welcome msg
+			if sample == 6:
+				return {
+					'global' : {
+						'layout' : 'INPUT_BOTTOM',
+						'padding' : (10,10,10,10),
+						'bck_alpha' : 150,
+						'welcome_msg' : 'Sample 6: Mimimal - only input and output, with transparency and welcome msg\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
+						'welcome_msg_color' : (0,255,0)
+						},
+					'input' : {
+						'font_file' : 'experiments/cli/fonts/JackInput.ttf',
+						'bck_alpha' : 0
+						},
+					'output' : {
+						'font_file' : 'experiments/cli/fonts/JackInput.ttf',
+						'bck_alpha' : 0,
+						'display_lines' : 20,
+						'display_columns' : 100
+						}
+					}
 
 	# Initiate testing 'game'
 	t = TestObject()
