@@ -21,19 +21,16 @@
 		-	in text input fix jumping text line when '1' or 'q' is input - this is the best solution, use different font if not satisfied
 		-	console does not need to contain header/footer/input/output - based on json config
 
-	TODO
-	****
+	FEATURES TODO
+	*************
 		
-		-	All animation related params into Console class as config
-		-	Better scripts - directory with scripts as console parameter
-		-	handling tabs as spaces - it somehow does not work
+		-	blit integers depretiation warning
+		-	Directory with scripts as console parameter
+		-	handling tabs as spaces - substitute tabs on output by predefined number of spaces
 
 		-	merge to GITanim
 		-	put on forums
 
-	TEST CASES
-	**********
-		- test all header layouts with and without optional parameters + not existing layout names
 
 
 	How to incorporate in the code
@@ -154,7 +151,6 @@ class CommandLineProcessor(cmd.Cmd):
 			!game.surf.fill((0,0,0))
 			!print('I have colored the brick')
 		'''
-
 		
 		script_line = None
 		script_line_no = None
@@ -372,22 +368,22 @@ class Header:
 		'''
 
 		# Blit the main header surface to background
-		surf.blit(self.surf, pos)
+		surf.blit(self.surf, (int(pos[0]), int(pos[1])) )
 
 		# Clear the main text surface on which the actual text is blitted
 		self.txt_surf.fill((0,0,0,0)) # Last 0 indicates alpha, i.e. full transparency
 
 		if self.layout_name == 'TEXT_RIGHT':
-			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (self.txt_surf_dim.width - self.fnt_txt_surf_dim.width, 0))
-			self.txt_surf.blit(self.fnt_txt_surf, (self.txt_surf_dim.width - self.fnt_txt_surf_dim.width, 0))			
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (int(self.txt_surf_dim.width - self.fnt_txt_surf_dim.width), 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (int(self.txt_surf_dim.width - self.fnt_txt_surf_dim.width), 0))			
 
 		if self.layout_name == 'TEXT_LEFT':
-			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (0, 0))
-			self.txt_surf.blit(self.fnt_txt_surf, (0, 0))
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (0,0))
+			self.txt_surf.blit(self.fnt_txt_surf, (0,0))
 
 		if self.layout_name == 'TEXT_CENTRE':
-			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (self.txt_surf_dim.width // 2 - self.fnt_text_surf_dim.width // 2, 0))
-			self.txt_surf.blit(self.fnt_txt_surf, (self.txt_surf_dim.width // 2 - self.fnt_txt_surf_dim.width // 2, 0))
+			if self.font_bck_color: self.txt_surf.blit(self.fnt_bck_surf, (int(self.txt_surf_dim.width // 2 - self.fnt_text_surf_dim.width // 2), 0))
+			self.txt_surf.blit(self.fnt_txt_surf, (int(self.txt_surf_dim.width // 2 - self.fnt_txt_surf_dim.width // 2), 0))
 
 		if self.layout_name == 'SCROLL_LEFT':
 			if self.scroll_offset > -1 * self.fnt_txt_surf_dim.width:
@@ -459,8 +455,8 @@ class Header:
 		
 		# Blit text surface to surf - take account text padding
 		surf.blit(self.txt_surf, 
-				(pos[0] + self.padding.left,
-				pos[1] + self.padding.up))
+				(int(pos[0] + self.padding.left),
+				int(pos[1] + self.padding.up)))
 
 	def get_height(self):
 		''' Returns hight of the header surface. Called from Console instance in order
@@ -608,7 +604,7 @@ class TextOutput:
 		'''		
 		
 		# Blit output background
-		surf.blit(self.surf, pos)
+		surf.blit(self.surf, (int(pos[0]), int(pos[1])))
 
 		# Clear the main text input surf on which the actual text is blitted
 		self.txt_surf.fill((0,0,0,0)) # Last 0 indicates alpha, i.e. full transparency
@@ -627,18 +623,18 @@ class TextOutput:
 				
 				self.txt_surf.blit(fnt_bck_surf,
 						(0,
-						height + self.line_spacing - (( self.line_spacing - fnt_txt_surf_dim.height) // 2) - fnt_txt_surf_dim.height))
+						int(height + self.line_spacing - (( self.line_spacing - fnt_txt_surf_dim.height) // 2) - fnt_txt_surf_dim.height)))
 
 			self.txt_surf.blit(fnt_txt_surf, 
 						(0,
-						height + self.line_spacing - (( self.line_spacing - fnt_txt_surf_dim.height) // 2) - fnt_txt_surf_dim.height))
+						int(height + self.line_spacing - (( self.line_spacing - fnt_txt_surf_dim.height) // 2) - fnt_txt_surf_dim.height)))
 
 			height = height + self.line_spacing
 		
 		# Blit text surface to surf - take account text padding
 		surf.blit(self.txt_surf, 
-				(pos[0] + self.padding.left,
-				pos[1] + self.padding.up))
+				(int(pos[0] + self.padding.left),
+				int(pos[1] + self.padding.up)))
 
 	def update(self, events):
 		''' Handles scrolling the output buffer by pressing pgUP and pgDOWN keys.
@@ -1051,7 +1047,7 @@ class TextInput:
 		'''
 
 		# Background surface blit
-		surf.blit(self.surf, pos)
+		surf.blit(self.surf, (int(pos[0]), int(pos[1])))
 		
 		# Clear the main text input surf on which the actual text is blitted
 		self.txt_surf.fill((0,0,0,0)) # Last 0 indicates alpha, i.e. full transparency
@@ -1059,24 +1055,24 @@ class TextInput:
 		# Input text background blit
 		if self.font_bck_color:			
 			self.txt_surf.blit(self.fnt_bck_surf,
-					(self.fnt_txt_scroll_offset,
-					self.line_spacing - ((self.line_spacing - self.fnt_bck_surf_dim.height) // 2) - self.fnt_bck_surf_dim.height))
+					(int(self.fnt_txt_scroll_offset),
+					int(self.line_spacing - ((self.line_spacing - self.fnt_bck_surf_dim.height) // 2) - self.fnt_bck_surf_dim.height)))
 
 		# Input text blit
 		self.txt_surf.blit(self.fnt_txt_surf,
-						(self.fnt_txt_scroll_offset,
-						self.line_spacing - ((self.line_spacing - self.fnt_txt_surf_dim.height) // 2) - self.fnt_txt_surf_dim.height))
+						(int(self.fnt_txt_scroll_offset),
+						int(self.line_spacing - ((self.line_spacing - self.fnt_txt_surf_dim.height) // 2) - self.fnt_txt_surf_dim.height)))
 
 		# Cursor blit
 		if self.cursor_visible:
 			self.txt_surf.blit(self.cursor_surf, 
-						(self.fnt_txt_scroll_offset + self.cursor_blit_position,
-						self.line_spacing - ((self.line_spacing - self.cursor_surf_dim.height) // 2) - self.cursor_surf_dim.height))
+						(int(self.fnt_txt_scroll_offset + self.cursor_blit_position),
+						int(self.line_spacing - ((self.line_spacing - self.cursor_surf_dim.height) // 2) - self.cursor_surf_dim.height)))
 
 		# Cutted text blit
 		surf.blit(self.txt_surf, 
-				(pos[0] + self.padding.left,
-				pos[1] + self.padding.up))
+				(int(pos[0] + self.padding.left),
+				int(pos[1] + self.padding.up)))
 
 	def get_height(self):
 		''' Returns current height of the text input surface. 
@@ -1356,15 +1352,15 @@ class Console(pygame.Surface):
 			if self.bck_image: self.blit(self.bck_image, (0, 0))
 
 			# Blit console background to the surface
-			surf.blit(self, (pos[0] + anim_dx, pos[1] + anim_dy))
+			surf.blit(self, (int(pos[0] + anim_dx), int(pos[1] + anim_dy)))
 
 			# Blit header onto the surface - by calling show and not blitting directly enables
 			# transparent background and non transparent text displayed on it.
 			if self.console_header:
 				self.console_header.show(
 					surf,
-					(pos[0] + anim_dx + self.header_position[0],
-					pos[1] + anim_dy + self.header_position[1])
+					(int(pos[0] + anim_dx + self.header_position[0]),
+					int(pos[1] + anim_dy + self.header_position[1]))
 					)
 
 			# Blit output onto the surface
@@ -1372,8 +1368,8 @@ class Console(pygame.Surface):
 			if self.console_output:
 				self.console_output.show(
 					surf,
-					(pos[0] + anim_dx + self.text_output_position[0],
-					pos[1] + anim_dy + self.text_output_position[1])
+					(int(pos[0] + anim_dx + self.text_output_position[0]),
+					int(pos[1] + anim_dy + self.text_output_position[1]))
 					)
 			
 			# Blit input surface onto the surface
@@ -1381,16 +1377,16 @@ class Console(pygame.Surface):
 			if self.console_input:
 				self.console_input.show(
 					surf,
-					(pos[0] + anim_dx + self.text_input_position[0],
-					pos[1] + anim_dy + self.text_input_position[1])
+					(int(pos[0] + anim_dx + self.text_input_position[0]),
+					int(pos[1] + anim_dy + self.text_input_position[1]))
 					)		
 
 			# Blit footer onto the surface
 			if self.console_footer:
 				self.console_footer.show(
 					surf,
-					(pos[0] + anim_dx + self.footer_position[0],
-					pos[1] + anim_dy + self.footer_position[1])
+					(int(pos[0] + anim_dx + self.footer_position[0]),
+					int(pos[1] + anim_dy + self.footer_position[1]))
 					)
 	
 	def write(self, text, color=None):
@@ -1495,7 +1491,7 @@ if __name__ == "__main__":
 							self.console.toggle()
 
 				# Update the game situation - blit square on screen and position
-				self.screen.blit(self.surf, self.pos)
+				self.screen.blit(self.surf, (int(self.pos[0]), int(self.pos[1])))
 
 				# Read and process events related to the console in case console is enabled
 				self.console.update(events)	
