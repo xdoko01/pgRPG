@@ -5,7 +5,7 @@
 	Features
 	********
 		-	command buffer on text input
-		-	buffer on text output and scrolling up and down in it (pgUp, pgDown)
+		-	buffer on text output and scrolling up and down in it (pgUp, pgDown) and/or mouse wheel
 		-	console transparent background
 		-	picture as a console background
 		-	animation of showing/hiding console in the game
@@ -49,7 +49,7 @@ import pygame.freetype # for all the fonts
 import pygame.locals as pl # for key names
 import cmd	# for command line support https://docs.python.org/3/library/cmd.html
 
-class Padding(tuple):
+class Padding(list):
 	''' Class to facilitate easier and more understandable work 
 	with console paddings that are tuples (indexing). Items of this class
 	can be accessed by either indexing or by name.
@@ -60,7 +60,7 @@ class Padding(tuple):
 		pad.up returns also 1
 	'''
 
-	def __init__(self, padding=(0,0,0,0)):
+	def __init__(self, padding=[0,0,0,0]):
 		''' Init the padding and translate the tupple into 
 		readable padding properties.
 		'''
@@ -293,7 +293,7 @@ class Header:
 		#####
 		# Create the main header surface
 		#####
-		self.surf_dim = pygame.Rect(0, 0, self.width, self.line_spacing + self.padding[0] + self.padding[1])
+		self.surf_dim = pygame.Rect(0, 0, self.width, self.line_spacing + self.padding.up + self.padding.down)
 		self.surf = pygame.Surface((int(self.surf_dim.width), int(self.surf_dim.height)))
 
 		# Fill the header surface with background color
@@ -655,6 +655,18 @@ class TextOutput:
 
 				elif event.key == pl.K_RETURN:
 					self.buffer_offset = max([0, len(self.buffer) - self.display_lines])
+					self.prepare_surface()
+			
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+
+				# On mouse roll button UP - one row up
+				if event.button == 4:
+					self.buffer_offset = max([0, self.buffer_offset - 1])
+					self.prepare_surface()
+
+				# On mouse roll button DOWN - one row down
+				elif event.button == 5:
+					self.buffer_offset = min([max([0, len(self.buffer) - 1]), self.buffer_offset + 1])
 					self.prepare_surface()
 
 	def write(self, text, color=None):
@@ -1489,6 +1501,7 @@ if __name__ == "__main__":
 						if event.key == pygame.K_F1: 						
 							# Toggle the console - if on then off if off then on
 							self.console.toggle()
+
 
 				# Update the game situation - blit square on screen and position
 				self.screen.blit(self.surf, (int(self.pos[0]), int(self.pos[1])))

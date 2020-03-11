@@ -24,47 +24,12 @@
 	 configuration dict.
 	
 	Examples:
-	 - Example of config file
+	 - See pyrpg/config.json for the example
 
-	{
-		"paths" : {
-			"MODEL_PATH" : "pyrpg/resources/models/",
-			"MAP_PATH" :  "pyrpg/resources/maps/",
-			"QUEST_PATH" :  "pyrpg/resources/quests/",
-			"FONT_PATH" :  "pyrpg/resources/fonts/"
-
-		},
-		
-		"logging" : {
-			"level" : DEBUG,
-			"format" : ""
-			
-		},
-
-		"display" : {
-			"resolution" : [640, 480],
-			"fullscreen" : False,
-			"fps" : 30,
-			"show_fps" : True
-			"collision_map" : False,
-			"raycasting" : False
-		},
-
-		"sound" : {
-			"sound_volume": 0,
-			"music_volume" : 0		
-		},
-
-		"game" : {
-			"CLI" : True,
-			"starting_quest": "main_quest"
-		}
-	}
 '''
 
 import logging
 import logging.config
-
 import json
 
 def load_config(config_file_path=None):
@@ -88,12 +53,15 @@ def load_config(config_file_path=None):
 def get_defaults():
 	''' Returns default game configuration - hardcoded
 	'''
-	return {'config_file' : 'config.json',
+	return {
+			'config_file' : 'config.json',
 			'paths' :  {
 				'model_path' : 'pyrpg/resources/models/',
 				'map_path' :  'pyrpg/resources/maps/',
 				'quest_path' :  'pyrpg/resources/quests/',
-				'font_path' :  'pyrpg/resources/fonts/'
+				'font_path' :  'pyrpg/resources/fonts/',
+				'image_path' : 'pyrpg/resources/images/',
+				'script_path' : 'pyrpg/resources/scripts/'			
 				},
 			'logging' : {
 				},
@@ -113,9 +81,23 @@ def get_defaults():
 				'music_volume' : 0		
 				},
 			'game' : {
-				'cli_enabled' : True,
-				'cli_module' : None,	
 				'starting_quest': 'main_quest.json'
+				},
+			'console' : {
+				'global' : {
+					'cli_module' : None,	
+					'bck_alpha' : 150,
+					},
+				'input' : {
+					'font_file' : 'pyrpg/resources/fonts/JackInput.ttf',
+					'bck_alpha' : 0
+					},
+				'output' : {
+					'font_file' : 'pyrpg/resources/fonts/JackInput.ttf',
+					'bck_alpha' : 0,
+					'display_lines' : 20,
+					'display_columns' : 100
+					}
 				}
 			}
 

@@ -1,5 +1,8 @@
 ''' pyrpg/pyrpg/core/components/mapentity.py
 '''
+
+import ctypes # to show number of references to an instance
+
 import pygame.time # Necessary for pygame.time.get_ticks()
 
 # load and store config dict as cfg.config
@@ -155,9 +158,16 @@ class MapEntity:
 		"""
 		pass
 
-	def __str__(self):
-		return f"*Instance of {self.__class__.__name__}\tInstance Addr: {hex(id(self))}\tModel Addr: {hex(id(self.model))}\tId: {self.id}\tName: {self.name}\tMap: {self.map}\tPos: {self.map}\
-			\n\tModel detail: {self.model}"
+	def __str__(self, level=0):
+		
+		tabs = '\t' * level
+		
+		return f'{tabs}*Instance of {self.__class__.__name__} ({hex(id(self))}) [{ctypes.c_long.from_address(id(self)).value}]:\n\
+				{tabs}\tId:\t\t({hex(id(self.id))}) [{ctypes.c_long.from_address(id(self.id)).value}]:\t{self.id}\n\
+				{tabs}\tName:\t\t({hex(id(self.name))}) [{ctypes.c_long.from_address(id(self.name)).value}]:\t{self.name}\n\
+				{tabs}\tPos:\t\t({hex(id(self.pos))}) [{ctypes.c_long.from_address(id(self.pos)).value}]:\t{self.pos}\n\
+				{tabs}\tMap:\t\t({hex(id(self.map))}) [{ctypes.c_long.from_address(id(self.map)).value}]:\t{self.map}\n\
+				{tabs}\tModel detail:\t\t{self.model.__str__(level+1)}\n'
 
 
 class Item(MapEntity):

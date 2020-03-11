@@ -275,15 +275,18 @@ class TileModel:
 				(child_ref if child_ref != None else self).texture_length.update({ action_key : len(frames)})
 				(child_ref if child_ref != None else self).texture_dynamic.update({ action_key : dynamic})
 	
-	def __str__(self):
-		return f'\n*Instance of {self.__class__.__name__} ({hex(id(self))}) [{ctypes.c_long.from_address(id(self)).value}]:\
-			\n\tmodel_name\t\t({hex(id(self.model_name))})[{ctypes.c_long.from_address(id(self.model_name)).value}]:\t{self.model_name}\
-			\n\tcollision_area\t\t({hex(id(self.collision_area))})[{ctypes.c_long.from_address(id(self.collision_area)).value}]:\t{self.collision_area}\
-			\n\ttexture_offset\t\t({hex(id(self.texture_offset))})[{ctypes.c_long.from_address(id(self.texture_offset)).value}]:\t{self.texture_offset}\
-			\n\ttexture_file\t\t({hex(id(self.texture_file))})[{ctypes.c_long.from_address(id(self.texture_file)).value}]:\t{self.texture_file}\
-			\n\ttexture_data\t\t({hex(id(self.texture_data))})[{ctypes.c_long.from_address(id(self.texture_data)).value}]:\t{self.texture_data}\
-			\n\ttexture_length\t\t({hex(id(self.texture_length))})[{ctypes.c_long.from_address(id(self.texture_length)).value}]:\t{self.texture_length}\
-			\n\ttexture_dynamic\t\t({hex(id(self.texture_dynamic))})[{ctypes.c_long.from_address(id(self.texture_dynamic)).value}]:\t{self.texture_dynamic}'
+	def __str__(self, level=0):
+		
+		tabs = '\t' * level
+
+		return f'{tabs}*Instance of {self.__class__.__name__} ({hex(id(self))}) [{ctypes.c_long.from_address(id(self)).value}]:\n\
+				{tabs}\tmodel_name\t\t({hex(id(self.model_name))}) [{ctypes.c_long.from_address(id(self.model_name)).value}]:\t{self.model_name}\n\
+				{tabs}\tcollision_area\t\t({hex(id(self.collision_area))}) [{ctypes.c_long.from_address(id(self.collision_area)).value}]:\t{self.collision_area}\n\
+				{tabs}\ttexture_offset\t\t({hex(id(self.texture_offset))}) [{ctypes.c_long.from_address(id(self.texture_offset)).value}]:\t{self.texture_offset}\n\
+				{tabs}\ttexture_file\t\t({hex(id(self.texture_file))}) [{ctypes.c_long.from_address(id(self.texture_file)).value}]:\t{self.texture_file}\n\
+				{tabs}\ttexture_data\t\t({hex(id(self.texture_data))}) [{ctypes.c_long.from_address(id(self.texture_data)).value}]:\t{self.texture_data}\n\
+				{tabs}\ttexture_length\t\t({hex(id(self.texture_length))}) [{ctypes.c_long.from_address(id(self.texture_length)).value}]:\t{self.texture_length}\n\
+				{tabs}\ttexture_dynamic\t\t({hex(id(self.texture_dynamic))}) [{ctypes.c_long.from_address(id(self.texture_dynamic)).value}]:\t{self.texture_dynamic}\n'
 	
 @functools.lru_cache(maxsize=32)#@Memoize
 class EntityModel(TileModel):

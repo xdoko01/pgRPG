@@ -36,9 +36,12 @@ def main():
 	engine.init_globals()
 	
 	# Load game from the quest - no parameter marks that init quest is in config file
-	logger.info('*Load game start')
 	engine.load_game()
-	logger.info('*Load game finish')
 
-	# Enter the main loop - originally part of load_game()
+	# Show Game info - what has been loaded so far
+	print(engine.game_info())
+
+	# Enter the main loop
 	engine.run()
+
+logger.info('Game main.py module successfully loaded/imported.')

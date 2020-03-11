@@ -89,10 +89,16 @@
 
 '''
 
+# Create local logger
+import logging
+logger = logging.getLogger(__name__)
+
+import ctypes # to show number of references to an instance
 import json # Parsing of quest json definition
 
 # Neccessary for accessing engine variables - maps, screens, quests
 # Necessary for calling engine module methods - get_all_entities, ...
+# Necessary to access console output engine.console.write
 import pyrpg.core.engine as engine
 
 # Necessary for calling load_map method - TODO - dont I want engine to do that loading?
@@ -120,14 +126,27 @@ def load_quest(quest_id):
 
 	# Most of the work is done here
 	new_quest = Quest(cfg.config.get('paths').get('quest_path') + quest_id + '.json')
-
+	
 	# Store the quest in the list of active quests
 	engine.quests.update( {quest_id : new_quest} )
+
+	# Log successful quest load
+	logger.info(f'Quest "{new_quest.name}" loaded')
 
 
 class Quest(EventHandler):
 	''' Main Quest class TBD ...
 	'''
+
+	def __str__(self, level=0):
+
+		tabs = '\t' * level
+
+		return f'{tabs}*Instance of {self.__class__.__name__} ({hex(id(self))}) [{ctypes.c_long.from_address(id(self)).value}]:\n\
+				{tabs}\tquest_name\t\t({hex(id(self.name))}) [{ctypes.c_long.from_address(id(self.name)).value}]:\t{self.name}\n\
+				{tabs}\tdescription\t\t({hex(id(self.description))}) [{ctypes.c_long.from_address(id(self.description)).value}]:\t{self.description}\n\
+				{tabs}\tobjective\t\t({hex(id(self.objective))}) [{ctypes.c_long.from_address(id(self.objective)).value}]:\t{self.objective}\n\
+				{tabs}\tphase_id\t\t({hex(id(self.phase_id))}) [{ctypes.c_long.from_address(id(self.phase_id)).value}]:\t{self.phase_id}\n'
 
 	def __init__(self, quest_json):
 
@@ -185,6 +204,10 @@ class Quest(EventHandler):
 			
 			# Unregister reference to model
 			_all_entities.get(entity_id).clear_resources()
+		
+		# Log successful cleanup entities
+		logger.info(f'"{self.phase_name}" - cleanup Entities done')
+
 
 		# Cleanup maps - unregister map means also unregistering all entities on the map 
 		# (but they still may be pointed at on quest level).
@@ -205,6 +228,9 @@ class Quest(EventHandler):
 			# Remove from Engine maps
 			del Quest.engine.maps[map_id]
 
+		# Log successful cleanup maps
+		logger.info(f'"{self.phase_name}" - cleanup Maps done')
+
 		# Get dictionary of all screens currently loaded in the game
 		_all_screens = engine.get_all_screens()
 
@@ -219,6 +245,10 @@ class Quest(EventHandler):
 
 			# Remove from Engine screens dict
 			del Quest.engine.screens[screen_id]
+		
+		# Log successful cleanup screens
+		logger.info(f'"{self.phase_name}" - cleanup Screens done')
+
 
 		# Process the prerequisities - create ###
 		##########################################
@@ -227,9 +257,16 @@ class Quest(EventHandler):
 		for map_id in self.phase_definition.get('prerequisities', {}).get('create', {}).get('maps', []):
 			map.load_map(map_id)
 
+		# Log successful maps load
+		logger.info(f'"{self.phase_name}" - prerequisities - Maps load done')
+
 		# Create screens
 		for screen_dict in self.phase_definition.get('prerequisities', {}).get('create', {}).get('screens', []):
 			screen.load_screen(screen_dict)
+
+		# Log successful screens load
+		logger.info(f'"{self.phase_name}" - prerequisities - Screens load done')
+
 
 		# Main part - Create the Entities      ###
 		##########################################
@@ -247,6 +284,10 @@ class Quest(EventHandler):
 			new_item.register_map()
 			# Register new Item at the screen if necessary
 			new_item.register_screen(item.get('screen',''))
+		
+		# Log successful Items load
+		logger.info(f'"{self.phase_name}" - creation - Items load done')
+
 
 		# Create and fill the Character entities requested by the Quest		
 		for character in self.phase_definition.get('entities', {}).get('characters', []):
@@ -262,6 +303,10 @@ class Quest(EventHandler):
 			new_character.register_map()
 			# Register new Character at the screen if necessary
 			new_character.register_screen(character.get('screen',''))
+		
+		# Log successful Characters load
+		logger.info(f'"{self.phase_name}" - creation - Characters load done')
+
 
 		# Create and fill the Player entities requested by the Quest		
 		for player in self.phase_definition.get('entities', {}).get('players', []):
@@ -279,10 +324,20 @@ class Quest(EventHandler):
 			# Register new Player at the screen if necessary
 			new_player.register_screen(player.get('screen',''))
 
+		# Log successful Players load
+		logger.info(f'"{self.phase_name}" - creation - Players load done')
 
-		# Store conditions for event handling into the quest dict structure - skipping for now
-		pass
 
+		#####################
+		# TODO - Store conditions for event handling into the quest dict structure - skipping for now
+		#####################
+
+		# Log successful Players load
+		logger.info(f'"{self.phase_name}" - creation - Conditions load done')
+
+
+		# Log successful phase load
+		logger.info(f'Phase "{self.phase_name}" loaded')
 
 	def event_handler(self, event):
 		""" Quest is an event handler. Event is delivered by 
