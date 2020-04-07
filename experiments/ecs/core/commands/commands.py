@@ -3,62 +3,178 @@ import core.ecs.components as components # To work with components in commands (
 
 import pygame.time # pygame.ime
 
-# TODO - do it as functions and not classes
-# world should be probably passed always to command so command can actually do something usefull
-# probably entity of the world should be passed
+# TODO - commands for implementation
+#	move to x,y
+#	move to entity
 
-
-def cmd_move_left_ent(entity, step):
-	''' Entity is optional, there can be commands that do not require entity
-	'''
-	motion = engine.world.component_for_entity(entity, components.Motion)
-	motion.dx = -step
+def cmd_set_quest_phase(*args, **kwargs):
+	''' In the game cinematics processor, it may come to the point when I want to proceed
+	to the next phase of the game.
+	To enable that from global game cinematics processor, I can see 2 ways:
+		-	I can invoke command that change the phase
+		-	I can invoke event from the global brain command and let the quest to change the phase
 	
-def cmd_move_right_ent(entity, step):
-	''' Entity is optional, there can be commands that do not require entity
+	Let's go with the first option and see
+	
+	TODO - this is dirty - accessing engine quest dict directly
 	'''
-	motion = engine.world.component_for_entity(entity, components.Motion)
-	motion.dx = step
 
-def cmd_move_up_ent(entity, step):
-	''' Entity is optional, there can be commands that do not require entity
+	# Get quest id and the new phase id
+	quest = kwargs.get("quest", None)
+	phase = kwargs.get("phase", None)	
+
+	# Update the quest's phase
+	try:
+		engine._quests.get(quest, None).set_phase(phase)
+		
+		# Everything went smoothly
+		return 0
+	except:
+		# Error occured
+		return -1
+
+def cmd_add_screen(*args, **kwargs):
+	''' Input
+		-	entity to which I want to add the screen
+		-	screen parameters
 	'''
-	motion = engine.world.component_for_entity(entity, components.Motion)
-	motion.dy = -step
 
-def cmd_move_down_ent(entity, step):
-	''' Entity is optional, there can be commands that do not require entity
+	# Get entity of for the new screen
+	focus_ent = kwargs.get("entity", None)
+
+	# Get the Camera 
+	screen_pos_x = kwargs.get("screen_pos_x", 0)
+	screen_pos_y = kwargs.get("screen_pos_y", 0)
+	screen_width = kwargs.get("screen_width", 300)
+	screen_height = kwargs.get("screen_height", 300)
+
+	# Create the camera
+	engine.world.add_component(focus_ent, components.Camera(screen_pos_x=screen_pos_x, screen_pos_y=screen_pos_y, screen_width=screen_width, screen_height=screen_height))
+
+	# Successful finished
+	return 0
+
+def cmd_remove_screen(*args, **kwargs):
+	''' Input
+		-	entity from which I want to remove the screen
+		-	screen parameters
 	'''
-	motion = engine.world.component_for_entity(entity, components.Motion)
-	motion.y = step
 
-############
+	# Get entity of for the new screen
+	focus_ent = kwargs.get("entity", None)
 
-def cmd_move_left(entity, step, component=None):
-	''' Entity is optional, there can be commands that do not require entity
+	# Try to Remove the camera
+	try:
+	
+		engine.world.remove_component(focus_ent, components.Camera(screen_pos_x=screen_pos_x, screen_pos_y=screen_pos_y, screen_width=screen_width, screen_height=screen_height))
+	
+		# Successfully removed
+		return 0
+
+	except KeyError:
+		
+		# entity or component does not exist
+		return -1
+
+def cmd_add_to_inventory(*args, **kwargs):
+	''' Input
+		-	receiver's entity
+		-	item's entity
 	'''
-	motion = component if component else engine.world.component_for_entity(entity, components.Motion)
-	motion.dx = -step
 
-def cmd_move_right(entity, step, component=None):
-	''' Entity is optional, there can be commands that do not require entity
+	# Get entity of the receiver and of the item
+	receiver_ent = kwargs.get("entity", None)
+	item_ent = kwargs.get("item", None)
+
+	# Get HasInventory component for receiver entity - if it has one
+	try:
+		has_inventory = engine.world.component_for_entity(receiver_ent, components.HasInventory)
+
+		# If the item is passed, add it to the inventory
+		if item_ent: has_inventory.inventory.append(item_ent)
+		
+		# Successful finished
+		return 0
+
+	except KeyError:
+		return -1
+
+def cmd_remove_from_inventory(*args, **kwargs):
+	''' Input
+		-	giver's entity
+		-	item's entity
 	'''
-	motion = component if component else engine.world.component_for_entity(entity, components.Motion)
-	motion.dx = step
 
-def cmd_move_up(entity, step, component=None):
-	''' Entity is optional, there can be commands that do not require entity
+	# Get entity of the giver and of the item
+	giver_ent = kwargs.get("entity", None)
+	item_ent = kwargs.get("item", None)
+
+	# Get HasInventory component for giver entity - if it has one
+	try:
+		has_inventory = engine.world.component_for_entity(giver_ent, components.HasInventory)
+
+		# If the item is passed, remove it from the inventory
+		if item_ent: has_inventory.inventory.remove(item_ent)
+		
+		# Successful finished
+		return 0
+
+	except KeyError:
+		return -1
+
+def cmd_toggle_control(*args, **kwargs):
+	''' Disable/enable any user input for given entity - used in cinematics so that 
+	the user cannot break it with movements.
+
+	Example (0,	commands.cmd_toggle_input, {"enable" : False})
+	-	above disables user input on entity
 	'''
-	motion = component if component else engine.world.component_for_entity(entity, components.Motion)
-	motion.dy = -step
 
-def cmd_move_down(entity, step, component=None):
-	''' Entity is optional, there can be commands that do not require entity
+	# Get entity whose brain we need to freeze from cmd parameters
+	entity = kwargs.get("entity", None)
+
+	# Get on/off control information - default is enabled
+	toggle = kwargs.get("enable", True)
+
+	# Get Cotrollable component for this entity - if it has one
+	try:
+		control = engine.world.component_for_entity(entity, components.Controllable)
+
+		# Disable the brain
+		control.enabled = toggle
+
+		# Successful finished
+		return 0
+
+	except KeyError:
+		return -1
+
+def cmd_toggle_brain(*args, **kwargs):
+	''' Stop/Start brain of given entity for the purposes of global game
+	processor.
+
+	This command should not have usually exception handling defined.
+	Exception is thrown when component does not have Brain entity.
+
 	'''
-	motion = component if component else engine.world.component_for_entity(entity, components.Motion)
-	motion.dy = step
 
-####################
+	# Get entity whose brain we need to freeze from cmd parameters
+	entity = kwargs.get("entity", None)
+	toggle = kwargs.get("enable", True)
+
+
+	# Get brain component for this entity - if it has one
+	try:
+		brain = engine.world.component_for_entity(entity, components.Brain)
+
+		# Disable the brain
+		brain.enabled = toggle
+
+		# Successful finished
+		return 0
+
+	except KeyError:
+		return -1
 
 def cmd_show_dialog(*args, **kwargs):
 	''' Show text dialog
@@ -93,7 +209,6 @@ def cmd_show_dialog(*args, **kwargs):
 
 		return -1
 
-
 def cmd_loop(*args, **kwargs):
 	''' Loop command - uses information stored in brain about actual number of loops
 	'''
@@ -112,7 +227,6 @@ def cmd_loop(*args, **kwargs):
 		# Do not throw exception, looping has finished
 		return 0
 
-
 def cmd_wait(*args, **kwargs):
 	''' Wait command used for example to slow done the motion
 	'''
@@ -128,12 +242,24 @@ def cmd_wait(*args, **kwargs):
 		# There is still some time to wait - return exception
 		return -1
 
+def cmd_wait_key(*args, **kwargs):
+	''' Wait until key specified in parameter is pressed. Then continue.
+	'''
+
+	continue_key = kwargs.get("key", None)
+
+	# Get the pressed key from global - CommandProcessor
+	keys = pygame.key.get_pressed()
+	if keys[pygame.K_SPACE]:
+		return 0
+	else:
+		return -1
+
 def cmd_goto(*args, **kwargs):
 	''' Goto command always returns exception. By doing that
 	it always skips to unit defined by index in IF-EXCEPTION-GOTO
 	'''
 	return -1
-
 
 def cmd_none(*args, **kwargs):
 	''' Empty command - Null object pattern.
@@ -167,7 +293,7 @@ def cmd_move(*args, **kwargs):
 
 	except KeyError:
 		print(f'Entity {entity} does not have Motion component.')
-		
+
 	finally:
 		# Mark that command has finished. Important for Brain processor
 		return 0 
@@ -178,33 +304,18 @@ def cmd_disable_collision(*args, **kwargs):
 	entity = kwargs.get("entity")
 	engine.world.remove_component(entity, components.Collidable)		
 
-
-
-########################################
-class Command:
-
-	def __init__(self):
-		pass
-
-	def execute(self):
-		pass
-
-class MoveCommand(Command):
-
-	def __init__(self, dx, dy):
-		super().__init__()
-		self.dx = dx
-		self.dy = dy
-
-	def execute(self, motion_component):
-		motion_component.dx = self.dx
-		motion_component.dy = self.dy
-
-class DisableTeleportCommand(Command):
-	
-	def __init__(self, world):
-		super().__init__()
-		self.world = world
-
-	def execute(self, teleport_entity):
-		self.world.remove_component(4, components.Collidable)		
+CMD_DICT = {
+	'loop' : cmd_loop,
+	'wait' : cmd_wait,
+	'wait_key' : cmd_wait_key,
+	'goto' : cmd_goto,
+	'none' : cmd_none,
+	#####
+	'add_screen' : cmd_add_screen,
+	'remove_screen' : cmd_remove_screen,
+	'toggle_control' : cmd_toggle_control,
+	'toggle_brain' : cmd_toggle_brain,
+	'show_dialog' : cmd_show_dialog,
+	'move' : cmd_move,
+	'disable_collision' : cmd_disable_collision
+}

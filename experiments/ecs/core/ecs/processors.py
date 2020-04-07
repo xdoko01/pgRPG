@@ -62,13 +62,14 @@ class Event:
 ### Processors Classes
 ########################################################
 
+# TODO - Implement debug
 class UpdateCameraOffsetProcessor(esper.Processor):
 	'''Updates Camera offset based on position (Transform) of the entity. Updated
 	camera offset is necessary later for RenderProcessor component to correctly display
 	the screen.
 	
 	Input parameters:
-		-	None
+		-	debug
 
 	Involved components:
 		-	Transform
@@ -85,10 +86,12 @@ class UpdateCameraOffsetProcessor(esper.Processor):
 		-	after MovementProcessor - the position of the object in camera focus must be final
 	'''
 
-	def __init__(self):
+	def __init__(self, debug=False):
 		''' Initiation of CameraProcessor processor.
 		'''
 		super().__init__()
+		
+		self.debug = debug
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -114,13 +117,15 @@ class UpdateCameraOffsetProcessor(esper.Processor):
 			# Update the Camera offset
 			camera.offset_x, camera.offset_y = x, y
 
-
+# TODO - use vector2 for transform and motion
+# TODO - implement debug
+# TODO - implement direction
 class MovementProcessor(esper.Processor):
 	''' Updates Transform component (position of an entity on the map) based on Motion
 	component (movement).
 	
 	Input parameters:
-		-	None
+		-	debug
 
 	Involved components:
 		-	Transform
@@ -137,10 +142,11 @@ class MovementProcessor(esper.Processor):
 		-	after MovementProcessor - the position of the object in camera focus must be final
 	'''
 
-	def __init__(self):
+	def __init__(self, debug=False):
 		''' Initiation of MovementProcessor processor.
 		'''
 		super().__init__()
+		self.debug = debug
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -170,7 +176,8 @@ class MovementProcessor(esper.Processor):
 			motion.dx = 0
 			motion.dy = 0
 
-
+# TODO - optimize
+# TODO - use vector2
 class RenderProcessor(esper.Processor):
 	''' Draws the whole game sceen - camera screens, map and sprites.
 	
@@ -178,6 +185,7 @@ class RenderProcessor(esper.Processor):
 		-	window - reference to main game screen
 		-	tile_res - resolution of game tile (default 64x64)
 		-	clear_color - backgroun screen color
+		-	debug
 
 	Involved components:
 		-	Transform
@@ -196,13 +204,14 @@ class RenderProcessor(esper.Processor):
 		-	after UpdateCameraOffsetProcessor - in order to display scrolling
 	'''
 
-	def __init__(self, window, tile_res=64, clear_color=(0, 0, 0)):
+	def __init__(self, window, tile_res=64, clear_color=(0, 0, 0), debug=False):
 		''' Initiation of RenderProcessor processor.
 		'''
 		super().__init__()
 		self.window = window
 		self.clear_color = clear_color
 		self.tile_res = tile_res
+		self.debug = debug
 
 	def apply_camera(self, camera: components.Camera, pos=(0,0)):
 		''' Applying camera offset to some position. Returns new position
@@ -210,6 +219,11 @@ class RenderProcessor(esper.Processor):
 		'''
 		# Move the sprite of the entity - returns new shifted coordinates
 		return (pos[0] + camera.offset_x, pos[1] + camera.offset_y)
+
+	def centre_sprite(self, pos):
+		''' Centre the sprite so it is centered on the map position
+		'''
+		return (pos[0] - self.tile_res / 2, pos[1] - self.tile_res / 2)
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -236,17 +250,17 @@ class RenderProcessor(esper.Processor):
 			for i in range(len(map.ground_layer)): # Y axis	
 				for j in range(len(map.ground_layer[0])): # X axis
 					if map.ground_layer[i][j] != 0:
-						cam_cam.screen.blit(map.get_tile('ground', j, i), self.apply_camera(cam_cam, (j*64, i*64)))
+						cam_cam.screen.blit(map.get_tile('ground', j, i), self.apply_camera(cam_cam, (j * self.tile_res, i * self.tile_res)))
 
 			# Blit the map wall layer
 			for i in range(len(map.wall_layer)): # Y axis	
 				for j in range(len(map.wall_layer[0])): # X axis
 					if map.wall_layer[i][j] != 0:
-						cam_cam.screen.blit(map.get_tile('wall', j, i), self.apply_camera(cam_cam, (j*64, i*64)))
+						cam_cam.screen.blit(map.get_tile('wall', j, i), self.apply_camera(cam_cam, (j * self.tile_res, i * self.tile_res)))
 
 			# Blit all the Entities that have Renderable and Transform components
 			for _ , (renderable, transform) in self.world.get_components(components.Renderable, components.Transform):
-				cam_cam.screen.blit(renderable.image, self.apply_camera(cam_cam, (transform.x, transform.y)))
+				cam_cam.screen.blit(renderable.image, self.apply_camera(cam_cam, self.centre_sprite((transform.x, transform.y))))
 
 			# Blit all Texts that are entities saying (CanSpeak + Transform component)
 			for _ , (can_talk, transform) in self.world.get_components(components.CanTalk, components.Transform):
@@ -255,18 +269,49 @@ class RenderProcessor(esper.Processor):
 				if can_talk.text:
 					
 					# Blit the text bubble on the position offset specified by CanTalk component
-					cam_cam.screen.blit(can_talk.text_surf, self.apply_camera(cam_cam, (transform.x - can_talk.text_rect[2], transform.y - can_talk.text_rect[3])))
+					cam_cam.screen.blit(can_talk.text_surf, self.apply_camera(cam_cam, self.centre_sprite((transform.x - can_talk.text_rect[2], transform.y - can_talk.text_rect[3]))))
+		
+			if self.debug:
+				# Blit debug information
+				for debug_entity , (deb_comp, trans_comp) in self.world.get_components(components.Debug,components.Transform):
+
+					# Print possition
+					try:
+						trans_debug = self.world.component_for_entity(debug_entity, components.Transform)
+						text = 'Pos: (' + str(int(trans_debug.x)) + ', ' + str(int(trans_debug.y)) + ')'
+						pos = deb_comp.font.render(text, True, pygame.Color('white'))
+						cam_cam.screen.blit(pos, self.apply_camera(cam_cam, self.centre_sprite((trans_comp.x, trans_comp.y))))
+					except KeyError:
+						pass
+
+					# Print brain
+					try:
+						brain_debug = self.world.component_for_entity(debug_entity, components.Brain)
+						for cmd_idx, cmd_txt in enumerate(brain_debug.commands):
+							color = pygame.Color('red') if cmd_idx == brain_debug.current_cmd_idx else pygame.Color('white')
+							cmd = deb_comp.font.render(str(cmd_idx) + ' -> ' + str(cmd_txt), True, color)
+							cam_cam.screen.blit(cmd, self.apply_camera(cam_cam, self.centre_sprite((trans_comp.x, 10 + trans_comp.y + (cmd_idx * 10)))))
+					except KeyError:
+						pass
+
+					# Print collision area
+					try:
+						coll_debug = self.world.component_for_entity(debug_entity, components.Collidable)
+						pygame.draw.rect(cam_cam.screen, pygame.Color('blue'), pygame.Rect(self.apply_camera(cam_cam, (trans_comp.x - coll_debug.x,trans_comp.y - coll_debug.y)), (2 * coll_debug.x, 2 *coll_debug.y)),1)
+					except KeyError:
+						pass
 
 			# Blit the camera screen on the main game window
 			self.window.blit(cam_cam.screen, (cam_cam.screen_pos_x, cam_cam.screen_pos_y))
 
-
+# TODO - implement debug
 class InputProcessor(esper.Processor):
 	''' Based on user input generates commands to controll the entity.
 	
 	Input parameters:
 		-	events - list of pressed keys passed from the main game loop
 		-	input_command_queue - queue for storing commands for later processing
+		-	debug
 
 	Involved components:
 		-	Controllable
@@ -282,11 +327,12 @@ class InputProcessor(esper.Processor):
 		-	as first of the processors - user input should have priority over AI (Brain)
 	'''
 
-	def __init__(self, input_command_queue):
+	def __init__(self, input_command_queue, debug=False):
 		''' Initiation of InputProcessor processor.
 		'''
 		super().__init__()
 		self.input_command_queue = input_command_queue
+		self.debug = debug
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -304,22 +350,24 @@ class InputProcessor(esper.Processor):
 		for ent, (inp) in self.world.get_component(components.Controllable):
 
 			# For each entity check if control keys were pressed and move them accordingly
-					
-			# Move up
-			if keys[inp.control_keys.get('up')]:
-				self.input_command_queue.append((inp.control_cmds.get('up'), {"entity" : ent, "dy" : -config.MOVE_SPEED}))
+			# only process if keys are enabled.
+			if inp.enabled:
 
-			# Move down
-			if keys[inp.control_keys.get('down')]:
-				self.input_command_queue.append((inp.control_cmds.get('down'), {"entity" : ent, "dy" : config.MOVE_SPEED}))
+				# Move up
+				if keys[inp.control_keys.get('up')]:
+					self.input_command_queue.append((inp.control_cmds.get('up'), {"entity" : ent, "dy" : -config.MOVE_SPEED}))
 
-			# Move left
-			if keys[inp.control_keys.get('left')]:
-				self.input_command_queue.append((inp.control_cmds.get('left'), {"entity" : ent, "dx" : -config.MOVE_SPEED}))
+				# Move down
+				if keys[inp.control_keys.get('down')]:
+					self.input_command_queue.append((inp.control_cmds.get('down'), {"entity" : ent, "dy" : config.MOVE_SPEED}))
 
-			# Move right
-			if keys[inp.control_keys.get('right')]:
-				self.input_command_queue.append((inp.control_cmds.get('right'), {"entity" : ent, "dx" : config.MOVE_SPEED}))
+				# Move left
+				if keys[inp.control_keys.get('left')]:
+					self.input_command_queue.append((inp.control_cmds.get('left'), {"entity" : ent, "dx" : -config.MOVE_SPEED}))
+
+				# Move right
+				if keys[inp.control_keys.get('right')]:
+					self.input_command_queue.append((inp.control_cmds.get('right'), {"entity" : ent, "dx" : config.MOVE_SPEED}))
 
 #continue here
 class CollisionMapProcessor(esper.Processor):
@@ -416,24 +464,32 @@ class CollisionTeleportProcessor(esper.Processor):
 					# If entity is Teleportable and has position
 					if self.world.has_components(col_event_entity, components.Teleportable, components.Transform, components.Collidable):
 						
-						# Get the transition component of the entity
+						# Get the Transform, Collidable and HasInventory component of the teleportee entity
 						col_event_entity_trans = self.world.component_for_entity(col_event_entity, components.Transform) 
 						col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+						try:
+							col_event_entity_inventory = self.world.component_for_entity(col_event_entity, components.HasInventory)
+							
+							# Does the teleportee have the key in the inventory?
+							teleportee_has_key = teleport.key is None or teleport.key in col_event_entity_inventory.inventory
+						except KeyError:
+							teleportee_has_key = teleport.key is None
 
-						# Do the teleportation
-						col_event_entity_trans.x = teleport.dest_x
-						col_event_entity_trans.y = teleport.dest_y
-						col_event_entity_trans.map = teleport.dest_map 
+						# Do the teleportation of the teleportee - only if it has the key (by default no key necessary)
+						if teleportee_has_key:
+							col_event_entity_trans.x = teleport.dest_x
+							col_event_entity_trans.y = teleport.dest_y
+							col_event_entity_trans.map = teleport.dest_map 
+
+							# Report that teleportation occured - generate event
+							teleport_event = Event('TELEPORTATION', ent, col_event_entity, params={'teleport' : ent, 'teleportee' : col_event_entity})
+							self.teleport_event_queue.append(teleport_event)
 
 						# Remove the col_event_entity from Teleport
 						collision.collision_events.remove(col_event_entity)
 
 						# Remove the col event related to teleport from the Entity
 						col_event_entity_coll.collision_events.remove(ent)
-
-						# Report that teleportation occured - generate event
-						teleport_event = Event('TELEPORTATION', ent, col_event_entity, params={'teleport' : ent, 'teleportee' : col_event_entity})
-						self.teleport_event_queue.append(teleport_event)
 
 
 class CollisionItemProcessor(esper.Processor):
@@ -504,7 +560,6 @@ class BrainProcessor(esper.Processor):
 	def process(self, *args, **kwargs):
 		for ent, (brain) in self.world.get_component(components.Brain):
 			
-			print(brain)
 			# Only continue processing if the brain is enabled
 			if brain.enabled:
 
@@ -512,7 +567,7 @@ class BrainProcessor(esper.Processor):
 				try:
 					unit = brain.commands[brain.next_cmd_idx]
 				except:
-					print(f'No command found, disabling brain')
+					print(f'No command found, disabling brain. {brain}')
 					brain.enabled = False
 					return
 				
@@ -530,10 +585,10 @@ class BrainProcessor(esper.Processor):
 				# remember the self.unit_first_call_time
 				if brain.next_cmd_idx != brain.last_cmd_idx:
 					brain.cmd_first_call_time = pygame.time.get_ticks()
-					print(f'Setting up first call cmd time: {cmd_fnc}')
+					#print(f'Setting up first call cmd time: {cmd_fnc}')
 
 				# DEBUG
-				print(f'CMD inserted - Cmd: {cmd_fnc}, last_idx: {brain.last_cmd_idx}, current_idx: {brain.current_cmd_idx}, next_idx: {brain.next_cmd_idx}')
+				#print(f'CMD inserted - Cmd: {cmd_fnc}, last_idx: {brain.last_cmd_idx}, current_idx: {brain.current_cmd_idx}, next_idx: {brain.next_cmd_idx}')
 
 				# The result of the command will be communicated by the command_queue directly to component function
 				#brain.process_resutt()
@@ -555,14 +610,16 @@ class GameEventsProcessor(esper.Processor):
 
 class CommandProcessor(esper.Processor):
 
-	def __init__(self, game_commands_handler):
+	def __init__(self, game_commands_handler, debug=False):
 		super().__init__()
 
 		self.game_commands_handler = game_commands_handler
+		self.debug = debug
 
 	@time_dec
 	def process(self, *args, **kwargs):
 		''' Call external function that processes all commands
 		'''
-		self.game_commands_handler()
+
+		self.game_commands_handler(self.debug)
 

@@ -25,6 +25,16 @@ class Component:
 		return f"Component '{self.__class__.__name__}' at {hex(id(self))} ({sys.getsizeof(self)}): {self.__dict__}"
 
 
+class Debug(Component):
+	'''
+	'''
+	def __init__(self):
+		''' Initiate values for the new Brain component
+		'''
+		super().__init__()
+		self.font = pygame.font.Font(None, 16)
+
+
 class Brain(Component):
 	''' Entity can perform commands stored in its brain. 
 	Contains commands and management variables. Commands are executed on given 
@@ -72,21 +82,25 @@ class Brain(Component):
 		# If the command finished succesfully - move to the next command
 		if exception == 0:
 			self.next_cmd_idx += 1
+			print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned 0. Setting next_cmd_idx to {self.next_cmd_idx}')
 		else:
 			# If there is return value <> 0 ... that means exception then
 			# set self.next_cmd_id to the exception record
 			
 			# Find out where to skip if there is exception
 			goto_on_exception = self.commands[self.current_cmd_idx][0]
-			print(f'Goto on exception: {goto_on_exception}, current idx {self.current_cmd_idx}')
+			print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1. Setting goto_on_exception to  {goto_on_exception}, self.next_cmd_idx = {self.next_cmd_idx}, self.current_cmd_idx = {self.current_cmd_idx}')
+
 
 			# If there is some skipping defined
 			if goto_on_exception != None:
 				self.next_cmd_idx = goto_on_exception
+				print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1. Setting next_cmd_idx to  {self.next_cmd_idx}')
 			else:
 				# If the command unit does not have defined goto skip on exception
 				# then continue with the next command.
 				self.next_cmd_idx += 1
+				print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1, goto_on_exeption = None. Setting next_cmd_idx to  {self.next_cmd_idx}')
 
 	def reset(self, commands=[]):
 
@@ -205,13 +219,18 @@ class Teleport(Component):
 	the object that colided with the entity
 	'''
 
-	def __init__(self, dest_map, dest_x, dest_y):
+	def __init__(self, dest_map, dest_x, dest_y, key=None):
 		''' Initiate values for the new Teleport component.
 		'''
 		super().__init__()
+		
+		# Teleport destination
 		self.dest_map = dest_map
 		self.dest_x = dest_x
 		self.dest_y = dest_y
+
+		# Key for the teleport - no teleportation without key in inventory (entity)
+		self.key = key
 
 
 class Teleportable(Component):
@@ -224,7 +243,7 @@ class Teleportable(Component):
 		'''
 		super().__init__()
 
-
+# Implement vector2
 class Motion(Component):
 	'''	Entity can move
 	'''
@@ -252,7 +271,7 @@ class Renderable(Component):
 		super().__init__()
 
 		# Image and its parameters
-		self.image = image
+		self.image = image.convert()
 		self.w = image.get_width()
 		self.h = image.get_height()
 
@@ -265,7 +284,10 @@ class Controllable(Component):
 		''' Initiate values for the new Controllable component.
 		'''
 		super().__init__()
-		
+
+		# Possibility to disable input for the global processor
+		self.enabled = True
+
 		# Keyboard arrows
 		default_keys = {
 			"left" : 276,

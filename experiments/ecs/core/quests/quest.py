@@ -13,6 +13,8 @@ class Quest:
 	'''
 	def __init__(self):
 		
+		self.phase = '1'
+
 		self.script01 = "for i in range(10):\n\tprint('ahoj')\n\tprint('borce')\nscript_disable_teleport(event)"
 
 		self.event_handlers = {
@@ -137,3 +139,6 @@ class Quest:
 					
 		print(f'*Finishing quest event processing')
 
+	def set_phase(self, phase):
+		self.phase = phase
+		return 0

@@ -75,8 +75,8 @@ class Map:
 			[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 		]
 
-		ground_tile = pygame.image.load(config.IMAGE_PATH + "ground_tile.png")
-		wall_tile = pygame.image.load(config.IMAGE_PATH + "wall_tile.png")
+		ground_tile = pygame.image.load(config.IMAGE_PATH + "ground_tile.png").convert()
+		wall_tile = pygame.image.load(config.IMAGE_PATH + "wall_tile.png").convert()
 
 		self.tilewidth = len(self.ground_layer[0])
 		self.tileheight = len(self.ground_layer)

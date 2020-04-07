@@ -24,36 +24,35 @@ global command_queue
 ### Game commands handler
 ########################################################
 
-def process_game_commands():
+def process_game_commands(debug=False):
 	''' Process game commands. It is called by CommandsProcessor.
 	Processes the command_queue.
 	'''
 	global command_queue
 
-	if command_queue: print(f'*Command Queue: {command_queue}')
+	if debug and command_queue: print(f'*Command Queue: {command_queue}')
 
 	# Process every command in the queue
-	for command in command_queue:
-		
-		print(f'*Processing command: {command}')
+	while command_queue:
+
+		# pop out command from the beginning of the queue
+		command = command_queue.pop(0)
+
+		if debug: print(f'*Processing command: {command}')
 		
 		(cmd_fnc, cmd_params) = command
 		
-		# Extract brain reference if cmd was invoked by the brain
-		# Necessary for notification of the brain about the result
 		brain = cmd_params.get("brain", None)
 
 		# Execute the command
 		result = cmd_fnc(**cmd_params)
 
 		# Notify brain about the result of the cmd unit currently on current_cmd_idx
+		print(f'\n*process_game_commands: {cmd_fnc} PRE calling process_result({result})')
+
 		if brain: brain.process_result(result)
 
-		# Remove th current command from the queue
-		# Brain will put the command into the queue again if it is not yet finished 
-		# typically wait command
-		command_queue.remove(command)
-
+		print(f'*process_game_commands: POST calling process_result: {command_queue}')
 
 ########################################################
 ### Game event handler
@@ -65,6 +64,7 @@ def process_game_events():
 	global _quests
 
 	# Process every waiting event
+	'''
 	for event in c_event_queue:
 
 		# Send every event to every quest for handling
@@ -75,6 +75,17 @@ def process_game_events():
 
 		# Remove the event from the queue
 		c_event_queue.remove(event)
+	'''
+	while c_event_queue:
+
+		# out event from the beginning of the queue
+		event = c_event_queue.pop(0)
+
+		# Send every event to every quest for handling
+		for quest in _quests:
+
+			# Call event handler
+			quest.event_handler(event)
 
 ########################################################
 ### Game world creator
@@ -99,20 +110,19 @@ def create_entities(world):
 	world.add_component(player, components.HasInventory())
 	world.add_component(player, components.Brain(commands=[]))
 	world.add_component(player, components.CanTalk())
+	world.add_component(player, components.Debug())
 
 
-
-	# Create static entity being observed by the camera
+	# Create static entity being observed by the camera - it is also a key for the teleport
 	item = world.create_entity()
 	world.add_component(item, components.Labeled(id='item01', name='Static Item'))
 	world.add_component(item, components.Transform(x=300, y=300, map=_maps.get('map01', None)))	# Player has position in the world
-	#world.add_component(item, components.Motion(x=0, y=0))	# Player can move, hence can have velocity that will change based on key inputs
+	world.add_component(item, components.Motion(dx=0, dy=0))	# Player can move, hence can have velocity that will change based on key inputs
 	#world.add_component(item, components.Controllable(control_keys={}))	# Player can be managed by pressing keys
 	world.add_component(item, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "item.png"))) # Player has sprite
 	world.add_component(item, components.Collidable(32,32))
 	world.add_component(item, components.Camera(screen_pos_x=0, screen_pos_y=310, screen_width=300, screen_height=300))
 	world.add_component(item, components.Pickable())
-
 
 	# Create moving camera without any followed object 	engine.world.remove_component(event.generator_obj, components.Collidable)		
 	camera = world.create_entity()
@@ -124,30 +134,51 @@ def create_entities(world):
 	#world.add_component(camera, components.Collidable(32,32))
 	world.add_component(camera, components.Camera(screen_pos_x=310, screen_pos_y=0, screen_width=300, screen_height=300))
 	world.add_component(camera, components.CanTalk())
+	world.add_component(camera, components.Debug())
 
 	world.add_component(camera, 
 		components.Brain(
 			commands=[
 				# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
-				(None, commands.cmd_move, {"dx" : -config.MOVE_SPEED}), #0
-				(0, commands.cmd_loop, {"iterations" : 5}),
-				#(1, commands.cmd_wait, {"time" : 200}), #1
-				(None, commands.cmd_move, {"dy" : -config.MOVE_SPEED}), #2
-				(2, commands.cmd_loop, {"iterations" : 5}),
-				#(3, commands.cmd_wait, {"time" : 200}), #3
-				(None, commands.cmd_move, {"dx" : config.MOVE_SPEED}), #4
-				(4, commands.cmd_loop, {"iterations" : 5}),
-				#(5, commands.cmd_wait, {"time" : 200}), #5
-				(None, commands.cmd_move, {"dy" : config.MOVE_SPEED}), #6
-				(6, commands.cmd_loop, {"iterations" : 5}),
-				#(7, commands.cmd_wait, {"time" : 200}), #7
-				(None, commands.cmd_move, {"dx" : 0, "dy" : 0}), #8
-				(9, commands.cmd_show_dialog, {"time" : 1000, "text" : 'Hello world!'}), #9
-				#(0, commands.cmd_loop, {"iterations" : 4}) # 4 times repeat cmd index 0
-				(0, commands.cmd_goto, {})
+				### Move Left
+				(None, 	commands.cmd_move, {"dx" : -config.MOVE_SPEED}), #0
+				(0, 	commands.cmd_loop, {"iterations" : 1}), #1
+				### Move Up
+				(None, 	commands.cmd_move, {"dy" : -config.MOVE_SPEED}), #2
+				(2, 	commands.cmd_loop, {"iterations" : 1}), #3
+				### Move Right
+				(None, 	commands.cmd_move, {"dx" : config.MOVE_SPEED}), #4
+				(4, 	commands.cmd_loop, {"iterations" : 1}), #5
+				###	Move Down
+				(None, 	commands.cmd_move, {"dy" : config.MOVE_SPEED}), #6
+				(6, 	commands.cmd_loop, {"iterations" : 1}), #7
+				### Show Text
+				(8, 	commands.cmd_show_dialog, {"time" : 1000, "text" : 'Hello world!'}), #8
+				### Wait for space pressed
+				(9, 	commands.cmd_wait_key, {"key" : 276}), #9
+				(0, 	commands.cmd_goto, {}) #10
 			]
 		)
 	)
+
+	# Create GlobalScript entity		
+	#script = world.create_entity()
+	#world.add_component(script, components.Labeled(id='script_engine', name='Global Script Engine'))
+	#world.add_component(script, 
+	#	components.Brain(
+	#		commands=[
+	#			# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
+	#			(None, commands.cmd_move, {"entity" : 1, "dx" : -config.MOVE_SPEED}), #0
+	#			(0, commands.cmd_loop, {"iterations" : 5}),
+	#			(2, commands.cmd_wait_key, {"key" : 276}), # wait until space is pressed
+	#			(None, commands.cmd_move, {"entity": 2, "dy" : -config.MOVE_SPEED}), #2
+	#			(3, commands.cmd_loop, {"iterations" : 5}),
+	#			(5, commands.cmd_wait_key, {"key" : 276}), # wait until space is pressed
+	#			(None, commands.cmd_disable_brain, {"entity" : 3}),
+	#			(0, commands.cmd_goto, {}) 
+	#		]
+	#	)
+	#)
 
 
 	# Create static teleport
@@ -159,7 +190,7 @@ def create_entities(world):
 	world.add_component(teleport, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "teleport.png"))) # Player has sprite
 	world.add_component(teleport, components.Collidable(32,32))
 	world.add_component(teleport, components.Camera(screen_pos_x=310, screen_pos_y=310, screen_width=300, screen_height=300))
-	world.add_component(teleport, components.Teleport(dest_map=_maps.get('map01', None), dest_x=764, dest_y=164))
+	world.add_component(teleport, components.Teleport(dest_map=_maps.get('map01', None), dest_x=764, dest_y=164, key=item))
 
 def create_processors(world):
 	
@@ -171,7 +202,7 @@ def create_processors(world):
 	movement_processor = processors.MovementProcessor()
 
 	# Render processor to place renderable entities with position on the screen
-	render_processor = processors.RenderProcessor(window=window)
+	render_processor = processors.RenderProcessor(window=window, debug=True)
 
 	# Input processor to process keys pressed - the commands are queued and processed later by CommandProcessor
 	input_processor = processors.InputProcessor(command_queue)
@@ -236,6 +267,12 @@ def create_processors(world):
 ########################################################
 
 def main():
+	# Initialize Pygame stuff - at the beginning due to convert() function
+	global window
+
+	pygame.init()
+	window = pygame.display.set_mode((850,850))
+	clock = pygame.time.Clock()
 
 	# All commands are queued here
 	global command_queue
@@ -260,14 +297,7 @@ def main():
 	_maps = {}
 	_maps.update({'map01' : sample_map})
 
-	# Initialize Pygame stuff
-	global window
-
-	pygame.init()
-	window = pygame.display.set_mode((850,850))
-	pygame.display.set_caption("Esper Pygame example")
-	clock = pygame.time.Clock()
-
+	
 	#####
 	# Initialize Esper world with entites and processors
 	#####
@@ -307,6 +337,8 @@ def main():
 		# Flip the framebuffers
 		pygame.display.update()
 
+		# Display FPS in window title
+		pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
 
 	pygame.quit()
 

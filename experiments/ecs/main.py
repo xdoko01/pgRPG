@@ -4,11 +4,30 @@ Requirements
 	-	esper - https://github.com/benmoran56/esper
 
 	Features
-		-	Camera implemented
+		-	Architecture Design implemented
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			- Maps and Quests are out of esper.world
+			- Maps and quests are accessed from Processors that have engine function as a input parameter 
+			  i.e. they know how to call outside the esper.world
+
+			  - event handling - is achieved by calling to engine functions from esper.world processors
+			  - command handling - is achieved by calling to engine functions from esper.world processors
+
+		-	Multiple game screens implemented
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			- entity can have Camera component assign
+			- Camera component is represented by separate game screen on the main game window where entity is in the centre of this screen
+			- Render component facilitates correct updating of all camera screens
+			- New screen can be dynamically added/removed by adding/removing camera component to any entity that I want
+				- command that adds/removes Camera component to any entity must be called for that
+
+		-	Scrolling implemented
+			^^^^^^^^^^^^^^^^^^^^^
 			- CameraProcessor updates camera offset based on position (Transform) of the entity that has Camera component
 			- RenderProcessor iterates all entities with Camera component and draws the screen into Camera componet variable sceen that is blitted on the window.
 
 		-	Teleports implemented
+			^^^^^^^^^^^^^^^^^^^^^
 			- 2 options
 			
 			- 1st option - remember collision entities on Colision components (list of entities with whom the entity has colided)
@@ -22,9 +41,10 @@ Requirements
 				- CollisionCorrector processor consumes the rest
 			
 			- I prefer the first option as there is no need to step out of the ECS world
-			- On the other end we need to step out of the ECS world due to Quests - 
+			- On the other end we need to step out of the ECS world due to Quests
 
 		-	Quest event (simple) processing implemented
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 			- New GameEventProcessor created. The processor takes as a parametr global (engine) function that is event handler
 			- New processor is planned into the other processors
 			- The engine handler function is called and takes the list of events and passes it to all quests
@@ -37,28 +57,73 @@ Requirements
 			- Actions are specified as a list of functions
 				- execute_function function can be used to invoke arbitrary python code or taking the code from file or other json element
 				- modify_brain function - resets brain of any entity with commands from Command class
-				- other functions
-
-
+				- other functions - shake screen, fadein/fadeout, ...
 
 		-	Picking items implemented
+			^^^^^^^^^^^^^^^^^^^^^^^^^
 			- very similar to Teleports implementation
 
 
-	Notes
-		-	I want to achieve 4 players with 4 screens in the window, each screen running different map
-			-	map and its properties is outside ECS
-				-	collision data
-				-	tileset data
-			-	screen is defined fully in Camera component. i.e. Camera is screen
-			-	RenderProcessor
-				-	reads the Transform entity - which contains Map ID
-				-	reads the Camera entity - which contains information about the screen
-				-	based on map data + transform position + screen data draws the scene
-			-	Camera component can be together with Transform component in other than Player entity
-				and can be moved independently from the player (Controllable component)
-
 	- TODO 
+		-	Simple quest
+			^^^^^^^^^^^^
+			- Scenario overview
+				- Player hits NPC
+				- Player and NPC have linear conversation
+				- At the end of the conversation NPC gives item to the player (key)
+				- NPC waits until task is done
+				- Using the key, player can enter to the other map
+
+			- Scenario tech details
+				- Player hits NPC (NPC has key item in the inventory)
+					- define collision event between player and NPC
+				- Player and NPC have linear conversation
+				- At the end of the conversation NPC gives item to the player (key)
+					- collision event triggers following actions
+						- Fill GlobalBrain with following commands
+							- Stop Brain processing to both Player and NPC (cmd_disable_brain)
+							- Stop Controlls to the PLAYER and NPC (cmd_toggle_control)
+							- Show text bubble to Player - 'HI, do jou have some job for me?'
+							- Wait for any key
+							- Show text buble to NPC - 'Sure, I need to get rid of those bloody rats.'
+							- Wait for any key
+							- Show text bubble to Player - 'No, problem. Where can I find them?'
+							- Wait for any key
+							- Show text buble to NPC - 'They are in the cellar. Here is the key'
+							- Wait for any key
+							- NPC gives item to Player(Key) (cmd_add_to_inventory, cmd_remove_to_inventory)
+							- Show text buble to Player - 'Thanks.'
+							- Wait for any key
+							- Add camera component to the NPC (cmd_add_screen)
+							- Resume Brain processing for Player and NPC (cmd_enable_brain)
+							- Resume Controlls to the Player and NPC (cmd_toggle_control)
+				- NPC waits until task is done
+					- change quest phase from 1 to 2 (cmd_set_quest_phase)
+					- collision event definition (if collision with NPC and phase = 2)
+						- Fill GlobalBrain with following commands
+							- Stop Brain processing to both Player and NPC (cmd_disable_brain)
+							- Stop Controlls to the PLAYER and NPC (cmd_toggle_control)
+							- Show text bubble to Player - 'Hi, its harder than I though'
+							- Wait for any key
+							- Show text buble to NPC - 'Go on, finish them all'
+							- Wait for any key
+							- Resume Brain processing for Player and NPC (cmd_enable_brain)
+							- Resume Controlls to the Player and NPC (cmd_toggle_control)
+				- Using the key, player can enter to the other map
+					- collision event with teleport - condition is that Player has the key 
+
+
+
+
+
+
+		-	Implement global brain - entity that can rule everyhting in the world using
+			commands.
+			- It can be entity with just BRAIN component. But every command must have parameter
+			entity specified because if it is not specified then the command is trying to be executed
+			on the source entity (which does not make sence for the global Script processor)
+		
+
 		-	How to implement translation from entity_id to game_id in quest event processing
 
 		-	How to implement showing conversation between characters and the player
@@ -87,11 +152,12 @@ Requirements
 		-	How to implement Cutscenes
 		-	How to add some cinematics into teleportation? Fadeouts etc???
 
-		-	reimplement coordinates - floats
-
-		-	Implement collision zones properly - position of the entity is the centre of the sprite
-		-	Implement constatnt time in the main loop
-		-	Implement diagonal movement
+		
+		-	Improve speed
+		-	Implement comand to stop and wait for specific key to press
+		-	Move speed implement as a parameter of some processor
+		-	Implement pygame.math.Vector2 for all positions used in the game
+		-	Implement tile_res=64 as a parameter of render processor for all (defaut 64)
 		-	Improve collision with the map
 		-	Improve collision amongst entities
 		-	Improve rendering speed 
