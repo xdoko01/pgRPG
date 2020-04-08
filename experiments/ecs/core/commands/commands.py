@@ -93,6 +93,7 @@ def cmd_add_to_inventory(*args, **kwargs):
 		# If the item is passed, add it to the inventory
 		if item_ent: has_inventory.inventory.append(item_ent)
 		
+		print(f'Entity {item_ent} successfully added to the inventory')
 		# Successful finished
 		return 0
 
@@ -116,6 +117,7 @@ def cmd_remove_from_inventory(*args, **kwargs):
 		# If the item is passed, remove it from the inventory
 		if item_ent: has_inventory.inventory.remove(item_ent)
 		
+		print(f'Entity {item_ent} successfully removed from the inventory')
 		# Successful finished
 		return 0
 

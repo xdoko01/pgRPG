@@ -82,25 +82,25 @@ class Brain(Component):
 		# If the command finished succesfully - move to the next command
 		if exception == 0:
 			self.next_cmd_idx += 1
-			print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned 0. Setting next_cmd_idx to {self.next_cmd_idx}')
+			#print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned 0. Setting next_cmd_idx to {self.next_cmd_idx}')
 		else:
 			# If there is return value <> 0 ... that means exception then
 			# set self.next_cmd_id to the exception record
 			
 			# Find out where to skip if there is exception
 			goto_on_exception = self.commands[self.current_cmd_idx][0]
-			print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1. Setting goto_on_exception to  {goto_on_exception}, self.next_cmd_idx = {self.next_cmd_idx}, self.current_cmd_idx = {self.current_cmd_idx}')
+			#print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1. Setting goto_on_exception to  {goto_on_exception}, self.next_cmd_idx = {self.next_cmd_idx}, self.current_cmd_idx = {self.current_cmd_idx}')
 
 
 			# If there is some skipping defined
 			if goto_on_exception != None:
 				self.next_cmd_idx = goto_on_exception
-				print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1. Setting next_cmd_idx to  {self.next_cmd_idx}')
+				#print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1. Setting next_cmd_idx to  {self.next_cmd_idx}')
 			else:
 				# If the command unit does not have defined goto skip on exception
 				# then continue with the next command.
 				self.next_cmd_idx += 1
-				print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1, goto_on_exeption = None. Setting next_cmd_idx to  {self.next_cmd_idx}')
+				#print(f'process_results: {self.commands[self.current_cmd_idx][1]} - Returned -1, goto_on_exeption = None. Setting next_cmd_idx to  {self.next_cmd_idx}')
 
 	def reset(self, commands=[]):
 

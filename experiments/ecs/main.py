@@ -63,16 +63,29 @@ Requirements
 			^^^^^^^^^^^^^^^^^^^^^^^^^
 			- very similar to Teleports implementation
 
-
-	- TODO 
-		-	Simple quest
-			^^^^^^^^^^^^
+		-	Simple  implemented
+			^^^^^^^^^^^^^^^^^^^
 			- Scenario overview
 				- Player hits NPC
 				- Player and NPC have linear conversation
 				- At the end of the conversation NPC gives item to the player (key)
 				- NPC waits until task is done
-				- Using the key, player can enter to the other map
+				- Using the key, player can enter to the other map - teleport with the key
+
+
+	- TODO  
+		-	Fix moving into collision zone even if both entities have collision set
+
+		-	Fix teleportation into the collision zone - it is impossible to move in this situation
+
+		-	Simple  implemented
+			^^^^^^^^^^^^^^^^^^^
+			- Scenario overview
+				- Player hits NPC
+				- Player and NPC have linear conversation
+				- At the end of the conversation NPC gives item to the player (key)
+				- NPC waits until task is done
+				- Using the key, player can enter to the other map - teleport with the key
 
 			- Scenario tech details
 				- Player hits NPC (NPC has key item in the inventory)

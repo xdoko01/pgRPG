@@ -48,11 +48,11 @@ def process_game_commands(debug=False):
 		result = cmd_fnc(**cmd_params)
 
 		# Notify brain about the result of the cmd unit currently on current_cmd_idx
-		print(f'\n*process_game_commands: {cmd_fnc} PRE calling process_result({result})')
+		#print(f'\n*process_game_commands: {cmd_fnc} PRE calling process_result({result})')
 
 		if brain: brain.process_result(result)
 
-		print(f'*process_game_commands: POST calling process_result: {command_queue}')
+		#print(f'*process_game_commands: POST calling process_result: {command_queue}')
 
 ########################################################
 ### Game event handler
@@ -82,10 +82,10 @@ def process_game_events():
 		event = c_event_queue.pop(0)
 
 		# Send every event to every quest for handling
-		for quest in _quests:
+		for quest_name, quest_object in _quests.items():
 
 			# Call event handler
-			quest.event_handler(event)
+			quest_object.event_handler(event)
 
 ########################################################
 ### Game world creator
@@ -162,24 +162,21 @@ def create_entities(world):
 	)
 
 	# Create GlobalScript entity		
-	#script = world.create_entity()
-	#world.add_component(script, components.Labeled(id='script_engine', name='Global Script Engine'))
-	#world.add_component(script, 
-	#	components.Brain(
-	#		commands=[
-	#			# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
-	#			(None, commands.cmd_move, {"entity" : 1, "dx" : -config.MOVE_SPEED}), #0
-	#			(0, commands.cmd_loop, {"iterations" : 5}),
-	#			(2, commands.cmd_wait_key, {"key" : 276}), # wait until space is pressed
-	#			(None, commands.cmd_move, {"entity": 2, "dy" : -config.MOVE_SPEED}), #2
-	#			(3, commands.cmd_loop, {"iterations" : 5}),
-	#			(5, commands.cmd_wait_key, {"key" : 276}), # wait until space is pressed
-	#			(None, commands.cmd_disable_brain, {"entity" : 3}),
-	#			(0, commands.cmd_goto, {}) 
-	#		]
-	#	)
-	#)
-
+	script = world.create_entity()
+	world.add_component(script, components.Labeled(id='script_engine', name='Global Script Engine'))
+	world.add_component(script, 
+		components.Brain(
+			commands=[
+				# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
+				(None, commands.cmd_move, {"entity" : 3, "dx" : -config.MOVE_SPEED}), #0
+				(0, commands.cmd_loop, {"iterations" : 100}), #1
+				(None, commands.cmd_move, {"entity": 3, "dy" : -config.MOVE_SPEED}), #2
+				(2, commands.cmd_loop, {"iterations" : 20}), #3
+				(None, commands.cmd_toggle_brain, {"entity" : 3, "enable" : False}), #4
+				(0, commands.cmd_goto, {})  #5
+			]
+		)
+	)
 
 	# Create static teleport
 	teleport = world.create_entity()
@@ -191,6 +188,53 @@ def create_entities(world):
 	world.add_component(teleport, components.Collidable(32,32))
 	world.add_component(teleport, components.Camera(screen_pos_x=310, screen_pos_y=310, screen_width=300, screen_height=300))
 	world.add_component(teleport, components.Teleport(dest_map=_maps.get('map01', None), dest_x=764, dest_y=164, key=item))
+
+	# Create key to the cellar
+	key = world.create_entity(components.Labeled(id='key01', name='Key to the cellar'))
+	#world.add_component(key, components.Transform(x=800, y=200, map=_maps.get('map01', None)))
+	world.add_component(key, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "key.png")))
+	world.add_component(key, components.Collidable(20,20))
+	world.add_component(key, components.Pickable())
+
+	# Create NPC
+	npc = world.create_entity(components.Labeled(id='npc01', name='Merchant'))
+	world.add_component(npc, components.Transform(x=800, y=200, map=_maps.get('map01', None)))
+	world.add_component(npc, components.Motion(dx=0, dy=0))	
+	world.add_component(npc, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "npc.png")))
+	world.add_component(npc, components.Collidable(40,40))
+	world.add_component(npc, components.HasInventory(inventory=[key]))
+	world.add_component(npc, components.CanTalk())
+	world.add_component(npc, components.Debug())
+	world.add_component(npc, 
+		components.Brain(
+			commands=[
+				# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
+				### Move Left
+				(None, 	commands.cmd_move, {"dx" : -config.MOVE_SPEED}), #0
+				(0, 	commands.cmd_loop, {"iterations" : 30}), #1
+				### Wait and show text
+				(2, 	commands.cmd_show_dialog, {"time" : 3000, "text" : '... who will help me ...?'}), #2
+				### Move Right
+				(None, 	commands.cmd_move, {"dx" : config.MOVE_SPEED}), #3
+				(3, 	commands.cmd_loop, {"iterations" : 30}), #4
+				### Wait and show text
+				(5, 	commands.cmd_show_dialog, {"time" : 3000, "text" : '... Somebody please help me !!'}), #5
+				(0, 	commands.cmd_goto, {}) #10
+			]
+		)
+	)
+
+	# Print entity mappings
+	print({
+		'player' : player,
+		'item' : item,
+		'teleport' : teleport,
+		'camera' : camera,
+		'key' : key,
+		'npc' : npc,
+		'script' : script
+	})
+
 
 def create_processors(world):
 	
@@ -219,8 +263,11 @@ def create_processors(world):
 	# Item Collision processor
 	collision_item_processor = processors.CollisionItemProcessor(c_event_queue)
 
-	# Collision corrector processor
-	collision_corrector_processor = processors.CollisionCorrectorProcessor()
+	# Entity Collision processor
+	collision_entity_processor = processors.CollisionEntityProcessor(c_event_queue)
+
+	# Collision position corrector processor - OBSOLETE - substituted by CollisionEntityProcessor
+	#collision_corrector_processor = processors.CollisionCorrectorProcessor()
 
 	# Camera processor - update position of the camera
 	update_camera_offset_processor = processors.UpdateCameraOffsetProcessor()
@@ -253,7 +300,8 @@ def create_processors(world):
 	world.add_processor(collision_entity_generator_processor)	# Fills information about which entities collided together into the Collision components
 	world.add_processor(collision_teleport_processor)	# Resolves teleport collisions + generates events to the main program where those can be further processed
 	world.add_processor(collision_item_processor)		# Resolves item pickups collisions + generates events to the main program where those can be further processed
-	world.add_processor(collision_corrector_processor)	# Fixes positions of collided entities
+	world.add_processor(collision_entity_processor)		# Resolves entity collisions + generates events to the main program where those can be further processed
+	#world.add_processor(collision_corrector_processor)	# Fixes positions of collided entities - OBSOLETE - substituted by CollisionEntityProcessor
 
 	### Process all events that were generated by collision processors	
 	world.add_processor(game_events_processor)	# Based on events generated by the collisions (teleportation, item pickups) now is the time to see if there are some game actions that we want to do - e.g. cinematics
@@ -285,10 +333,10 @@ def main():
 	# All quests are here
 	global _quests
 
-	_quests = []
+	_quests = {}
 
 	sample_quest = quest.Quest()
-	_quests.append(sample_quest)
+	_quests.update({'test_quest' : sample_quest})
 
 	# All maps are here
 	global _maps

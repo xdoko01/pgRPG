@@ -4,7 +4,7 @@ import core.config.config as config
 
 import pygame
 import random
-import time
+import time 
 import logging
 
 from functools import wraps
@@ -275,6 +275,16 @@ class RenderProcessor(esper.Processor):
 				# Blit debug information
 				for debug_entity , (deb_comp, trans_comp) in self.world.get_components(components.Debug,components.Transform):
 
+					# Print labels
+					try:
+						label_debug = self.world.component_for_entity(debug_entity, components.Labeled)
+						text = str(debug_entity) + ', ' + str(label_debug.id) + ', ' + str(label_debug.name)
+						pos = deb_comp.font.render(text, True, pygame.Color('black'))
+						cam_cam.screen.blit(pos, self.apply_camera(cam_cam, self.centre_sprite((trans_comp.x, trans_comp.y - 10))))
+					except KeyError:
+						pass
+
+					
 					# Print possition
 					try:
 						trans_debug = self.world.component_for_entity(debug_entity, components.Transform)
@@ -528,6 +538,49 @@ class CollisionItemProcessor(esper.Processor):
 						# Report that item was picked up - generate event
 						teleport_event = Event('ITEM_PICKUP', ent, col_event_entity, params={'item' : ent, 'picker' : col_event_entity})
 						self.item_pickup_event_queue.append(teleport_event)
+
+
+# TODO - this does not work well - collision of player and npc with brain does not work - player cannot colide but npc can walk into the player
+class CollisionEntityProcessor(esper.Processor):
+	''' It is basically CollisionCorrectorProcessor but also generates events
+	on collisions
+	'''
+
+	def __init__(self, entity_coll_event_queue):
+		super().__init__()
+		self.entity_coll_event_queue = entity_coll_event_queue
+
+	@time_dec
+	def process(self, *args, **kwargs):
+		for ent, (collision, transform) in self.world.get_components(components.Collidable, components.Transform):
+
+			# If some collision occured, the collision_event set is not empty
+			if collision.collision_events:
+				
+				# Fix position for the entity that has moved
+				transform.x = transform.lastx
+				transform.y = transform.lasty
+
+			# Process everything that collided with entity ent
+			for col_event_entity in collision.collision_events.copy():
+
+				# Report that entity collision occured - generate event
+				collision_event = Event('COLLISION', ent, col_event_entity, params={'entity1' : ent, 'entity2' : col_event_entity})
+				self.entity_coll_event_queue.append(collision_event)
+
+				# Fix position for the entity that has moved
+				#transform.x = transform.lastx
+				#transform.y = transform.lasty
+
+				##### All below is for removal of collision event from the entities
+				# Get the Collidable component of the entity - in order to remove the collision
+				col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+
+				# Remove the col event related to item from the Entity
+				col_event_entity_coll.collision_events.remove(ent)
+
+				# Remove the col_event_entity from  entity
+				collision.collision_events.remove(col_event_entity)
 
 
 class CollisionCorrectorProcessor(esper.Processor):
