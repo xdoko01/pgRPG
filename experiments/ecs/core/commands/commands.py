@@ -1,11 +1,75 @@
 import core.engine as engine # To reference the world 
 import core.ecs.components as components # To work with components in commands (remove search add ...)
 
+import math # for calculation of square root move_to
+
 import pygame.time # pygame.ime
 
 # TODO - commands for implementation
 #	move to x,y
 #	move to entity
+
+def cmd_move_to(*args, **kwargs):
+	''' Move to certain x,y position on the current map.
+	Returns exception until the destination is reached. So it needs to be
+	redirected to itself in order to repeat this command until destination is reached. 
+
+	TODO - change direction not immediatelly but after some time or number of steps
+	'''
+
+	# Who (entity) needs to move
+	entity = kwargs.get("entity")
+	
+	# Get the target coordinates
+	tx = kwargs.get("x", None)
+	ty = kwargs.get("y", None)
+
+	# Get the coordinate of the entity and the target 
+	trans = engine.world.component_for_entity(entity, components.Transform)
+	motion = engine.world.component_for_entity(entity, components.Motion)
+
+	sign = lambda x: 1 if x>0 else (-1 if x<0 else 0)
+
+	# If the distance is close, close the gap and end
+	if math.sqrt( (tx - trans.x)**2 + (ty - trans.y)**2 ) < 10:
+		trans.x = tx
+		trans.y = ty
+
+		return 0
+	
+	# If gap is big, continue
+	else:
+		# Create movement so to minimise the distance between entity and the target
+		if abs(tx - trans.x) > abs(ty - trans.y):
+			# Close on x-axis
+			cmd_move(entity=entity, dx=sign(tx - trans.x) * 120)
+		else:
+			# Close on y-axis
+			cmd_move(entity=entity, dy=sign(ty - trans.y) * 120)			
+
+		return -1
+
+def cmd_disable_talk(*args, **kwargs):
+	''' Finish speaking when global brain wants to run cinematics
+	'''
+
+	# Get entity to stop speaking
+	talk_ent = kwargs.get("entity", None)
+
+	# Get CanTalk component for the entity
+	try:
+		can_talk = engine.world.component_for_entity(talk_ent, components.CanTalk)
+
+		# Set text to empty string
+		can_talk.text = ''
+		
+		# Successful finished
+		return 0
+
+	except KeyError:
+		
+		# Entity does not have component CanTalk
+		return -1
 
 def cmd_set_quest_phase(*args, **kwargs):
 	''' In the game cinematics processor, it may come to the point when I want to proceed
@@ -86,6 +150,12 @@ def cmd_add_to_inventory(*args, **kwargs):
 	receiver_ent = kwargs.get("entity", None)
 	item_ent = kwargs.get("item", None)
 
+	# First try to find value based on key in _entity_map. If nothing found, use item (integer)
+	# If entity nod defined by integer, raise error
+	item = kwargs.get("item", None)
+	item_ent = engine._entity_map.get(item, item)
+	assert(isinstance(item_ent, int), f'Entity {item} is not defined and/or must be an integer')
+	
 	# Get HasInventory component for receiver entity - if it has one
 	try:
 		has_inventory = engine.world.component_for_entity(receiver_ent, components.HasInventory)
@@ -110,12 +180,19 @@ def cmd_remove_from_inventory(*args, **kwargs):
 	giver_ent = kwargs.get("entity", None)
 	item_ent = kwargs.get("item", None)
 
+	# First try to find value based on key in _entity_map. If nothing found, use item (integer)
+	# If entity nod defined by integer, raise error
+	item = kwargs.get("item", None)
+	item_ent = engine._entity_map.get(item, item)
+	assert(isinstance(item_ent, int), f'Entity {item} is not defined and/or must be an integer')
+
 	# Get HasInventory component for giver entity - if it has one
 	try:
 		has_inventory = engine.world.component_for_entity(giver_ent, components.HasInventory)
 
 		# If the item is passed, remove it from the inventory
-		if item_ent: has_inventory.inventory.remove(item_ent)
+		if item_ent in has_inventory.inventory: 
+			has_inventory.inventory.remove(item_ent)
 		
 		print(f'Entity {item_ent} successfully removed from the inventory')
 		# Successful finished
@@ -178,6 +255,28 @@ def cmd_toggle_brain(*args, **kwargs):
 	except KeyError:
 		return -1
 
+def cmd_toggle_motion(*args, **kwargs):
+	'''
+	'''
+
+	# Get entity whose motion we need to freeze from cmd parameters
+	entity = kwargs.get("entity", None)
+	toggle = kwargs.get("enable", True)
+
+
+	# Get motion component for this entity - if it has one
+	try:
+		motion = engine.world.component_for_entity(entity, components.Motion)
+
+		# Disable the motion
+		motion.enabled = toggle
+
+		# Successful finished
+		return 0
+
+	except KeyError:
+		return -1
+
 def cmd_show_dialog(*args, **kwargs):
 	''' Show text dialog
 	'''
@@ -191,23 +290,37 @@ def cmd_show_dialog(*args, **kwargs):
 	brain = kwargs.get("brain", None)
 	text = kwargs.get("text", '')
 	time = kwargs.get("time", 0)
-	
+
+	# Read the pressed keys
+	keys = pygame.key.get_pressed()	
+
 	current_time = pygame.time.get_ticks()
-	
-	if current_time - brain.cmd_first_call_time >= time:
+
+	# time for every character to display
+	d_char = time / len(text) if len(text) != 0 else 0
+
+	# If text displayed long enough or SPACE is pressed then end
+	if (current_time - brain.cmd_first_call_time >= time) or keys[pygame.K_SPACE]:
 		
 		# Text has been shown long enough - continue without exception and reset the text
 		# in can_talk component (as a result it will not be drawn by the render function)
-		can_talk.text = ''		
+		can_talk.text = ''
 
 		return 0
 	else:
 		# There is still some time to display the text - return exception
 
-		# TODO - maybe only for the first time it is called last_idx <> next_idx condition
+		# Only show for the first time it is called last_idx <> next_idx condition
 		if brain.last_cmd_idx != brain.next_cmd_idx:
 			can_talk.text = text
 			(can_talk.text_surf, can_talk.text_rect) = can_talk.font_object.render(can_talk.text, (0,0,255), None)
+
+		# Display text as animated effect
+		# each character must be displayed time/length
+		#char_to_show = (current_time - brain.cmd_first_call_time) // d_char
+
+		#can_talk.text = text[:int(char_to_show)]
+		#(can_talk.text_surf, can_talk.text_rect) = can_talk.font_object.render(can_talk.text, (0,0,255), None)
 
 		return -1
 
@@ -267,13 +380,13 @@ def cmd_none(*args, **kwargs):
 	''' Empty command - Null object pattern.
 	It is useful if we want some action keys to do nothing
 	'''
+	print(f'None command executed')
 	return 0
 
 def cmd_move(*args, **kwargs):
 	''' Pass whatever information you think are necessary for the command
 	and let the command utilize them or not
 	'''
-
 	# Get parameters for movement
 	entity = kwargs.get("entity")
 	
@@ -293,18 +406,68 @@ def cmd_move(*args, **kwargs):
 		motion.dx = dx if dx else motion.dx
 		motion.dy = dy if dy else motion.dy
 
-	except KeyError:
-		print(f'Entity {entity} does not have Motion component.')
+		return 0
 
-	finally:
-		# Mark that command has finished. Important for Brain processor
-		return 0 
+	except KeyError:
+		
+		return -1
 
 def cmd_disable_collision(*args, **kwargs):
 	'''
 	'''
 	entity = kwargs.get("entity")
 	engine.world.remove_component(entity, components.Collidable)		
+
+def cmd_face_entity(*args, **kwargs):
+	''' Change the direction of the entity so that it faces other entity.
+	'''
+
+	# Get the entity whose direction needs to be changed
+	entity = kwargs.get("entity")
+	
+	# Get the entity towards the entity should face
+	face_to = kwargs.get("face", None)
+
+	face_ent = engine._entity_map.get(face_to, face_to)
+	assert(isinstance(face_ent, int), f'Entity {face_ent} is not defined and/or must be an integer')
+
+	# Sign function
+	sign = lambda x: -1 if x<0 else (1 if x>0 else 0)
+
+	try:
+		# Get the Transform component from the entity
+		trans_entity = engine.world.component_for_entity(entity, components.Transform)
+		
+		# Get the Transform component from the Face to entity
+		trans_face = engine.world.component_for_entity(face_ent, components.Transform)
+		
+		# if possitive, trans_entity must face Right
+		x_dir = trans_face.x - trans_entity.x
+		# if positive, trans_entity must face Down
+		y_dir = trans_face.y - trans_entity.y
+
+		# turn left or right
+		if abs(x_dir) > abs(y_dir):
+			trans_entity.direction = (sign(x_dir), 0)
+		# turn up or down
+		else:
+			trans_entity.direction = (0, sign(y_dir))
+
+		# Direction successfully updated
+		print(f'Face CMD: Direction of entity {entity} changed to {trans_entity.direction }')
+		return 0
+
+	except KeyError:
+		
+		# Error, direction not updated
+		return -1
+
+###
+def get_cmd_fnc(cmd_str):
+	''' Returns the function implementing command that is represented by the string.
+	In case the command is not recognized, empty command is returned
+	'''
+	return CMD_DICT.get(cmd_str, cmd_none)
 
 CMD_DICT = {
 	'loop' : cmd_loop,
@@ -313,11 +476,19 @@ CMD_DICT = {
 	'goto' : cmd_goto,
 	'none' : cmd_none,
 	#####
+	'move_to' : cmd_move_to,
+	#####
+	'face_entity' : cmd_face_entity,
+	'disable_talk' : cmd_disable_talk,
 	'add_screen' : cmd_add_screen,
 	'remove_screen' : cmd_remove_screen,
 	'toggle_control' : cmd_toggle_control,
 	'toggle_brain' : cmd_toggle_brain,
+	'toggle_motion' : cmd_toggle_motion,
 	'show_dialog' : cmd_show_dialog,
 	'move' : cmd_move,
-	'disable_collision' : cmd_disable_collision
+	'disable_collision' : cmd_disable_collision,
+	'remove_from_inventory' : cmd_remove_from_inventory,
+	'add_to_inventory' : cmd_add_to_inventory,
+	'set_quest_phase' : cmd_set_quest_phase
 }

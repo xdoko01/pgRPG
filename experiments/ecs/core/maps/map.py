@@ -1,14 +1,26 @@
 import core.config.config as config
 
 import pygame
+from itertools import product
+
 
 ########################################################
 ### Map class
 ########################################################
 
+def rect_to_bb(rect):
+	''' Convert rectancle to start and end
+	coordinates'
+	'''
+	x, y, w, h = rect
+	return x, y, x + w - 1, y + h - 1
+
+
 class Map:
 
-	def __init__(self):
+	def __init__(self, map_name):
+		self.name = map_name
+		
 		self.ground_layer = [
 			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 			[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -75,6 +87,8 @@ class Map:
 			[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 		]
 
+		self.visible_tile_layers = ['ground', 'wall']
+
 		ground_tile = pygame.image.load(config.IMAGE_PATH + "ground_tile.png").convert()
 		wall_tile = pygame.image.load(config.IMAGE_PATH + "wall_tile.png").convert()
 
@@ -88,12 +102,62 @@ class Map:
 			1 : ground_tile,
 			2 : wall_tile
 		}
-
-	def get_tile(self, layer, map_x, map_y) -> pygame.Surface:
-		''' Return the Surface of the particular tile
-		'''
-		if layer == 'ground':
-			return self.tileset.get(self.ground_layer[map_y][map_x])
 	
-		elif layer == 'wall':
-			return self.tileset.get(self.wall_layer[map_y][map_x])
+	def get_tile_images_by_rect(self, layer, rect):
+		''' Get all the map tiles that are in the camera view as
+		an iterator.
+
+			:type rect: tuple ... rectancle of camera in pixel coordinates
+		'''
+
+		# Convert the camera rectancle tuple to variables
+		# x1,y1 specifies top left corner in pixel coordinates
+		# x2,y2 specifies botom right corner in pixel coordinates
+		
+		(x1, y1, x2, y2) = rect
+
+		# Calculate the topleft and bottom-right tile map cell positions to display
+		x1 = int(x1 // config.TILE_RES)
+		y1 = int(y1 // config.TILE_RES)
+		x2 = int(x2 // config.TILE_RES)
+		y2 = int(y2 // config.TILE_RES)
+
+		for y, x in product(range(y1, y2 + 1), range(x1, x2 + 1)):
+			tile = self.get_tile_image(x, y, layer)
+			if tile:
+				yield x, y, tile
+
+		'''
+		 			try:
+                        # animated, so return the correct frame
+                        yield x, y, l, at[(x, y, l)]
+				        #self._animated_tile = dict()     # mapping of tile substitutions when animated
+
+
+                    except KeyError:
+
+                        # not animated, so return surface from data, if any
+                        yield x, y, l, images[gid]
+		'''
+
+	def get_tile_image(self, map_x, map_y, layer) -> pygame.Surface:
+		''' Return the Surface of the particular tile
+		 try:
+            # animated, so return the correct frame
+            return self._animated_tile[(x, y, l)]
+
+        except KeyError:
+
+            # not animated, so return surface from data, if any
+            return self._get_tile_image(x, y, l)
+
+		'''
+		try:
+			if layer == 'ground':
+				return self.tileset.get(self.ground_layer[map_y][map_x], None)
+		
+			elif layer == 'wall':
+				return self.tileset.get(self.wall_layer[map_y][map_x], None)
+		except IndexError:
+			# in cases that we are asking for out of map cells
+			return None

@@ -3,6 +3,15 @@
 Requirements
 	-	esper - https://github.com/benmoran56/esper
 
+	Solved situations
+		-	Q: 	How to implement translation from entity_id to game_id in quest event processing?
+			A: 	Keeping dictionary of entity names and entity ids on Engine module level.
+
+		-	Q: 	How to fix moving into collision zone even if both entities have collision set?
+			A: 	All movement (even corrective movements after collision) must be implemented as move command
+				and pushed into command queue. Otherwise, by correction using lastx, lasty etc. entity will get stuck
+				eventually.
+
 	Features
 		-	Architecture Design implemented
 			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -63,8 +72,14 @@ Requirements
 			^^^^^^^^^^^^^^^^^^^^^^^^^
 			- very similar to Teleports implementation
 
-		-	Simple  implemented
-			^^^^^^^^^^^^^^^^^^^
+		-	Global brain implemented (Global Script processor)
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			- It is implemented as just entity with just BRAIN component. 
+			- Every command must have parameter entity specified because if it is not specified then the command is trying to be executed
+			on the source entity (which does not make sence for the global Script processor)
+
+		-	Simple quest implemented
+			^^^^^^^^^^^^^^^^^^^^^^^^
 			- Scenario overview
 				- Player hits NPC
 				- Player and NPC have linear conversation
@@ -72,105 +87,47 @@ Requirements
 				- NPC waits until task is done
 				- Using the key, player can enter to the other map - teleport with the key
 
+		-	Save and Load game implemented
+			^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			- Using pickle library
+			- First all engine global objects are put into the dictionary called game_state (command queue, event queue, maps, quests and ecs world)
+			- pygame.Surface objects are not serializable, so before saving it was necessary to set every such reference to none (on both components
+				and processors)
+			- After saving those references must be refreshed in order to keep the game going - it is done using pre_save and post_load methods
+				and the logic happens in save_game and load_game functions.
+			- During the game, pressing F1 saves the game and pressing F2 loads the game
 
-	- TODO  
-		-	Fix moving into collision zone even if both entities have collision set
+	- TODO
+
+		-	clear and comment the 
+		
+		-	document - diagrams
+			-	event processing
+			-	command processing
+			-	collision processing - whenever you move, use commands!!!
+
+
+		-	command move to place, move to entity, search etc
+
+		-	Implement pygame.math.Vector2 for all positions used in the game
+		
+		-	Show text command to have time parameter but also to disapear when space is pressed (or action key)
+
+		-	Text buble aligment of the text (wrapping)
+
+		-	Some command that will have the whole dialog on input as dictionary/list and will rule the whole conversation
+	
+		-	How to add some cinematics into teleportation? Fadeouts etc???
+
+	- BUGS
 
 		-	Fix teleportation into the collision zone - it is impossible to move in this situation
 
-		-	Simple  implemented
-			^^^^^^^^^^^^^^^^^^^
-			- Scenario overview
-				- Player hits NPC
-				- Player and NPC have linear conversation
-				- At the end of the conversation NPC gives item to the player (key)
-				- NPC waits until task is done
-				- Using the key, player can enter to the other map - teleport with the key
 
-			- Scenario tech details
-				- Player hits NPC (NPC has key item in the inventory)
-					- define collision event between player and NPC
-				- Player and NPC have linear conversation
-				- At the end of the conversation NPC gives item to the player (key)
-					- collision event triggers following actions
-						- Fill GlobalBrain with following commands
-							- Stop Brain processing to both Player and NPC (cmd_disable_brain)
-							- Stop Controlls to the PLAYER and NPC (cmd_toggle_control)
-							- Show text bubble to Player - 'HI, do jou have some job for me?'
-							- Wait for any key
-							- Show text buble to NPC - 'Sure, I need to get rid of those bloody rats.'
-							- Wait for any key
-							- Show text bubble to Player - 'No, problem. Where can I find them?'
-							- Wait for any key
-							- Show text buble to NPC - 'They are in the cellar. Here is the key'
-							- Wait for any key
-							- NPC gives item to Player(Key) (cmd_add_to_inventory, cmd_remove_to_inventory)
-							- Show text buble to Player - 'Thanks.'
-							- Wait for any key
-							- Add camera component to the NPC (cmd_add_screen)
-							- Resume Brain processing for Player and NPC (cmd_enable_brain)
-							- Resume Controlls to the Player and NPC (cmd_toggle_control)
-				- NPC waits until task is done
-					- change quest phase from 1 to 2 (cmd_set_quest_phase)
-					- collision event definition (if collision with NPC and phase = 2)
-						- Fill GlobalBrain with following commands
-							- Stop Brain processing to both Player and NPC (cmd_disable_brain)
-							- Stop Controlls to the PLAYER and NPC (cmd_toggle_control)
-							- Show text bubble to Player - 'Hi, its harder than I though'
-							- Wait for any key
-							- Show text buble to NPC - 'Go on, finish them all'
-							- Wait for any key
-							- Resume Brain processing for Player and NPC (cmd_enable_brain)
-							- Resume Controlls to the Player and NPC (cmd_toggle_control)
-				- Using the key, player can enter to the other map
-					- collision event with teleport - condition is that Player has the key 
+	- IMPROVE
 
-
-
-
-
-
-		-	Implement global brain - entity that can rule everyhting in the world using
-			commands.
-			- It can be entity with just BRAIN component. But every command must have parameter
-			entity specified because if it is not specified then the command is trying to be executed
-			on the source entity (which does not make sence for the global Script processor)
-		
-
-		-	How to implement translation from entity_id to game_id in quest event processing
-
-		-	How to implement showing conversation between characters and the player
-			- player hits the character
-			- character stops
-			- player pops a message (Get out of my way)
-			- player cannot move when the message is displayed
-			- message is displayed for 5 seconds or until space is pressed
-			- after that character pops a message (Mind your own business)
-			- message is displayed for 5 seconds or until space is pressed
-			- both player and character can move now
-			------------------------------------------
-			- hit event reaction
-			- function to prevent movement and function to enable movement (parameter in Input component. When disabled, space is enabled)
-			- function for displaying message based on TRANS of the entity - create temp component text message (CanSpeak) with texts to speak??? Yes.
-				- by doing this way, I only adjust render function to take into account CanSpeak ...
-			- 5 sec delay or space - delay can be in CanSpeak component or must be govern by event actions - display text -> wait or space -> display text
-			
-
-		-	How to implement that global cinematics script processor - i.e. player is out of control, just watching and pressing space on text dialogs
-		-	How to implement dialog and then adding some new item to the inventory of the player
-		-	How to implement that teleport works only 3 times and then it stops working.
-		
-
-		-	How to implement Quests
-		-	How to implement Cutscenes
-		-	How to add some cinematics into teleportation? Fadeouts etc???
-
-		
 		-	Improve speed
 		-	Implement comand to stop and wait for specific key to press
-		-	Move speed implement as a parameter of some processor
-		-	Implement pygame.math.Vector2 for all positions used in the game
-		-	Implement tile_res=64 as a parameter of render processor for all (defaut 64)
 		-	Improve collision with the map
 		-	Improve collision amongst entities
 		-	Improve rendering speed 

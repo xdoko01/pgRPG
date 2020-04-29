@@ -1,0 +1,284 @@
+{
+	"id" : "q01",
+	"name" : "Kill the Rats",
+	"description" : "Once upon the time there was a merchant who had problem with rats in his cellar.",
+	"objective" : "Kill all the rats in the cellar.",
+	"init_phase" : "phase01",
+
+	"phases" : {			
+		"phase01" :{
+			"name" : "Meeting the merchant",
+			"objective" : "Speak to the merchant and get the key to the cellar",
+			"maps" : "map01",
+			
+			"cleanup" : [],
+
+			"entities" : [
+				{
+					"id" : "player01",
+					"templates" : ["player"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
+						{"type" : "Transform", "params" : {"x" : 200, "y" : 200, "map" : "map01"}},
+						{"type" : "Controllable", "params" :  {
+							"control_keys" : {}, 
+							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move"}
+							}
+						},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 300, "screen_height" : 300}},
+						{"type" : "Debug", "params" : {}}
+					]
+				},
+				{
+					"id" : "item01",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "item01", "name" : "Static Item"}},
+						{"type" : "Transform", "params" : {"x" : 300, "y" : 300, "map" : "map01"}},
+						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "Renderable", "params" : {"image" : "item.png"}},
+						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 310, "screen_width" : 300, "screen_height" :300}},
+						{"type" : "Pickable", "params" : {}}
+					]
+				},
+				{
+					"id" : "camera01",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
+						{"type" : "Transform", "params" : {"x" : 400, "y" : 300, "map" : "map01"}},
+						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "Controllable", "params" :  {
+							"control_keys" : {"up" : 119, "down" : 115, "left" : 97, "right" : 100}, 
+							"control_cmds" : {"up": "none", "down": "move", "left": "move", "right": "move"}
+							}
+						},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 310, "screen_pos_y" : 0, "screen_width" : 300, "screen_height" :300}},
+						{"type" : "CanTalk", "params" : {}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Brain", "params" : {"commands" : [
+							[null, 	"move", {"dx" : -120}],
+							[0, 	"loop", {"iterations" : 1}],
+							[null, 	"move", {"dy" : -120}],
+							[2, 	"loop", {"iterations" : 1}],
+							[null, 	"move", {"dx" : 120}],
+							[4, 	"loop", {"iterations" : 1}],
+							[null, 	"move", {"dy" : 120}],
+							[6, 	"loop", {"iterations" : 1}],
+							[8, 	"show_dialog", {"time" : 1000, "text" : "Hello world!"}],
+							[9, 	"wait_key", {"key" : 276}],
+							[0, 	"goto", {}]
+						]}}
+					]
+				},
+				{
+					"id" : "script_engine",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "script_engine", "name" : "Global Script Engine"}},
+						{"type" : "Brain", "params" : {"commands" : []}}
+					]
+				},
+				{
+					"id" : "tele01",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
+						{"type" : "Transform", "params" : {"x" : 400, "y" : 400, "map" : "map01"}},
+						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "Renderable", "params" : {"image" : "teleport.png"}},
+						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 310, "screen_pos_y" : 310, "screen_width" : 300, "screen_height" : 300}},
+						{"type" : "Teleport", "params" : {"dest_map" : "map01", "dest_x" : 200, "dest_y" : 1000, "key" : "item01"}}
+					]
+				},
+				{
+					"id" : "key01",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "key01", "name" : "Key to the cellar"}},
+						{"type" : "Collidable", "params" : {"x" : 20, "y" : 20}},
+						{"type" : "Renderable", "params" : {"image" : "key.png"}},
+						{"type" : "Pickable", "params" : {}}
+					]
+				},
+				{
+					"id" : "npc01",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
+						{"type" : "Transform", "params" : {"x" : 800, "y" : 200, "map" : "map01"}},
+						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "Renderable", "params" : {"image" : "npc.png"}},
+						{"type" : "Collidable", "params" : {"x" : 40, "y" : 40}},
+						{"type" : "HasInventory", "params" : {"inventory" : ["key01"]}},
+						{"type" : "CanTalk", "params" : {}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Brain", "params" : {"commands" : [
+							[null, 	"move", {"dx" : -120}],
+							[0, 	"loop", {"iterations" : 30}],
+							[2, 	"show_dialog", {"time" : 3000, "text" : "... who will help me ...?"}],
+							[null, 	"move", {"dx" : 120}],
+							[3, 	"loop", {"iterations" : 30}],
+							[5, 	"show_dialog", {"time" : 3000, "text" : "... Somebody please help me !!"}],
+							[0, 	"goto", {}]
+						]}}
+					]
+				},
+				{
+					"id" : "npc02",
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
+						{"type" : "Renderable", "params" : {"image" : "npc.png"}},
+						{"type" : "Transform", "params" : {"x" : 400, "y" : 1100, "map" : "map01"}},
+						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 700, "screen_pos_y" : 700}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Brain", "params" : {"commands" : [
+							[0, 	"move_to", {"x" : 100, "y" : 1100}],
+							[1, 	"move_to", {"x" : 400, "y" : 1000}],
+							[0, 	"goto", {}]
+						]}}
+
+					]
+				}
+			],
+
+			"event_handling" : {
+			
+				"COLLISION" : [
+					{
+						"conditions" : {
+							"params" : {
+								"entity1" : "player01",
+								"entity2" : "npc01"
+							},
+							"script" : "self.phase_id == 'phase01'"
+						},
+						"actions" : [
+							["execute_script", {"script_body" : "print(f'Modifying Global Brain')"}],
+							["modify_brain", {
+								"entity" : "script_engine",
+								"commands" : [
+									[null, "disable_talk", {"entity" : "player01"}],
+									[null, "disable_talk", {"entity" : "npc01"}],
+									
+									[null, "toggle_brain", {"entity" : "player01", "enable" : false}], 
+									[null, "toggle_brain", {"entity" : "npc01", "enable" : false}], 
+									
+									[null, "toggle_control", {"entity" : "player01", "enable" : false}], 
+									[null, "toggle_control", {"entity" : "npc01", "enable" : false}], 
+									
+									[null, "toggle_motion", {"entity" : "player01", "enable" : false}], 
+									[null, "toggle_motion", {"entity" : "npc01", "enable" : false}], 
+									
+									[null, "face_entity", {"entity" : "npc01", "face" : "player01"}], 
+									[null, "face_entity", {"entity" : "player01", "face" : "npc01"}], 
+										
+									[10, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi, do jou have some job for me?"}],
+									
+									[11, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "Sure, I need to get rid of those bloody rats."}],
+									
+									[12, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "No, problem. Where can I find them?"}], 
+									
+									[13, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "They are in the cellar. Here is the key"}], 
+									
+									[null, "remove_from_inventory", {"entity" : "npc01", "item" : "key01"}], 
+									[null, "add_to_inventory", {"entity" : "player01", "item" : "key01"}], 
+									
+									[16, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Thanks!"}], 
+									
+									[null, "add_screen", {"entity" : "npc01", "screen_pos_x" : 0, "screen_pos_y" : 400, "screen_width" : 300, "screen_height" : 300}], 
+									
+									[null, "toggle_motion", {"entity" : "player01", "enable" : true}], 
+									[null, "toggle_motion", {"entity" : "npc01", "enable" : true}], 
+									
+									[null, "toggle_brain", {"entity" : "player01", "enable" : true}], 
+									[null, "toggle_brain", {"entity" : "npc01", "enable" : true}], 
+									
+									[null, "toggle_control", {"entity" : "player01", "enable" : true}], 
+									[null, "toggle_control", {"entity" : "npc01", "enable" : true}], 
+											
+									[null, "set_quest_phase", {"quest" : "test_quest", "phase" : "phase02"}]
+									]
+								}
+							]
+						]
+					},
+					{
+						"conditions" : {
+							"params" : {
+								"entity1" : "player01",
+								"entity2" : "npc01"
+							},
+							"script" : "self.phase_id == 'phase02'"
+	
+						},
+						"actions" : [
+							["execute_script", {"script_body" : "print(f'Modifying Global Brain')"}],
+							["modify_brain", {
+								"entity" : "script_engine", 	 
+								"commands" : [
+									[null, "disable_talk", {"entity" : "player01"}],
+									[null, "disable_talk", {"entity" : "npc01"}],
+
+									[null, "toggle_brain", {"entity" : "player01", "enable" : false}], 
+									[null, "toggle_brain", {"entity" : "npc01", "enable" : false}], 
+
+									[null, "toggle_control", {"entity" : "player01", "enable" : false}], 
+									[null, "toggle_control", {"entity" : "npc01", "enable" : false}], 
+
+									[null, "toggle_motion", {"entity" : "player01", "enable" : false}], 
+									[null, "toggle_motion", {"entity" : "npc01", "enable" : false}], 
+
+									[null, "face_entity", {"entity" : "npc01", "face" : "player01"}], 
+									[null, "face_entity", {"entity" : "player01", "face" : "npc01"}], 
+
+									[10, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi, its harder than I though"}], 
+
+									[11, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "Go on, finish them"}], 
+
+									[null, "toggle_motion", {"entity" : "player01", "enable" : true}], 
+									[null, "toggle_motion", {"entity" : "npc01", "enable" : true}], 
+
+									[null, "toggle_brain", {"entity" : "player01", "enable" : true}], 
+									[null, "toggle_brain", {"entity" : "npc01", "enable" : true}], 
+
+									[null, "toggle_control", {"entity" : "player01", "enable" : true}], 
+									[null, "toggle_control", {"entity" : "npc01", "enable" : true}]
+									]
+								}
+							]
+						]
+					}				
+				],
+	
+				"TELEPORTATION" : [
+					{
+						"conditions" : {
+							"params" : {
+								"teleport" : "tele01",
+								"teleportee" : "player01"
+							},
+							"function" : ["script_condition_example", { "test_param" : "this is not atest"}]
+						},
+						"actions" : [ 
+							["execute_script", { "script_body" : "pygame.time.wait(500)" }], 
+							["script_shake_screen", {}], 
+							["script_disable_teleport", {}],
+							["modify_brain", {
+								"entity" : "player01", 
+								"commands" : [
+									[0, "show_dialog", {"time" : 5000, "text" : "I have just been teleported!"}]
+									]
+								}
+							]
+						]
+					}
+				]
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

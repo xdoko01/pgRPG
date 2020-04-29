@@ -1,0 +1,8 @@
+{
+	"id" : "player",
+	"templates" : ["human"],
+	"components" : [
+		{"type" : "Renderable", "params" : {"image" : "player.png"}},
+		{"type" : "HasInventory", "params" : {}}
+	]
+}

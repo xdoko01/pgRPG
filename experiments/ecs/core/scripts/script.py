@@ -15,7 +15,7 @@ def modify_brain(event=None, *args, **kwargs):
 	''' Called from quest 
 	'''
 	# Get the entity whose brain I will be working with
-	entity = kwargs.get("entity", None)
+	entity = engine._entity_map.get(kwargs.get("entity", None))
 
 	# Get the brain of the entity
 	try:
@@ -68,7 +68,7 @@ def script_shake_screen(event, *args, **kwargs):
 		camera.screen_pos_x = camera.screen_pos_x + random.randint(-5,5)
 		camera.screen_pos_y = camera.screen_pos_y + random.randint(-5,5)
 		# Render the world
-		engine.world.get_processor(processors.RenderProcessor).process()
+		engine.world.get_processor(processors.RenderWorldProcessor).process()
 		# Blit the world
 		pygame.display.update()
 		# Wait to make it more visible

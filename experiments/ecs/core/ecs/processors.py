@@ -16,7 +16,7 @@ from functools import wraps
 logger = logging.getLogger('processors')
 logger.setLevel(logging.DEBUG)
 
-fh = logging.FileHandler('proc_perf.log')
+fh = logging.FileHandler(config.LOG_PATH + 'proc_perf.log')
 fh.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 fh.setFormatter(formatter)
@@ -31,7 +31,7 @@ def time_dec(f):
 	def wrapped(*args, **kwargs):
 		start = time.time()
 		r = f(*args, **kwargs)
-		if config.DEBUG: logger.info(f'Method {f} took {(time.time() - start) * 1000} msecs.')
+		if config.DEBUG.get('log_performance', False): logger.info(f'Method {f} took {(time.time() - start) * 1000} msecs.')
 		return r
 	return wrapped
 
@@ -86,12 +86,13 @@ class UpdateCameraOffsetProcessor(esper.Processor):
 		-	after MovementProcessor - the position of the object in camera focus must be final
 	'''
 
-	def __init__(self, debug=False):
+	def __init__(self, maps, debug=False):
 		''' Initiation of CameraProcessor processor.
 		'''
 		super().__init__()
 		
 		self.debug = debug
+		self.maps = maps
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -105,17 +106,83 @@ class UpdateCameraOffsetProcessor(esper.Processor):
 			# Updates camera offset based on position of the Transform (component that the camera follows). 
 
 			# Offset moves opposite direction than the object + we need to keep it in the centre of the screen
-			x = -transform.x + int(camera.screen_width / 2)
-			y = -transform.y + int(camera.screen_height / 2)
+			#x = -transform.x + int(camera.screen_width / 2)
+			#y = -transform.y + int(camera.screen_height / 2)
+			x = -transform.x + camera.screen_width_half
+			y = -transform.y + camera.screen_height_half
 		
 			# Correction - do not centre while entity is at the edge of the map
-			x = min(0, x)
-			y = min(0, y)
-			x = max(-(transform.map.width - camera.screen_width), x)
-			y = max(-(transform.map.height - camera.screen_height), y)
+
+			# In case centred camera is required then skip all corrections
+			if not camera.always_center:
+				# Get the reference to the map from the global dict of maps
+				try:
+					trans_map_ref = self.maps.get(transform.map)
+				except KeyError:
+					raise
+
+				# Do the correction
+				x = min(0, x)
+				y = min(0, y)
+				x = max(-(trans_map_ref.width - camera.screen_width), x)
+				y = max(-(trans_map_ref.height - camera.screen_height), y)
 
 			# Update the Camera offset
 			camera.offset_x, camera.offset_y = x, y
+
+			# Update camera.map_screen_rect - rectancle that specifies in pixel coordinates what part of 
+			# map area is displayed on the camera.screen - area should not exceed map edges, that is
+			# why the correction is applied
+			
+			# tl means top-left, br means bottom-right. These are supportive variables that are added to
+			# corners of the area in case that camera is at the border of the map. In those cases there
+			# was a problem that the area was incorrectly calculated because the transform position 
+			# was not in the centre of the camera. Those variables are correcting this.
+
+			# Top-left corner - initial values (camera in the centre of the screen)
+			x1 = transform.x - camera.screen_width_half
+			y1 = transform.y - camera.screen_height_half
+
+			# Bottom-right corner - initial values (camera in the centre of the screen)
+			x2 = transform.x + camera.screen_width_half
+			y2 = transform.y + camera.screen_height_half
+
+			# In case centred camera is required then skip all corrections
+			if not camera.always_center:
+
+				# If the camera is freezed on top or left map edge, calculate correction
+				# that is later added to bottom-right corner.
+				tl_dx = -x1 if x1 < 0 else 0
+				tl_dy = -y1 if y1 < 0 else 0			
+
+				# If the camera is freezed on bottom or right map edge, calculate correction
+				# that is later added to top-left corner.
+				br_dx = -(x2 - trans_map_ref.width) if x2 > trans_map_ref.width else 0
+				br_dy = -(y2 - trans_map_ref.height) if y2 > trans_map_ref.height else 0
+
+				# Top-left corner is never negative
+				x1 = max(0, x1 + br_dx)
+				y1 = max(0, y1 + br_dy)
+
+				# Bottom-right corner cannot exceed map borders
+				x2 = min(trans_map_ref.width , x2 + tl_dx)
+				y2 = min(trans_map_ref.height, y2 + tl_dy)
+
+			# Update the part of map that is displayed on camera.screen
+			camera.map_screen_rect = (x1, y1 , x2, y2)
+
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (maps)
+		'''
+		self.maps = None
+
+	def post_load(self, maps):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to maps again
+		'''
+		self.maps = maps
+
 
 # TODO - use vector2 for transform and motion
 # TODO - implement debug
@@ -142,11 +209,13 @@ class MovementProcessor(esper.Processor):
 		-	after MovementProcessor - the position of the object in camera focus must be final
 	'''
 
-	def __init__(self, debug=False):
+	def __init__(self, stand_delay_ms=1500, debug=False):
 		''' Initiation of MovementProcessor processor.
 		'''
 		super().__init__()
 		self.debug = debug
+		# How long entity stays without movement before reseting its direction to SOUTH
+		self.stand_delay_ms = stand_delay_ms
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -159,26 +228,109 @@ class MovementProcessor(esper.Processor):
 
 		for _ , (transform, motion) in self.world.get_components(components.Transform, components.Motion):
 			
-			# Save last position - used for collision resolution
-			transform.lastx = transform.x
-			transform.lasty = transform.y
+			# Motion can be disabled from script or brain
+			if motion.enabled:
 
-			# Compensate the speed of the diagonal movement - division by sqrt(2)
-			if motion.dx != 0 and motion.dy != 0:
-				motion.dx *= 0.7071
-				motion.dy *= 0.7071
+				# If the position of the entity needs to be updated 
+				if (motion.dx !=0 or motion.dy !=0):
 
-			# Update the position by the velocity. Compensate by dt
-			transform.x += motion.dx * dt
-			transform.y += motion.dy * dt
+					# Save last position - used for collision resolution
+					transform.lastx = transform.x
+					transform.lasty = transform.y
+					transform.lastmap = transform.map
+					#transform.lastdir = transform.direction
+					motion.last_move = pygame.time.get_ticks()
 
-			# Return the velocity to 0
-			motion.dx = 0
-			motion.dy = 0
+					# Compensate the speed of the diagonal movement - division by sqrt(2)
+					if motion.dx != 0 and motion.dy != 0:
+						motion.dx *= 0.7071
+						motion.dy *= 0.7071
+
+					# Update the position by the velocity. Compensate by dt
+					transform.x += motion.dx * dt
+					transform.y += motion.dy * dt
+
+					####
+					## Update the direction
+					####
+
+					# Update the direction based on motion attributes
+					sign = lambda x: -1 if x<0 else (1 if x>0 else 0)
+					transform.direction = (sign(motion.dx), sign(motion.dy))
+
+					# If movement is in both axises then use NORD-SOUTH direction
+					if motion.dx != 0 and motion.dy != 0:
+						transform.direction = (0, transform.direction[1])
+
+					# Return the velocity to 0 - movement has been processed
+					motion.dx = 0
+					motion.dy = 0
+				
+				# No update of velocity in this cycle
+				else:
+					# if the time from the last movement is longer than given duration, change the direction to SOUTH
+					if pygame.time.get_ticks() - motion.last_move > self.stand_delay_ms:
+						transform.direction = (0,1)
+
+
+class RenderMapProcessor(esper.Processor):
+	''' For rendering maps on camera surfaces. 
+	'''
+
+	def __init__(self, window, maps, tile_res=64, debug=False):
+		'''
+		'''
+		super().__init__()
+		self.window = window
+		self.maps = maps
+		self.tile_res = tile_res
+		self.debug = debug
+
+	@time_dec
+	def process(self, *args, **kwargs):
+		''' 
+		'''
+		
+		# Find the entity with Camera and use its position
+		# cam_trans - position and map of the object that is in camera's focus
+		# cam_cam - camera component itself
+		for _ , (cam_trans, cam_cam) in self.world.get_components(components.Transform, components.Camera):
+
+			# Clear the camera surface
+			cam_cam.screen.fill((0,0,0))
+
+			# Get map that is on the object in camera's focus
+			map = self.maps.get(cam_trans.map)
+
+
+			for x, y, tile in map.get_tile_images_by_rect('ground', cam_cam.map_screen_rect):
+				cam_cam.screen.blit(tile, cam_cam.apply((x * self.tile_res, y * self.tile_res)))
+
+			for x, y, tile in map.get_tile_images_by_rect('wall', cam_cam.map_screen_rect):
+				cam_cam.screen.blit(tile, cam_cam.apply((x * self.tile_res, y * self.tile_res)))
+			
+
+			# Blit the camera screen on the main game window
+			self.window.blit(cam_cam.screen, (cam_cam.screen_pos_x, cam_cam.screen_pos_y))
+
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (window, maps)
+		'''
+		self.window = None
+		self.maps = None
+
+	def post_load(self, window, maps):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to window and maps again
+		'''
+		self.window = window
+		self.maps = maps
+
 
 # TODO - optimize
 # TODO - use vector2
-class RenderProcessor(esper.Processor):
+class RenderWorldProcessor(esper.Processor):
 	''' Draws the whole game sceen - camera screens, map and sprites.
 	
 	Input parameters:
@@ -204,26 +356,14 @@ class RenderProcessor(esper.Processor):
 		-	after UpdateCameraOffsetProcessor - in order to display scrolling
 	'''
 
-	def __init__(self, window, tile_res=64, clear_color=(0, 0, 0), debug=False):
+	def __init__(self, window, debug=False):
 		''' Initiation of RenderProcessor processor.
+		window ... main drawing surface
+		maps ... reference to the dictionary of all maps
 		'''
 		super().__init__()
 		self.window = window
-		self.clear_color = clear_color
-		self.tile_res = tile_res
 		self.debug = debug
-
-	def apply_camera(self, camera: components.Camera, pos=(0,0)):
-		''' Applying camera offset to some position. Returns new position
-		of the object and hence enables scrolling effect.
-		'''
-		# Move the sprite of the entity - returns new shifted coordinates
-		return (pos[0] + camera.offset_x, pos[1] + camera.offset_y)
-
-	def centre_sprite(self, pos):
-		''' Centre the sprite so it is centered on the map position
-		'''
-		return (pos[0] - self.tile_res / 2, pos[1] - self.tile_res / 2)
 
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -232,87 +372,183 @@ class RenderProcessor(esper.Processor):
 		implementation of scrolling https://youtu.be/3zV2ewk-IGU.
 		'''
 		
-		# Clear the main game window surface
-		self.window.fill(self.clear_color)
-
 		# Find the entity with Camera and use its position
 		# cam_trans - position and map of the object that is in camera's focus
 		# cam_cam - camera component itself
-		for _ , (cam_trans, cam_cam) in self.world.get_components(components.Transform, components.Camera):
-
-			# Clear the camera surface
-			cam_cam.screen.fill((0,0,0))
-
-			# Get map that is on the object in camera's focus
-			map = cam_trans.map
-
-			# Blit the map ground layer			
-			for i in range(len(map.ground_layer)): # Y axis	
-				for j in range(len(map.ground_layer[0])): # X axis
-					if map.ground_layer[i][j] != 0:
-						cam_cam.screen.blit(map.get_tile('ground', j, i), self.apply_camera(cam_cam, (j * self.tile_res, i * self.tile_res)))
-
-			# Blit the map wall layer
-			for i in range(len(map.wall_layer)): # Y axis	
-				for j in range(len(map.wall_layer[0])): # X axis
-					if map.wall_layer[i][j] != 0:
-						cam_cam.screen.blit(map.get_tile('wall', j, i), self.apply_camera(cam_cam, (j * self.tile_res, i * self.tile_res)))
+		for _ , (cam_cam) in self.world.get_component(components.Camera):
 
 			# Blit all the Entities that have Renderable and Transform components
 			for _ , (renderable, transform) in self.world.get_components(components.Renderable, components.Transform):
-				cam_cam.screen.blit(renderable.image, self.apply_camera(cam_cam, self.centre_sprite((transform.x, transform.y))))
+				#cam_cam.screen.blit(renderable.image, self.apply_camera(cam_cam, self.centre_sprite((transform.x, transform.y))))
+				cam_cam.screen.blit(renderable.image, cam_cam.apply(renderable.topleft((transform.x, transform.y))))
 
 			# Blit all Texts that are entities saying (CanSpeak + Transform component)
-			for _ , (can_talk, transform) in self.world.get_components(components.CanTalk, components.Transform):
+			for _ , (can_talk, renderable, transform) in self.world.get_components(components.CanTalk, components.Renderable, components.Transform):
 
 				# If there is something to say
 				if can_talk.text:
 					
 					# Blit the text bubble on the position offset specified by CanTalk component
-					cam_cam.screen.blit(can_talk.text_surf, self.apply_camera(cam_cam, self.centre_sprite((transform.x - can_talk.text_rect[2], transform.y - can_talk.text_rect[3]))))
-		
-			if self.debug:
-				# Blit debug information
-				for debug_entity , (deb_comp, trans_comp) in self.world.get_components(components.Debug,components.Transform):
+					#cam_cam.screen.blit(can_talk.text_surf, self.apply_camera(cam_cam, self.centre_sprite((transform.x - can_talk.text_rect[2], transform.y - can_talk.text_rect[3]))))
+					
+					if transform.direction == (1,0): # RIGHT
+						cam_cam.screen.blit(can_talk.text_surf, 
+							cam_cam.apply((transform.x - renderable.d_w - can_talk.text_rect[2], transform.y - can_talk.text_rect[3])))
+					
+					elif transform.direction == (-1,0): # if direction is (-1, 0) LEFT
+						cam_cam.screen.blit(can_talk.text_surf, 
+							cam_cam.apply((transform.x + renderable.d_w, transform.y - can_talk.text_rect[3])))
 
-					# Print labels
+					elif transform.direction == (0,-1): # if direction is (0,-1) UP
+						cam_cam.screen.blit(can_talk.text_surf, 
+							cam_cam.apply((transform.x - can_talk.text_rect[2] / 2, transform.y + renderable.d_h )))
+
+					else: # if direction is (0,1) DOWN
+						cam_cam.screen.blit(can_talk.text_surf, 
+							cam_cam.apply((transform.x - can_talk.text_rect[2] / 2, transform.y - renderable.d_h - can_talk.text_rect[3])))
+
+
+			# Blit the camera screen on the main game window
+			self.window.blit(cam_cam.screen, (cam_cam.screen_pos_x, cam_cam.screen_pos_y))
+
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (window).
+		'''
+		self.window = None
+
+	def post_load(self, window):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to window again.
+		'''
+		self.window = window
+
+class RenderDebugProcessor(esper.Processor):
+
+	def __init__(self, window):
+
+		super().__init__()
+		self.window = window
+		self.font = pygame.font.Font(None, 14)
+
+
+	@time_dec
+	def process(self, *args, **kwargs):
+
+		# Get information about required debug information
+		debug = kwargs.get('debug', {})
+
+		# Show debug information on all cameras
+		for _ , (cam_cam) in self.world.get_component(components.Camera):
+
+			# Show debug information only for displayable entities with Debug flag
+			for debug_entity , (deb_comp, render_comp, trans_comp) in self.world.get_components(components.Debug, components.Renderable, components.Transform):
+
+				# Print inventory
+				if debug.get('show_inventory', False):
+					try:
+						inventory_debug = self.world.component_for_entity(debug_entity, components.HasInventory)
+						text = f'Inventory: {inventory_debug.inventory}'
+						pos = deb_comp.font.render(text, True, pygame.Color('black'))
+						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((trans_comp.x, trans_comp.y - 20))))
+					except KeyError:
+						pass
+
+				# Print labels
+				if debug.get('show_labels', False):
 					try:
 						label_debug = self.world.component_for_entity(debug_entity, components.Labeled)
 						text = str(debug_entity) + ', ' + str(label_debug.id) + ', ' + str(label_debug.name)
 						pos = deb_comp.font.render(text, True, pygame.Color('black'))
-						cam_cam.screen.blit(pos, self.apply_camera(cam_cam, self.centre_sprite((trans_comp.x, trans_comp.y - 10))))
+						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((trans_comp.x, trans_comp.y - 10))))
 					except KeyError:
 						pass
 
-					
-					# Print possition
+				
+				# Print position
+				if debug.get('show_position', False):
 					try:
 						trans_debug = self.world.component_for_entity(debug_entity, components.Transform)
 						text = 'Pos: (' + str(int(trans_debug.x)) + ', ' + str(int(trans_debug.y)) + ')'
 						pos = deb_comp.font.render(text, True, pygame.Color('white'))
-						cam_cam.screen.blit(pos, self.apply_camera(cam_cam, self.centre_sprite((trans_comp.x, trans_comp.y))))
+						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((trans_comp.x, trans_comp.y))))
 					except KeyError:
 						pass
 
-					# Print brain
+				# Print brain
+				if debug.get('show_brain', False):
 					try:
 						brain_debug = self.world.component_for_entity(debug_entity, components.Brain)
 						for cmd_idx, cmd_txt in enumerate(brain_debug.commands):
 							color = pygame.Color('red') if cmd_idx == brain_debug.current_cmd_idx else pygame.Color('white')
 							cmd = deb_comp.font.render(str(cmd_idx) + ' -> ' + str(cmd_txt), True, color)
-							cam_cam.screen.blit(cmd, self.apply_camera(cam_cam, self.centre_sprite((trans_comp.x, 10 + trans_comp.y + (cmd_idx * 10)))))
+							cam_cam.screen.blit(cmd, cam_cam.apply(render_comp.topleft((trans_comp.x, 10 + trans_comp.y + (cmd_idx * 10)))))
 					except KeyError:
 						pass
 
-					# Print collision area
+				# Print collision area
+				if debug.get('show_collision', False):
 					try:
 						coll_debug = self.world.component_for_entity(debug_entity, components.Collidable)
-						pygame.draw.rect(cam_cam.screen, pygame.Color('blue'), pygame.Rect(self.apply_camera(cam_cam, (trans_comp.x - coll_debug.x,trans_comp.y - coll_debug.y)), (2 * coll_debug.x, 2 *coll_debug.y)),1)
+						pygame.draw.rect(cam_cam.screen, pygame.Color('blue'), pygame.Rect(cam_cam.apply((trans_comp.x - coll_debug.x,trans_comp.y - coll_debug.y)), (2 * coll_debug.x, 2 *coll_debug.y)),1)
 					except KeyError:
 						pass
+
+				# Print direction of entity
+				if debug.get('show_direction', False):
+					try:
+						pygame.draw.line(cam_cam.screen, pygame.Color('red'), 
+							cam_cam.apply((trans_comp.x, trans_comp.y)),
+							cam_cam.apply((trans_comp.x + trans_comp.direction[0] * 20, trans_comp.y + trans_comp.direction[1] * 20)),
+							2)
+					except KeyError:
+						pass
+
+			if debug.get('show_map_screen_area', False):
+				map_display_area = self.font.render(str(cam_cam.map_screen_rect), True, pygame.Color('white'))
+				cam_cam.screen.blit(map_display_area, (0,0))
 
 			# Blit the camera screen on the main game window
 			self.window.blit(cam_cam.screen, (cam_cam.screen_pos_x, cam_cam.screen_pos_y))
+
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (window).
+		'''
+		self.window = None
+
+	def post_load(self, window):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to window again.
+		'''
+		self.window = window
+
+
+class RenderBackgroundProcessor(esper.Processor):
+	def __init__(self, window, clear_color=(0, 0, 0), debug=False):
+
+		super().__init__()
+		self.window = window
+		self.clear_color = clear_color
+		self.debug = debug
+
+	@time_dec
+	def process(self, *args, **kwargs):
+		# Clear the main game window surface
+		self.window.fill(self.clear_color)
+	
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (window)
+		'''
+		self.window = None
+
+	def post_load(self, window):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to window again
+		'''
+		self.window = window
+
 
 # TODO - implement debug
 class InputProcessor(esper.Processor):
@@ -379,13 +615,29 @@ class InputProcessor(esper.Processor):
 				if keys[inp.control_keys.get('right')]:
 					self.input_command_queue.append((inp.control_cmds.get('right'), {"entity" : ent, "dx" : config.MOVE_SPEED}))
 
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (none)
+		'''
+		pass
+
+	def post_load(self, input_command_queue):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to window again
+		'''
+		self.input_command_queue = input_command_queue
+
 #continue here
 class CollisionMapProcessor(esper.Processor):
 	''' Checks for collisions with the titles on the map
 	'''
 
-	def __init(self):
+	def __init__(self, maps):
+		''' maps is link to global dict of maps
+		'''
 		super().__init__()
+
+		self.maps = maps
 	
 	@time_dec
 	def process(self, *args, **kwargs):
@@ -393,8 +645,8 @@ class CollisionMapProcessor(esper.Processor):
 		# Do collision against the map
 		for ent_moved, (coll_moved, trans_moved) in self.world.get_components(components.Collidable, components.Transform):
 			
-			# Get collision map
-			collision_map = trans_moved.map.collision_map
+			# Get collision map using the global dict of maps
+			collision_map = self.maps.get(trans_moved.map).collision_map
 
 			# Get the map position where the entity is situated
 			
@@ -411,6 +663,17 @@ class CollisionMapProcessor(esper.Processor):
 				trans_moved.x = trans_moved.lastx
 				trans_moved.y = trans_moved.lasty
 
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components
+		'''
+		self.maps = None
+
+	def post_load(self, maps):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to maps again
+		'''
+		self.maps = maps
 
 class CollisionEntityGeneratorProcessor(esper.Processor):
 	''' -	COLLISION SYSTEM
@@ -456,6 +719,10 @@ class CollisionEntityGeneratorProcessor(esper.Processor):
 					
 					# Add collision to the collision component 
 					coll_other.collision_events.add(ent_moved)
+					#coll_moved.collision_events.add(ent_other)
+
+					if ent_other == 8:
+						print(f'COLLISION EVENTS for 8 {coll_other.collision_events}')
 
 
 class CollisionTeleportProcessor(esper.Processor):
@@ -481,7 +748,9 @@ class CollisionTeleportProcessor(esper.Processor):
 							col_event_entity_inventory = self.world.component_for_entity(col_event_entity, components.HasInventory)
 							
 							# Does the teleportee have the key in the inventory?
+							# Either no key is required by the teleport or key is in teleportees inventory
 							teleportee_has_key = teleport.key is None or teleport.key in col_event_entity_inventory.inventory
+
 						except KeyError:
 							teleportee_has_key = teleport.key is None
 
@@ -529,6 +798,12 @@ class CollisionItemProcessor(esper.Processor):
 						# Remove Transform component from the item so that it is not displayable on the map - item is picked
 						self.world.remove_component(ent, components.Transform) 
 
+						# Remove Camera component from the item so that the screen disappears - item is picked
+						try:
+							self.world.remove_component(ent, components.Camera) 
+						except KeyError:
+							pass
+
 						# Remove the col_event_entity from Item entity
 						collision.collision_events.remove(col_event_entity)
 
@@ -539,21 +814,72 @@ class CollisionItemProcessor(esper.Processor):
 						teleport_event = Event('ITEM_PICKUP', ent, col_event_entity, params={'item' : ent, 'picker' : col_event_entity})
 						self.item_pickup_event_queue.append(teleport_event)
 
-
 # TODO - this does not work well - collision of player and npc with brain does not work - player cannot colide but npc can walk into the player
+# This is because first entity 1 is fixed and all related collisions with number 1 are deleted, so also NPCs collision events are deleted before they are processed
+
 class CollisionEntityProcessor(esper.Processor):
 	''' It is basically CollisionCorrectorProcessor but also generates events
 	on collisions
 	'''
 
-	def __init__(self, entity_coll_event_queue):
+	def __init__(self, entity_coll_event_queue, input_command_queue):
 		super().__init__()
 		self.entity_coll_event_queue = entity_coll_event_queue
+		self.input_command_queue = input_command_queue
 
 	@time_dec
 	def process(self, *args, **kwargs):
 		for ent, (collision, transform) in self.world.get_components(components.Collidable, components.Transform):
 
+			##### New collision process
+			# 1. Iterate all collidable entities
+			# 2. Iterate all entities with whom there was a collision
+			# 3. Generate collision event
+			# 4. Calculate the positions so that objects are not collided - do not use last position - this was causing stuck states
+
+			for col_event_entity in collision.collision_events.copy():
+
+				# Report that entity collision occured - generate event
+				collision_event = Event('COLLISION', ent, col_event_entity, params={'entity1' : ent, 'entity2' : col_event_entity})
+				self.entity_coll_event_queue.append(collision_event)
+
+				# Calculate and update possition
+				col_event_entity_trans = self.world.component_for_entity(col_event_entity, components.Transform)
+				col_event_entity_collidable = self.world.component_for_entity(col_event_entity, components.Collidable)
+
+				# collision on X axis (distance is lower then coll area)
+				if abs(col_event_entity_trans.x - transform.x) < (col_event_entity_collidable.x + collision.x):
+					# Call move 
+					if transform.x < col_event_entity_trans.x: 
+						self.input_command_queue.append(('move', {"entity" : ent, "dx" : -config.MOVE_SPEED}))
+						self.input_command_queue.append(('move', {"entity" : col_event_entity, "dx" : config.MOVE_SPEED}))
+					else:
+						self.input_command_queue.append(('move', {"entity" : ent, "dx" : config.MOVE_SPEED}))
+						self.input_command_queue.append(('move', {"entity" : col_event_entity, "dx" : -config.MOVE_SPEED}))
+					
+					# transform.x = transform.lastx
+					# col_event_entity_trans.x = col_event_entity_trans.lastx
+
+				# collision on Y axis (distance is lower then coll area)
+				if abs(col_event_entity_trans.y - transform.y) <= (col_event_entity_collidable.y + collision.y) + 10:
+					# Call move 
+					if transform.y < col_event_entity_trans.y: 
+						self.input_command_queue.append(('move', {"entity" : ent, "dy" : -config.MOVE_SPEED}))
+						self.input_command_queue.append(('move', {"entity" : col_event_entity, "dy" : config.MOVE_SPEED}))
+					else:
+						self.input_command_queue.append(('move', {"entity" : ent, "dy" : config.MOVE_SPEED}))
+						self.input_command_queue.append(('move', {"entity" : col_event_entity, "dy" : -config.MOVE_SPEED}))
+					
+					
+					# try to use last position for both
+					#transform.y = transform.lasty
+					#col_event_entity_trans.y = col_event_entity_trans.lasty
+
+				# Remove the col_event_entity from  entity
+				collision.collision_events.remove(col_event_entity)
+
+
+			''' Old process
 			# If some collision occured, the collision_event set is not empty
 			if collision.collision_events:
 				
@@ -574,14 +900,17 @@ class CollisionEntityProcessor(esper.Processor):
 
 				##### All below is for removal of collision event from the entities
 				# Get the Collidable component of the entity - in order to remove the collision
-				col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+				
+				# Below commented as it caused that NPCs were walking into player
+				#col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
 
 				# Remove the col event related to item from the Entity
-				col_event_entity_coll.collision_events.remove(ent)
+				# Below commented as it caused that NPCs were walking into player
+				#col_event_entity_coll.collision_events.remove(ent)
 
 				# Remove the col_event_entity from  entity
 				collision.collision_events.remove(col_event_entity)
-
+			'''
 
 class CollisionCorrectorProcessor(esper.Processor):
 	def __init__(self):
@@ -631,7 +960,8 @@ class BrainProcessor(esper.Processor):
 				# Parse command unit - cmd_fnc is string
 				_, cmd_fnc, cmd_params = unit
 
-				# Put the command into the queue for processing
+				# Put the command into the queue for processing - entity and brain can be override by the command
+				# itself. It is used for global scripting functionality.
 				self.input_command_queue.append((cmd_fnc, {**{"entity" : ent, "brain" : brain}, **cmd_params}))
 
 				# If the unit exist then check if it was previously called
@@ -676,3 +1006,72 @@ class CommandProcessor(esper.Processor):
 
 		self.game_commands_handler(self.debug)
 
+########################################################
+### Processors Classes - NOT USED
+########################################################
+
+class RenderMapProcessorFullScan(esper.Processor):
+	''' For rendering maps on camera surfaces. 
+	
+	For ALL maps ALL TILES are blitted - even those that are out of visible area.
+	
+	Hence this is not optimal version of the RenderMapProcessor.
+	'''
+
+	def __init__(self, window, maps, tile_res=64, debug=False):
+		'''
+		'''
+		super().__init__()
+		self.window = window
+		self.maps = maps
+		self.tile_res = tile_res
+		self.debug = debug
+
+	@time_dec
+	def process(self, *args, **kwargs):
+		''' 
+		'''
+		
+		# Find the entity with Camera and use its position
+		# cam_trans - position and map of the object that is in camera's focus
+		# cam_cam - camera component itself
+		for _ , (cam_trans, cam_cam) in self.world.get_components(components.Transform, components.Camera):
+
+			# Clear the camera surface
+			cam_cam.screen.fill((0,0,0))
+
+			# Get map that is on the object in camera's focus
+			map = self.maps.get(cam_trans.map)
+
+			# Blit the map ground layer			
+			for i in range(len(map.ground_layer)): # Y axis	
+				for j in range(len(map.ground_layer[0])): # X axis
+					if map.ground_layer[i][j] != 0:
+						#cam_cam.screen.blit(map.get_tile('ground', j, i), self.apply_camera(cam_cam, (j * self.tile_res, i * self.tile_res)))
+						cam_cam.screen.blit(map.get_tile_image(j, i, 'ground'), cam_cam.apply((j * self.tile_res, i * self.tile_res)))
+
+			# Blit the map wall layer
+			for i in range(len(map.wall_layer)): # Y axis	
+				for j in range(len(map.wall_layer[0])): # X axis
+					if map.wall_layer[i][j] != 0:
+						#cam_cam.screen.blit(map.get_tile('wall', j, i), self.apply_camera(cam_cam, (j * self.tile_res, i * self.tile_res)))
+						cam_cam.screen.blit(map.get_tile_image(j, i, 'wall'), cam_cam.apply((j * self.tile_res, i * self.tile_res)))
+		
+						
+
+			# Blit the camera screen on the main game window
+			self.window.blit(cam_cam.screen, (cam_cam.screen_pos_x, cam_cam.screen_pos_y))
+
+	def pre_save(self):
+		''' Prepare processor for serialization by disabling links to 
+		non-serializable components (window, maps)
+		'''
+		self.window = None
+		self.maps = None
+
+	def post_load(self, window, maps):
+		''' Reconfigure the processor after de-serialization by attaching
+		the reference to window and maps again
+		'''
+		self.window = window
+		self.maps = maps

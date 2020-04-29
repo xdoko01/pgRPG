@@ -11,7 +11,8 @@ import core.quests.quest as quest
 
 import pygame
 import math
-
+import json
+import pickle # for savegame
 
 global world
 global _maps
@@ -19,6 +20,7 @@ global _quests
 global window
 global c_event_queue
 global command_queue
+global _entity_map
 
 ########################################################
 ### Game commands handler
@@ -29,8 +31,10 @@ def process_game_commands(debug=False):
 	Processes the command_queue.
 	'''
 	global command_queue
+	global _entity_map
 
 	if debug and command_queue: print(f'*Command Queue: {command_queue}')
+
 
 	# Process every command in the queue
 	while command_queue:
@@ -42,11 +46,19 @@ def process_game_commands(debug=False):
 		
 		(cmd_fnc, cmd_params) = command
 		
+		# Check if in cmd_params there is entity parameter that is not an integer but a string.
+		# Such commands can be submitted by the global script processor Brain
+		entity_id = cmd_params.get('entity')
+		if isinstance(entity_id, str): cmd_params.update({'entity' : _entity_map.get(entity_id)})
+
 		brain = cmd_params.get("brain", None)
 
-		# Execute the command
-		result = cmd_fnc(**cmd_params)
-
+		# Execute the command - command is a text hence need to get reference to command func. first
+		# result = cmd_fnc(**cmd_params) # originally, this was called when command fnc was reference to the fnc
+		# If command is not recognized by the command module, none command function is returned
+		
+		result = commands.get_cmd_fnc(cmd_fnc)(**cmd_params)
+		
 		# Notify brain about the result of the cmd unit currently on current_cmd_idx
 		#print(f'\n*process_game_commands: {cmd_fnc} PRE calling process_result({result})')
 
@@ -91,162 +103,73 @@ def process_game_events():
 ### Game world creator
 ########################################################
 
-def create_entities(world):
-	#####
-	# Initiate entities with components
-	#####
-	global _maps
+def _create_entity(json_ent_obj, child_ref=None):
+	''' Create entity from json definition. See Quest for definitions
+	'''
 
-	# Create player entity that can move
-	player = world.create_entity(components.Labeled(id='player01', name='First Player'))
-	#world.add_component(player, Labeled(id='player01', name='First Player'))
-	world.add_component(player, components.Transform(x=200, y=200, map=_maps.get('map01', None)))	# Player has position in the world
-	world.add_component(player, components.Motion(dx=0, dy=0))	# Player can move, hence can have velocity that will change based on key inputs
-	world.add_component(player, components.Controllable(control_keys={}, control_cmds={"up": commands.cmd_move,"down": commands.cmd_move,"left": commands.cmd_move,"right": commands.cmd_move}))	# Player can be managed by pressing keys
-	world.add_component(player, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "player.png"))) # Player has sprite
-	world.add_component(player, components.Teleportable())
-	world.add_component(player, components.Collidable(32,32))
-	world.add_component(player, components.Camera(screen_pos_x=0, screen_pos_y=0, screen_width=300, screen_height=300))
-	world.add_component(player, components.HasInventory())
-	world.add_component(player, components.Brain(commands=[]))
-	world.add_component(player, components.CanTalk())
-	world.add_component(player, components.Debug())
+	global world
+	global _entity_map
 
+	# Decode entity id 
+	new_entity_id = json_ent_obj.get("id")
 
-	# Create static entity being observed by the camera - it is also a key for the teleport
-	item = world.create_entity()
-	world.add_component(item, components.Labeled(id='item01', name='Static Item'))
-	world.add_component(item, components.Transform(x=300, y=300, map=_maps.get('map01', None)))	# Player has position in the world
-	world.add_component(item, components.Motion(dx=0, dy=0))	# Player can move, hence can have velocity that will change based on key inputs
-	#world.add_component(item, components.Controllable(control_keys={}))	# Player can be managed by pressing keys
-	world.add_component(item, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "item.png"))) # Player has sprite
-	world.add_component(item, components.Collidable(32,32))
-	world.add_component(item, components.Camera(screen_pos_x=0, screen_pos_y=310, screen_width=300, screen_height=300))
-	world.add_component(item, components.Pickable())
+	# Create new entity obj for the root elntity
+	if not child_ref: new_entity_obj = world.create_entity()
 
-	# Create moving camera without any followed object 	engine.world.remove_component(event.generator_obj, components.Collidable)		
-	camera = world.create_entity()
-	world.add_component(camera, components.Labeled(id='camera01', name='Dynamic Camera'))
-	world.add_component(camera, components.Transform(x=400, y=300, map=_maps.get('map01', None)))	# Player has position in the world
-	world.add_component(camera, components.Motion(dx=0, dy=0))	# Player can move, hence can have velocity that will change based on key inputs
-	world.add_component(camera, components.Controllable(control_keys={'up': pygame.K_w, 'down':pygame.K_s, 'left':pygame.K_a, 'right':pygame.K_d}, control_cmds={"up": commands.cmd_none,"down": commands.cmd_move,"left": commands.cmd_move,"right": commands.cmd_move}))	# Player can be managed by pressing keys
-	#world.add_component(camera, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "bluesquare.png"))) # Player has sprite
-	#world.add_component(camera, components.Collidable(32,32))
-	world.add_component(camera, components.Camera(screen_pos_x=310, screen_pos_y=0, screen_width=300, screen_height=300))
-	world.add_component(camera, components.CanTalk())
-	world.add_component(camera, components.Debug())
+	# Read the components from the templates - order matters! latter has priority and overwrites the previous components
+	for template in json_ent_obj.get("templates", []):
 
-	world.add_component(camera, 
-		components.Brain(
-			commands=[
-				# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
-				### Move Left
-				(None, 	commands.cmd_move, {"dx" : -config.MOVE_SPEED}), #0
-				(0, 	commands.cmd_loop, {"iterations" : 1}), #1
-				### Move Up
-				(None, 	commands.cmd_move, {"dy" : -config.MOVE_SPEED}), #2
-				(2, 	commands.cmd_loop, {"iterations" : 1}), #3
-				### Move Right
-				(None, 	commands.cmd_move, {"dx" : config.MOVE_SPEED}), #4
-				(4, 	commands.cmd_loop, {"iterations" : 1}), #5
-				###	Move Down
-				(None, 	commands.cmd_move, {"dy" : config.MOVE_SPEED}), #6
-				(6, 	commands.cmd_loop, {"iterations" : 1}), #7
-				### Show Text
-				(8, 	commands.cmd_show_dialog, {"time" : 1000, "text" : 'Hello world!'}), #8
-				### Wait for space pressed
-				(9, 	commands.cmd_wait_key, {"key" : 276}), #9
-				(0, 	commands.cmd_goto, {}) #10
-			]
-		)
-	)
+		# Read the entity.json		
+		try:		
+			with open(config.ENTITY_PATH + template + '.json', 'r') as entity_file:
+				json_entity_data = entity_file.read()
+				template_entity_data = json.loads(json_entity_data)
+		except FileNotFoundError:
+			print(f"Entity file {config.ENTITY_PATH + template + '.json'} not found.")
+			raise
 
-	# Create GlobalScript entity		
-	script = world.create_entity()
-	world.add_component(script, components.Labeled(id='script_engine', name='Global Script Engine'))
-	world.add_component(script, 
-		components.Brain(
-			commands=[
-				# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
-				(None, commands.cmd_move, {"entity" : 3, "dx" : -config.MOVE_SPEED}), #0
-				(0, commands.cmd_loop, {"iterations" : 100}), #1
-				(None, commands.cmd_move, {"entity": 3, "dy" : -config.MOVE_SPEED}), #2
-				(2, commands.cmd_loop, {"iterations" : 20}), #3
-				(None, commands.cmd_toggle_brain, {"entity" : 3, "enable" : False}), #4
-				(0, commands.cmd_goto, {})  #5
-			]
-		)
-	)
+		print(f'Trying to create entity from {template + ".json"}')
+		_create_entity(template_entity_data, child_ref=new_entity_obj if not child_ref else child_ref)
 
-	# Create static teleport
-	teleport = world.create_entity()
-	world.add_component(teleport, components.Labeled(id='tele01', name='Static Teleport'))	
-	world.add_component(teleport, components.Transform(x=400, y=400, map=_maps.get('map01', None)))	# Player has position in the world
-	world.add_component(teleport, components.Motion(dx=0, dy=0))	# Player can move, hence can have velocity that will change based on key inputs
-	#world.add_component(teleport, components.Controllable(control_keys={'up': pygame.K_w, 'down':pygame.K_s, 'left':pygame.K_a, 'right':pygame.K_d}))	# Player can be managed by pressing keys
-	world.add_component(teleport, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "teleport.png"))) # Player has sprite
-	world.add_component(teleport, components.Collidable(32,32))
-	world.add_component(teleport, components.Camera(screen_pos_x=310, screen_pos_y=310, screen_width=300, screen_height=300))
-	world.add_component(teleport, components.Teleport(dest_map=_maps.get('map01', None), dest_x=764, dest_y=164, key=item))
+	# Initiate every component
+	for component in json_ent_obj.get("components"):
+		
+		# Get component type
+		comp_type = component.get("type")
 
-	# Create key to the cellar
-	key = world.create_entity(components.Labeled(id='key01', name='Key to the cellar'))
-	#world.add_component(key, components.Transform(x=800, y=200, map=_maps.get('map01', None)))
-	world.add_component(key, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "key.png")))
-	world.add_component(key, components.Collidable(20,20))
-	world.add_component(key, components.Pickable())
+		# Get component params
+		comp_params = component.get("params", {})
 
-	# Create NPC
-	npc = world.create_entity(components.Labeled(id='npc01', name='Merchant'))
-	world.add_component(npc, components.Transform(x=800, y=200, map=_maps.get('map01', None)))
-	world.add_component(npc, components.Motion(dx=0, dy=0))	
-	world.add_component(npc, components.Renderable(image=pygame.image.load(config.IMAGE_PATH + "npc.png")))
-	world.add_component(npc, components.Collidable(40,40))
-	world.add_component(npc, components.HasInventory(inventory=[key]))
-	world.add_component(npc, components.CanTalk())
-	world.add_component(npc, components.Debug())
-	world.add_component(npc, 
-		components.Brain(
-			commands=[
-				# IF-EXCEPTION-GOTO, CMD-FNC, CMD-PARAM
-				### Move Left
-				(None, 	commands.cmd_move, {"dx" : -config.MOVE_SPEED}), #0
-				(0, 	commands.cmd_loop, {"iterations" : 30}), #1
-				### Wait and show text
-				(2, 	commands.cmd_show_dialog, {"time" : 3000, "text" : '... who will help me ...?'}), #2
-				### Move Right
-				(None, 	commands.cmd_move, {"dx" : config.MOVE_SPEED}), #3
-				(3, 	commands.cmd_loop, {"iterations" : 30}), #4
-				### Wait and show text
-				(5, 	commands.cmd_show_dialog, {"time" : 3000, "text" : '... Somebody please help me !!'}), #5
-				(0, 	commands.cmd_goto, {}) #10
-			]
-		)
-	)
+		# Create component - volat s odkazem na root entity obj
+		result = components._create_component(world, new_entity_obj if not child_ref else child_ref, comp_type, comp_params)
 
-	# Print entity mappings
-	print({
-		'player' : player,
-		'item' : item,
-		'teleport' : teleport,
-		'camera' : camera,
-		'key' : key,
-		'npc' : npc,
-		'script' : script
-	})
+	# Add entity to the entity map - for the root entity
+	if not child_ref: _entity_map.update({new_entity_id : new_entity_obj})
 
+	return 0
 
 def create_processors(world):
 	
 	global window
 	global c_event_queue
 	global command_queue
+	global _maps
+
 
 	# Movement processor updates entity position based on the velocity 
 	movement_processor = processors.MovementProcessor()
 
+	# Render background procesor to display game stats and anything else
+	render_background_processor = processors.RenderBackgroundProcessor(window=window)
+
+	# Render processor to display map
+	render_map_processor = processors.RenderMapProcessor(window=window, maps=_maps)
+
 	# Render processor to place renderable entities with position on the screen
-	render_processor = processors.RenderProcessor(window=window, debug=True)
+	render_world_processor = processors.RenderWorldProcessor(window=window)
+
+	# Render debug processor to display debug information for renderable entities
+	render_debug_processor = processors.RenderDebugProcessor(window=window)
 
 	# Input processor to process keys pressed - the commands are queued and processed later by CommandProcessor
 	input_processor = processors.InputProcessor(command_queue)
@@ -255,7 +178,7 @@ def create_processors(world):
 	collision_entity_generator_processor = processors.CollisionEntityGeneratorProcessor()
 
 	# Collision Map processor
-	collision_map_processor = processors.CollisionMapProcessor()
+	collision_map_processor = processors.CollisionMapProcessor(maps=_maps)
 
 	# Teleport Collision processor
 	collision_teleport_processor = processors.CollisionTeleportProcessor(c_event_queue)
@@ -263,14 +186,14 @@ def create_processors(world):
 	# Item Collision processor
 	collision_item_processor = processors.CollisionItemProcessor(c_event_queue)
 
-	# Entity Collision processor
-	collision_entity_processor = processors.CollisionEntityProcessor(c_event_queue)
+	# Entity Collision processor - added command queue processor to generate corrective movements
+	collision_entity_processor = processors.CollisionEntityProcessor(c_event_queue,command_queue)
 
 	# Collision position corrector processor - OBSOLETE - substituted by CollisionEntityProcessor
 	#collision_corrector_processor = processors.CollisionCorrectorProcessor()
 
 	# Camera processor - update position of the camera
-	update_camera_offset_processor = processors.UpdateCameraOffsetProcessor()
+	update_camera_offset_processor = processors.UpdateCameraOffsetProcessor(maps=_maps)
 
 	# Game events processor - triggers actions based on previously generated events
 	game_events_processor = processors.GameEventsProcessor(process_game_events)
@@ -306,9 +229,193 @@ def create_processors(world):
 	### Process all events that were generated by collision processors	
 	world.add_processor(game_events_processor)	# Based on events generated by the collisions (teleportation, item pickups) now is the time to see if there are some game actions that we want to do - e.g. cinematics
 	
+	##################################
 	### Render the world on the screen
+	##################################
+	# Update all cameras
 	world.add_processor(update_camera_offset_processor)
-	world.add_processor(render_processor)
+	
+	# Render background - stats / inventory / picture
+	world.add_processor(render_background_processor)
+
+	# Render maps
+	world.add_processor(render_map_processor)
+
+	# Render world entities
+	world.add_processor(render_world_processor)
+
+	# Render additional debug information on the screen
+	world.add_processor(render_debug_processor)
+
+########################################################
+### Save and load game
+########################################################
+
+def load_game():
+	''' Load game state 
+	'''
+
+	with open(config.SAVE_PATH + 'save.dat','rb') as f: game_state = pickle.load(f)
+
+	# Restore command queue
+	global command_queue
+	command_queue = game_state.get('command_queue')
+
+	# Restore event queue
+	global c_event_queue
+	c_event_queue = game_state.get('event_queue')
+
+	# Restore maps
+	global _maps
+	_maps = {}
+
+	for map_name in game_state.get('maps'):
+		sample_map = map.Map(map_name)	
+		_maps.update({ map_name : sample_map})
+
+	# Restore entity mapping
+	global _entity_map
+	_entity_map = game_state.get('entity_map')
+
+	# Restore quests
+	global _quests
+	_quests = game_state.get('quests')
+
+	##### Restore world
+	global world
+	world = game_state.get('world')
+
+	# Restore references to non-serializable objects on entities
+	for entity_id in world._entities.keys():
+		# Go through every component of the entity
+		for component in world.components_for_entity(entity_id):
+			# Execute pre-save steps on the component			
+			component.post_load()
+			print(f'LOAD: Finished post-load steps for entity {entity_id} and component {component}')
+
+	# Restore processor references
+	global window
+
+	world.get_processor(processors.CollisionMapProcessor).post_load(_maps)
+	print(world.get_processor(processors.CollisionMapProcessor))
+
+	world.get_processor(processors.UpdateCameraOffsetProcessor).post_load(_maps)
+	print(world.get_processor(processors.UpdateCameraOffsetProcessor))
+
+	world.get_processor(processors.RenderBackgroundProcessor).post_load(window) 
+	print(world.get_processor(processors.RenderBackgroundProcessor))
+
+	world.get_processor(processors.RenderMapProcessor).post_load(window, _maps) 
+	print(world.get_processor(processors.RenderMapProcessor))
+
+	world.get_processor(processors.RenderWorldProcessor).post_load(window) 
+	print(world.get_processor(processors.RenderWorldProcessor))
+	
+	world.get_processor(processors.RenderDebugProcessor).post_load(window) 
+	print(world.get_processor(processors.RenderDebugProcessor))	
+	
+	return 0
+
+def save_game():
+	''' Before saving, all pygame.Surface must be removed
+	and on load again refreshed.
+	'''
+	
+	global window
+	global command_queue
+	global c_event_queue
+	global _maps
+	global _entity_map
+	global world
+	global _quests
+
+	game_state = {}
+
+	# Prepare command queue for save
+	game_state.update({'command_queue' : command_queue})
+
+	# Prepare event queue for save
+	game_state.update({'event_queue' : c_event_queue})
+
+	# Preapare maps for save - we will only save list of names
+	# and reload maps from scratch during load game
+	game_state.update({'maps' : [map_name for map_name in _maps.keys()]})
+	
+	# Prepare entity name -> entity id mapping for save
+	game_state.update({'entity_map' : _entity_map})
+
+	# Prepare quests for save
+	game_state.update({'quests' : _quests})
+	
+	# Prepare game world for save - first it is needed
+	# to remove all pygame.Surface references from components
+	
+	##### Go through every entity - in the world
+	for entity_id in world._entities.keys():
+		# Go through every component of the entity
+		for component in world.components_for_entity(entity_id):
+			# Execute pre-save steps on the component
+			print(f'SAVE: Running pre-save steps for entity {entity_id} and component {component}')
+			component.pre_save()
+
+
+	##### Go through every processor that has problematic entity - remove and create all processors? Will it help?
+	# Problematic - processor is referencing the WOrld so I need to clean processors first
+	# processors.InputProcessor - OK
+	# processors.BrainProcessor - OK
+	# processors.CommandProcessor - OK
+	# processors.MovementProcessor - OK
+	# processors.CollisionMapProcessor - FAILED (self.maps) - TODO - would it be possible to pass maps to all processors during main loop rather than in constructor?
+	world.get_processor(processors.CollisionMapProcessor).pre_save()
+	# processors.CollisionEntityGeneratorProcessor - OK
+	# processors.CollisionTeleportProcessor - OK
+	# processors.CollisionItemProcessor - OK
+	# processors.CollisionEntityProcessor - OK
+	# processors.GameEventsProcessor - OK
+	# processors.UpdateCameraOffsetProcessor - FAILED (self.maps) - TODO - would it be possible to pass maps to all processors during main loop rather than in constructor?
+	world.get_processor(processors.UpdateCameraOffsetProcessor).pre_save()
+	# processors.RenderBackgroundProcessor - FAILED (self.window) - TODO - would it be possible to pass maps to all processors during main loop rather than in constructor?
+	world.get_processor(processors.RenderBackgroundProcessor).pre_save() 
+	# processors.RenderMapProcessor - FAILED (self.window, self.maps)
+	world.get_processor(processors.RenderMapProcessor).pre_save() 
+	# processors.RenderWorldProcessor - FAILED (self.window) - TODO - would it be possible to pass maps to all processors during main loop rather than in constructor?
+	world.get_processor(processors.RenderWorldProcessor).pre_save() 
+	# processors.RenderDebugProcessor - FAILED (self.window) - TODO - would it be possible to pass maps to all processors during main loop rather than in constructor?
+	world.get_processor(processors.RenderDebugProcessor).pre_save() 
+
+	# Save the world
+	game_state.update({'world' : world})
+	
+	with open(config.SAVE_PATH + 'save.dat', 'wb') as f: pickle.dump(game_state, f)
+
+	### Restore the non-serializable objects so that game can continue
+	for entity_id in world._entities.keys():
+		# Go through every component of the entity
+		for component in world.components_for_entity(entity_id):
+			# Execute pre-save steps on the component			
+			component.post_load()
+			print(f'SAVE: Finished post-load steps for entity {entity_id} and component {component}')
+
+	### Restore processor references
+	world.get_processor(processors.CollisionMapProcessor).post_load(_maps)
+	print(world.get_processor(processors.CollisionMapProcessor))
+
+	world.get_processor(processors.UpdateCameraOffsetProcessor).post_load(_maps)
+	print(world.get_processor(processors.UpdateCameraOffsetProcessor))
+
+	world.get_processor(processors.RenderBackgroundProcessor).post_load(window) 
+	print(world.get_processor(processors.RenderBackgroundProcessor))
+
+	world.get_processor(processors.RenderMapProcessor).post_load(window, _maps) 
+	print(world.get_processor(processors.RenderMapProcessor))
+
+	world.get_processor(processors.RenderWorldProcessor).post_load(window) 
+	print(world.get_processor(processors.RenderWorldProcessor))
+	
+	world.get_processor(processors.RenderDebugProcessor).post_load(window) 
+	print(world.get_processor(processors.RenderDebugProcessor))
+
+	return 0
 
 ########################################################
 ### Main program
@@ -330,30 +437,37 @@ def main():
 	global c_event_queue
 	c_event_queue = []
 
-	# All quests are here
-	global _quests
-
-	_quests = {}
-
-	sample_quest = quest.Quest()
-	_quests.update({'test_quest' : sample_quest})
 
 	# All maps are here
 	global _maps
 
-	sample_map = map.Map()	
+	sample_map = map.Map('map01')	
 	_maps = {}
 	_maps.update({'map01' : sample_map})
 
-	
+	global _entity_map
+
+	_entity_map = {}
+
+
 	#####
 	# Initialize Esper world with entites and processors
 	#####
 	global world
 
 	world = esper.World()
-	create_entities(world)
 	create_processors(world)
+
+	# All quests are here
+	global _quests
+	_quests = {}
+
+	sample_quest = quest.load_quest('test_quest')
+	# sample_quest = quest.Quest()
+	_quests.update({'test_quest' : sample_quest})
+
+	# Print entity mappings
+	print(_entity_map)
 
 	#####
 	# The main loop
@@ -375,12 +489,20 @@ def main():
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					running = False
-
+				if event.key == pygame.K_F1:
+					print(f'Saving game ...')
+					save_game()
+					print(f'Game saved.')
+				if event.key == pygame.K_F2:
+					print(f'Loading game ...')
+					load_game()
+					print(f'Game loaded.')
+					
 		# Update all the processors, pass key events as a parameter
 		# and dt (how long the previous frame was processed)
 		# Parameter will be passed to all processors. Those who want it
 		# will process it.
-		world.process(events=key_events, keys=key_pressed, dt=dt)
+		world.process(events=key_events, keys=key_pressed, dt=dt, debug=config.DEBUG)
 
 		# Flip the framebuffers
 		pygame.display.update()
@@ -389,5 +511,3 @@ def main():
 		pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
 
 	pygame.quit()
-
-	print(f'Event queue content: {c_event_queue}')

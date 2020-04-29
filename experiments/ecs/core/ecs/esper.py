@@ -30,6 +30,9 @@ class Processor:
     def process(self, *args, **kwargs):
         raise NotImplementedError
 
+    def __str__(self):
+        return f"Processor '{self.__class__.__name__}' at {hex(id(self))}: {self.__dict__}"
+
 
 class World:
     """A World object keeps track of all Entities, Components, and Processors.

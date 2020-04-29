@@ -332,7 +332,7 @@ class Assets:
 			new_model = CellModel(Assets.ASSETS_PATH, str(model_type) + '.json')
 			cls._all_tile_models.update( { model_type : new_model })
 		return cls._all_tile_models.get(model_type)	
-
+'''
 pygame.init()
 window = pygame.display.set_mode([640,480])
 
@@ -364,4 +364,3 @@ print(EntityModel.cache_info())
 
 #EntityModel.list_memo
 
-'''
