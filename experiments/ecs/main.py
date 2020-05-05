@@ -2,6 +2,8 @@
 
 Requirements
 	-	esper - https://github.com/benmoran56/esper
+	-	pytmx - https://github.com/bitcraft/PyTMX
+
 
 	Solved situations
 		-	Q: 	How to implement translation from entity_id to game_id in quest event processing?
@@ -32,7 +34,7 @@ Requirements
 
 		-	Scrolling implemented
 			^^^^^^^^^^^^^^^^^^^^^
-			- CameraProcessor updates camera offset based on position (Transform) of the entity that has Camera component
+			- CameraProcessor updates camera offset based on position (Position component) of the entity that has Camera component
 			- RenderProcessor iterates all entities with Camera component and draws the screen into Camera componet variable sceen that is blitted on the window.
 
 		-	Teleports implemented
@@ -99,8 +101,15 @@ Requirements
 
 	- TODO
 
-		-	clear and comment the 
-		
+		-	clear and comment
+			- components - every constructor should return ValueError in case that parameters are incorrect
+				- that raises to _create_entity
+			- use private variable prefixes
+			- use __slots__
+			- use __all__ in modules
+
+			rename _entity_map to entity_map or mapping, it is global so it should not start by _
+
 		-	document - diagrams
 			-	event processing
 			-	command processing
@@ -121,6 +130,7 @@ Requirements
 
 	- BUGS
 
+		-	Fix colision correction movement - now it is moving strangelly into the side
 		-	Fix teleportation into the collision zone - it is impossible to move in this situation
 
 

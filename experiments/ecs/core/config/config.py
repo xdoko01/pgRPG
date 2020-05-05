@@ -1,7 +1,7 @@
-
 IMAGE_PATH = 'experiments/ecs/resources/images/' 
 QUEST_PATH = 'experiments/ecs/resources/quests/'
-ENTITY_PATH =  'experiments/ecs/resources/entities/'
+ENTITY_PATH = 'experiments/ecs/resources/entities/'
+MAP_PATH = 'experiments/ecs/resources/maps/'
 LOG_PATH = 'experiments/ecs/logs/'
 SAVE_PATH = 'experiments/ecs/save/'
 DEBUG = {

@@ -1,4 +1,6 @@
+import pygame
 import json
+from pytmx.util_pygame import load_pygame
 
 '''
 IN PYSCROLL
@@ -36,15 +38,15 @@ class Map:
 		
 
 		# List of animation objects - frames and last time
-		self.animations = { 50 : [(duration, gid reference),(duration, gid reference),(duration,gid reference)]}
+		#self.animations = { 50 : [(duration, gid reference),(duration, gid reference),(duration,gid reference)]}
 
 		### 
 		# 1/ Read all used images, convert and save into images under their GID
 		# 2/ Read all the animation definition in self.animations - create objects contaning frames duration last time and actual index (private)
 		# 4/ DISPLAY
-			- method get-tile_images_by_rect
-				-	first try to display from animations - check the frame time here
-				-	if failed display from images (KeyError)
+		#	- method get-tile_images_by_rect
+		#		-	first try to display from animations - check the frame time here
+		#		-	if failed display from images (KeyError)
 	
 		##### Load tileset
 		# All the map tiles must be stored
@@ -85,9 +87,59 @@ class Map:
 			s = layer.data
 			self.used_tiles.union(s)
 
+# # #
+
+pygame.init()
+window = pygame.display.set_mode((850,850))
+
+tmxdata = load_pygame('experiments/titled_maps/resources/maps/test_map.tmx')
+
+def images_rescale(images=[], scale=(64,64)):
+	return [pygame.transform.scale(i, scale) if i else None for i in images]
+
+tmxdata.images = images_rescale(tmxdata.images, (64,64))
+
+print(tmxdata.images)
+
+print(tmxdata.layers[2].data)
+
+print(f'Width: {tmxdata.width} Height: {tmxdata.width} TileWidth: {tmxdata.tilewidth} TIleHeight: {tmxdata.tileheight}')
+
+print(tmxdata.get_tile_image(1,1,1))
+print(tmxdata.get_tile_gid(1,1,1)) # 9
+print(tmxdata.get_tile_gid(1,1,1))
+
+# get all the tiles with properties
+print(tmxdata.tile_properties)
+
+# animations with meta data
+animations = {}
+for gid, props in tmxdata.tile_properties.items():
+	animations.update({ gid : 0})
+
+print(animations)
+
+print(tmxdata.get_tile_properties(1,1,0))
 
 
-sample_map = Map('experiments/titled_maps/resources/maps/test_map.json')
-print(sample_map.layers)
-print(sample_map.collision_layer.data)
-print(sample_map.used_tiles)
+running = True
+
+while running:
+
+	# Read the keys pressed, mouse, win resize etc.
+	key_events = pygame.event.get()
+
+	# Check for End Game
+	for event in key_events:
+		if event.type == pygame.QUIT:
+			running = False
+
+	for num, img in enumerate(tmxdata.images):
+		if img:
+			window.blit(img, ((num % 20) * 64, (num // 20) * 64))
+
+	window.blit(tmxdata.get_tile_image_by_gid(9), (0, 0))
+
+	pygame.display.flip()
+
+pygame.quit()

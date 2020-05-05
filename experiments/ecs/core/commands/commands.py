@@ -5,6 +5,12 @@ import math # for calculation of square root move_to
 
 import pygame.time # pygame.ime
 
+########################################################
+### Package init commands
+########################################################
+
+if not pygame.get_init(): pygame.init()
+
 # TODO - commands for implementation
 #	move to x,y
 #	move to entity
@@ -25,27 +31,27 @@ def cmd_move_to(*args, **kwargs):
 	ty = kwargs.get("y", None)
 
 	# Get the coordinate of the entity and the target 
-	trans = engine.world.component_for_entity(entity, components.Transform)
+	position = engine.world.component_for_entity(entity, components.Position)
 	motion = engine.world.component_for_entity(entity, components.Motion)
 
 	sign = lambda x: 1 if x>0 else (-1 if x<0 else 0)
 
 	# If the distance is close, close the gap and end
-	if math.sqrt( (tx - trans.x)**2 + (ty - trans.y)**2 ) < 10:
-		trans.x = tx
-		trans.y = ty
+	if math.sqrt( (tx - position.x)**2 + (ty - position.y)**2 ) < 10:
+		position.x = tx
+		position.y = ty
 
 		return 0
 	
 	# If gap is big, continue
 	else:
 		# Create movement so to minimise the distance between entity and the target
-		if abs(tx - trans.x) > abs(ty - trans.y):
+		if abs(tx - position.x) > abs(ty - position.y):
 			# Close on x-axis
-			cmd_move(entity=entity, dx=sign(tx - trans.x) * 120)
+			cmd_move(entity=entity, dx=sign(tx - position.x) * 120)
 		else:
 			# Close on y-axis
-			cmd_move(entity=entity, dy=sign(ty - trans.y) * 120)			
+			cmd_move(entity=entity, dy=sign(ty - position.y) * 120)			
 
 		return -1
 
@@ -435,26 +441,26 @@ def cmd_face_entity(*args, **kwargs):
 	sign = lambda x: -1 if x<0 else (1 if x>0 else 0)
 
 	try:
-		# Get the Transform component from the entity
-		trans_entity = engine.world.component_for_entity(entity, components.Transform)
+		# Get the Position component from the entity
+		pos_entity = engine.world.component_for_entity(entity, components.Position)
 		
-		# Get the Transform component from the Face to entity
-		trans_face = engine.world.component_for_entity(face_ent, components.Transform)
+		# Get the Position component from the Face to entity
+		pos_face = engine.world.component_for_entity(face_ent, components.Position)
 		
-		# if possitive, trans_entity must face Right
-		x_dir = trans_face.x - trans_entity.x
-		# if positive, trans_entity must face Down
-		y_dir = trans_face.y - trans_entity.y
+		# if possitive, pos_entity must face Right
+		x_dir = pos_face.x - pos_entity.x
+		# if positive, pos_entity must face Down
+		y_dir = pos_face.y - pos_entity.y
 
 		# turn left or right
 		if abs(x_dir) > abs(y_dir):
-			trans_entity.direction = (sign(x_dir), 0)
+			pos_entity.direction = (sign(x_dir), 0)
 		# turn up or down
 		else:
-			trans_entity.direction = (0, sign(y_dir))
+			pos_entity.direction = (0, sign(y_dir))
 
 		# Direction successfully updated
-		print(f'Face CMD: Direction of entity {entity} changed to {trans_entity.direction }')
+		print(f'Face CMD: Direction of entity {entity} changed to {pos_entity.direction }')
 		return 0
 
 	except KeyError:

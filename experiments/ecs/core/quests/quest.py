@@ -59,7 +59,11 @@ class Quest:
 		self.entities = phase_data.get("entities")
 
 		# Create entities in the world
-		for entity in self.entities: engine._create_entity(entity)
+		try:
+			for entity in self.entities: engine._create_entity(entity)
+		except ValueError:
+			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
+			raise ValueError
 
 		# Event handlers
 		self.event_handlers = phase_data.get("event_handling")
@@ -71,7 +75,7 @@ class Quest:
 				"templates" : ["player"],
 				"components" : [
 					{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
-					{"type" : "Transform", "params" : {"x" : 200, "y" : 200, "map" : "map01"}},
+					{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "map01"}},
 					#{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 					{"type" : "Controllable", "params" :  {
 						"control_keys" : {}, 
@@ -92,7 +96,7 @@ class Quest:
 				"id" : "item01",
 				"components" : [
 					{"type" : "Labeled", "params" : {"id" : "item01", "name" : "Static Item"}},
-					{"type" : "Transform", "params" : {"x" : 300, "y" : 300, "map" : "map01"}},
+					{"type" : "Position", "params" : {"x" : 300, "y" : 300, "map" : "map01"}},
 					{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 					{"type" : "Renderable", "params" : {"image" : "item.png"}},
 					{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
@@ -104,7 +108,7 @@ class Quest:
 				"id" : "camera01",
 				"components" : [
 					{"type" : "Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
-					{"type" : "Transform", "params" : {"x" : 400, "y" : 300, "map" : "map01"}},
+					{"type" : "Position", "params" : {"x" : 400, "y" : 300, "map" : "map01"}},
 					{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 					{"type" : "Controllable", "params" :  {
 						"control_keys" : {'up' : 119, 'down' : 115, 'left' : 97, 'right' : 100}, 
@@ -155,7 +159,7 @@ class Quest:
 				"id" : "tele01",
 				"components" : [
 					{"type" : "Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
-					{"type" : "Transform", "params" : {"x" : 400, "y" : 400, "map" : "map01"}},
+					{"type" : "Position", "params" : {"x" : 400, "y" : 400, "map" : "map01"}},
 					{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 					{"type" : "Renderable", "params" : {"image" : "teleport.png"}},
 					{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
@@ -176,7 +180,7 @@ class Quest:
 				"id" : "npc01",
 				"components" : [
 					{"type" : "Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
-					{"type" : "Transform", "params" : {"x" : 800, "y" : 200, "map" : "map01"}},
+					{"type" : "Position", "params" : {"x" : 800, "y" : 200, "map" : "map01"}},
 					{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 					{"type" : "Renderable", "params" : {"image" : "npc.png"}},
 					{"type" : "Collidable", "params" : {"x" : 40, "y" : 40}},
@@ -204,7 +208,7 @@ class Quest:
 				"components" : [
 					{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
 					{"type" : "Renderable", "params" : {"image" : "npc.png"}},
-					{"type" : "Transform", "params" : {"x" : 500, "y" : 500, "map" : "map01"}},
+					{"type" : "Position", "params" : {"x" : 500, "y" : 500, "map" : "map01"}},
 					{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
 					{"type" : "Camera", "params" : {"screen_pos_x" : 700, "screen_pos_y" : 700}}
 				]

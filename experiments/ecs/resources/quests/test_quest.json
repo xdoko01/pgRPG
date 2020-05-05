@@ -9,7 +9,7 @@
 		"phase01" :{
 			"name" : "Meeting the merchant",
 			"objective" : "Speak to the merchant and get the key to the cellar",
-			"maps" : "map01",
+			"maps" : "test_map",
 			
 			"cleanup" : [],
 
@@ -19,7 +19,7 @@
 					"templates" : ["player"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
-						{"type" : "Transform", "params" : {"x" : 200, "y" : 200, "map" : "map01"}},
+						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
 						{"type" : "Controllable", "params" :  {
 							"control_keys" : {}, 
 							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move"}
@@ -33,7 +33,7 @@
 					"id" : "item01",
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "item01", "name" : "Static Item"}},
-						{"type" : "Transform", "params" : {"x" : 300, "y" : 300, "map" : "map01"}},
+						{"type" : "Position", "params" : {"x" : 300, "y" : 300, "map" : "test_map"}},
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Renderable", "params" : {"image" : "item.png"}},
 						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
@@ -45,7 +45,7 @@
 					"id" : "camera01",
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
-						{"type" : "Transform", "params" : {"x" : 400, "y" : 300, "map" : "map01"}},
+						{"type" : "Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Controllable", "params" :  {
 							"control_keys" : {"up" : 119, "down" : 115, "left" : 97, "right" : 100}, 
@@ -81,12 +81,12 @@
 					"id" : "tele01",
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
-						{"type" : "Transform", "params" : {"x" : 400, "y" : 400, "map" : "map01"}},
+						{"type" : "Position", "params" : {"x" : 400, "y" : 400, "map" : "test_map"}},
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Renderable", "params" : {"image" : "teleport.png"}},
 						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
 						{"type" : "Camera", "params" : {"screen_pos_x" : 310, "screen_pos_y" : 310, "screen_width" : 300, "screen_height" : 300}},
-						{"type" : "Teleport", "params" : {"dest_map" : "map01", "dest_x" : 200, "dest_y" : 1000, "key" : "item01"}}
+						{"type" : "Teleport", "params" : {"dest_map" : "test_map", "dest_x" : 200, "dest_y" : 1000, "key" : "item01"}}
 					]
 				},
 				{
@@ -102,7 +102,7 @@
 					"id" : "npc01",
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
-						{"type" : "Transform", "params" : {"x" : 800, "y" : 200, "map" : "map01"}},
+						{"type" : "Position", "params" : {"x" : 800, "y" : 200, "map" : "test_map"}},
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Renderable", "params" : {"image" : "npc.png"}},
 						{"type" : "Collidable", "params" : {"x" : 40, "y" : 40}},
@@ -125,7 +125,7 @@
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
 						{"type" : "Renderable", "params" : {"image" : "npc.png"}},
-						{"type" : "Transform", "params" : {"x" : 400, "y" : 1100, "map" : "map01"}},
+						{"type" : "Position", "params" : {"x" : 400, "y" : 1100, "map" : "test_map"}},
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
 						{"type" : "Camera", "params" : {"screen_pos_x" : 700, "screen_pos_y" : 700}},

@@ -22,6 +22,13 @@ global c_event_queue
 global command_queue
 global _entity_map
 
+
+########################################################
+### Package init commands
+########################################################
+
+if not pygame.get_init(): pygame.init()
+
 ########################################################
 ### Game commands handler
 ########################################################
@@ -141,7 +148,12 @@ def _create_entity(json_ent_obj, child_ref=None):
 		comp_params = component.get("params", {})
 
 		# Create component - volat s odkazem na root entity obj
-		result = components._create_component(world, new_entity_obj if not child_ref else child_ref, comp_type, comp_params)
+		try:
+			result = components.create_component(world, new_entity_obj if not child_ref else child_ref, comp_type, comp_params)
+		except ValueError:
+			print(f'Error in creation of component {comp_type} with parameters {comp_params}')
+			raise ValueError
+
 
 	# Add entity to the entity map - for the root entity
 	if not child_ref: _entity_map.update({new_entity_id : new_entity_obj})
@@ -441,9 +453,9 @@ def main():
 	# All maps are here
 	global _maps
 
-	sample_map = map.Map('map01')	
+	sample_map = map.Map('test_map')	
 	_maps = {}
-	_maps.update({'map01' : sample_map})
+	_maps.update({'test_map' : sample_map})
 
 	global _entity_map
 
@@ -463,7 +475,6 @@ def main():
 	_quests = {}
 
 	sample_quest = quest.load_quest('test_quest')
-	# sample_quest = quest.Quest()
 	_quests.update({'test_quest' : sample_quest})
 
 	# Print entity mappings
@@ -505,7 +516,8 @@ def main():
 		world.process(events=key_events, keys=key_pressed, dt=dt, debug=config.DEBUG)
 
 		# Flip the framebuffers
-		pygame.display.update()
+		#pygame.display.update()
+		pygame.display.flip()
 
 		# Display FPS in window title
 		pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))

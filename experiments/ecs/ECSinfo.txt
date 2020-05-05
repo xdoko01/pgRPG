@@ -12,7 +12,7 @@
 		-	Player (Position, Velocity, Sprite, Character, Input, Player)
 
 	Components
-		-	TRANSFORM - Has a position in the world
+		-	POSITION - Has a position in the world
 			-	world position (x,y)
 		-	MOTION - Can move (velocity, acceleration)
 			-	velocity, acceleration
@@ -41,15 +41,15 @@
 
 	Systems(Processors)
 		-	MOVEMENT SYSTEM
-			-	TRANSFORM + MOTION - Updates position based on velocity
+			-	POSITION + MOTION - Updates position based on velocity
 		-	INPUT SYSTEM
 			-	JOYSTICK + MOTION - Changes velocity based on arrow keys pressed
 		-	COLLISION SYSTEM
-			-	COLLISION + TRANSFORM - Checks for collisions and resolves them
+			-	COLLISION + POSITION - Checks for collisions and resolves them
 		-	FOLLOW SYSTEM
-			-	TRANSFORM + MOTION + FOLLOW - Changes velocity based on where player is
+			-	POSITION + MOTION + FOLLOW - Changes velocity based on where player is
 		-	RENDER SYSTEM
-			-	TRANSFORM + SPRITE - Render the sprite on the screen
+			-	POSITION + SPRITE - Render the sprite on the screen
 		-----------
 		-	GAME LOGIC?
 			-Player sends I am here by calling SendMessage

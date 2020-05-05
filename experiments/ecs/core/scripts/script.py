@@ -6,6 +6,11 @@ import core.ecs.processors as processors
 import pygame
 import random
 
+########################################################
+### Package init commands
+########################################################
+
+if not pygame.get_init(): pygame.init()
 
 ########################################################
 ### Scripting function examples
