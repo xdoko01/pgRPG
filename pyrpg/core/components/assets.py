@@ -137,7 +137,7 @@ import functools # for cache decorator
 
 # load and store config dict as cfg.config
 # here necessary for loading tile resolution and paths
-import pyrpg.constants.config as cfg 
+#import pyrpg.constants.config as cfg 
 
 
 class TileModel:
@@ -223,7 +223,8 @@ class TileModel:
 			# Continue with opening actual file with textures based on information
 			# stored in texture file.
 			try:
-				image = pygame.image.load(cfg.config.get('paths').get('model_path', '') + tex_data.get('image', '')).convert()
+				#image = pygame.image.load(cfg.config.get('paths').get('model_path', '') + tex_data.get('image', '')).convert()
+				image = pygame.image.load(tex_data.get('image', '')).convert()
 			except AttributeError:
 				print(f"Unexpected error while processing graphics file {tex_data.get('image', '')} not found.")
 				raise
@@ -265,7 +266,8 @@ class TileModel:
 							tile_width, tile_height)
 							
 					# Save the tile image converted to TILE_RESOLUTION of the game (64x64)
-					frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), cfg.config.get('display').get('tile_res', [64, 64])) })
+					#frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), cfg.config.get('display').get('tile_res', [64, 64])) })
+					frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), [64,64]) })
 
 					# Now is the frame ready to be stored into the list
 					frames.append(frame)

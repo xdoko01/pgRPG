@@ -1,18 +1,17 @@
 ''' Module containing all components
-
-	TODO 
-	- implement __slots__ on component objects for memory optimization
-	- implement parameter checking on component constructors
-	- implement if __name == '__main__'
-
 '''
+import functools		# for cache decorator - Memoize RenderableModel class
+import json				# necessary to parse json file with model
+import ctypes			# to show number of references to an instance
 
-import core.config.config as config  # For renderable component IMAGE_PATH
-import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps 
-
-import sys 				# for getting size of instance object
+import sys 				# for getting size of instance object and sys path
 import pygame 			# for Camera component
 import pygame.freetype 	# for CanTalk component
+
+if __name__ != '__main__':
+	import core.config.config as config  # For renderable component IMAGE_PATH
+	import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+	import core.models.model as model # For cached animated model in RenderableModel entity
 
 ########################################################
 ### Package init commands
@@ -29,7 +28,8 @@ if not pygame.freetype.get_init(): pygame.freetype.init()
 # assigned to the entity
 ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 	'Collidable', 'Camera', 'Brain', 'CanTalk', 'Pickable', 'HasInventory',\
-	'Teleport', 'Teleportable', 'Motion']
+	'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
+	'CanWear']
 
 ########################################################
 ### Module functions
@@ -113,11 +113,98 @@ class Component(object):
 		pass
 
 
+class Wearable(Component):
+	''' Entity is wearable by other entity that has CanWear component
+
+	Used by:
+		-	CollisionWearableProcessor
+
+	Tests:
+		>>> c = Wearable()
+	'''
+
+	__slots__ = ['bodypart']
+
+	BODYPARTS = ['head', 'hands', 'feet', 'belt', 'legs', 'torso']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the new Wearable component. Component has
+		one arguments describing on which part of body the entity should be weared.
+		'''
+
+		super().__init__()
+
+		# Coordinates in the world
+		try:
+			self.bodypart = kwargs.get('bodypart')
+		except KeyError:
+			# Notify component factory that initiation has failed
+			print(f'Mandatory parameters are missing.')
+			raise ValueError
+
+		# Assert that bodypart exists in list of BODYPARTS
+		try:
+			assert isinstance(self.bodypart, str) and self.bodypart in Wearable.BODYPARTS, f'Unknown bodypart "{self.bodypart}" for {self.__class__} component.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
+
+class CanWear(Component):
+	''' Entity can pickup and wear Wearable entities
+
+	Used by:
+		-	CollisionWearableProcessor
+
+	Tests:
+		>>> c = CanWear()
+	'''
+
+	__slots__ = ['wearables']
+
+	BODYPARTS = ['head', 'hands', 'feet', 'belt', 'legs', 'torso']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the new CanWear component. 
+		'''
+
+		super().__init__()
+
+		# Initiate the wardrobe
+		self.wearables = {
+			'head' : None,
+			'hands' : None,
+			'feet' : None,
+			'belt' : None,
+			'legs' : None,
+			'torso' : None
+		}
+
+		# Try to wear the entity
+		try:
+			for w_key, w_value in kwargs.items():
+				
+				# Translate the value (Wearable) to Entity instance if necessary
+				wearable_entity = engine._entity_map.get(w_value) if isinstance(w_value, str) else w_value
+
+				# If it is possible to wear the entity (known bodypart and empty slot for wearable) then wear it
+				if w_key in CanWear.BODYPARTS and not self.wearables.get(w_key):
+					self.wearables.update({w_key : wearable_entity})
+
+		except KeyError:
+			# Notify component factory that initiation has failed
+			print(f'Problem with wearing of the entity')
+			raise ValueError
+
+
 class Debug(Component):
 	''' Display debug information on entities that are tagged by this component.
 
 	Used by:
 		-	RenderDebugProcessor
+	
+	Tests:
+		>>> c = Debug()
 	'''
 
 	__slots__ = 'font'
@@ -144,10 +231,10 @@ class Debug(Component):
 
 
 class Brain(Component):
-	''' Entity can perform commands stored in its brain. Contains commands 
-	and management variables. Commands are executed on given entity and are 
+	''' Entity can perform commands stored in its brain. Contains commands
+	and management variables. Commands are executed on given entity and are
 	in form of simple list.
-	
+
 	Command structure is following (tuple): (IF-Exception-Goto, CMD NAME, CMD PARAMS)
 
 	Overview:
@@ -155,7 +242,7 @@ class Brain(Component):
 		it into command queue for processing.
 		-	If command returns success (no exception) the index of the brain moves
 		to the next command and again puts it into the queue for processing.
-		-	If command returns exception then the index is moved so that it is 
+		-	If command returns exception then the index is moved so that it is
 		pointing to  IF-EXCEPTION_GOTO item in the list.
 		-	Those exceptions then facilitate execution of one command many times
 		until it succeedes (for examle wait command) or looping in the commands
@@ -164,6 +251,13 @@ class Brain(Component):
 	Used by:
 		-	BrainProcessor
 		-	RenderDebugProcessor
+
+	Tests:
+		>>> c = Brain()
+		>>> c.commands
+		[]
+		>>> c.enabled
+		False
 	'''
 
 	__slots__ = ['commands', 'enabled', 'next_cmd_idx', 'current_cmd_idx', 'last_cmd_idx',\
@@ -284,6 +378,9 @@ class CanTalk(Component):
 
 	Used by:
 		-	RenderWorldProcessor
+
+	Tests:
+		>>> c = CanTalk()
 	'''
 
 	__slots__ = ['font_object', 'text', 'text_surf', 'text_rect']
@@ -347,6 +444,9 @@ class Labeled(Component):
 
 	Used by:
 		-	RenderDebugProcessor
+
+	Tests:
+		>>> c = Labeled()
 	'''
 
 	__slots__ = ['id', 'name']
@@ -372,6 +472,9 @@ class Pickable(Component):
 
 	Used by:
 		-	CollisionItemProcessor
+
+	Tests:
+		>>> c = Pickable()
 	'''
 
 	__slots__ = []
@@ -391,6 +494,9 @@ class HasInventory(Component):
 		-	RenderDebugProcessor
 		-	CollisionTeleportProcessor
 		-	CollisionItemProcessor
+
+	Tests:
+		>>> c = HasInventory()
 	'''
 
 	__slots__ = ['inventory']
@@ -421,7 +527,7 @@ class HasInventory(Component):
 			print(f'Item in the inventory is not initiated in global list of entities.')
 			raise ValueError
 
-
+# TODO - is self.direction necessary? is not enough dir_name?
 class Position(Component):
 	''' Entity has possition in the game world specified by x, y and map.
 	
@@ -437,9 +543,12 @@ class Position(Component):
 		-	CollisionEntityProcessor
 		-	CollisionCorrectorProcessor
 		-	RenderMapProcessorFullScan (OBSOLETE)
+
+	Tests:
+		>>> c = Position()
 	'''
 
-	__slots__ = ['x', 'y', 'map', 'direction']
+	__slots__ = ['x', 'y', 'map', 'direction', 'dir_name']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Position component.
@@ -481,6 +590,7 @@ class Position(Component):
 		# Direction SOUTH (0,1) NORD (0,-1) WEST (-1,0) EAST (1,0)
 		# Necessary for correct rendering of sprites and text boxes etc.
 		self.direction = (0, 1)
+		self.dir_name = 'down'
 
 		# Remember last possition, on collision return to the last known pos
 		# Required for resolution of collisions with the map
@@ -495,6 +605,9 @@ class Teleport(Component):
 
 	Used by:
 		-	CollisionTeleportProcessor
+
+	Tests:
+		>>> c = Teleport()
 	'''
 
 	__slots__ = ['dest_x', 'dest_y', 'dest_map']
@@ -558,7 +671,12 @@ class Teleportable(Component):
 
 	Used by:
 		-	CollisionTeleportProcessor
+
+	Tests:
+		>>> c = Teleportable()
 	'''
+
+	__slots__ = []
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Teleportable component.
@@ -567,22 +685,48 @@ class Teleportable(Component):
 
 
 class Motion(Component):
-	'''	Entity can move
+	'''	Entity can move.
+
+	Used by:
+		-	MovementProcessor
+
+	Tests:
+		>>> c = Motion()
 	'''
 	
+	__slots__ = ['dx', 'dy', 'enabled', 'last_move']
+
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Motion component.
+
+		Parameters:
+			:param dx: X-axis delta movement component.
+			:type dx: float
+
+			:param dy: Y-axis delta movement component.
+			:type dy: float
+
+			:raise: ValueError - in case movement params are not numbers.
 		'''
 		super().__init__()
 		
-		self.enabled = True
-
 		# Change of position
 		self.dx = kwargs.get('dx', 0.0)
 		self.dy = kwargs.get('dy', 0.0)
 
+		# Assert that dx, dy are numbers
+		try:
+			assert isinstance(self.dx, int) or isinstance(self.dx, float), f'Movement dx is not a number for {self.__class__} component.'
+			assert isinstance(self.dy, int) or isinstance(self.dy, float), f'Movement dy is not a number for {self.__class__} component.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
+		# Entity movement can be freezed by command - used in scripted cinematics
+		self.enabled = True
+
 		# Remember last move and if we have moved
-		#self.has_moved = False
+		self.has_moved = False
 
 		# Remember time when the entity last moved
 		# Necessary to know when to reset the direction of the entity due to rendering
@@ -590,18 +734,44 @@ class Motion(Component):
 
 
 class Renderable(Component):
-	''' Entity is displayable on the game screen
+	''' Entity is displayable on the game screen.
+
+	Used by:
+		-	RenderWorldProcessor
+		-	RenderDebugProcessor
+
+	Tests:
+		>>> c = Renderable()
 	'''
+
+	__slots__ = ['image', 'w', 'h', 'd_h', 'd_w']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Renderable component.
+
+		Parameters:
+			:param image_file: Name of the image stored in IMAGE_PATH directory, including suffix
+			:type image_file: str
+
+			:raise: ValueError - in case image file is not found
 		'''
+
 		super().__init__()
 
-
 		# Image and its parameters
-		self.image_file = kwargs.get("image", "")
-		self.image = pygame.image.load(config.IMAGE_PATH + self.image_file).convert()
+		try:
+			self.image_file = kwargs.get("image", "")
+			assert isinstance(self.image_file, str), f'Image file name {self.image_file} is not valid.'
+
+			self.image = pygame.image.load(config.IMAGE_PATH + self.image_file).convert()
+		except FileNotFoundError:
+			print(f'Image file {config.IMAGE_PATH + self.image_file} not found')
+			# Notify component factory that initiation has failed
+			raise ValueError
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
 		self.w = self.image.get_width()
 		self.h = self.image.get_height()
 
@@ -615,6 +785,12 @@ class Renderable(Component):
 
 	def topleft(self, pos):
 		''' Returns correction of coordinates to display the sprite correctly
+
+		Parameters:
+			:param pos: Position on the map in pixels.
+			:type pos: tuple, list
+			
+			:return: Position of the topleft corner of the image as a tuple.
 		'''
 		return (pos[0] - self.d_w, pos[1] - self.d_h)
 
@@ -623,64 +799,276 @@ class Renderable(Component):
 		non-serializable objects
 		'''
 		self.image = None
-		self.w = None
-		self.h = None
+		self.w = self.h = self.d_h = self.d_w = None
 	
 	def post_load(self):
 		''' Regenerate all non-serializable objects for the component
 		'''
 		self.image = pygame.image.load(config.IMAGE_PATH + self.image_file).convert()
+		
 		self.w = self.image.get_width()
 		self.h = self.image.get_height()
+		
+		self.d_w = self.w / 2
+		self.d_h = self.h / 2		
+
+# New component
+class State(Component):
+	''' Represent state of the entity
+	idle, walk, attack, ...
+	'''
+
+	__slots__ = ['state']
+
+	STATES = ['idle', 'walk', 'attack']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate State component
+
+		Parameters:
+			:param state: State of the entity (default = idle)
+			:type state: str
+
+			:raise: ValueError - in case state is not defined/allowed
+		'''
+		
+		try:
+			self.state = kwargs.get('state', 'idle') 
+			assert isinstance(self.state, str) and self.state in State.STATES, f'State {self.state} is not allowed state'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+		
+# Refator the RenderableModel
+# new class Model will be part of it - memoized
+# component will only have last frame and last time
+class RenderableModel(Component):
+	''' Entity is displayable as animated model on the game screen.
+
+	Used by:
+		-	RenderModelWorldProcessor
+
+	Tests:
+		>>> c = RenderableModel()
+	'''
+
+	__slots__ = ['model', 'last_frame', 'last_time']
+
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the new RenderableModel component.
+
+		Parameters:
+			:param model_name: Name of the model stored in MODEL_PATH directory
+			:type model_name: str
+
+			:raise: ValueError - in case model file is not found or has problem
+		'''
+
+		super().__init__()
+
+		# Get the model name
+		model_file = kwargs.get('model', '')
+
+		# Check the model name
+		try:
+			assert isinstance(model_file, str), f'Model file name {model_file} is not valid.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
+		# Initiate new model
+		try:
+			self.model = model.Model(model_file)
+		except:
+			print(f'Something went wrong during initiation of the model {model_file}')
+			# Notify component factory that initiation has failed
+			raise ValueError
+
+		# Time and frame must be remembered for animation
+		self.last_frame = 0
+		self.last_time = pygame.time.get_ticks()
+
+		print(self.model)
+
+	def topleft(self, pos):
+		''' Returns correction of coordinates to display the sprite correctly
+
+		Parameters:
+			:param pos: Position on the map in pixels.
+			:type pos: tuple, list
+			
+			:return: Position of the topleft corner of the image as a tuple.
+		'''
+		return (pos[0] - self.model.d_w, pos[1] - self.model.d_h)
+
+	def get_frame(self, action, direction, frame_id=None):
+		''' Get the current frame for display. It is taking into account animated frames.
+		'''
+
+		# Get length of the animation and use it for modulo on last_frame.
+		# This is needed because if action/direction is changed, last frame can be bigger
+		# than number of frames in the animation - hence causing error.
+		# TODO - Alternativelly, reset last_frame to 0 with every change of direction/action
+		#	- but where is the right place to do it??
+		
+		
+		########
+		
+		# In case of particular frame (used with Wearables to be synchronized with animation)
+		if frame_id:
+			return self.model.texture_data.get(action).get(direction)[frame_id].get('tile')
+		
+		########
+
+		# Get no of the animated frames for given action adn direction
+		anim_length = self.model.texture_length.get(action).get(direction)
+		
+		# Fix the last_frame so it is always within 0 .. anim_length
+		self.last_frame = self.last_frame % anim_length
+
+		# Get dictionary describing the current frame
+		curr_frame = self.model.texture_data.get(action).get(direction)[self.last_frame]
+
+		# If action is animated - then shift based on time
+		if self.model.texture_dynamic.get(action).get(direction):
+
+			# Get the currect time and measure the delay from last_time
+			current_time = pygame.time.get_ticks()
+		
+			# if delay is greater move to the next frame and reset timer
+			if current_time - self.last_time > curr_frame.get('duration'):
+				self.last_time = current_time
+				self.last_frame = (self.last_frame + 1) % anim_length
+
+		return self.model.texture_data.get(action).get(direction)[self.last_frame].get('tile')
+
+	def set_next_frame(self, action, direction):
+		''' Set the next frame for animation '''
+		self.last_time = pygame.time.get_ticks() 
+		self.last_frame = (self.last_frame + 1) % self.model.texture_length.get(action).get(direction)
+
+	def pre_save(self):
+		''' Prepare component for saving - remove all references to
+		non-serializable objects
+		'''
+		self.model = None
+	
+	def post_load(self):
+		''' Regenerate all non-serializable objects for the component
+		'''
+		try:
+			self.model = model.Model(self.model_file)
+		except:
+			raise ValueError	
 
 
 class Controllable(Component):
-	''' Entity can be controlled by the keyboard commands
+	''' Entity can be controlled by the keyboard commands.
+
+	Used by:
+		-	InputProcessor
+
+	Tests:
+		>>> c = Controllable()
 	'''
+
+	__slots__ = ['control_keys', 'enabled', 'control_cmds']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Controllable component.
+
+		Parameters:
+			:param control_keys: Dictionary containing mapping 
+				of movement and action keys to keyboard keys
+			:type control_keys: dict
+
+			:param control_cmds: Dictionary containing mapping
+				of movement and action keys to commands
+			:type control_cmds: dict
+
+			:raise: ValueError - in case of incorrect keys/commands definition
+
 		'''
 		super().__init__()
-
-		control_keys = kwargs.get("control_keys", {})
-		control_cmds = kwargs.get("control_cmds", {})
 
 		# Possibility to disable input for the global processor
 		self.enabled = True
 
-		# Keyboard arrows
-		default_keys = {
-			"left" : 276,
-			"right": 275,
-			"up" : 273,
-			"down" : 274
-		}
-		
+		# Control keys definition
+		default_keys = {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274}
+		control_keys = kwargs.get("control_keys", default_keys)
+
+		# Control commands definition
+		default_cmds = { 'left' : 'move', 'right': 'move', 'up' : 'move', 'down' : 'move'}
+		control_cmds = kwargs.get("control_cmds", default_cmds)
+
+		try:
+			assert isinstance(control_keys, dict), f'Control keys must be passed in a form of dictionary.'
+			assert isinstance(control_cmds, dict), f'Control cmds must be passed in a form of dictionary.'
+
+			# Does control_keys dictionary contain at least one valid key key?
+			assert bool(set(default_keys.keys()).intersection(set(control_keys.keys()))), f'Control keys are not properly defined'
+
+			# Does control_cmds dictionary contain at least one valid command key?
+			assert bool(set(default_cmds.keys()).intersection(set(control_cmds.keys()))), f'Control commands are not properly defined'
+
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
 		# Merge defaults with defined
 		self.control_keys = {**default_keys, **control_keys}
-
-		# No default commands
-		default_cmds = {}
 
 		# Merge defaults with defined
 		self.control_cmds = {**default_cmds, **control_cmds}
 
 
 class Collidable(Component):
-	''' Entity collides with other collidable entities
+	''' Entity collides with other collidable entities.
+
+	Used by:
+		-	RenderDebugProcessor
+		-	CollisionMapProcessor
+		-	CollisionEntityGeneratorProcessor
+		-	CollisionTeleportProcessor
+		-	CollisionItemProcessor
+		-	CollisionEntityProcessor
+		-	CollisionCorrectorProcessor	
+
+	Tests:
+		>>> c = Collidable()
 	'''
+
+	__slots__ = ['x', 'y', 'collision_events']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Collidable component.
+
+		Parameters:
+			:param x: X-axis collision zone +- from the x-centre of the entity in pixel coordinates
+			:type x: int
+
+			:param y: Y-axis collision zone +- from the y-centre of the entity in pixel coordinates
+			:type y: int
+
+			:raise: ValueError - in case of incorrect collision borders
 		'''
+
 		super().__init__()
 		
-		# With and height of the collision zone
+		# With and height of the collision zone - from the center +/-x and +/-y
 		self.x = kwargs.get('x', 0)
 		self.y = kwargs.get('y', 0)
 
-		# Keep track with who the entity collided
+		try:
+			assert isinstance(self.x, int) and self.x >= 0, f'Collision x-axis must be passed as positive int.'
+			assert isinstance(self.y, int) and self.x >= 0, f'Collision y-axis must be passed as positive int.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError		
+
+		# Keep track with whom the entity collided
 		self.collision_events = set()
 
 
@@ -690,16 +1078,36 @@ class Camera(Component):
 
 	Used by:
 		-	UpdateCameraOffsetProcessor
+		-	CollisionItemProcessor
+		-	RenderMapProcessor
+		-	RenderWorldProcessor
+		-	RenderDebugProcessor
+		-	RenderMapProcessorFullScan (OBSOLETE)
 
+	Tests:
+		>>> c = Camera()
 	'''
+
+	__slots__ = ['always_centre', 'map_screen_rect', 'offset_x', 'offset_y', 'screen_pos_x', 'screen_pos_y' \
+				'screen_width', 'screen_height', 'screen_width_half', 'screen_height_half','screen']
+
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new Camera component.
+
+		Parameters:
+			:param screen_pos_x: X-axis position of the topleft screen corner in the game window.
+			:type screen_pos_x: int
+
+			:param screen_pos_y: Y-axis position of the topleft screen corner in the game window.
+			:type screen_pos_y: int
+
+			:param screen_width: Width of the screen window.
+			:type screen_height: Height of the screen window.
+
+			:raise: ValueError - in case of incorrect screen window parameters.
 		'''
 		
 		super().__init__()
-
-		# Should the camera be always centered on the entity - default is False (better)
-		self.always_center = False
 		
 		# Rectancle (top-left and bottom-right positions in pixels) of the map that is displayed on
 		# camera.screen surface. It is used for rendering of map on the screen. Rectancle is calculated
@@ -711,6 +1119,10 @@ class Camera(Component):
 		self.offset_x = 0
 		self.offset_y = 0
 
+		# Should the camera be always centered on the entity - default is False 
+		# If False then camera stops centering when entity is close to map edges
+		self.always_center = kwargs.get('always_center', False)
+
 		# Topleft position of the Camera screen
 		self.screen_pos_x = kwargs.get('screen_pos_x', 0)
 		self.screen_pos_y = kwargs.get('screen_pos_y', 0)
@@ -718,6 +1130,19 @@ class Camera(Component):
 		# Width and height of the Camera screen
 		self.screen_width = kwargs.get('screen_width', 100)
 		self.screen_height = kwargs.get('screen_height', 100)
+
+		# Check the parameters for correctness
+		try:
+			assert isinstance(self.always_center, bool), f'Incorrect camera mode parameter - {self.always_center}.'
+
+			assert isinstance(self.screen_pos_x, int) and self.screen_pos_x >= 0, f'Incorrect position of the camera screen window - {self.screen_pos_x}.'
+			assert isinstance(self.screen_pos_y, int) and self.screen_pos_y >= 0, f'Incorrect position of the camera screen window - {self.screen_pos_y}.'
+
+			assert isinstance(self.screen_width, int) and self.screen_width > 0, f'Incorrect width of the camera screen window - {self.screen_width}.'
+			assert isinstance(self.screen_height, int) and self.screen_height > 0, f'Incorrect height of the camera screen window - {self.screen_height}.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
 
 		# Half of width and height is precalculated to avoid repetitive calculations /2
 		self.screen_width_half = int(round(self.screen_width / 2))
@@ -729,6 +1154,10 @@ class Camera(Component):
 	def apply(self, pos=(0,0)):
 		''' Applying camera offset to some position. Returns new position
 		of the object and hence enables scrolling effect.
+
+		Parameters:
+			:param pos: Position on which camera offset will be applied
+			:type pos: tuple
 		'''
 		# Move the sprite of the entity - returns new shifted coordinates
 		return (pos[0] + self.offset_x, pos[1] + self.offset_y)
@@ -744,3 +1173,13 @@ class Camera(Component):
 		'''
 		self.screen = pygame.Surface((self.screen_width, self.screen_height))
 
+########################################################
+### For Standalone execution
+########################################################
+
+if __name__ == '__main__':
+	
+	# Test the module
+	from doctest import testmod
+	testmod()
+	print(f'Tests finished')

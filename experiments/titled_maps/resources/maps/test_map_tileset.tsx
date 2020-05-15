@@ -49,6 +49,9 @@
   </animation>
  </tile>
  <tile id="781">
+  <properties>
+   <property name="action" value="upwards"/>
+  </properties>
   <animation>
    <frame tileid="781" duration="101"/>
    <frame tileid="782" duration="101"/>

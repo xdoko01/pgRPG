@@ -1,0 +1,20 @@
+What needs to be done to prepare json model from TileSet in Tiled.
+
+1/ Create new tilemap from png with tiles and save it as json.
+
+2/ Add custom properties 'action' and 'direction' to static or animated tiles
+
+
+	Typically 'action' = 'idle' (this will be probably on static tiles, but may be also on animated tiles)
+		'direction' = 'up'
+		'direction' = 'down'
+		'direction' = 'left'
+		'direction' = 'right'
+
+	Typically 'action' = 'walk' (this will be probably on animated tiles, but may be also on static tiles)
+		'direction' = 'up'
+		'direction' = 'down'
+		'direction' = 'left'
+		'direction' = 'right'
+
+		

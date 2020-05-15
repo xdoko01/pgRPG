@@ -93,6 +93,7 @@ pygame.init()
 window = pygame.display.set_mode((850,850))
 
 tmxdata = load_pygame('experiments/titled_maps/resources/maps/test_map.tmx')
+tmxdata_dark_male = load_pygame('experiments/titled_maps/resources/maps/darkmale.tmx')
 
 def images_rescale(images=[], scale=(64,64)):
 	return [pygame.transform.scale(i, scale) if i else None for i in images]
@@ -121,6 +122,10 @@ print(animations)
 
 print(tmxdata.get_tile_properties(1,1,0))
 
+for layer in tmxdata.visible_tile_layers: print(layer)
+
+
+print(tmxdata_dark_male.tile_properties)
 
 running = True
 

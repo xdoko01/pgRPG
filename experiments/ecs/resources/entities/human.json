@@ -1,9 +1,8 @@
 {
 	"id" : "human",
-	"templates" : ["being"],
+	"templates" : ["tannedmale"],
 	"components" : [
 		{"type" : "Teleportable", "params" : {}},
-		{"type" : "Renderable", "params" : {"image" : "human.png"}},
 		{"type" : "Brain", "params" : {"commands" : []}},
 		{"type" : "CanTalk", "params" : {}}
 	]

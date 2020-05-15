@@ -15,18 +15,59 @@
 
 			"entities" : [
 				{
+					"id" : "helmet_to_pick",
+					"templates" : ["thing"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "golden_helmet", "name" : "Golden Helmet"}},
+						{"type" : "Position", "params" : {"x" : 200, "y" : 300, "map" : "test_map"}},
+
+
+						{"type" : "State", "params" : {"state" : "idle"}},
+						{"type" : "RenderableModel", "params" : {"model" : "w_m_legs_formalpantsstripes.json"}},
+
+						{"type" : "Pickable", "params" : {}},
+						{"type" : "Wearable", "params" : {"bodypart" : "legs"}},
+
+						{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
+
+						{"type" : "Debug", "params" : {}}
+
+					]
+				},
+				{
+					"id" : "helmet_to_wear",
+					"templates" : ["thing"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "golden_helmet_to_wear", "name" : "Golden Helmet"}},
+
+						{"type" : "RenderableModel", "params" : {"model" : "malegoldenhelm.json"}},
+
+						{"type" : "Pickable", "params" : {}},
+						{"type" : "Wearable", "params" : {"bodypart" : "head"}},
+
+						{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
+
+						{"type" : "Debug", "params" : {}}
+
+					]
+				},
+				{
 					"id" : "player01",
 					"templates" : ["player"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
 						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
+
 						{"type" : "Controllable", "params" :  {
-							"control_keys" : {}, 
 							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move"}
 							}
 						},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 300, "screen_height" : 300}},
-						{"type" : "Debug", "params" : {}}
+
+						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
+						{"type" : "Debug", "params" : {}},
+
+						{"type" : "CanWear", "params" : {"head" : "helmet_to_wear"}}
+
 					]
 				},
 				{
@@ -37,7 +78,7 @@
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Renderable", "params" : {"image" : "item.png"}},
 						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 310, "screen_width" : 300, "screen_height" :300}},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 410, "screen_width" : 400, "screen_height" :400}},
 						{"type" : "Pickable", "params" : {}}
 					]
 				},
@@ -52,7 +93,7 @@
 							"control_cmds" : {"up": "none", "down": "move", "left": "move", "right": "move"}
 							}
 						},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 310, "screen_pos_y" : 0, "screen_width" : 300, "screen_height" :300}},
+						{"type" : "Camera", "params" : {"always_center": true, "screen_pos_x" : 410, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
 						{"type" : "CanTalk", "params" : {}},
 						{"type" : "Debug", "params" : {}},
 						{"type" : "Brain", "params" : {"commands" : [
@@ -85,7 +126,7 @@
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Renderable", "params" : {"image" : "teleport.png"}},
 						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 310, "screen_pos_y" : 310, "screen_width" : 300, "screen_height" : 300}},
+						{"type" : "Camera", "params" : {"screen_pos_x" : 410, "screen_pos_y" : 410, "screen_width" : 400, "screen_height" : 400}},
 						{"type" : "Teleport", "params" : {"dest_map" : "test_map", "dest_x" : 200, "dest_y" : 1000, "key" : "item01"}}
 					]
 				},
@@ -100,35 +141,33 @@
 				},
 				{
 					"id" : "npc01",
+					"templates" : ["human"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
 						{"type" : "Position", "params" : {"x" : 800, "y" : 200, "map" : "test_map"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Renderable", "params" : {"image" : "npc.png"}},
-						{"type" : "Collidable", "params" : {"x" : 40, "y" : 40}},
+
 						{"type" : "HasInventory", "params" : {"inventory" : ["key01"]}},
-						{"type" : "CanTalk", "params" : {}},
+
 						{"type" : "Debug", "params" : {}},
+
 						{"type" : "Brain", "params" : {"commands" : [
-							[null, 	"move", {"dx" : -120}],
-							[0, 	"loop", {"iterations" : 30}],
-							[2, 	"show_dialog", {"time" : 3000, "text" : "... who will help me ...?"}],
-							[null, 	"move", {"dx" : 120}],
-							[3, 	"loop", {"iterations" : 30}],
-							[5, 	"show_dialog", {"time" : 3000, "text" : "... Somebody please help me !!"}],
+							[0, 	"move_to", {"x" : 600, "y" : 200}],
+							[1, 	"show_dialog", {"time" : 3000, "text" : "... who will help me ...?"}],
+							[2, 	"move_to", {"x" : 1000, "y" : 200}],
+							[3, 	"show_dialog", {"time" : 3000, "text" : "... Somebody please help me !!"}],
 							[0, 	"goto", {}]
 						]}}
 					]
 				},
 				{
 					"id" : "npc02",
+					"templates" : ["human"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
-						{"type" : "Renderable", "params" : {"image" : "npc.png"}},
 						{"type" : "Position", "params" : {"x" : 400, "y" : 1100, "map" : "test_map"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 700, "screen_pos_y" : 700}},
+
+						{"type" : "Camera", "params" : {"screen_pos_x" : 750, "screen_pos_y" : 750}},
+
 						{"type" : "Debug", "params" : {}},
 						{"type" : "Brain", "params" : {"commands" : [
 							[0, 	"move_to", {"x" : 100, "y" : 1100}],

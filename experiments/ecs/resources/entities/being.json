@@ -3,6 +3,6 @@
 	"templates" : ["thing"],
 	"components" : [
 		{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-		{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}}
+		{"type" : "Collidable", "params" : {"x" : 16, "y" : 32}}
 	]
 }

@@ -1,0 +1,10 @@
+{
+	"id" : "orcfemale",
+	"templates" : ["being"],
+	"components" : [
+
+		{"type" : "State", "params" : {"state" : "idle"}},
+		{"type" : "RenderableModel", "params" : {"model" : "orcfemale.json"}}		
+
+	]
+}

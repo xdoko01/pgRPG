@@ -1,0 +1,10 @@
+{
+	"id" : "darkmale",
+	"templates" : ["being"],
+	"components" : [
+
+		{"type" : "State", "params" : {"state" : "idle"}},
+		{"type" : "RenderableModel", "params" : {"model" : "darkmale.json"}}		
+
+	]
+}

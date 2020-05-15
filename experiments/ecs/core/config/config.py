@@ -1,11 +1,13 @@
-IMAGE_PATH = 'experiments/ecs/resources/images/' 
+MODEL_PATH = 'experiments/ecs/resources/models/'
+IMAGE_PATH = 'experiments/ecs/resources/images/'
 QUEST_PATH = 'experiments/ecs/resources/quests/'
 ENTITY_PATH = 'experiments/ecs/resources/entities/'
 MAP_PATH = 'experiments/ecs/resources/maps/'
 LOG_PATH = 'experiments/ecs/logs/'
 SAVE_PATH = 'experiments/ecs/save/'
+
 DEBUG = {
-	'log_performance' : False,
+	'show_wearables' : True,
 	'show_inventory' : True,
 	'show_labels' : True,
 	'show_position' : True,
@@ -17,4 +19,3 @@ DEBUG = {
 FPS = 120
 MOVE_SPEED = 120 # in px per second
 TILE_RES = 64
-

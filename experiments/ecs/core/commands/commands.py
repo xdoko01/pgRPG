@@ -409,8 +409,15 @@ def cmd_move(*args, **kwargs):
 		motion = engine.world.component_for_entity(entity, components.Motion)
 		
 		# Change the motion if parameter passed in the command
-		motion.dx = dx if dx else motion.dx
-		motion.dy = dy if dy else motion.dy
+		# What if there are several commands in the queue for motion - like move 5x to the left?
+		# In that case, what is written below will not work
+
+		#motion.dx = dx if dx else motion.dx
+		#motion.dy = dy if dy else motion.dy
+
+		# This is more correct as it is not ignoring multiple movement commands for one entity
+		motion.dx = motion.dx + dx if dx else motion.dx
+		motion.dy = motion.dy + dy if dy else motion.dy
 
 		return 0
 
