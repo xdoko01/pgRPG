@@ -54,17 +54,62 @@ def filter_only_visible(camera, comp_tuple, corr=32):
 ### Processors Classes
 ########################################################
 
-class StateProcessor(esper.Processor):
-	''' Change the status
+class ClearTemporaryEntityProcessor(esper.Processor):
+	''' Delete for example projectiles
 	'''
 	def __init__(self):
 		super().__init__()
 
 	def process(self, *args, **kwargs):
+		
+		# Get all temporary components
+		for ent, temporary in self.world.get_component(components.Temporary):
+			
+			# Compare if the entity lived long enough
+			if pygame.time.get_ticks() - temporary.creation_time > temporary.ttl:
+				self.world.delete_entity(ent)
+			
+			# Remove from the list of projectiles
+			#engine.world.get_component(ent, components.HasWeapon)
 
-		# Blit all the Entities that have Renderable and Position components
-		for _, (state, motion) in self.world.get_components(components.State, components.Motion):
-			state.state = 'walk' if motion.has_moved else 'idle'
+
+class RenderableModelAnimationActionProcessor(esper.Processor):
+	''' Change the action of renderable model in order to display
+	correct action animation.
+	'''
+	def __init__(self):
+		super().__init__()
+
+	def process(self, *args, **kwargs):
+		
+		# Get all states
+		for ent, renderable_model in self.world.get_component(components.RenderableModel):
+			
+			# try to get motion, has_weapon - returns None if not present
+			motion = self.world.try_component(ent, components.Motion)
+			has_weapon = self.world.try_component(ent, components.HasWeapon)
+
+			if motion and motion.has_moved:
+				
+				# If entity has moved, action is set to 'walk'
+				renderable_model.set_action('walk')
+			
+			elif has_weapon and has_weapon.weapon and has_weapon.has_attacked:
+				
+				# If entity has weapon and the weapon has attacked, set action to proper value
+				renderable_model.set_action(has_weapon.get_weapon_action_anim())
+				
+				# Reset the attack - in case attack key is released animation of attack is no longer displayed
+				has_weapon.has_attacked = False
+
+			elif has_weapon and has_weapon.weapon:
+				
+				# If entity has weapon but is not attacking, display idle weapon animation
+				renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+			
+			else:
+				# Has no weapon, is not moving,
+				renderable_model.set_action('idle')
 
 
 class RenderModelWorldProcessor(esper.Processor):
@@ -129,9 +174,8 @@ class RenderModelWorldProcessor(esper.Processor):
 			#####
 
 			# Blit all the Entities that have Renderable and Position components - only visible entities
-			for ent, (position, renderable, state) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel, components.State)):
-				camera.screen.blit(renderable.get_frame(state.state, position.dir_name), camera.apply(renderable.topleft((position.x, position.y))))
-
+			for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+				camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
 
 				#####
 				# Blit wearables for those displayable- using body information in order to sync the animations
@@ -151,7 +195,25 @@ class RenderModelWorldProcessor(esper.Processor):
 							w_renderable = self.world.component_for_entity(w_entity, components.RenderableModel)
 
 							# Blit it on the screen the wearable - using state / position and frame id from the character's RenderableModel
-							camera.screen.blit(w_renderable.get_frame(state.state, position.dir_name, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+							camera.screen.blit(w_renderable.get_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+
+				#####
+				# Blit weapons for those displayable- using body information in order to sync the animations
+				#####
+
+				# Blit all weapons for the above Entity - if possible
+				if self.world.has_component(ent, components.HasWeapon):
+
+					# Get the HasWeapon component of the entity that picked up Weapon
+					has_weapon = self.world.component_for_entity(ent, components.HasWeapon)
+
+					# Get the weapon entity - RenderableModel
+					if has_weapon.weapon:
+						w_renderable = self.world.component_for_entity(has_weapon.weapon, components.RenderableModel)
+
+						# Blit it on the screen the weapon - using state / position and frame id from the character's RenderableModel
+						camera.screen.blit(w_renderable.get_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+
 
 			#####
 			# Blit text bubbles
@@ -543,6 +605,36 @@ class RenderDebugProcessor(esper.Processor):
 			# Show debug information only for displayable entities with Debug flag - only for visible entities
 			for debug_entity, (pos_comp, deb_comp, render_comp) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.RenderableModel)):
 
+				# Print health
+				if debug.get('show_health', False):
+					try:
+						damageable_debug = self.world.component_for_entity(debug_entity, components.Damageable)
+						text = f'Health: {damageable_debug.health}'
+						pos = deb_comp.font.render(text, True, pygame.Color('black'))
+						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((pos_comp.x, pos_comp.y - 60))))
+					except KeyError:
+						pass
+
+				# Print status
+				if debug.get('show_state', False):
+					try:
+						state_debug = self.world.component_for_entity(debug_entity, components.RenderableModel)
+						text = f'State: {state_debug.action}'
+						pos = deb_comp.font.render(text, True, pygame.Color('black'))
+						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((pos_comp.x, pos_comp.y - 50))))
+					except KeyError:
+						pass
+
+				# Print weapons
+				if debug.get('show_weapons', False):
+					try:
+						weapons_debug = self.world.component_for_entity(debug_entity, components.HasWeapon)
+						text = f'Weapon: {weapons_debug.weapon}'
+						pos = deb_comp.font.render(text, True, pygame.Color('black'))
+						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((pos_comp.x, pos_comp.y - 40))))
+					except KeyError:
+						pass
+
 				# Print wearables
 				if debug.get('show_wearables', False):
 					try:
@@ -725,6 +817,10 @@ class InputProcessor(esper.Processor):
 				if keys[inp.control_keys.get('right')]:
 					self.input_command_queue.append((inp.control_cmds.get('right'), {"entity" : ent, "dx" : config.MOVE_SPEED}))
 
+				# Attack
+				if keys[inp.control_keys.get('attack')]:
+					self.input_command_queue.append((inp.control_cmds.get('attack'), {"entity" : ent}))
+				
 				# If none above buttons are presed
 				#if not (keys[inp.control_keys.get('up')]
 				#	or keys[inp.control_keys.get('up')]
@@ -895,6 +991,95 @@ class CollisionTeleportProcessor(esper.Processor):
 
 						# Remove the col event related to teleport from the Entity
 						col_event_entity_coll.collision_events.remove(ent)
+
+
+class CollisionDamageProcessor(esper.Processor):
+	def __init__(self, damage_event_queue):
+		super().__init__()
+		self.damage_event_queue = damage_event_queue
+
+	def process(self, *args, **kwargs):
+
+		for ent, (damaging, collision) in self.world.get_components(components.Damaging, components.Collidable):
+
+			# Process everything that collided with Damaging entity
+			for col_event_entity in collision.collision_events.copy():
+
+				# If hitted component has Damageble component then proceed
+				if self.world.has_component(col_event_entity, components.Damageable):
+
+					# Get the Damageble component of the entity that was hit by the Projectile
+					col_event_entity_damageable = self.world.component_for_entity(col_event_entity, components.Damageable) 
+					
+					# Get the Collidable component of the entity that was hitted - in order to remove the collision
+					col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+
+					# Decrease the health
+					col_event_entity_damageable.health -= damaging.damage
+
+					#try:
+					#	# Remove Position component from the weapon so that it is not displayable on the map - weapon is picked
+					#	self.world.remove_component(ent, components.Position) 
+					#	# Remove Camera component from the weapon so that the screen disappears - weapon is picked
+					#	self.world.remove_component(ent, components.Camera) 
+					#except KeyError:
+					#	pass
+
+					# Remove the col_event_entity from Damagable entity
+					collision.collision_events.remove(col_event_entity)
+
+					# Remove the col event related to item from the Damaging
+					col_event_entity_coll.collision_events.remove(ent)
+
+					# Report that item was hit - generate event
+					damage_event = event.Event('DAMAGE', ent, col_event_entity, params={'damaging' : ent, 'damaged' : col_event_entity})
+					self.damage_event_queue.append(damage_event)
+
+
+class CollisionWeaponProcessor(esper.Processor):
+	def __init__(self, weapon_event_queue):
+		super().__init__()
+		self.weapon_event_queue = weapon_event_queue
+
+	def process(self, *args, **kwargs):
+		for ent, (item, collision) in self.world.get_components(components.Weapon, components.Collidable):
+
+			# Process everything that collided with weapon entity
+			for col_event_entity in collision.collision_events.copy():
+					
+					# If entity (that have collided with weapon) can wear weapons items (HasWeapon)
+					if self.world.has_component(col_event_entity, components.HasWeapon):
+						
+						# Get the HasWeapon component of the entity that picked up Weapon
+						col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, components.HasWeapon) 
+						
+						# Get the Collidable component of the entity that picked up Weapon - in order to remove the collision
+						col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+
+						# Add weapon to the HasWeapon - only in case that the slot for Weapon is available
+						if not col_event_entity_has_weapon.weapon:
+							col_event_entity_has_weapon.weapon = ent
+
+							# Store the action connected to the weapon in the hasWeapon component
+							col_event_entity_has_weapon.action = self.world.component_for_entity(ent, components.Weapon).action
+
+							try:
+								# Remove Position component from the weapon so that it is not displayable on the map - weapon is picked
+								self.world.remove_component(ent, components.Position) 
+								# Remove Camera component from the weapon so that the screen disappears - weapon is picked
+								self.world.remove_component(ent, components.Camera) 
+							except KeyError:
+								pass
+
+							# Remove the col_event_entity from HasWeapon entity
+							collision.collision_events.remove(col_event_entity)
+
+							# Remove the col event related to item from the Weapon
+							col_event_entity_coll.collision_events.remove(ent)
+
+							# Report that item was weared - generate event
+							weapon_event = event.Event('WEAPON_ARMED', ent, col_event_entity, params={'weapon' : ent, 'picker' : col_event_entity})
+							self.weapon_event_queue.append(weapon_event)
 
 
 class CollisionWearableProcessor(esper.Processor):
@@ -1080,23 +1265,6 @@ class CollisionEntityProcessor(esper.Processor):
 				collision.collision_events.remove(col_event_entity)
 			'''
 
-
-class CollisionCorrectorProcessor(esper.Processor):
-	def __init__(self):
-		super().__init__()
-
-	def process(self, *args, **kwargs):
-		for ent, (collision, position) in self.world.get_components(components.Collidable, components.Position):
-			
-			# If some collision occured, the collision_event set is not empty
-			if collision.collision_events:
-				
-				# Fix position for the entity that has moved
-				position.x = position.lastx
-				position.y = position.lasty
-
-				# Clear all collisions
-				collision.collision_events.clear()
 
 
 class BrainProcessor(esper.Processor):
@@ -1547,6 +1715,23 @@ class CollisionEntityGeneratorProcessorFullScan(esper.Processor):
 					# Add collision to the collision component 
 					coll_other.collision_events.add(ent_moved)
 					#coll_moved.collision_events.add(ent_other)
+
+class CollisionCorrectorProcessor(esper.Processor):
+	def __init__(self):
+		super().__init__()
+
+	def process(self, *args, **kwargs):
+		for ent, (collision, position) in self.world.get_components(components.Collidable, components.Position):
+			
+			# If some collision occured, the collision_event set is not empty
+			if collision.collision_events:
+				
+				# Fix position for the entity that has moved
+				position.x = position.lastx
+				position.y = position.lasty
+
+				# Clear all collisions
+				collision.collision_events.clear()
 
 class RenderDebugProcessorFullScan(esper.Processor):
 	''' Information displayed only on visible entities

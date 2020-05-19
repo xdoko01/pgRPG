@@ -15,6 +15,137 @@ if not pygame.get_init(): pygame.init()
 #	move to x,y
 #	move to entity
 
+def cmd_attack(*args, **kwargs):
+	''' Pass whatever information you think are necessary for the command
+	and let the command utilize them or not
+
+	- Projectile
+		- ttl
+		- owner entity
+
+	- Damaging
+		- damage
+
+	- Weapon
+		- type
+		- action - automatically filled
+		- max_projectiles
+		- projectiles collision zones (up, down, left, right)
+		- damage
+	
+	- some Weapon entity
+		-	Weapon
+		-	RenderableModel
+
+		---- in order to pick the weapon
+		-	Position (optional)
+		-	Collidable (optional)
+		-	Pickable (optional)
+		
+
+				, RenderableModel
+				- projectile - prepare projectiles - entities
+				- {up: entity, down: entity, left: entity, right: entity}
+				- components - Projectile, Collidable, Damaging (no position or position -100, -100)
+				- max projectiles ... 1 on smashable, pikeable weapons, many on arrows
+			 
+	- HasWeapon - rename to CanAttack??
+
+		- weapon, - read from weapon on init
+					- action, - read from Weapon on init
+
+		- has attacked - status - important for action animation
+
+		- projectiles = []
+
+		- method create_projectile (weapon on input, position component on input - in order to generate the correct position)
+			- check if more projectiles can be created
+			- read weapon
+			- create new entity based on description in Weapon - Projectilem Collidable Position Damaging
+			- add it into projectiles
+
+
+
+					- projectile_dict = {up, down, left, right} - read from Weapon on init
+						- Projectile
+						- Collidable - from Weapon
+						- Position - -100,-100
+						- Damaging
+
+					- projectiles_active = []
+					
+					- has_attacked
+
+	- Attack command
+		- call HasWeapon, create_projectile - here position is important
+
+	- CollisionGenerator
+		- should generate collisions with Projectiles - no change needed
+
+	- CollisionProjectileProcessor
+		- new processor that checks only Projectile, Collidable
+		- if entity hit then adjust health component + remove Collidable component - hit was done and no more
+					
+	- ClearTemporaryEntityProcessor
+		- new processor
+		- iterate every projectile OR iterate HasWeapon.projectiles_active
+			- check ttl on projectile and destroy it
+
+
+					- tile to attack - how long the projectile exists
+
+						- is created by action command - only if such entity does not exist
+							- Projectile, just a tag
+							- Position - based on position of character,s entity and character's collision zone
+							- Collidable - take from weapon component
+							- Damaging - how much healt is taken on collision with damageable component
+						- is destroyed - after some period of time?
+	- Action command
+		- get HasWeapon, Position component
+		- wet weapon component
+		- check if projectile = None
+			- if yes, check direction entity is facing - position.direction
+			- take the projectile entity from weapon get(direction)
+				-	get position component of projectile
+				-	update it
+				- assign it to HasWeapon
+
+
+	'''
+	# Get parameters for movement
+	entity = kwargs.get("entity")
+	
+	# Get HasWeapon component
+	# Check if has_weapon.projectile is None
+	#	if yes, 
+	#		
+	# get HasWeapon component
+	# get HasWeapon action
+	# set status component of the entity to action
+
+	# if HasWeapon component does not exist on entity then error is not raised
+	try:
+		# Get the HasWeapon component from the entity - TODO COllidable component must be optional
+		has_weapon = engine.world.component_for_entity(entity, (components.HasWeapon))
+
+		#position = engine.world.component_for_entity(entity, (components.Position))
+
+		#collidable = engine.world.component_for_entity(entity, (components.Collidable))
+
+		#state = engine.world.component_for_entity(entity, components.State)
+		has_weapon.has_attacked = True
+
+		#has_weapon.create_projectile(entity, position, collidable)
+		# set status component of the entity to action
+		#state.state = has_weapon.action
+
+		print(f'Attack command successfully added. Entity {entity}')
+		return 0
+
+	except KeyError:
+		print(f'Attack command error. Entity {entity}')
+		return -1
+
 def cmd_move_to(*args, **kwargs):
 	''' Move to certain x,y position on the current map.
 	Returns exception until the destination is reached. So it needs to be
@@ -500,6 +631,7 @@ CMD_DICT = {
 	'toggle_motion' : cmd_toggle_motion,
 	'show_dialog' : cmd_show_dialog,
 	'move' : cmd_move,
+	'attack' : cmd_attack,
 	'disable_collision' : cmd_disable_collision,
 	'remove_from_inventory' : cmd_remove_from_inventory,
 	'add_to_inventory' : cmd_add_to_inventory,

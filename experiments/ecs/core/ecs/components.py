@@ -29,7 +29,8 @@ if not pygame.freetype.get_init(): pygame.freetype.init()
 ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 	'Collidable', 'Camera', 'Brain', 'CanTalk', 'Pickable', 'HasInventory',\
 	'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
-	'CanWear']
+	'CanWear', \
+	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary']
 
 ########################################################
 ### Module functions
@@ -113,6 +114,183 @@ class Component(object):
 		pass
 
 
+class Temporary(Component):
+	''' Entity has limited timespan. After that entity disappears.
+	For example, projectile is temporary (arrow)
+	'''
+
+	__slots__ = ['ttl', 'creation_time']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the  Projectile component.
+		'''
+		super().__init__()
+
+		# how long in ms lives the projectile
+		self.ttl = kwargs.get("ttl", 100)
+
+		# when was the projectile fired
+		self.creation_time = pygame.time.get_ticks()
+
+
+class Damaging(Component):
+	''' Entity damages on collision - for example projectile
+	'''
+
+	__slots__ = ['damage']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the  Damaging component.
+		'''
+		super().__init__()
+
+		self.damage = kwargs.get("damage", 10)
+
+
+class Damageable(Component):
+	''' Entity has some health, i.e. is damageable 
+	'''
+
+	__slots__ = ['health']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the  Health component.
+		'''
+		super().__init__()
+
+		self.health = kwargs.get("health", 100)
+
+
+class Weapon(Component):
+	'''
+		- new component Weapon - identification of weapon entity
+		- Weapon will have renderableModel, Pickable, COllidable
+		- component specifies type of the weapon (bow, pike, sword, magic)
+		- component specifies the action corresponding to the weapon
+			- bow ... action = shoot (up, left, down, right)
+			- spear ... action = stab (up, left, down, right)
+			- sword ... action = swing (up, left, down, right)
+			- spell ... action = cast (up, left, down, right)
+	'''
+
+	WEAPONS = {
+		'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
+		'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
+		'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
+		'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
+	}
+
+	__slots__ = ['type', 'action']
+
+	def __init__(self, *args, **kwargs):
+
+		super().__init__()
+
+		# Read the weapon type
+		try:
+			self.type = kwargs.get('type')
+			self.action = Weapon.WEAPONS.get(self.type).get('action')
+			self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
+			self.max_projectiles = kwargs.get('max_projectiles', 100)
+			self.projectile_collision_zones = {
+				'up' : (16, 16),
+				'left' : (16, 16),
+				'down' : (16, 16),
+				'right' : (16, 16)
+			}
+			self.damage = 11
+
+		except KeyError:
+			# Notify component factory that initiation has failed
+			print(f'Mandatory parameters are missing.')
+			raise ValueError
+
+		# Assert that weapon type exists in list of WEAPONS
+		try:
+			assert isinstance(self.type, str) and self.type in Weapon.WEAPONS.keys(), f'Unknown weapon type "{self.type}" for {self.__class__} component.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
+
+class HasWeapon(Component):
+	''' Entity can pickup and have a Weapon entity
+
+	Used by:
+		-	CollisionWeaponProcessor
+
+	Tests:
+		>>> c = HasWeapon()
+	'''
+
+	__slots__ = ['weapon', 'action', 'has_attacked']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the new HasWeapon component. 
+		'''
+
+		super().__init__()
+
+		self.has_attacked = False
+
+		# Try to get the weapon the entity
+		try:
+			self.weapon = kwargs.get('weapon', None)
+
+			# Translate the value (Weapon) to Entity instance if necessary
+			self.weapon = engine._entity_map.get(self.weapon) if isinstance(self.weapon, str) else self.weapon
+
+			# TODO - do we really need the action here and not on the weapon??? Or alternativelly remove it from the weapon?
+			# TODO - Remember the action connected with the weapon - usage in StateProcesor
+			#self.action  = engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
+
+			# Remember the projectiles number
+			self.active_projectiles = 0
+
+		except KeyError:
+			# Notify component factory that initiation has failed
+			print(f'Problem with initiating a weapon for the entity')
+			raise ValueError
+	
+	def get_weapon_action_anim(self):
+			return engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
+	
+	def get_weapon_idle_anim(self):
+			return engine.world.component_for_entity(self.weapon, Weapon).idle if self.weapon else None
+
+
+	
+	def create_projectile(self, owner_ent, pos_comp, coll_comp):
+		'''
+			- check if more projectiles can be created
+			- read weapon
+			- create new entity based on description in Weapon - Projectilem Collidable Position Damaging
+			- add it into projectiles
+		'''
+		# Get weapon component from the weapon
+		weapon = engine.world.component_for_entity(self.weapon, Weapon)
+
+		# Check if more projectiles can be created and continue, if yes
+		if self.active_projectiles < weapon.max_projectiles:
+			
+			new_projectile = engine._create_entity(
+				{
+					"id" : "projectile_" + "owner_" + str(owner_ent),
+					"components" : [
+						{"type" : "Temporary", "params" : {"ttl" : 1000}},
+						{"type" : "Collidable", "params" : {"x" : weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], "y" : weapon.projectile_collision_zones.get(pos_comp.dir_name)[1]}},
+						{"type" : "Position", "params" : {"x" : int(pos_comp.x + (pos_comp.direction[0] * (coll_comp.x + 30))), "y" : int(pos_comp.y + (pos_comp.direction[1] * (coll_comp.y + 30))), "map" : pos_comp.map}},
+						{"type" : "Damaging", "params" : {}},
+						{"type" : "Debug", "params" : {}}
+					]
+				}, 
+				# Do not register in _entity_map
+				register=False)
+			
+			# Increase count of active projectiles
+			self.active_projectiles += 1
+
+
 class Wearable(Component):
 	''' Entity is wearable by other entity that has CanWear component
 
@@ -134,7 +312,7 @@ class Wearable(Component):
 
 		super().__init__()
 
-		# Coordinates in the world
+		# Read the bodypart
 		try:
 			self.bodypart = kwargs.get('bodypart')
 		except KeyError:
@@ -812,36 +990,7 @@ class Renderable(Component):
 		self.d_w = self.w / 2
 		self.d_h = self.h / 2		
 
-# New component
-class State(Component):
-	''' Represent state of the entity
-	idle, walk, attack, ...
-	'''
 
-	__slots__ = ['state']
-
-	STATES = ['idle', 'walk', 'attack']
-
-	def __init__(self, *args, **kwargs):
-		''' Initiate State component
-
-		Parameters:
-			:param state: State of the entity (default = idle)
-			:type state: str
-
-			:raise: ValueError - in case state is not defined/allowed
-		'''
-		
-		try:
-			self.state = kwargs.get('state', 'idle') 
-			assert isinstance(self.state, str) and self.state in State.STATES, f'State {self.state} is not allowed state'
-		except AssertionError:
-			# Notify component factory that initiation has failed
-			raise ValueError
-		
-# Refator the RenderableModel
-# new class Model will be part of it - memoized
-# component will only have last frame and last time
 class RenderableModel(Component):
 	''' Entity is displayable as animated model on the game screen.
 
@@ -852,8 +1001,7 @@ class RenderableModel(Component):
 		>>> c = RenderableModel()
 	'''
 
-	__slots__ = ['model', 'last_frame', 'last_time']
-
+	__slots__ = ['model', 'last_frame', 'last_time', 'action']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new RenderableModel component.
@@ -862,6 +1010,9 @@ class RenderableModel(Component):
 			:param model_name: Name of the model stored in MODEL_PATH directory
 			:type model_name: str
 
+			:param action: Initial animated action of the model
+			:type action: str
+			
 			:raise: ValueError - in case model file is not found or has problem
 		'''
 
@@ -870,9 +1021,13 @@ class RenderableModel(Component):
 		# Get the model name
 		model_file = kwargs.get('model', '')
 
-		# Check the model name
+		# Get the initial action of the model
+		self.action = kwargs.get('action', 'default') 
+
+		# Check the model name and the action name for validity
 		try:
 			assert isinstance(model_file, str), f'Model file name {model_file} is not valid.'
+			assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Action "{self.action}" is not allowed animation.'
 		except AssertionError:
 			# Notify component factory that initiation has failed
 			raise ValueError
@@ -891,6 +1046,19 @@ class RenderableModel(Component):
 
 		print(self.model)
 
+	def set_action(self, action):
+		''' Check if action is supported and set it - reset the frame and time.
+		If action is not supported then set action to 'default' action.
+		'''
+		# In case of non-supported action, change to default
+		if action not in self.model.texture_actions: action = 'default'
+		
+		# In case of action change - reset the anim variables
+		if action != self.action:
+			self.action = action
+			self.last_frame = 0
+			self.last_time = pygame.time.get_ticks()
+
 	def topleft(self, pos):
 		''' Returns correction of coordinates to display the sprite correctly
 
@@ -902,7 +1070,7 @@ class RenderableModel(Component):
 		'''
 		return (pos[0] - self.model.d_w, pos[1] - self.model.d_h)
 
-	def get_frame(self, action, direction, frame_id=None):
+	def get_frame(self, direction, action=None, frame_id=None):
 		''' Get the current frame for display. It is taking into account animated frames.
 		'''
 
@@ -912,41 +1080,50 @@ class RenderableModel(Component):
 		# TODO - Alternativelly, reset last_frame to 0 with every change of direction/action
 		#	- but where is the right place to do it??
 		
+		####### check that tile exists for given action, direction and frame
 		
+		## If action is not specified, use action from component
+		if not action: action = self.action
+
 		########
-		
 		# In case of particular frame (used with Wearables to be synchronized with animation)
 		if frame_id:
-			return self.model.texture_data.get(action).get(direction)[frame_id].get('tile')
-		
+			# In case that action / direction does not exist for the model, do nothing
+			try:
+				return self.model.texture_data.get(action, {}).get(direction, [])[frame_id].get('tile')
+			except:
+				return self.model.no_tile
 		########
 
-		# Get no of the animated frames for given action adn direction
-		anim_length = self.model.texture_length.get(action).get(direction)
-		
-		# Fix the last_frame so it is always within 0 .. anim_length
-		self.last_frame = self.last_frame % anim_length
+		try:
+			# Get no of the animated frames for given action and direction
+			anim_length = self.model.texture_length.get(action).get(direction)
+			
+			# Fix the last_frame so it is always within 0 .. anim_length
+			self.last_frame = self.last_frame % anim_length
 
-		# Get dictionary describing the current frame
-		curr_frame = self.model.texture_data.get(action).get(direction)[self.last_frame]
+			# Get dictionary describing the current frame
+			curr_frame = self.model.texture_data.get(action).get(direction)[self.last_frame]
 
-		# If action is animated - then shift based on time
-		if self.model.texture_dynamic.get(action).get(direction):
+			# If action is animated - then shift based on time
+			if self.model.texture_dynamic.get(action).get(direction):
 
-			# Get the currect time and measure the delay from last_time
-			current_time = pygame.time.get_ticks()
-		
-			# if delay is greater move to the next frame and reset timer
-			if current_time - self.last_time > curr_frame.get('duration'):
-				self.last_time = current_time
-				self.last_frame = (self.last_frame + 1) % anim_length
+				# Get the currect time and measure the delay from last_time
+				current_time = pygame.time.get_ticks()
+			
+				# if delay is greater move to the next frame and reset timer
+				if current_time - self.last_time > curr_frame.get('duration'):
+					self.last_time = current_time
+					self.last_frame = (self.last_frame + 1) % anim_length
 
-		return self.model.texture_data.get(action).get(direction)[self.last_frame].get('tile')
+			return self.model.texture_data.get(action).get(direction)[self.last_frame].get('tile')
+		except:
+			return self.model.no_tile
 
-	def set_next_frame(self, action, direction):
-		''' Set the next frame for animation '''
-		self.last_time = pygame.time.get_ticks() 
-		self.last_frame = (self.last_frame + 1) % self.model.texture_length.get(action).get(direction)
+	#def set_next_frame(self, action, direction):
+	#	''' Set the next frame for animation '''
+	#	self.last_time = pygame.time.get_ticks() 
+	#	self.last_frame = (self.last_frame + 1) % self.model.texture_length.get(action).get(direction)
 
 	def pre_save(self):
 		''' Prepare component for saving - remove all references to
@@ -995,12 +1172,12 @@ class Controllable(Component):
 		# Possibility to disable input for the global processor
 		self.enabled = True
 
-		# Control keys definition
-		default_keys = {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274}
+		# Control keys definition - keyboard arrows + 'z' key for attack
+		default_keys = {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274, 'attack' : 122}
 		control_keys = kwargs.get("control_keys", default_keys)
 
 		# Control commands definition
-		default_cmds = { 'left' : 'move', 'right': 'move', 'up' : 'move', 'down' : 'move'}
+		default_cmds = { 'left' : 'move', 'right': 'move', 'up' : 'move', 'down' : 'move', 'attack' : 'attack'}
 		control_cmds = kwargs.get("control_cmds", default_cmds)
 
 		try:
@@ -1172,6 +1349,36 @@ class Camera(Component):
 		''' Regenerate all non-serializable objects for the component
 		'''
 		self.screen = pygame.Surface((self.screen_width, self.screen_height))
+
+########################################################
+### Not Used anymore
+########################################################
+
+class State(Component):
+	''' Represent state of the entity
+	idle, walk, attack, ...
+	'''
+
+	__slots__ = ['state']
+
+	STATES = ['idle', 'walk', 'idle_stab', 'idle_swing']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate State component
+
+		Parameters:
+			:param state: State of the entity (default = idle)
+			:type state: str
+
+			:raise: ValueError - in case state is not defined/allowed
+		'''
+		
+		try:
+			self.state = kwargs.get('state', 'idle') 
+			assert isinstance(self.state, str) and self.state in State.STATES, f'State {self.state} is not allowed state'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
 
 ########################################################
 ### For Standalone execution

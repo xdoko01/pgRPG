@@ -15,6 +15,26 @@
 
 			"entities" : [
 				{
+					"id" : "spear_to_pick",
+					"templates" : ["thing"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "dragon_spear", "name" : "Dragon Spear"}},
+						{"type" : "Position", "params" : {"x" : 200, "y" : 400, "map" : "test_map"}},
+
+						{"type" : "Weapon", "params" : {"type" : "sword"}},
+
+						{"type" : "RenderableModel", "params" : {"model" : "shortswordmale.json"}},
+
+						{"type" : "Pickable", "params" : {}},
+						
+						{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
+
+						{"type" : "Debug", "params" : {}}
+
+					]
+				},
+
+				{
 					"id" : "helmet_to_pick",
 					"templates" : ["thing"],
 					"components" : [
@@ -22,7 +42,6 @@
 						{"type" : "Position", "params" : {"x" : 200, "y" : 300, "map" : "test_map"}},
 
 
-						{"type" : "State", "params" : {"state" : "idle"}},
 						{"type" : "RenderableModel", "params" : {"model" : "w_m_legs_formalpantsstripes.json"}},
 
 						{"type" : "Pickable", "params" : {}},
@@ -59,14 +78,15 @@
 						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
 
 						{"type" : "Controllable", "params" :  {
-							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move"}
+							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move", "attack": "attack"}
 							}
 						},
 
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
 						{"type" : "Debug", "params" : {}},
 
-						{"type" : "CanWear", "params" : {"head" : "helmet_to_wear"}}
+						{"type" : "CanWear", "params" : {"head" : "helmet_to_wear"}},
+						{"type" : "HasWeapon", "params" : {}}
 
 					]
 				},
@@ -90,7 +110,7 @@
 						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 						{"type" : "Controllable", "params" :  {
 							"control_keys" : {"up" : 119, "down" : 115, "left" : 97, "right" : 100}, 
-							"control_cmds" : {"up": "none", "down": "move", "left": "move", "right": "move"}
+							"control_cmds" : {"up": "none", "down": "move", "left": "move", "right": "move", "attack" : "none"}
 							}
 						},
 						{"type" : "Camera", "params" : {"always_center": true, "screen_pos_x" : 410, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},

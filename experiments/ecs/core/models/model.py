@@ -59,11 +59,11 @@ class Model(object):
 	''' Animated model of entity
 	'''
 
-	__slots__ = ['texture_data', 'texture_length', 'texture_dynamic', 'name', 'model_file','w', 'h', 'd_h', 'd_w']
+	__slots__ = ['texture_data', 'texture_length', 'texture_dynamic', 'texture_actions', 'name', 'model_file','w', 'h', 'd_h', 'd_w', 'no_tile']
 
 	# Allowed model directions and actions
 	DIRECTIONS = ['up', 'down', 'left', 'right']
-	ACTIONS = ['walk', 'idle']
+	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing']
 
 	def __init__(self, model_file):
 		''' Initiate values for the new RenderableModel component.
@@ -82,11 +82,17 @@ class Model(object):
 		
 		# Initiate variables
 		self.name = None
-		self.w = self.h = self.d_w = self.d_h = None
+		self.w = self.h = config.TILE_RES
+		self.d_w = self.d_h = config.TILE_RES / 2
 
 		self.texture_data = {'default' : [{'duration' : 0, 'tile' : None}]}
 		self.texture_length = {'default' : 1}
 		self.texture_dynamic = {'default' : False}
+		self.texture_actions = set('default')
+
+		# No tile is used in case tile for given action / direction / frame is not found
+		# see RenderableModel.get_frame
+		self.no_tile = pygame.Surface((0,0))
 
 		# Load model from model file
 		try:
@@ -112,16 +118,16 @@ class Model(object):
 
 		# Store name and dimensions of the model
 		self.name = model_data.get('name')
-		self.w = model_data.get('tilewidth')
-		self.h = model_data.get('tileheight')
+		tilewidth = model_data.get('tilewidth')
+		tileheight = model_data.get('tileheight')
 
 		# Diff vector from centre of the sprite to the topleft corner
 		# it is used by Render processor to get the right point where
 		# to render the sprite. i.e. position of the character can be 
 		# 100, 100 but in order to be centered on this position, render 
 		# processor must blit the sprite on 75,75 (example w,h=50)
-		self.d_w = self.w / 2
-		self.d_h = self.h / 2
+		#self.d_w = self.w / 2
+		#self.d_h = self.h / 2
 
 		# Load image with all model tiles
 		try:
@@ -141,9 +147,9 @@ class Model(object):
 		#####
 
 		# Prepare the tile texture - rectangle from the image - topleft image
-		rect = ((0 % (image_width // self.w)) * self.w, 
-				(0 // (image_width // self.h)) * self.h, 
-				self.w, self.h)
+		rect = ((0 % (image_width // tilewidth)) * tilewidth, 
+				(0 // (image_width // tileheight)) * tileheight, 
+				tilewidth, tileheight)
 
 		# Prepare the tile texture - image from model file - most topleft
 		self.texture_data.update({'default' : [{'duration' : 0, 'tile' : pygame.transform.scale(image.subsurface(rect), [config.TILE_RES, config.TILE_RES])}]})
@@ -170,6 +176,9 @@ class Model(object):
 				# Check that action and direction are valid and hence we can proceed with saving
 				if action in Model.ACTIONS and direction in Model.DIRECTIONS:
 					
+					## Record that action is supported
+					self.texture_actions.add(action)
+
 					##
 					# Save the animation
 					#	- prepare the list that will be added to texture_data on position of action and direction
@@ -187,12 +196,12 @@ class Model(object):
 						frame = {'duration' : 0}
 
 						# Prepare the tile texture - rectangle from the image
-						rect = ((int(anim_tile.get('id', 0)) % (image_width // self.w)) * self.w, 
-								(int(anim_tile.get('id', 0)) // (image_width // self.h)) * self.h, 
-								self.w, self.h)
+						rect = ((int(anim_tile.get('id', 0)) % (image_width // tilewidth)) * tilewidth, 
+								(int(anim_tile.get('id', 0)) // (image_width // tileheight)) * tileheight, 
+								tilewidth, tileheight)
 
 						# Save the tile image converted to TILE_RESOLUTION of the game (config.TILE_RES)
-						frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), [64,64]) })
+						frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), [config.TILE_RES, config.TILE_RES]) })
 						
 						frames.append(frame)
 					
@@ -207,12 +216,12 @@ class Model(object):
 							frame.update({ 'duration' : frame_dict.get('duration', 0)})
 
 							# Prepare the tile texture - rectangle from the image
-							rect = ((int(frame_dict.get('tileid', 0)) % (image_width // self.w)) * self.w, 
-									(int(frame_dict.get('tileid', 0)) // (image_width // self.h)) * self.h, 
-									self.w, self.h)
+							rect = ((int(frame_dict.get('tileid', 0)) % (image_width // tilewidth)) * tilewidth, 
+									(int(frame_dict.get('tileid', 0)) // (image_width // tileheight)) * tileheight, 
+									tilewidth, tileheight)
 								
 							# Save the tile image converted to TILE_RESOLUTION of the game (config.TILE_RES)
-							frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), [64,64]) })
+							frame.update({ 'tile' : pygame.transform.scale(image.subsurface(rect), [config.TILE_RES, config.TILE_RES]) })
 
 							# Now is the frame ready to be stored into the list
 							frames.append(frame)

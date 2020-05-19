@@ -2,7 +2,7 @@ class Event:
 	''' Class encapsulating event sent by event dispatcher
 	'''
 
-	EVENT_TYPES = ['COLLISION', 'TELEPORTATION', 'ITEM_PICKUP', 'WEARABLE_WEARED']
+	EVENT_TYPES = ['COLLISION', 'TELEPORTATION', 'ITEM_PICKUP', 'WEARABLE_WEARED', 'WEAPON_ARMED']
 
 	def __init__(self, event_type, generator_obj, other_obj, params={}):
 

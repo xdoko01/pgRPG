@@ -292,7 +292,7 @@ class World:
                  which is empty if the component doesn't exist.
         """
         if component_type in self._entities[entity]:
-            yield self._entities[entity][component_type]
+            return self._entities[entity][component_type]
         else:
             return None
 

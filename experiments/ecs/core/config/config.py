@@ -7,6 +7,9 @@ LOG_PATH = 'experiments/ecs/logs/'
 SAVE_PATH = 'experiments/ecs/save/'
 
 DEBUG = {
+	'show_health' : True,
+	'show_state' : True,
+	'show_weapons' : True,
 	'show_wearables' : True,
 	'show_inventory' : True,
 	'show_labels' : True,

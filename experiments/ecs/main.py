@@ -145,9 +145,110 @@ Requirements
 			- adjustment of processor RenderModelWorldProcessor
 				- added check if entity has CanWear component and if yes - rendering the clothes
 
+
+
 	- TODO
 
+		- Attack button pressed
+		- Attack command
+			- HasWeapon.has_attacked = True
+		- RenderableModelState changed
+			- to swing
+			- has_attacked = False
+		- RenderableModelGenerate
+			- draws swing sprite while button is pressed - when released start from scratch
+		
+		- GenerateProjectile processor
+			- check last_frame - RenderableModel, HasWeapon, Position
+				- last_frame = current frame and action is action
+				- has_weapon. max number of projectiles 
+				- create Projectile as temporary entity - position needed
+					Temporary, Collidable, Damaging, FiredFrom (hasEntity component)
+
+		- ClearTemporaryEntities processor
+
+
+		- I need to generate entity when animation is on the last frame and keep it alive for some time
+		- How to know that I am on the last frame?
+		-------------------------------
+
+		- if weapon is placed on position then display default action ...
+			- get_frame ... if direction is empty then direction is down
+			- if action is empty then action = default
+			- get_frame(action=default) ... same as get_frame action=default, direction = down
+
+		- document modification of esper - try_component .qq..
+
+
 		- how to implement action button
+			- new component Weapon - identification of weapon entity
+				- Weapon will have renderableModel, Pickable, COllidable
+				- component specifies type of the weapon (bow, pike, sword, magic)
+				- component specifies the action corresponding to the weapon
+					- bow ... action = shoot (up, left, down, right)
+					- spear ... action = stab (up, left, down, right)
+					- sword ... action = swing (up, left, down, right)
+					- spell ... action = cast (up, left, down, right)
+			- new component HasWeapon - if entity can pick up a weapon
+				- component contains the weapon entity
+			- new component CollisionWeaponProcessor
+				- must be planned before CollisionWearableProcessor - first to try to take weapon
+					if weapon already present, pik it as item to the inventory
+				- picking up weapon generates new action WEAPON EQUIPED
+			- adjustment of processor RenderModelWorldProcessor
+				- added check if entity has HasWeapon component, if yes - render the weapon
+			- HOW TO HIT THE ENEMY
+				- action command
+					- set HasWeapon.has_attacked = True
+					- in State processor set state to swing or other attack state + reset has_attacked
+				- Damageable component
+					{"type" : "Damageable", "params" : {"health" : 100}},
+				- Weapon
+					- should have collision zone that extends character collision zone
+				- if Attack 
+					- enhance collision zone in the direction in the attack command
+						- Collidable component change based on weapon component
+						- Collision Weapon generator processor generates collision event
+							- check all that HasWeapon
+								- for each calculate new collision zone based on
+									- position direction
+									- collidable collision
+									- weapon collision
+									- has_weapon - has_attacked
+							- check against all Damageable, position
+							- in case of hit ...
+
+						- Collision Entity processor
+				- alternatively, create new entity representing projectile - swing
+					- position is depending on parent entity position
+					- collidable dependent on weapon
+					- new component damaging
+					- facing right, pushin attack button
+						- new projectile entity is generated on the right side of the character
+						- later it is destroyed again
+						- Collision generator will notify the hit
+						- New collisionProjectileProcessor will generate event and change healt and everything.
+				- HasWeapon
+					- weapon, action
+					- projectile - entity that represents swing, arrow
+						- is created by action command - only if such entity does not exist
+							- Projectile, just a tag
+							- Position - based on position of character,s entity and character's collision zone
+							- Collidable - take from weapon component
+							- Damaging - how much healt is taken on collision with damageable component
+						- is destroyed - after some period of time?
+
+
+				- New collision weapon processor
+					- take components that have HasWeapon component
+						- that have has_attacked = True
+
+
+		- Controllable component - pass it also parameters of commands, currently those are filled in Input processor which is not
+		flexible enough. If I want to map different command than move, it will not work
+
+		- properly support default action if no other action exist in model - or have idle/down on all models????? or default/down???
+			- if frame is not found, use default/down??
 
 		- nice textboxes
 
@@ -168,8 +269,6 @@ Requirements
 				
 		- implement speed into the motion component - friendly NPCs should be slower than the player
 
-
-
 		- fix save and load, probably some processors have problem
 
 		- what is the FPS drop with anim. characters?
@@ -189,9 +288,7 @@ Requirements
 			- Helps reducing bitdepht from 32 to 16
 				window = pygame.display.set_mode((850,850), 0, 16)
 
-
 			rename _entity_map to entity_map or mapping, it is global so it should not start by _
-
 
 		-	implement animated entities
 
