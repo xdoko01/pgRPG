@@ -126,7 +126,7 @@ def cmd_attack(*args, **kwargs):
 	# if HasWeapon component does not exist on entity then error is not raised
 	try:
 		# Get the HasWeapon component from the entity - TODO COllidable component must be optional
-		has_weapon = engine.world.component_for_entity(entity, (components.HasWeapon))
+		has_weapon = engine.world.try_component(entity, (components.HasWeapon))
 
 		#position = engine.world.component_for_entity(entity, (components.Position))
 
@@ -139,11 +139,9 @@ def cmd_attack(*args, **kwargs):
 		# set status component of the entity to action
 		#state.state = has_weapon.action
 
-		print(f'Attack command successfully added. Entity {entity}')
 		return 0
 
-	except KeyError:
-		print(f'Attack command error. Entity {entity}')
+	except (KeyError, AttributeError):
 		return -1
 
 def cmd_move_to(*args, **kwargs):
@@ -517,7 +515,7 @@ def cmd_none(*args, **kwargs):
 	''' Empty command - Null object pattern.
 	It is useful if we want some action keys to do nothing
 	'''
-	print(f'None command executed')
+	#print(f'None command executed')
 	return 0
 
 def cmd_move(*args, **kwargs):

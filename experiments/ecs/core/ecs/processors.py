@@ -54,6 +54,36 @@ def filter_only_visible(camera, comp_tuple, corr=32):
 ### Processors Classes
 ########################################################
 
+class GenerateProjectileProcessor(esper.Processor):
+	''' Generate projectiles
+	'''
+	def __init__(self):
+		super().__init__()
+
+	def process(self, *args, **kwargs):
+		'''
+		- GenerateProjectile processor
+			- check last_frame - RenderableModel, HasWeapon, Position
+				- last_frame = current frame and action is action
+				- has_weapon. max number of projectiles 
+				- create Projectile as temporary entity - position needed
+					Temporary, Collidable, Damaging, Container (hasEntity component)
+		'''
+		# Get entities capable of producing projectiles - HasWeapon, on the last attack frame RenderableModel
+		for ent, (has_weapon, renderable_model, position) in self.world.get_components(components.HasWeapon, components.RenderableModel, components.Position):
+			
+			# Check if Model is in the action status and last frame of the action is happening
+			if renderable_model.action == has_weapon.get_weapon_action_anim() and renderable_model.is_last_frame:
+				
+				# Collidable is optional component - entities who are not collidable can generate projectiles
+				collidable = self.world.try_component(ent, (components.Collidable))
+
+				# Create an projectile
+				has_weapon.create_projectile(ent, position, collidable)
+
+				print(f'Projectile created')
+
+
 class ClearTemporaryEntityProcessor(esper.Processor):
 	''' Delete for example projectiles
 	'''
@@ -64,13 +94,22 @@ class ClearTemporaryEntityProcessor(esper.Processor):
 		
 		# Get all temporary components
 		for ent, temporary in self.world.get_component(components.Temporary):
-			
+
 			# Compare if the entity lived long enough
 			if pygame.time.get_ticks() - temporary.creation_time > temporary.ttl:
+				
+				# Delete from container TODO - must be done generic
+				container = self.world.try_component(ent, components.Container)
+				
+				if container:
+					# Remove from the set of projectiles
+					print(f'container.contained_in {container.contained_in}, container.contained_in.projectiles {container.contained_in.projectiles}')
+					container.contained_in.remove_projectile(ent) #HasWeapon component
+					
+				
+				# Remove from the world
 				self.world.delete_entity(ent)
 			
-			# Remove from the list of projectiles
-			#engine.world.get_component(ent, components.HasWeapon)
 
 
 class RenderableModelAnimationActionProcessor(esper.Processor):
@@ -601,6 +640,14 @@ class RenderDebugProcessor(esper.Processor):
 
 		# Show debug information on all cameras
 		for _, (cam_cam) in self.world.get_component(components.Camera):
+
+			for debug_entity, (pos_comp, deb_comp, coll_debug) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.Collidable)):
+				# Print collision area
+				if debug.get('show_collision', False):
+					try:
+						pygame.draw.rect(cam_cam.screen, pygame.Color('blue'), pygame.Rect(cam_cam.apply((pos_comp.x - coll_debug.x,pos_comp.y - coll_debug.y)), (2 * coll_debug.x, 2 *coll_debug.y)),1)
+					except KeyError:
+						pass
 
 			# Show debug information only for displayable entities with Debug flag - only for visible entities
 			for debug_entity, (pos_comp, deb_comp, render_comp) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.RenderableModel)):

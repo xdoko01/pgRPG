@@ -149,6 +149,11 @@ Requirements
 
 	- TODO
 
+		- problem, Renderable model is staying on the last frame of action animation more then one cycle, hence generating multiple collision zones
+		that are colliding with each other and causing processor load.
+
+		- problem that is_last_frame is set to true after processor that generates the projectile. Then until the whole cycle is finished
+
 		- Attack button pressed
 		- Attack command
 			- HasWeapon.has_attacked = True
@@ -158,6 +163,8 @@ Requirements
 		- RenderableModelGenerate
 			- draws swing sprite while button is pressed - when released start from scratch
 		
+		- creating many projectiles instead of a few
+
 		- GenerateProjectile processor
 			- check last_frame - RenderableModel, HasWeapon, Position
 				- last_frame = current frame and action is action

@@ -30,7 +30,7 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 	'Collidable', 'Camera', 'Brain', 'CanTalk', 'Pickable', 'HasInventory',\
 	'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
 	'CanWear', \
-	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary']
+	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container']
 
 ########################################################
 ### Module functions
@@ -113,6 +113,19 @@ class Component(object):
 		'''
 		pass
 
+
+class Container(Component):
+	''' {"type" : "Container", "params" : {"contained_in" : self.projectiles}}
+	'''
+
+	__slots__ = ['contained_in']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the  Container component.
+		'''
+		super().__init__()
+
+		self.contained_in = kwargs.get("contained_in", None)
 
 class Temporary(Component):
 	''' Entity has limited timespan. After that entity disappears.
@@ -223,7 +236,7 @@ class HasWeapon(Component):
 		>>> c = HasWeapon()
 	'''
 
-	__slots__ = ['weapon', 'action', 'has_attacked']
+	__slots__ = ['weapon', 'action', 'has_attacked', 'projectiles']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new HasWeapon component. 
@@ -244,8 +257,8 @@ class HasWeapon(Component):
 			# TODO - Remember the action connected with the weapon - usage in StateProcesor
 			#self.action  = engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
 
-			# Remember the projectiles number
-			self.active_projectiles = 0
+			# Remember the projectiles - set of ints representing entities
+			self.projectiles = set()
 
 		except KeyError:
 			# Notify component factory that initiation has failed
@@ -257,9 +270,15 @@ class HasWeapon(Component):
 	
 	def get_weapon_idle_anim(self):
 			return engine.world.component_for_entity(self.weapon, Weapon).idle if self.weapon else None
-
-
 	
+	def remove_projectile(self, entity):
+		'''
+		'''
+		print(f' Before deletion: {self.projectiles}')
+
+		self.projectiles.remove(entity)
+
+
 	def create_projectile(self, owner_ent, pos_comp, coll_comp):
 		'''
 			- check if more projectiles can be created
@@ -271,24 +290,33 @@ class HasWeapon(Component):
 		weapon = engine.world.component_for_entity(self.weapon, Weapon)
 
 		# Check if more projectiles can be created and continue, if yes
-		if self.active_projectiles < weapon.max_projectiles:
+		if len(self.projectiles) < weapon.max_projectiles:
 			
+			# calculate position for the new projectile
+			(ent_col_x, ent_col_y) = (coll_comp.x, coll_comp.y) if coll_comp else (0, 0)
+			(pos_x, pos_y, pos_map) = (int(pos_comp.x + (pos_comp.direction[0] * (ent_col_x + 30))), int(pos_comp.y + (pos_comp.direction[1] * (ent_col_y + 30))), pos_comp.map)
+			
+			# calculate collision zone for the new projectile
+			(col_x, col_y) = (weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], weapon.projectile_collision_zones.get(pos_comp.dir_name)[1])
+
 			new_projectile = engine._create_entity(
 				{
 					"id" : "projectile_" + "owner_" + str(owner_ent),
 					"components" : [
 						{"type" : "Temporary", "params" : {"ttl" : 1000}},
-						{"type" : "Collidable", "params" : {"x" : weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], "y" : weapon.projectile_collision_zones.get(pos_comp.dir_name)[1]}},
-						{"type" : "Position", "params" : {"x" : int(pos_comp.x + (pos_comp.direction[0] * (coll_comp.x + 30))), "y" : int(pos_comp.y + (pos_comp.direction[1] * (coll_comp.y + 30))), "map" : pos_comp.map}},
+						{"type" : "Collidable", "params" : {"x" : col_x, "y" : col_y}},
+						{"type" : "Position", "params" : {"x" : pos_x, "y" : pos_y, "map" : pos_map}},
 						{"type" : "Damaging", "params" : {}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Container", "params" : {"contained_in" : self}} # reference to has_weapon instance
 					]
 				}, 
 				# Do not register in _entity_map
 				register=False)
 			
 			# Increase count of active projectiles
-			self.active_projectiles += 1
+			self.projectiles.add(new_projectile)
+			print(f'New projectile added :{self.projectiles}')
 
 
 class Wearable(Component):
@@ -1001,7 +1029,7 @@ class RenderableModel(Component):
 		>>> c = RenderableModel()
 	'''
 
-	__slots__ = ['model', 'last_frame', 'last_time', 'action']
+	__slots__ = ['model', 'last_frame', 'last_time', 'is_last_frame', 'action']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new RenderableModel component.
@@ -1043,6 +1071,9 @@ class RenderableModel(Component):
 		# Time and frame must be remembered for animation
 		self.last_frame = 0
 		self.last_time = pygame.time.get_ticks()
+
+		# In order to launch projectile, I need to know the last frame of animation
+		self.is_last_frame = False
 
 		print(self.model)
 
@@ -1115,6 +1146,14 @@ class RenderableModel(Component):
 				if current_time - self.last_time > curr_frame.get('duration'):
 					self.last_time = current_time
 					self.last_frame = (self.last_frame + 1) % anim_length
+					
+					# Set the flag if animation is on the last frame. Important for emitting projectiles
+					self.is_last_frame = True if self.last_frame == anim_length-1 else False
+					#print(f'is last frame set to {self.is_last_frame} on model {self.model.name}')
+
+				else: 
+					# Set the flag to False, I want to have it True only once when the animation changes
+					self.is_last_frame = False
 
 			return self.model.texture_data.get(action).get(direction)[self.last_frame].get('tile')
 		except:

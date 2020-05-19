@@ -362,8 +362,8 @@ class Quest:
 
 	def event_handler(self, event):
 
-		print(f'*Starting quest event processing')
-		print(event)
+		#print(f'*Starting quest event processing')
+		#print(event)
 
 		# Check if there are any actions defined for the event_type and iterate through
 		for event_handle in self.event_handlers.get(event.event_type, []):
