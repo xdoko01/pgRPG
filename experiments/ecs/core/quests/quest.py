@@ -391,7 +391,7 @@ class Quest:
 				# This value then AND with the value cond_param_result
 				cond_param_result = cond_param_result and (event.params.get(cond_param_key, None) == engine._entity_map.get(cond_param_value))
 
-			print(f'Cond_param_result: {cond_param_result}')
+			#print(f'Cond_param_result: {cond_param_result}')
 
 			#####
 			# SCRIPT condition
@@ -409,7 +409,7 @@ class Quest:
 			except SyntaxError:
 				print('Error in script condition for event {event}.')
 
-			print(f'Cond_script_result: {cond_script_result}')
+			#print(f'Cond_script_result: {cond_script_result}')
 
 			#####
 			# FUNCTION condition
@@ -429,7 +429,7 @@ class Quest:
 			except SyntaxError:
 				print('Error in function condition for event {event}.')
 
-			print(f'Cond_function_result: {cond_function_result}')
+			#print(f'Cond_function_result: {cond_function_result}')
 
 			#####
 			# Execute ACTION 
@@ -453,7 +453,7 @@ class Quest:
 					except SyntaxError:
 						print('Error in action function for event {event}.')
 					
-		print(f'*Finishing quest event processing')
+		#print(f'*Finishing quest event processing')
 
 	def set_phase(self, phase):
 		self.phase_id = phase

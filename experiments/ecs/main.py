@@ -149,6 +149,14 @@ Requirements
 
 	- TODO
 
+		- projectiles are generated only when second character is on the screen???? weird
+
+		- why are sometimes generated and sometimes not?
+
+		- why is the damage so big?
+
+		- analyse possibilities of Container component
+
 		- problem, Renderable model is staying on the last frame of action animation more then one cycle, hence generating multiple collision zones
 		that are colliding with each other and causing processor load.
 

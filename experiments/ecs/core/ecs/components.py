@@ -140,7 +140,7 @@ class Temporary(Component):
 		super().__init__()
 
 		# how long in ms lives the projectile
-		self.ttl = kwargs.get("ttl", 100)
+		self.ttl = kwargs.get("ttl", 10)
 
 		# when was the projectile fired
 		self.creation_time = pygame.time.get_ticks()
@@ -204,7 +204,7 @@ class Weapon(Component):
 			self.type = kwargs.get('type')
 			self.action = Weapon.WEAPONS.get(self.type).get('action')
 			self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
-			self.max_projectiles = kwargs.get('max_projectiles', 100)
+			self.max_projectiles = kwargs.get('max_projectiles', 1)
 			self.projectile_collision_zones = {
 				'up' : (16, 16),
 				'left' : (16, 16),
@@ -303,7 +303,7 @@ class HasWeapon(Component):
 				{
 					"id" : "projectile_" + "owner_" + str(owner_ent),
 					"components" : [
-						{"type" : "Temporary", "params" : {"ttl" : 1000}},
+						{"type" : "Temporary", "params" : {"ttl" : 100}},
 						{"type" : "Collidable", "params" : {"x" : col_x, "y" : col_y}},
 						{"type" : "Position", "params" : {"x" : pos_x, "y" : pos_y, "map" : pos_map}},
 						{"type" : "Damaging", "params" : {}},
