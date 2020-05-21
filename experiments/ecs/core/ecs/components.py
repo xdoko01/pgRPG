@@ -115,45 +115,51 @@ class Component(object):
 
 
 class Container(Component):
-	''' {"type" : "Container", "params" : {"contained_in" : self.projectiles}}
+	''' Component containing back reference to the
+	master component.
 	'''
 
 	__slots__ = ['contained_in']
 
 	def __init__(self, *args, **kwargs):
-		''' Initiate values for the  Container component.
+		''' Initiate values for the Container component.
 		'''
 		super().__init__()
 
 		self.contained_in = kwargs.get("contained_in", None)
 
+
 class Temporary(Component):
-	''' Entity has limited timespan. After that entity disappears.
-	For example, projectile is temporary (arrow)
+	''' Component that can be assigned to the entity that has
+	limited timespan. After that entity disappears. For example, 
+	projectile is temporary (arrow).
 	'''
 
 	__slots__ = ['ttl', 'creation_time']
 
 	def __init__(self, *args, **kwargs):
-		''' Initiate values for the  Projectile component.
+		''' Initiate values for the Temporary component.
 		'''
 		super().__init__()
 
-		# how long in ms lives the projectile
-		self.ttl = kwargs.get("ttl", 10)
+		# How long the entity with this components should live
+		# default is 5 seconds.
+		self.ttl = kwargs.get("ttl", 5000)
 
-		# when was the projectile fired
+		# When was the component created - in order to determine 
+		# destruction time
 		self.creation_time = pygame.time.get_ticks()
 
 
 class Damaging(Component):
-	''' Entity damages on collision - for example projectile
+	''' Entity containing this component is hurting 
+	entities upon collision - for example projectile.
 	'''
 
 	__slots__ = ['damage']
 
 	def __init__(self, *args, **kwargs):
-		''' Initiate values for the  Damaging component.
+		''' Initiate values for the Damaging component.
 		'''
 		super().__init__()
 
@@ -175,15 +181,8 @@ class Damageable(Component):
 
 
 class Weapon(Component):
-	'''
-		- new component Weapon - identification of weapon entity
-		- Weapon will have renderableModel, Pickable, COllidable
-		- component specifies type of the weapon (bow, pike, sword, magic)
-		- component specifies the action corresponding to the weapon
-			- bow ... action = shoot (up, left, down, right)
-			- spear ... action = stab (up, left, down, right)
-			- sword ... action = swing (up, left, down, right)
-			- spell ... action = cast (up, left, down, right)
+	''' Entity is a weapon if having this component.
+	Weapon has its parameters determined by weapon type.
 	'''
 
 	WEAPONS = {
@@ -199,19 +198,29 @@ class Weapon(Component):
 
 		super().__init__()
 
-		# Read the weapon type
+		# Read the weapon attributes
 		try:
+			# Weapon type
 			self.type = kwargs.get('type')
+			
+			# Weapon animation for attack action
 			self.action = Weapon.WEAPONS.get(self.type).get('action')
+			
+			# Weapon animation for idle action
 			self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
+			
+			# Weapon can generate max projectiles
 			self.max_projectiles = kwargs.get('max_projectiles', 1)
+			
 			self.projectile_collision_zones = {
 				'up' : (16, 16),
 				'left' : (16, 16),
 				'down' : (16, 16),
 				'right' : (16, 16)
 			}
-			self.damage = 11
+
+			# Weapon causes damage - default 10 points
+			self.damage = kwargs.get('damage', 10)
 
 		except KeyError:
 			# Notify component factory that initiation has failed
@@ -227,7 +236,7 @@ class Weapon(Component):
 
 
 class HasWeapon(Component):
-	''' Entity can pickup and have a Weapon entity
+	''' Entity can pickup and carry a Weapon 
 
 	Used by:
 		-	CollisionWeaponProcessor
@@ -244,6 +253,7 @@ class HasWeapon(Component):
 
 		super().__init__()
 
+		# Is set to True if attack action is in progress (command Attack was triggered)
 		self.has_attacked = False
 
 		# Try to get the weapon the entity
@@ -252,10 +262,6 @@ class HasWeapon(Component):
 
 			# Translate the value (Weapon) to Entity instance if necessary
 			self.weapon = engine._entity_map.get(self.weapon) if isinstance(self.weapon, str) else self.weapon
-
-			# TODO - do we really need the action here and not on the weapon??? Or alternativelly remove it from the weapon?
-			# TODO - Remember the action connected with the weapon - usage in StateProcesor
-			#self.action  = engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
 
 			# Remember the projectiles - set of ints representing entities
 			self.projectiles = set()
@@ -266,25 +272,29 @@ class HasWeapon(Component):
 			raise ValueError
 	
 	def get_weapon_action_anim(self):
-			return engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
+		''' Get the name of attack animation for the weapon that is currently 
+		in possesion of the entity.
+		'''
+		return engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
 	
 	def get_weapon_idle_anim(self):
-			return engine.world.component_for_entity(self.weapon, Weapon).idle if self.weapon else None
+		''' Get the name of idle animation for the weapon that is currently
+		in possesion of the entity.
+		'''
+		return engine.world.component_for_entity(self.weapon, Weapon).idle if self.weapon else None
 	
 	def remove_projectile(self, entity):
+		''' Removes projectile from the list of projectiles
+		that is implemented as a set.
 		'''
-		'''
-		print(f' Before deletion: {self.projectiles}')
 
 		self.projectiles.remove(entity)
+		print(f'Projectile {entity} deleted. List of projectiles {self.projectiles}')
 
 
 	def create_projectile(self, owner_ent, pos_comp, coll_comp):
-		'''
-			- check if more projectiles can be created
-			- read weapon
-			- create new entity based on description in Weapon - Projectilem Collidable Position Damaging
-			- add it into projectiles
+		''' Creates projectile - taking information from the generator of projectile - character entity position and collision
+		closely coupled with GenerateProjectile processor
 		'''
 		# Get weapon component from the weapon
 		weapon = engine.world.component_for_entity(self.weapon, Weapon)
@@ -296,9 +306,10 @@ class HasWeapon(Component):
 			(ent_col_x, ent_col_y) = (coll_comp.x, coll_comp.y) if coll_comp else (0, 0)
 			(pos_x, pos_y, pos_map) = (int(pos_comp.x + (pos_comp.direction[0] * (ent_col_x + 30))), int(pos_comp.y + (pos_comp.direction[1] * (ent_col_y + 30))), pos_comp.map)
 			
-			# calculate collision zone for the new projectile
+			# Calculate collision zone for the new projectile
 			(col_x, col_y) = (weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], weapon.projectile_collision_zones.get(pos_comp.dir_name)[1])
 
+			# Create new entity for the new projectile - TODO the parameters of projectile need to be taken from the weapon
 			new_projectile = engine._create_entity(
 				{
 					"id" : "projectile_" + "owner_" + str(owner_ent),
@@ -306,17 +317,17 @@ class HasWeapon(Component):
 						{"type" : "Temporary", "params" : {"ttl" : 100}},
 						{"type" : "Collidable", "params" : {"x" : col_x, "y" : col_y}},
 						{"type" : "Position", "params" : {"x" : pos_x, "y" : pos_y, "map" : pos_map}},
-						{"type" : "Damaging", "params" : {}},
+						{"type" : "Damaging", "params" : {"damage" : 10}},
 						{"type" : "Debug", "params" : {}},
 						{"type" : "Container", "params" : {"contained_in" : self}} # reference to has_weapon instance
 					]
 				}, 
-				# Do not register in _entity_map
+				# Do not register in engine global variable _entity_map - not needed
 				register=False)
 			
 			# Increase count of active projectiles
 			self.projectiles.add(new_projectile)
-			print(f'New projectile added :{self.projectiles}')
+			print(f'Projectile {new_projectile} created. List of projectiles {self.projectiles}')
 
 
 class Wearable(Component):
@@ -1104,7 +1115,7 @@ class RenderableModel(Component):
 	def get_frame(self, direction, action=None, frame_id=None):
 		''' Get the current frame for display. It is taking into account animated frames.
 		'''
-
+		if not frame_id: print(f'{self} - Get frame called: {direction}, {action}')
 		# Get length of the animation and use it for modulo on last_frame.
 		# This is needed because if action/direction is changed, last frame can be bigger
 		# than number of frames in the animation - hence causing error.
@@ -1148,7 +1159,8 @@ class RenderableModel(Component):
 					self.last_frame = (self.last_frame + 1) % anim_length
 					
 					# Set the flag if animation is on the last frame. Important for emitting projectiles
-					self.is_last_frame = True if self.last_frame == anim_length-1 else False
+					self.is_last_frame = True if self.last_frame == anim_length - 1 else False
+					if self.is_last_frame: print(f'RenderableModel: {self} - Set to TRUE!!!', {self.last_frame}, {action})
 					#print(f'is last frame set to {self.is_last_frame} on model {self.model.name}')
 
 				else: 
