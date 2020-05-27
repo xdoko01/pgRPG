@@ -178,6 +178,9 @@ def create_processors(world):
 	# Processor that deletes entities with Temporary component from the world - once ttl expires
 	clear_temporary_entity_processor = processors.ClearTemporaryEntityProcessor()
 	
+	# Update the animation for rendering the model
+	render_model_anim_update_processor = processors.RenderableModelAnimationUpdateProcessor()
+	
 	# Status procesor updates status of the entity - idle, walk, ...
 	render_model_anim_action_processor = processors.RenderableModelAnimationActionProcessor()
 
@@ -280,6 +283,9 @@ def create_processors(world):
 
 	### Change the entity state basedon everything what has happened before rendering
 	world.add_processor(render_model_anim_action_processor)
+	
+	### Update the entity animation
+	world.add_processor(render_model_anim_update_processor)
 
 	# Render background - stats / inventory / picture
 	world.add_processor(render_background_processor)
@@ -513,7 +519,7 @@ def main():
 	#####
 	global world
 
-	world = esper.World()
+	world = esper.World(timed=False)
 	create_processors(world)
 
 	# All quests are here
@@ -569,3 +575,4 @@ def main():
 		pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
 
 	pygame.quit()
+	#print(f'Process times: {world.process_times}')

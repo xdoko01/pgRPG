@@ -108,7 +108,6 @@ class ClearTemporaryEntityProcessor(esper.Processor):
 				
 				# Remove from the world
 				self.world.delete_entity(ent)
-			
 
 
 class RenderableModelAnimationActionProcessor(esper.Processor):
@@ -1319,7 +1318,6 @@ class CollisionEntityProcessor(esper.Processor):
 				# Remove the col_event_entity from  entity
 				collision.collision_events.remove(col_event_entity)
 			'''
-
 
 
 class BrainProcessor(esper.Processor):

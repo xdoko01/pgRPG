@@ -1,0 +1,26 @@
+{
+	"id" : "bow",
+	"templates" : ["weapon"],
+
+	"components" : [
+		
+		{
+			"type" : "Weapon", 
+			"params" : {
+				"animation" : {
+					"action" : "shoot", 
+					"idle" : "idle_shoot"
+				},
+				
+				"max_projectiles" : 3,
+
+				"projectiles" : null
+			}
+		},
+		
+		{"type" : "Factory", "params" : {}},
+		
+		{"type" : "Pickable", "params" : {}},
+		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

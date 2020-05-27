@@ -14,9 +14,10 @@
 			"cleanup" : [],
 
 			"entities" : [
+
 				{
 					"id" : "short_sword",
-					"templates" : ["sword"],
+					"templates" : ["sword", "sword_projectile_generator"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "short_sword", "name" : "Short Sword"}},
 						{"type" : "RenderableModel", "params" : {"model" : "shortswordmale.json"}},
@@ -74,7 +75,13 @@
 
 						{"type" : "CanWear", "params" : {"head" : "golden_helmet"}},
 
-						{"type" : "HasWeapon", "params" : {"weapon" : "short_sword"}}
+						{"type" : "HasWeapon", "params" : {
+							"weapons" : {
+								"sword" : {"weapon" : "short_sword", "generator" : "short_sword"}
+							}, 
+							"weapon_in_use" : "sword" }
+						}
+
 
 					]
 				},

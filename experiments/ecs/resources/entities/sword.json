@@ -1,9 +1,31 @@
 {
 	"id" : "sword",
-	"templates" : ["thing"],
+	"templates" : ["weapon"],
 
 	"components" : [
-		{"type" : "Weapon", "params" : {"type" : "sword"}},
+		 
+		{
+			"type" : "Weapon", 
+			"params" : {
+				"animation" : {
+					"action" : "swing", 
+					"idle" : "idle_swing"
+				},
+				"projectiles" : { 
+					"max_projectiles" : 1,
+					"projectile_collision_zones" : {
+						"up" : [16, 16],
+						"left" : [16, 16],
+						"down" : [16, 16],
+						"right" : [16, 16]
+					},
+					"damage" : 10,
+					"ttl" : 10,
+					"speed" : 0
+				}
+			}
+		},
+
 		{"type" : "Pickable", "params" : {}},
 		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}}
 	]

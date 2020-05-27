@@ -1,0 +1,26 @@
+{
+	"id" : "arrow",
+	"templates" : ["projectile"],
+
+	"components" : [
+		
+		{
+			"type" : "Projectile", 
+			"params" : {
+				"animation" : {
+					"action" : "shoot", 
+					"idle" : "idle_shoot"
+				},
+				"projectile_collision_zones" : {
+					"up" : [4, 12],
+					"left" : [12, 4],
+					"down" : [4, 12],
+					"right" : [12, 4]
+				},
+				"damage" : 10,
+				"ttl" : 500,
+				"speed" : 200
+			}
+		}
+	]
+}

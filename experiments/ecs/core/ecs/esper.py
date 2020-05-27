@@ -270,6 +270,24 @@ class World:
         except KeyError:
             pass
 
+    def _get_components_ex(self, *component_types: _Type, **kwargs) -> _Iterable[_Tuple[int, ...]]:
+        """Get an iterator for Entity and multiple Component sets + excluding entities
+		that are having exclude_component_types.
+
+        :param component_types: Two or more Component types.
+        :return: An iterator for Entity, (Component1, Component2, etc)
+        tuples.
+        """
+        entity_db = self._entities
+        comp_db = self._components
+        exclude_component_type = kwargs.get('without', None)
+
+        try:
+            for entity in set.intersection(*[comp_db[ct] for ct in component_types]).difference(comp_db[exclude_component_type]):
+                yield entity, [entity_db[entity][ct] for ct in component_types]
+        except KeyError:
+            pass
+
     @_lru_cache()
     def get_component(self, component_type: _Type[C]) -> _List[_Tuple[int, C]]:
         return [query for query in self._get_component(component_type)]
@@ -277,6 +295,10 @@ class World:
     @_lru_cache()
     def get_components(self, *component_types: _Type):
         return [query for query in self._get_components(*component_types)]
+
+    @_lru_cache()
+    def get_components_ex(self, *component_types: _Type, **kwargs):
+        return [query for query in self._get_components_ex(*component_types, **kwargs)]
 
     def try_component(self, entity: int, component_type: _Type):
         """Try to get a single component type for an Entity.

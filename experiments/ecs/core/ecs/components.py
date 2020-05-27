@@ -30,7 +30,8 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 	'Collidable', 'Camera', 'Brain', 'CanTalk', 'Pickable', 'HasInventory',\
 	'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
 	'CanWear', \
-	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container']
+	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container',\
+	'Factory']
 
 ########################################################
 ### Module functions
@@ -114,6 +115,67 @@ class Component(object):
 		pass
 
 
+class Factory(Component):
+	'''
+	- Factory component
+		- prescription for the new entity
+		- muze si pamatovat kolik muze vygenerovat entit
+		- position of the new component??? doda funkce create entity HasWeapon
+		- reference to projectile container??? doda funkce create entity HasWeapon
+		- factory component by mohla mit metodu generate
+		- vstupem pro uspesne vygenerovani musi byt pozice (volitelna) a kontainer(volitelny)
+
+	{"type" : "Factory", "params" : {"prescription" : "arrow.json", "units" : 5}},
+
+	'''
+
+	__slots__ = ['prescription', 'units']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the Factory component.
+		'''
+		super().__init__()
+
+		# Either define prescription as a json text or as a json entity file
+		self.prescription = kwargs.get('prescription')
+		
+		# Unlimited number of units in case no units passed in the argument
+		self.units = kwargs.get('units', None) 
+	
+		try:
+			assert isinstance(self.prescription, dict), f'Prescription must be in a form of dictionary'
+			assert isinstance(self.units, int) or self.units == None, f'Units must be integer or None(unlimited)'
+		except AssertionError:
+			raise ValueError
+
+	def create_entity(self, owner=None, pos=None, container=None, reg_at_engine=False):
+		''' Create entity from the prescription dictionary
+		'''
+		# If we want to register generated entity on engine level, we need to generate
+		# an uniq name for it.
+		if reg_at_engine:
+			id_str = f'{self.prescription.get("id", "")}OWN{owner}ORD{self.units}TS{pygame.time.get_ticks()}'
+			self.prescription.update({"id": id_str})
+		
+		new_entity = engine._create_entity(
+			self.prescription,
+			
+			# Do not register in engine global variable _entity_map - not needed
+			register=reg_at_engine
+		)
+
+		# Add position component pos = (pos_x, pos_y, pos_dir, pos_map)
+		if pos:
+			(pos_x, pos_y, pos_dir, pos_map) = pos
+			engine.world.add_component(new_entity, Position(x=pos_x, y=pos_y, dir=pos_dir, map=pos_map))
+		
+		# Add container component
+		if container:
+			engine.world.add_component(new_entity, Container(contained_in=container))
+
+		return new_entity
+
+
 class Container(Component):
 	''' Component containing back reference to the
 	master component.
@@ -185,14 +247,14 @@ class Weapon(Component):
 	Weapon has its parameters determined by weapon type.
 	'''
 
-	WEAPONS = {
-		'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
-		'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
-		'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
-		'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
-	}
-
-	__slots__ = ['type', 'action']
+	#WEAPONS = {
+	#	'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
+	#	'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
+	#	'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
+	#	'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
+	#}
+ 
+	__slots__ = ['action', 'idle']
 
 	def __init__(self, *args, **kwargs):
 
@@ -200,27 +262,24 @@ class Weapon(Component):
 
 		# Read the weapon attributes
 		try:
-			# Weapon type
-			self.type = kwargs.get('type')
 			
 			# Weapon animation for attack action
-			self.action = Weapon.WEAPONS.get(self.type).get('action')
+			self.action = kwargs.get('animation', {}).get('action', 'default')
 			
 			# Weapon animation for idle action
-			self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
+			self.idle  = kwargs.get('animation', {}).get('idle', 'default')
 			
 			# Weapon can generate max projectiles
-			self.max_projectiles = kwargs.get('max_projectiles', 1)
+			self.max_projectiles = kwargs.get('projectiles', {}).get('max_projectiles', 1)
 			
-			self.projectile_collision_zones = {
-				'up' : (16, 16),
-				'left' : (16, 16),
-				'down' : (16, 16),
-				'right' : (16, 16)
-			}
+			self.projectile_collision_zones = kwargs.get('projectiles', {}).get('projectile_collision_zones', {})
 
 			# Weapon causes damage - default 10 points
-			self.damage = kwargs.get('damage', 10)
+			self.damage = kwargs.get('projectiles', {}).get('damage', 1)
+
+			self.projectile_ttl =  kwargs.get('projectiles', {}).get('ttl', 100)
+
+			self.projectile_speed =  kwargs.get('projectiles', {}).get('speed', 100)
 
 		except KeyError:
 			# Notify component factory that initiation has failed
@@ -229,7 +288,12 @@ class Weapon(Component):
 
 		# Assert that weapon type exists in list of WEAPONS
 		try:
-			assert isinstance(self.type, str) and self.type in Weapon.WEAPONS.keys(), f'Unknown weapon type "{self.type}" for {self.__class__} component.'
+			assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Unknown animation action "{self.action}" for {self.__class__} component.'
+			assert isinstance(self.idle, str) and self.action in model.Model.ACTIONS, f'Unknown idle animation "{self.idle}" for {self.__class__} component.'
+			assert isinstance(self.max_projectiles, int), f'Max no. of projectiles must be an integer "{self.max_projectiles}" for {self.__class__} component.'
+			assert isinstance(self.damage, int), f' Damage must be an integer "{self.damage}" for {self.__class__} component.'
+			assert isinstance(self.projectile_ttl, int), f' Projectile ttl must be an integer "{self.projectile_ttl}" for {self.__class__} component.'
+			assert isinstance(self.projectile_speed, int), f' Projectile speed must be an integer "{self.projectile_speed}" for {self.__class__} component.'
 		except AssertionError:
 			# Notify component factory that initiation has failed
 			raise ValueError
@@ -245,7 +309,7 @@ class HasWeapon(Component):
 		>>> c = HasWeapon()
 	'''
 
-	__slots__ = ['weapon', 'action', 'has_attacked', 'projectiles']
+	__slots__ = ['weapons', 'has_attacked', 'projectiles', 'weapon_in_use']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new HasWeapon component. 
@@ -253,15 +317,39 @@ class HasWeapon(Component):
 
 		super().__init__()
 
+		# By default component does not store any weapons
+		default_weapons = {
+			"sword" : {"weapon" : None, "generator" : None},
+			"spear" : {"weapon" : None, "generator" : None},
+			"bow" : {"weapon" : None, "generator" : None},
+			"spell" : {"weapon" : None, "generator" : None}
+		}
+
+		# By default no weapon is selected
+		self.weapon_in_use = kwargs.get('weapon_in_use', None)
+
 		# Is set to True if attack action is in progress (command Attack was triggered)
 		self.has_attacked = False
 
-		# Try to get the weapon the entity
 		try:
-			self.weapon = kwargs.get('weapon', None)
+			# Join input parameters with default weapons
+			self.weapons = { **default_weapons, **kwargs.get('weapons', {}) }
 
-			# Translate the value (Weapon) to Entity instance if necessary
-			self.weapon = engine._entity_map.get(self.weapon) if isinstance(self.weapon, str) else self.weapon
+			# Translate the values (Weapon, generator) to Entity instance if necessary
+			for w_key, w_value in self.weapons.items():
+				
+				# Translate entity id name to entity id number if needed
+				weapon_ent = w_value.get('weapon')
+				weapon_ent = engine._entity_map.get(weapon_ent) if isinstance(weapon_ent, str) else weapon_ent
+
+				# Translate entity id name to entity id number if needed
+				generator_ent = w_value.get('generator')
+				generator_ent = engine._entity_map.get(generator_ent) if isinstance(generator_ent, str) else generator_ent
+
+				# TODO - check that generator has factory component!!
+
+				# Save the new values in weapons dictionary
+				self.weapons.update({w_key : {"weapon" : weapon_ent, "generator" : generator_ent}})
 
 			# Remember the projectiles - set of ints representing entities
 			self.projectiles = set()
@@ -271,17 +359,33 @@ class HasWeapon(Component):
 			print(f'Problem with initiating a weapon for the entity')
 			raise ValueError
 	
+	def set_weapon_in_use(self, type):
+		''' Switches to weapon that is used
+		'''
+		self.weapon_in_use = type if type in self.weapons.keys() else None
+	
+	def get_weapon_in_use(self):
+		''' Returns currently used weapon entity
+		'''
+		return self.weapons.get(self.weapon_in_use, {}).get('weapon', None)
+	
+	def get_generator_in_use(self):
+		''' Returns currently used generator entity
+		'''
+		return self.weapons.get(self.weapon_in_use, {}).get('generator', None)
+
 	def get_weapon_action_anim(self):
 		''' Get the name of attack animation for the weapon that is currently 
 		in possesion of the entity.
 		'''
-		return engine.world.component_for_entity(self.weapon, Weapon).action if self.weapon else None
+		# TODO - wouldnt it be easier to store action and idle action in weapons dictionary??
+		return engine.world.component_for_entity(self.get_weapon_in_use(), Weapon).action
 	
 	def get_weapon_idle_anim(self):
 		''' Get the name of idle animation for the weapon that is currently
 		in possesion of the entity.
 		'''
-		return engine.world.component_for_entity(self.weapon, Weapon).idle if self.weapon else None
+		return engine.world.component_for_entity(self.get_weapon_in_use(), Weapon).idle
 	
 	def remove_projectile(self, entity):
 		''' Removes projectile from the list of projectiles
@@ -295,9 +399,13 @@ class HasWeapon(Component):
 	def create_projectile(self, owner_ent, pos_comp, coll_comp):
 		''' Creates projectile - taking information from the generator of projectile - character entity position and collision
 		closely coupled with GenerateProjectile processor
+		
+		def create_entity(self, owner=None, pos=None, container=None, reg_at_engine=False):
+
 		'''
 		# Get weapon component from the weapon
-		weapon = engine.world.component_for_entity(self.weapon, Weapon)
+		weapon = engine.world.component_for_entity(self.get_weapon_in_use(), Weapon)
+		factory = engine.world.component_for_entity(self.get_generator_in_use(), Factory)
 
 		# Check if more projectiles can be created and continue, if yes
 		if len(self.projectiles) < weapon.max_projectiles:
@@ -310,21 +418,22 @@ class HasWeapon(Component):
 			(col_x, col_y) = (weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], weapon.projectile_collision_zones.get(pos_comp.dir_name)[1])
 
 			# Create new entity for the new projectile - TODO the parameters of projectile need to be taken from the weapon
-			new_projectile = engine._create_entity(
-				{
-					"id" : "projectile_" + "owner_" + str(owner_ent),
-					"components" : [
-						{"type" : "Temporary", "params" : {"ttl" : 100}},
-						{"type" : "Collidable", "params" : {"x" : col_x, "y" : col_y}},
-						{"type" : "Position", "params" : {"x" : pos_x, "y" : pos_y, "map" : pos_map}},
-						{"type" : "Damaging", "params" : {"damage" : 10}},
-						{"type" : "Debug", "params" : {}},
-						{"type" : "Container", "params" : {"contained_in" : self}} # reference to has_weapon instance
-					]
-				}, 
-				# Do not register in engine global variable _entity_map - not needed
-				register=False)
+			#new_projectile = engine._create_entity(
+			#	{
+			#		"id" : "projectile_" + "owner_" + str(owner_ent),
+			#		"components" : [
+			#			{"type" : "Temporary", "params" : {"ttl" : 100}},
+			#			{"type" : "Collidable", "params" : {"x" : col_x, "y" : col_y}},
+			#			{"type" : "Position", "params" : {"x" : pos_x, "y" : pos_y, "map" : pos_map}},
+			#			{"type" : "Damaging", "params" : {"damage" : 10}},
+			#			{"type" : "Debug", "params" : {}},
+			#			{"type" : "Container", "params" : {"contained_in" : self}} # reference to has_weapon instance
+			#		]
+			##	# Do not register in engine global variable _entity_map - not needed
+			#	register=False)
 			
+			new_projectile = factory.create_entity(owner=owner_ent, pos=(pos_x, pos_y, pos_comp.dir_name, pos_map), container=self, reg_at_engine=False)
+
 			# Increase count of active projectiles
 			self.projectiles.add(new_projectile)
 			print(f'Projectile {new_projectile} created. List of projectiles {self.projectiles}')
@@ -790,6 +899,7 @@ class Position(Component):
 			self.x = kwargs.get('x')
 			self.y = kwargs.get('y')
 			self.map = kwargs.get('map')
+			self.dir_name = kwargs.get('dir', 'down')
 		except KeyError:
 			# Notify component factory that initiation has failed
 			print(f'Mandatory parameters are missing.')
@@ -800,14 +910,18 @@ class Position(Component):
 			assert self.map in engine._maps.keys(), f'Map {self.map} is not initialized for {self.__class__} component.'
 			assert isinstance(self.x, int), f'Position x is not an integer for {self.__class__} component.'
 			assert isinstance(self.y, int), f'Position y is not an integer for {self.__class__} component.'
+			assert self.dir_name in ('up', 'down', 'left', 'right'), f'Position direction is not defined for {self.__class__} component.'
 		except AssertionError:
 			# Notify component factory that initiation has failed
 			raise ValueError
 
 		# Direction SOUTH (0,1) NORD (0,-1) WEST (-1,0) EAST (1,0)
 		# Necessary for correct rendering of sprites and text boxes etc.
-		self.direction = (0, 1)
-		self.dir_name = 'down'
+		
+		if self.dir_name == 'down': self.direction = (0, 1)
+		if self.dir_name == 'up': self.direction = (0, -1)
+		if self.dir_name == 'left': self.direction = (-1, 0)
+		if self.dir_name == 'right': self.direction = (1, 0)
 
 		# Remember last possition, on collision return to the last known pos
 		# Required for resolution of collisions with the map
@@ -1112,10 +1226,52 @@ class RenderableModel(Component):
 		'''
 		return (pos[0] - self.model.d_w, pos[1] - self.model.d_h)
 
-	def get_frame(self, direction, action=None, frame_id=None):
-		''' Get the current frame for display. It is taking into account animated frames.
+	def get_current_frame(self, direction, action=None, frame_id=None):
+		''' Only get the frame, do not do any animation shifting
+		In case frame does not exist, return empty frame.
 		'''
-		if not frame_id: print(f'{self} - Get frame called: {direction}, {action}')
+		try:
+			return self.model.texture_data.get(self.action if not action else action).get(direction)[self.last_frame if not frame_id else frame_id].get('tile')
+		except:
+			return self.model.no_tile
+	
+	def update_frame(self, direction):
+		''' Update the animation of the model based on time 
+		Just update the frame and that is it.
+		'''
+
+		# Get no of the animated frames for given action and direction
+		anim_length = self.model.texture_length.get(self.action).get(direction)
+		
+		# Fix the last_frame so it is always within 0 .. anim_length
+		#self.last_frame = self.last_frame % anim_length
+
+		# Get dictionary describing the current frame
+		curr_frame = self.model.texture_data.get(self.action).get(direction)[self.last_frame]
+
+		# If action is animated - then shift based on time
+		if self.model.texture_dynamic.get(self.action).get(direction):
+
+			# Get the currect time and measure the delay from last_time
+			current_time = pygame.time.get_ticks()
+		
+			# if delay is greater move to the next frame and reset timer
+			if current_time - self.last_time > curr_frame.get('duration'):
+				self.last_time = current_time
+				self.last_frame = (self.last_frame + 1) % anim_length
+				
+				# Set the flag if animation is on the last frame. Important for emitting projectiles
+				self.is_last_frame = True if self.last_frame == anim_length - 1 else False
+
+			else: 
+				# Set the flag to False, I want to have it True only once when the animation changes
+				self.is_last_frame = False
+
+
+	def get_frame(self, direction, action=None, frame_id=None):
+		''' This is OBSOLETE function
+			Get the current frame for display. It is taking into account animated frames.
+		'''
 		# Get length of the animation and use it for modulo on last_frame.
 		# This is needed because if action/direction is changed, last frame can be bigger
 		# than number of frames in the animation - hence causing error.
@@ -1160,8 +1316,6 @@ class RenderableModel(Component):
 					
 					# Set the flag if animation is on the last frame. Important for emitting projectiles
 					self.is_last_frame = True if self.last_frame == anim_length - 1 else False
-					if self.is_last_frame: print(f'RenderableModel: {self} - Set to TRUE!!!', {self.last_frame}, {action})
-					#print(f'is last frame set to {self.is_last_frame} on model {self.model.name}')
 
 				else: 
 					# Set the flag to False, I want to have it True only once when the animation changes
