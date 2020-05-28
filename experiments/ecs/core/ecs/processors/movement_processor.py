@@ -1,10 +1,37 @@
-__all__ = ['MovementProcessor']
+__all__ = ['MovementProcessor', 'LinearMovementProcessor']
 
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 import pygame	# for pygame.time.get_ticks()
 
 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
+
+class LinearMovementProcessor(esper.Processor):
+	'''
+	'''
+
+	__slots__ = ['debug']
+
+	def __init__(self, debug=False):
+		'''
+		'''
+
+		super().__init__()
+
+		self.debug = debug
+
+
+	def process(self, *args, **kwargs):
+		'''
+		'''
+
+		for _, (position, linear_motion, motion) in self.world.get_components(components.Position, components.LinearMotion, components.Motion):
+
+			# Just set dx, dy on the Motion component based on position direction and speed
+			if position.direction == (1,0): (motion.dx, motion.dy) = (linear_motion.speed, 0)
+			if position.direction == (-1,0): (motion.dx, motion.dy) = (-linear_motion.speed, 0)
+			if position.direction == (0,1): (motion.dx, motion.dy) = (0, linear_motion.speed)
+			if position.direction == (0,-1): (motion.dx, motion.dy) = (0, -linear_motion.speed)
 
 class MovementProcessor(esper.Processor):
 	''' Updates Position component (position of an entity on the map) based on Motion

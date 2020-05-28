@@ -1,11 +1,10 @@
 {
 	"id" : "human",
-	"templates" : ["darkmale"],
+	"templates" : ["being"],
 	"components" : [
 		{"type" : "Teleportable", "params" : {}},
 		{"type" : "Brain", "params" : {"commands" : []}},
-		{"type" : "CanTalk", "params" : {}},
-		{"type" : "Damageable", "params" : {}}
+		{"type" : "CanTalk", "params" : {}}
 
 	]
 }

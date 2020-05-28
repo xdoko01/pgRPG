@@ -11,7 +11,7 @@ class CollisionWeaponProcessor(esper.Processor):
 		self.weapon_event_queue = weapon_event_queue
 
 	def process(self, *args, **kwargs):
-		for ent, (item, collision) in self.world.get_components(components.Weapon, components.Collidable):
+		for ent, (weapon, collision) in self.world.get_components(components.Weapon, components.Collidable):
 
 			# Process everything that collided with weapon entity
 			for col_event_entity in collision.collision_events.copy():
@@ -20,17 +20,22 @@ class CollisionWeaponProcessor(esper.Processor):
 					if self.world.has_component(col_event_entity, components.HasWeapon):
 						
 						# Get the HasWeapon component of the entity that picked up Weapon
-						col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, components.HasWeapon) 
+						col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, components.HasWeapon)
 						
 						# Get the Collidable component of the entity that picked up Weapon - in order to remove the collision
 						col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
 
 						# Add weapon to the HasWeapon - only in case that the slot for Weapon is available
-						if not col_event_entity_has_weapon.weapon:
-							col_event_entity_has_weapon.weapon = ent
-
+						# For that purpose weapon must have some type
+						if not col_event_entity_has_weapon.weapons.get(weapon.type).get('weapon'):
+							col_event_entity_has_weapon.weapons[weapon.type]['weapon'] = ent
+							
 							# Store the action connected to the weapon in the hasWeapon component
-							col_event_entity_has_weapon.action = self.world.component_for_entity(ent, components.Weapon).action
+							# OBSOLETE - action removed from hasWeapon component, newly is determined by the weapon
+							#col_event_entity_has_weapon.action = self.world.component_for_entity(ent, components.Weapon).action
+
+							# Change to the new weapon
+							col_event_entity_has_weapon.set_weapon_in_use(weapon.type)
 
 							try:
 								# Remove Position component from the weapon so that it is not displayable on the map - weapon is picked
@@ -39,6 +44,7 @@ class CollisionWeaponProcessor(esper.Processor):
 								self.world.remove_component(ent, components.Camera) 
 							except KeyError:
 								pass
+
 
 							# Remove the col_event_entity from HasWeapon entity
 							collision.collision_events.remove(col_event_entity)

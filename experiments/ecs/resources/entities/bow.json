@@ -4,23 +4,7 @@
 
 	"components" : [
 		
-		{
-			"type" : "Weapon", 
-			"params" : {
-				"animation" : {
-					"action" : "shoot", 
-					"idle" : "idle_shoot"
-				},
-				
-				"max_projectiles" : 3,
-
-				"projectiles" : null
-			}
-		},
-		
-		{"type" : "Factory", "params" : {}},
-		
-		{"type" : "Pickable", "params" : {}},
-		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}}
+		{"type" : "Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+		{"type" : "Pickable", "params" : {}}
 	]
 }

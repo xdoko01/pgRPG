@@ -61,7 +61,7 @@ class RenderDebugProcessor(esper.Processor):
 				if debug.get('show_weapons', False):
 					try:
 						weapons_debug = self.world.component_for_entity(debug_entity, components.HasWeapon)
-						text = f'Weapon: {weapons_debug.get_weapon_in_use()}'
+						text = f'Weapon in use: {weapons_debug.get_weapon_in_use()}. All: {weapons_debug.weapons}'
 						pos = deb_comp.font.render(text, True, pygame.Color('black'))
 						cam_cam.screen.blit(pos, cam_cam.apply(render_comp.topleft((pos_comp.x, pos_comp.y - 40))))
 					except KeyError:

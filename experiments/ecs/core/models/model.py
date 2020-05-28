@@ -63,7 +63,7 @@ class Model(object):
 
 	# Allowed model directions and actions
 	DIRECTIONS = ['up', 'down', 'left', 'right']
-	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing']
+	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing', 'shoot', 'idle_shoot']
 
 	def __init__(self, model_file):
 		''' Initiate values for the new RenderableModel component.
@@ -258,4 +258,5 @@ class Model(object):
 				{tabs}\th\t\t({hex(id(self.h))}) [{ctypes.c_long.from_address(id(self.h)).value}]:\t{self.h}\n\
 				{tabs}\ttex_data\t\t({hex(id(self.texture_data))}) [{ctypes.c_long.from_address(id(self.texture_data)).value}]:\t{self.texture_data}\n\
 				{tabs}\ttex_length\t\t({hex(id(self.texture_length))}) [{ctypes.c_long.from_address(id(self.texture_length)).value}]:\t{self.texture_length}\n\
-				{tabs}\ttex_dynamic\t\t({hex(id(self.texture_dynamic))}) [{ctypes.c_long.from_address(id(self.texture_dynamic)).value}]:\t{self.texture_dynamic}\n'
+				{tabs}\ttex_dynamic\t\t({hex(id(self.texture_dynamic))}) [{ctypes.c_long.from_address(id(self.texture_dynamic)).value}]:\t{self.texture_dynamic}\n\
+				{tabs}\ttex_actions\t\t({hex(id(self.texture_actions))}) [{ctypes.c_long.from_address(id(self.texture_actions)).value}]:\t{self.texture_actions}\n'

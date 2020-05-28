@@ -1,10 +1,7 @@
 {
 	"id" : "tannedmale",
-	"templates" : ["being"],
+	"templates" : ["character_model"],
 	"components" : [
-
-		{"type" : "State", "params" : {"state" : "idle"}},
 		{"type" : "RenderableModel", "params" : {"model" : "tannedmale.json"}}		
-
 	]
 }

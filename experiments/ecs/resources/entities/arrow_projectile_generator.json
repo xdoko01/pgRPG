@@ -1,0 +1,22 @@
+{
+	"id" : "arrow_projectile_generator",
+
+	"components" : [
+		{
+			"type" : "Factory", 
+			"params" : {
+				"prescription" : {
+					"components" : [
+						{"type" : "Temporary", "params" : {"ttl" : 3000}},
+						{"type" : "Collidable", "params" : {"x" : 8, "y" : 8}},
+						{"type" : "LinearMotion", "params" : {"speed" : 200}},
+						{"type" : "RenderableModel", "params" : {"model" : "flying_arrow.json"}},
+						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "Damaging", "params" : {"damage" : 5}},
+						{"type" : "Debug", "params" : {}}
+					]
+				} 
+			}
+		}
+	]
+}

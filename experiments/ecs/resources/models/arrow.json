@@ -1,4 +1,12 @@
 { "columns":13,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "image":"arrow.png",
  "imageheight":256,
  "imagewidth":832,
@@ -98,6 +106,20 @@
                  "name":"direction",
                  "type":"string",
                  "value":"left"
+                }]
+        }, 
+        {
+         "id":17,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"idle"
+                }, 
+                {
+                 "name":"direction",
+                 "type":"string",
+                 "value":"down"
                 }]
         }, 
         {

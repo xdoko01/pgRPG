@@ -168,6 +168,14 @@ Requirements
 
 
 	- TODO
+
+		- pickup collision of generator implementation - add to HasWeapon
+		- destroy projectile on impact
+		- generate the entity not on the last frame but on different frame number???
+		- health and death
+		- tool that generates hierarchy of the models into the file automatically
+
+
 		- projectile stored HasWeapon - ProjectileGenerator entity
 			- pro to, aby z generator entity bylo mozne vytvorit
 			projektil, je treba vedet

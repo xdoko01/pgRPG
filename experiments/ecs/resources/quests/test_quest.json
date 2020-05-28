@@ -16,51 +16,56 @@
 			"entities" : [
 
 				{
+					"id" : "wooden_bow",
+					"templates" : ["bow", "wooden_bow_model"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "wooden_bow", "name" : "Wooden Bow"}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Position", "params" : {"x" : 200, "y" : 600, "map" : "test_map"}}
+					]
+				},
+
+				{
+					"id" : "pack_of_arrows",
+					"templates" : ["wooden_arrows_pack", "wooden_arrows_pack_model"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "pack_of_arrows", "name" : "Pack of Arrows"}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Position", "params" : {"x" : 200, "y" : 700, "map" : "test_map"}}
+					]
+				},
+
+				{
 					"id" : "short_sword",
-					"templates" : ["sword", "sword_projectile_generator"],
+					"templates" : ["sword", "short_sword_model",  "sword_swings_pack"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "short_sword", "name" : "Short Sword"}},
-						{"type" : "RenderableModel", "params" : {"model" : "shortswordmale.json"}},
 						{"type" : "Debug", "params" : {}}
 					]
 				},
 
 				{
 					"id" : "striped_pants",
-					"templates" : ["thing"],
+					"templates" : ["pants", "striped_pants_model"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "striped_pants", "name" : "Striped pants"}},
 						{"type" : "Position", "params" : {"x" : 200, "y" : 300, "map" : "test_map"}},
-
-						{"type" : "RenderableModel", "params" : {"model" : "w_m_legs_formalpantsstripes.json"}},
-
-						{"type" : "Pickable", "params" : {}},
-						{"type" : "Wearable", "params" : {"bodypart" : "legs"}},
-						{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
 						{"type" : "Debug", "params" : {}}
 					]
 				},
 
 				{
 					"id" : "golden_helmet",
-					"templates" : ["thing"],
+					"templates" : ["helmet", "golden_helmet_model"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "golden_helmet", "name" : "Golden Helmet"}},
-
-						{"type" : "RenderableModel", "params" : {"model" : "malegoldenhelm.json"}},
-
-						{"type" : "Pickable", "params" : {}},
-						{"type" : "Wearable", "params" : {"bodypart" : "head"}},
-
-						{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
-
 						{"type" : "Debug", "params" : {}}
 
 					]
 				},
 				{
 					"id" : "player01",
-					"templates" : ["player"],
+					"templates" : ["player", "darkmale"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
 						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
@@ -77,9 +82,10 @@
 
 						{"type" : "HasWeapon", "params" : {
 							"weapons" : {
-								"sword" : {"weapon" : "short_sword", "generator" : "short_sword"}
+								"sword" : {"weapon" : "short_sword", "generator" : "short_sword"},
+								"bow" : {"weapon" : "wooden_bow", "generator" : "pack_of_arrows"}
 							}, 
-							"weapon_in_use" : "sword" }
+							"weapon_in_use" : "bow" }
 						}
 
 

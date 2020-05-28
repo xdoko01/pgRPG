@@ -103,12 +103,28 @@ class RenderModelWorldProcessor(esper.Processor):
 
 					# Get the weapon entity - RenderableModel
 					if has_weapon.get_weapon_in_use():
-						w_renderable = self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.RenderableModel)
 
-						# Blit it on the screen the weapon - using state / position and frame id from the character's RenderableModel
-						# camera.screen.blit(w_renderable.get_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
-						camera.screen.blit(w_renderable.get_current_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+						# Skip if weapon does not have any model to be rendered
+						try:
+							w_renderable = self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.RenderableModel)
+							#print(f'has_weapon.get_weapon_in_use() - {has_weapon.get_weapon_in_use()}, renderable.action {renderable.action}')
 
+							# Blit it on the screen the weapon - using state / position and frame id from the character's RenderableModel
+							# camera.screen.blit(w_renderable.get_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+							camera.screen.blit(w_renderable.get_current_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+						except KeyError:
+							pass
+
+						# Skip if generator does not have any model to be rendered
+						try:
+							gen_renderable = self.world.component_for_entity(has_weapon.get_generator_in_use(), components.RenderableModel)
+							#print(f'has_weapon.get_weapon_in_use() - {has_weapon.get_weapon_in_use()}, renderable.action {renderable.action}')
+
+							# Blit it on the screen the weapon - using state / position and frame id from the character's RenderableModel
+							# camera.screen.blit(w_renderable.get_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+							camera.screen.blit(gen_renderable.get_current_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
+						except KeyError:
+							pass
 
 			#####
 			# Blit text bubbles

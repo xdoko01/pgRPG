@@ -22,9 +22,10 @@ class RenderableModelAnimationUpdateProcessor(esper.Processor):
 			
 			# Get RenderableModels with Positions
 			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
-
+	
 				# Call the update_frame function
-				if ent not in already_updated: renderable_model.update_frame(position.dir_name)
+				if ent not in already_updated:
+					renderable_model.update_frame(position.dir_name)
 
 				# Remember that entity was updated
 				already_updated.add(ent)

@@ -48,7 +48,10 @@ __all__ = [
 	'RenderableModelAnimationUpdateProcessor',
 	'RenderModelWorldProcessor',
 	'UpdateCameraOffsetProcessor',
+
+	'LinearMovementProcessor',	
 	'MovementProcessor',
+	
 	'RenderMapProcessor',
 	'RenderDebugProcessor',
 	'RenderBackgroundProcessor',

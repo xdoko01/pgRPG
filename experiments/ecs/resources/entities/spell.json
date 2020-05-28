@@ -3,27 +3,8 @@
 	"templates" : ["weapon"],
 
 	"components" : [
-		
-		{
-			"type" : "Weapon", 
-			"params" : {
-				"animation" : {
-					"action" : "cast", 
-					"idle" : "idle_cast"
-				},
-				"projectiles" : { 
-					"max_projectiles" : 1,
-					"projectile_collision_zones" : {
-						"up" : [16, 16],
-						"left" : [16, 16],
-						"down" : [16, 16],
-						"right" : [16, 16]
-					},
-					"damage" : 50,
-					"ttl" : 250,
-					"speed" : 100
-				}
-			}
-		}
+
+		{"type" : "Weapon", "params" : {"type" : "spell",	"max_projectiles" : 1}}
+
 	]
 }

@@ -1,0 +1,8 @@
+{
+	"id" : "golden_helmet_model",
+	"templates" : ["wearable_model"],
+	"components" : [
+		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
+		{"type" : "RenderableModel", "params" : {"model" : "malegoldenhelm.json"}}
+	]
+}

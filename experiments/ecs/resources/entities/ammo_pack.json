@@ -1,5 +1,5 @@
 {
-	"id" : "projectile",
+	"id" : "ammo_pack",
 	"templates" : ["thing"],
 	"components" : []
 }

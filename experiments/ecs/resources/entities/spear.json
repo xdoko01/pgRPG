@@ -3,29 +3,7 @@
 	"templates" : ["weapon"],
 
 	"components" : [
-		
-		{
-			"type" : "Weapon", 
-			"params" : {
-				"animation" : {
-					"action" : "stab", 
-					"idle" : "idle_stab"
-				},
-				"projectiles" : { 
-					"max_projectiles" : 1,
-					"projectile_collision_zones" : {
-						"up" : [8, 24],
-						"left" : [24, 8],
-						"down" : [8, 24],
-						"right" : [24, 8]
-					},
-					"damage" : 20,
-					"ttl" : 10,
-					"speed" : 0
-				}
-			}
-		},
-		
+		{"type" : "Weapon", "params" : {"type" : "spear",	"max_projectiles" :1}},
 		{"type" : "Pickable", "params" : {}},
 		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}}
 	]

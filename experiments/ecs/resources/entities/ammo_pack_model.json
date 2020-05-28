@@ -1,0 +1,7 @@
+{
+	"id" : "ammo_pack_model",
+	"templates" : ["model"],
+	"components" : [
+		{"type" : "Collidable", "params" : {"x" : 20, "y" : 20}}
+	]
+}

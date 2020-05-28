@@ -172,6 +172,9 @@ def create_processors(world):
 	global command_queue
 	global _maps
 
+	# Processor that updates constant speed movement
+	linear_movement_processor = processors.LinearMovementProcessor()
+
 	# Processor that generates projectiles
 	generate_projectiles_processor = processors.GenerateProjectileProcessor()
 
@@ -255,6 +258,7 @@ def create_processors(world):
 	world.add_processor(command_processor)
 
 	### Move the entities based on their movement vector 
+	world.add_processor(linear_movement_processor)  # update entities that are moving at constant speed (projectiles/arrows)
 	world.add_processor(movement_processor)
 
 	### Generate projectiles GenerateProjectileProcessor

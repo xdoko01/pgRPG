@@ -31,7 +31,7 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 	'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
 	'CanWear', \
 	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container',\
-	'Factory']
+	'Factory', 'LinearMotion']
 
 ########################################################
 ### Module functions
@@ -113,6 +113,27 @@ class Component(object):
 		''' Regenerate all non-serializable objects for the component
 		'''
 		pass
+
+
+class LinearMotion(Component):
+	'''
+	'''
+	__slots__ = ['speed']
+
+	def __init__(self, *args, **kwargs):
+		'''
+		'''
+		super().__init__()
+		
+		# Change of position
+		self.speed = kwargs.get('speed')
+
+		# Assert that dx, dy are numbers
+		try:
+			assert isinstance(self.speed, int) or isinstance(self.dx, float), f'Movement speed is not a number for {self.__class__} component.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
 
 
 class Factory(Component):
@@ -247,14 +268,14 @@ class Weapon(Component):
 	Weapon has its parameters determined by weapon type.
 	'''
 
-	#WEAPONS = {
-	#	'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
-	#	'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
-	#	'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
-	#	'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
-	#}
+	WEAPONS = {
+		'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
+		'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
+		'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
+		'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
+	}
  
-	__slots__ = ['action', 'idle']
+	__slots__ = ['action', 'idle', 'type']
 
 	def __init__(self, *args, **kwargs):
 
@@ -262,24 +283,27 @@ class Weapon(Component):
 
 		# Read the weapon attributes
 		try:
-			
+
+			# Weapon type
+			self.type = kwargs.get('type')
+
 			# Weapon animation for attack action
-			self.action = kwargs.get('animation', {}).get('action', 'default')
+			self.action = Weapon.WEAPONS.get(self.type).get('action')
 			
 			# Weapon animation for idle action
-			self.idle  = kwargs.get('animation', {}).get('idle', 'default')
+			self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
 			
 			# Weapon can generate max projectiles
-			self.max_projectiles = kwargs.get('projectiles', {}).get('max_projectiles', 1)
+			self.max_projectiles = kwargs.get('max_projectiles', 1)
 			
-			self.projectile_collision_zones = kwargs.get('projectiles', {}).get('projectile_collision_zones', {})
+			#self.projectile_collision_zones = kwargs.get('projectiles', {}).get('projectile_collision_zones', {})
 
 			# Weapon causes damage - default 10 points
-			self.damage = kwargs.get('projectiles', {}).get('damage', 1)
+			#self.damage = kwargs.get('projectiles', {}).get('damage', 1)
 
-			self.projectile_ttl =  kwargs.get('projectiles', {}).get('ttl', 100)
+			#self.projectile_ttl =  kwargs.get('projectiles', {}).get('ttl', 100)
 
-			self.projectile_speed =  kwargs.get('projectiles', {}).get('speed', 100)
+			#self.projectile_speed =  kwargs.get('projectiles', {}).get('speed', 100)
 
 		except KeyError:
 			# Notify component factory that initiation has failed
@@ -288,12 +312,13 @@ class Weapon(Component):
 
 		# Assert that weapon type exists in list of WEAPONS
 		try:
+			assert isinstance(self.type, str) and self.type in Weapon.WEAPONS, f'Unknown weapon type "{self.type}" for {self.__class__} component.'
 			assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Unknown animation action "{self.action}" for {self.__class__} component.'
 			assert isinstance(self.idle, str) and self.action in model.Model.ACTIONS, f'Unknown idle animation "{self.idle}" for {self.__class__} component.'
 			assert isinstance(self.max_projectiles, int), f'Max no. of projectiles must be an integer "{self.max_projectiles}" for {self.__class__} component.'
-			assert isinstance(self.damage, int), f' Damage must be an integer "{self.damage}" for {self.__class__} component.'
-			assert isinstance(self.projectile_ttl, int), f' Projectile ttl must be an integer "{self.projectile_ttl}" for {self.__class__} component.'
-			assert isinstance(self.projectile_speed, int), f' Projectile speed must be an integer "{self.projectile_speed}" for {self.__class__} component.'
+			#assert isinstance(self.damage, int), f' Damage must be an integer "{self.damage}" for {self.__class__} component.'
+			#assert isinstance(self.projectile_ttl, int), f' Projectile ttl must be an integer "{self.projectile_ttl}" for {self.__class__} component.'
+			#assert isinstance(self.projectile_speed, int), f' Projectile speed must be an integer "{self.projectile_speed}" for {self.__class__} component.'
 		except AssertionError:
 			# Notify component factory that initiation has failed
 			raise ValueError
@@ -399,13 +424,15 @@ class HasWeapon(Component):
 	def create_projectile(self, owner_ent, pos_comp, coll_comp):
 		''' Creates projectile - taking information from the generator of projectile - character entity position and collision
 		closely coupled with GenerateProjectile processor
-		
-		def create_entity(self, owner=None, pos=None, container=None, reg_at_engine=False):
-
 		'''
-		# Get weapon component from the weapon
-		weapon = engine.world.component_for_entity(self.get_weapon_in_use(), Weapon)
-		factory = engine.world.component_for_entity(self.get_generator_in_use(), Factory)
+		
+		# If no weapon ot generator do not create projectile
+		try:
+			# Get weapon component from the weapon
+			weapon = engine.world.component_for_entity(self.get_weapon_in_use(), Weapon)
+			factory = engine.world.component_for_entity(self.get_generator_in_use(), Factory)
+		except KeyError:
+			return None
 
 		# Check if more projectiles can be created and continue, if yes
 		if len(self.projectiles) < weapon.max_projectiles:
@@ -414,8 +441,8 @@ class HasWeapon(Component):
 			(ent_col_x, ent_col_y) = (coll_comp.x, coll_comp.y) if coll_comp else (0, 0)
 			(pos_x, pos_y, pos_map) = (int(pos_comp.x + (pos_comp.direction[0] * (ent_col_x + 30))), int(pos_comp.y + (pos_comp.direction[1] * (ent_col_y + 30))), pos_comp.map)
 			
-			# Calculate collision zone for the new projectile
-			(col_x, col_y) = (weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], weapon.projectile_collision_zones.get(pos_comp.dir_name)[1])
+			# Calculate collision zone for the new projectile - OBSOLETE - collision component is created by the factory
+			#(col_x, col_y) = (weapon.projectile_collision_zones.get(pos_comp.dir_name)[0], weapon.projectile_collision_zones.get(pos_comp.dir_name)[1])
 
 			# Create new entity for the new projectile - TODO the parameters of projectile need to be taken from the weapon
 			#new_projectile = engine._create_entity(
@@ -437,7 +464,8 @@ class HasWeapon(Component):
 			# Increase count of active projectiles
 			self.projectiles.add(new_projectile)
 			print(f'Projectile {new_projectile} created. List of projectiles {self.projectiles}')
-
+			
+			return new_projectile
 
 class Wearable(Component):
 	''' Entity is wearable by other entity that has CanWear component
@@ -1231,7 +1259,7 @@ class RenderableModel(Component):
 		In case frame does not exist, return empty frame.
 		'''
 		try:
-			return self.model.texture_data.get(self.action if not action else action).get(direction)[self.last_frame if not frame_id else frame_id].get('tile')
+			return self.model.texture_data.get(self.action if action is None else action).get(direction)[self.last_frame if frame_id is None else frame_id].get('tile')
 		except:
 			return self.model.no_tile
 	

@@ -1,4 +1,12 @@
 { "columns":13,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "image":"bow.png",
  "imageheight":256,
  "imagewidth":832,
@@ -98,6 +106,45 @@
                  "name":"direction",
                  "type":"string",
                  "value":"left"
+                }]
+        }, 
+        {
+         "animation":[
+                {
+                 "duration":75,
+                 "tileid":16
+                }, 
+                {
+                 "duration":75,
+                 "tileid":17
+                }, 
+                {
+                 "duration":75,
+                 "tileid":18
+                }, 
+                {
+                 "duration":75,
+                 "tileid":22
+                }, 
+                {
+                 "duration":75,
+                 "tileid":23
+                }, 
+                {
+                 "duration":75,
+                 "tileid":24
+                }],
+         "id":16,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"idle"
+                }, 
+                {
+                 "name":"direction",
+                 "type":"string",
+                 "value":"down"
                 }]
         }, 
         {
