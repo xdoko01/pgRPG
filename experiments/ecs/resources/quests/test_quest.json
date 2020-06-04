@@ -9,7 +9,7 @@
 		"phase01" :{
 			"name" : "Meeting the merchant",
 			"objective" : "Speak to the merchant and get the key to the cellar",
-			"maps" : "test_map",
+			"maps" : ["test_map"],
 			
 			"cleanup" : [],
 

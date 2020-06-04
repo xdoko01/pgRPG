@@ -38,12 +38,12 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 ########################################################
 
 def create_component(world, entity: int, comp_class: str, comp_params: dict):
-	''' Add a new component to the given entity in given world. 
-	
+	''' Add a new component to the given entity in given world.
+
 	Parameters:
 		:param world: ECS world in which the component should be created.
 		:type world: esper.World()
-	
+
 		:param entity: Entity to which component should be assigned.
 		:type entity: int
 
@@ -83,8 +83,8 @@ def create_component(world, entity: int, comp_class: str, comp_params: dict):
 	# Add new component to the world
 	world.add_component(entity, comp_inst)
 
-	# Return success
-	return 0
+	# Return entity and the new component
+	return (entity, comp_inst)
 
 ########################################################
 ### Component classes
@@ -466,6 +466,7 @@ class HasWeapon(Component):
 			print(f'Projectile {new_projectile} created. List of projectiles {self.projectiles}')
 			
 			return new_projectile
+
 
 class Wearable(Component):
 	''' Entity is wearable by other entity that has CanWear component

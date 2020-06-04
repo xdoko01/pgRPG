@@ -1,6 +1,7 @@
 '''
 TODO - rework ... all images store in image list not in the dictionary
 TODO - static frames with properties and with no animation - save them correctly
+TODO - texture_actions anre incorrectly filled
 
 	Example of model.json file - no prototype
 	-> darkmale.png

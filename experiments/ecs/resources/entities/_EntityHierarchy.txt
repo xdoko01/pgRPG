@@ -61,9 +61,5 @@ thing.json 		# no components
 				-> pants.json		# +Wearable, +Pickable
 				-> helmet.json		# +Wearable, +Pickable
 
-sword_projectile_generator.json		# OBSOLETE+Factory for swing
-arrow_projectile_generator.json		# OBSOLETE+Factory for arrows
-
-arrow.json		# OBSOLETE - substituted by arrow projectile generator
 
 
