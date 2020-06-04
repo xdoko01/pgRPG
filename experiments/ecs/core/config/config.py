@@ -1,3 +1,4 @@
+FONT_PATH = 'experiments/ecs/resources/fonts/'
 MODEL_PATH = 'experiments/ecs/resources/models/'
 IMAGE_PATH = 'experiments/ecs/resources/images/'
 QUEST_PATH = 'experiments/ecs/resources/quests/'

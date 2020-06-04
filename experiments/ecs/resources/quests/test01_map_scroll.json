@@ -11,7 +11,10 @@
 			"objective" : "Have fun",
 			"maps" : ["test_map"],
 			
-			"cleanup" : [],
+			"cleanup" : {
+				"maps" : [],
+				"entities" : []
+			},
 
 			"entities" : [
 				{

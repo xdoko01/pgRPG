@@ -113,7 +113,7 @@ def process_game_events():
             quest_object.event_handler(event)
 
 ########################################################
-### Game world creator
+### Game world creator/destructor methods
 ########################################################
 
 def _create_entity(json_ent_obj, register=True, child_ref=None):
@@ -344,6 +344,36 @@ def create_map(map_name):
         new_map = map.Map(map_name)	
         _maps.update({map_name : new_map})
 
+def delete_map(map_name):
+    ''' Unregister and delete the map object
+    '''
+
+    # All maps are here
+    global _maps
+
+    # If map is registered - de-reference it
+    # As map reference is stored only in global dictionary and
+    # not on individual entities, it is enough to dereference it
+    # here and not on individual entities.
+    if _maps.get(map_name, None):
+        del _maps[map_name]
+
+def delete_entity(entity_name):
+    ''' Delete and un-register entity from the world
+    '''
+
+    global world
+    global _entity_map
+
+    # If entity is registered, delete it
+    if _entity_map.get(entity_name, None):
+
+        # Delete it from Esper world
+        world.delete_entity(_entity_map.get(entity_name))
+        
+        # Un-register the entity
+        del _entity_map[entity_name]
+
 ########################################################
 ### Save and load game
 ########################################################
@@ -554,8 +584,8 @@ def main():
     global _quests
     _quests = {}
 
-    sample_quest = quest.load_quest('test01_map_scroll')
-    _quests.update({'test01_map_scroll' : sample_quest})
+    sample_quest = quest.load_quest('test_quest')
+    _quests.update({'test_quest' : sample_quest})
 
     # Print entity mappings
     print(_entity_map)

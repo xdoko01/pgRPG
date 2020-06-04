@@ -11,7 +11,10 @@
 			"objective" : "Speak to the merchant and get the key to the cellar",
 			"maps" : ["test_map"],
 			
-			"cleanup" : [],
+			"cleanup" : {
+				"maps" : [],
+				"entities" : []
+			},
 
 			"entities" : [
 

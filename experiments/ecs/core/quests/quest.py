@@ -40,45 +40,54 @@ class Quest:
 		- should contain event handlers
 	'''
 	def __init__(self, quest_data={}):
-		''' Load the data from dictionary
+		''' Load the data from quest dictionary
 		'''
+		# All quest data
+		self.quest_data = quest_data
 
 		# Quest details
-		self.id = quest_data.get("id")
-		self.name = quest_data.get("name")
-		self.description = quest_data.get("description")
-		self.objective = quest_data.get("objective")		
-		self.phase_id = quest_data.get("init_phase")		
+		self.id = self.quest_data.get("id")
+		self.name = self.quest_data.get("name")
+		self.description = self.quest_data.get("description")
+		self.objective = self.quest_data.get("objective")
+		self.phase_id = self.quest_data.get("init_phase")
+
+		# Phase data init
+		self.phase_name = self.phase_objective = None
+		self.maps = self.entities = self.event_handlers = None
+		
+		# Phase data load
+		self.load_phase(self.phase_id)
 
 		# Phase details
-		phase_data = quest_data.get("phases").get(self.phase_id)
-		self.phase_name = phase_data.get("name")
-		self.phase_objective = phase_data.get("objective")
+		#phase_data = quest_data.get("phases").get(self.phase_id)
+		#self.phase_name = phase_data.get("name")
+		#self.phase_objective = phase_data.get("objective")
 
 		# Maps
-		self.maps = phase_data.get("maps", [])
+		#self.maps = phase_data.get("maps", [])
 
 		# Create maps existing in the world
-		try:
-			for map_name in self.maps:
-				engine.create_map(map_name)
-		except ValueError:
-			print(f'Problem with initiation of maps for quest (id-name-phase-map): {self.id} - {self.name} - {self.phase_id} - {map_name}')
-			raise ValueError
+		#try:
+		#	for map_name in self.maps:
+		#		engine.create_map(map_name)
+		#except ValueError:
+		#	print(f'Problem with initiation of maps for quest (id-name-phase-map): {self.id} - {self.name} - {self.phase_id} - {map_name}')
+		#	raise ValueError
 
 		# Entities
-		self.entities = phase_data.get("entities")
+		#self.entities = phase_data.get("entities")
 
 		# Create entities in the world
-		try:
-			for entity in self.entities: 
-				engine._create_entity(entity)
-		except ValueError:
-			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
-			raise ValueError
+		#try:
+		#	for entity in self.entities: 
+		#		engine._create_entity(entity)
+		#except ValueError:
+		#	print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
+		#	raise ValueError
 
 		# Event handlers
-		self.event_handlers = phase_data.get("event_handling")
+		#self.event_handlers = phase_data.get("event_handling")
 
 	def event_handler(self, event):
 
@@ -175,7 +184,68 @@ class Quest:
 					
 		#print(f'*Finishing quest event processing')
 
-	def set_phase(self, phase):
-		self.phase_id = phase
+	def load_phase(self, phase_id):
+		''' Load the phase data into the quest 
+		properties.
+		'''
+
+		# Load phase header
+		phase_data = self.quest_data.get("phases").get(self.phase_id)
+		self.phase_name = phase_data.get("name")
+		self.phase_objective = phase_data.get("objective")
+
+		#####
+		# PRE-LOAD cleanup - Do the clearance pre phase load steps
+		#####
+
+		# Clean the entities that are no longer needed
+		entities_to_clean = phase_data.get("cleanup", {}).get("entities", [])
+
+		for entity_name_to_clean in entities_to_clean:
+			engine.delete_entity(entity_name_to_clean)
+
+		# Clean the maps that are no longer needed
+		maps_to_clean = phase_data.get("cleanup", {}).get("maps", [])
+
+		for map_name_to_clean in maps_to_clean:
+			engine.delete_map(map_name_to_clean)
+
+		#####
+		# LOAD PHASE
+		#####
+
+		# Maps
+		self.maps = phase_data.get("maps", [])
+
+		# Create maps existing in the world
+		try:
+			for map_name in self.maps:
+				engine.create_map(map_name)
+		except ValueError:
+			print(f'Problem with initiation of maps for quest (id-name-phase-map): {self.id} - {self.name} - {self.phase_id} - {map_name}')
+			raise ValueError
+
+		# Entities
+		self.entities = phase_data.get("entities")
+
+		# Create entities in the world
+		try:
+			for entity in self.entities: 
+				engine._create_entity(entity)
+		except ValueError:
+			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
+			raise ValueError
+
+		# Event handlers
+		self.event_handlers = phase_data.get("event_handling")
+
+	def set_phase(self, phase_id):
+		''' Change the phase
+		'''
+
+		self.phase_id = phase_id
+		self.load_phase(self.phase_id)
+
 		print(f'Phase was set to {self.phase_id}')
+		
 		return 0

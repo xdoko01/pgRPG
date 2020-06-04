@@ -758,7 +758,7 @@ class CanTalk(Component):
 
 		# Font parameters
 		self.text_color = kwargs.get('text_color', (255, 255, 255))
-		self.font = kwargs.get('font', 'experiments/ecs/FiraCode-Regular.ttf')
+		self.font = kwargs.get('font', config.FONT_PATH + 'FiraCode-Regular.ttf')
 		self.font_size = kwargs.get('font_size', 12)
 
 		# Check that parameters have correct type
