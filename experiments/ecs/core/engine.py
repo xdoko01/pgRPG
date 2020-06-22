@@ -25,7 +25,6 @@ global c_event_queue
 global command_queue
 global _entity_map
 
-
 ########################################################
 ### Package init commands
 ########################################################
@@ -140,7 +139,7 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
 
         # Read the entity.json
         try:
-            with open(config.ENTITY_PATH + template + '.json', 'r') as entity_file:
+            with open(config.ENTITY_PATH / str(template + '.json'), 'r') as entity_file:
                 json_entity_data = entity_file.read()
                 template_entity_data = json.loads(json_entity_data)
         except FileNotFoundError:
@@ -206,8 +205,11 @@ def create_processors(world):
     # Movement processor updates entity position based on the velocity 
     movement_processor = processors.MovementProcessor()
 
-    # Render background procesor to display game stats and anything else
+    # Render GAME WINDOW background procesor to display game stats and anything else
     render_background_processor = processors.RenderBackgroundProcessor(window=window)
+
+    # Render CAMERA background processor 
+    render_camera_background_processor = processors.RenderCameraBackgroundProcessor()
 
     # Render processor to display map
     render_map_processor = processors.RenderMapProcessor(window=window, maps=_maps)
@@ -308,8 +310,12 @@ def create_processors(world):
     ### Update the entity animation
     world.add_processor(render_model_anim_update_processor)
 
-    # Render background - stats / inventory / picture
+    # Render game window background - stats / inventory / picture
     world.add_processor(render_background_processor)
+
+    # Render cameras background - in order not to have blured screen on
+    # parts where map is not displayed.
+    world.add_processor (render_camera_background_processor)
 
     # Render maps
     world.add_processor(render_map_processor)
@@ -513,7 +519,7 @@ def save_game():
     # Save the world
     game_state.update({'world' : world})
 
-    with open(config.SAVE_PATH + 'save.dat', 'wb') as f: pickle.dump(game_state, f)
+    with open(config.SAVE_PATH / 'save.dat', 'wb') as f: pickle.dump(game_state, f)
 
     ### Restore the non-serializable objects so that game can continue
     for entity_id in world._entities.keys():
@@ -567,7 +573,7 @@ def main():
     # All maps are here
     global _maps
     _maps = {}
-    
+
     # Entity name vs id is stored here
     global _entity_map
     _entity_map = {}

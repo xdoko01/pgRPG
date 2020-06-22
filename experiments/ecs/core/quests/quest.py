@@ -15,7 +15,7 @@ def load_quest(quest_id):
 	'''
 	# Open the quest file	
 	try:		
-		with open(config.QUEST_PATH + quest_id +'.json', 'r') as quest_file:
+		with open(config.QUEST_PATH / str(quest_id +'.json'), 'r') as quest_file:
 			json_quest_data = quest_file.read()
 			quest_data = json.loads(json_quest_data)
 	except FileNotFoundError:

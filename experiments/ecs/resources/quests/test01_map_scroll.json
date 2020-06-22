@@ -29,13 +29,29 @@
 							}
 						},
 						{"type" : "Camera", "params" : {
-							"always_center": false, 
+							"always_center": true, 
 							"screen_pos_x" : 0, 
 							"screen_pos_y" : 0, 
 							"screen_width" : 850, 
 							"screen_height" : 850}
 						},
 						{"type" : "Debug", "params" : {}}
+					]
+				},
+				{
+					"id" : "npc02",
+					"templates" : ["human", "darkmale"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
+						{"type" : "Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
+
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Brain", "params" : {"commands" : [
+							[0, 	"move_to", {"x" : 200, "y" : 300}],
+							[1, 	"move_to", {"x" : 400, "y" : 300}],
+							[0, 	"goto", {}]
+						]}}
+
 					]
 				}
 			],

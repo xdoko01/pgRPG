@@ -2,6 +2,7 @@
 TODO - rework ... all images store in image list not in the dictionary
 TODO - static frames with properties and with no animation - save them correctly
 TODO - texture_actions anre incorrectly filled
+TODO - idle action is mandatory
 
 	Example of model.json file - no prototype
 	-> darkmale.png
@@ -64,7 +65,7 @@ class Model(object):
 
 	# Allowed model directions and actions
 	DIRECTIONS = ['up', 'down', 'left', 'right']
-	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing', 'shoot', 'idle_shoot']
+	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing', 'shoot', 'idle_shoot', 'die']
 
 	def __init__(self, model_file):
 		''' Initiate values for the new RenderableModel component.
@@ -97,7 +98,7 @@ class Model(object):
 
 		# Load model from model file
 		try:
-			self._load_model(config.MODEL_PATH + self.model_file)
+			self._load_model(config.MODEL_PATH / self.model_file)
 		except:
 			# Notify component factory that initiation has failed
 			raise ValueError
@@ -132,7 +133,7 @@ class Model(object):
 
 		# Load image with all model tiles
 		try:
-			image = pygame.image.load(config.MODEL_PATH + model_data.get('image', '')).convert()
+			image = pygame.image.load(str(config.MODEL_PATH / model_data.get('image', ''))).convert()
 		except AttributeError:
 			print(f"Unexpected error while processing model file {model_data} not found.")
 			raise ValueError

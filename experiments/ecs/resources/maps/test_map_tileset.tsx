@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.3.1" name="test_map_tileset" tilewidth="32" tileheight="32" tilecount="3072" columns="64" backgroundcolor="#000000">
- <editorsettings>
-  <export target="." format=""/>
- </editorsettings>
+<tileset version="1.2" tiledversion="1.2.4" name="test_map_tileset" tilewidth="32" tileheight="32" tilecount="3072" columns="64" backgroundcolor="#000000">
  <image source="tileset.png" trans="000000" width="2048" height="1536"/>
  <tile id="0">
   <animation>
@@ -28,6 +25,12 @@
    <frame tileid="675" duration="101"/>
    <frame tileid="676" duration="101"/>
    <frame tileid="677" duration="101"/>
+  </animation>
+ </tile>
+ <tile id="723">
+  <animation>
+   <frame tileid="723" duration="150"/>
+   <frame tileid="724" duration="150"/>
   </animation>
  </tile>
  <tile id="768">
@@ -58,6 +61,44 @@
    <frame tileid="787" duration="101"/>
    <frame tileid="786" duration="101"/>
    <frame tileid="788" duration="101"/>
+  </animation>
+ </tile>
+ <tile id="881">
+  <animation>
+   <frame tileid="881" duration="200"/>
+   <frame tileid="882" duration="200"/>
+   <frame tileid="883" duration="200"/>
+   <frame tileid="884" duration="200"/>
+  </animation>
+ </tile>
+ <tile id="1223">
+  <animation>
+   <frame tileid="1223" duration="150"/>
+   <frame tileid="1224" duration="150"/>
+  </animation>
+ </tile>
+ <tile id="1243">
+  <animation>
+   <frame tileid="1243" duration="150"/>
+   <frame tileid="1244" duration="150"/>
+   <frame tileid="1245" duration="150"/>
+   <frame tileid="1246" duration="150"/>
+   <frame tileid="1247" duration="150"/>
+   <frame tileid="1248" duration="150"/>
+   <frame tileid="1249" duration="150"/>
+   <frame tileid="1250" duration="150"/>
+   <frame tileid="1251" duration="150"/>
+  </animation>
+ </tile>
+ <tile id="1252">
+  <animation>
+   <frame tileid="1252" duration="150"/>
+   <frame tileid="1253" duration="150"/>
+   <frame tileid="1254" duration="150"/>
+   <frame tileid="1255" duration="150"/>
+   <frame tileid="1256" duration="150"/>
+   <frame tileid="1257" duration="150"/>
+   <frame tileid="1258" duration="150"/>
   </animation>
  </tile>
 </tileset>

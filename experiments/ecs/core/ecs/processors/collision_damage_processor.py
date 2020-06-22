@@ -25,14 +25,11 @@ class CollisionDamageProcessor(esper.Processor):
 					# Get the Collidable component of the entity that was hitted - in order to remove the collision
 					col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
 
-					# Decrease the health
-					col_event_entity_damageable.health -= damaging.damage
-
 					#try:
 					#	# Remove Position component from the weapon so that it is not displayable on the map - weapon is picked
-					#	self.world.remove_component(ent, components.Position) 
+					#	self.world.remove_component(ent, components.Position)
 					#	# Remove Camera component from the weapon so that the screen disappears - weapon is picked
-					#	self.world.remove_component(ent, components.Camera) 
+					#	self.world.remove_component(ent, components.Camera)
 					#except KeyError:
 					#	pass
 
@@ -45,3 +42,42 @@ class CollisionDamageProcessor(esper.Processor):
 					# Report that item was hit - generate event
 					damage_event = event.Event('DAMAGE', ent, col_event_entity, params={'damaging' : ent, 'damaged' : col_event_entity})
 					self.damage_event_queue.append(damage_event)
+
+					# Decrease the health
+					col_event_entity_damageable.health -= damaging.damage
+
+					# Die if health is up
+					if col_event_entity_damageable.health < 0:
+						
+						# Set health to 0
+						col_event_entity_damageable.health = 0
+
+						# Generate DEATH event
+						kill_event = event.Event('KILL', ent, col_event_entity, params={'killed_by' : ent, 'killed' : col_event_entity})
+						self.damage_event_queue.append(kill_event)
+
+						# Add IsDead tag/component to the entity col_event_entity
+						self.world.add_component(col_event_entity, components.IsDead())
+
+						# Remove Motion component from the entity
+						try:
+							self.world.remove_component(col_event_entity, components.Motion) 
+						except KeyError:
+							pass
+
+						# Remove Brain component from the entity
+						try:
+							self.world.remove_component(col_event_entity, components.Brain) 
+						except KeyError:
+							pass
+
+						# Remove Collidable component from the entity
+						try:
+							self.world.remove_component(col_event_entity, components.Collidable) 
+						except KeyError:
+							pass
+
+						# Add temporary component to the entity - visible for 20s
+						self.world.add_component(col_event_entity, components.Temporary(ttl=20000))
+
+

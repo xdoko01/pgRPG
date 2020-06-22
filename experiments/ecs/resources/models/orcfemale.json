@@ -1,4 +1,12 @@
 { "columns":13,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "image":"orcfemale.png",
  "imageheight":1344,
  "imagewidth":832,
@@ -251,6 +259,45 @@
                  "name":"direction",
                  "type":"string",
                  "value":"right"
+                }]
+        }, 
+        {
+         "animation":[
+                {
+                 "duration":275,
+                 "tileid":260
+                }, 
+                {
+                 "duration":275,
+                 "tileid":261
+                }, 
+                {
+                 "duration":275,
+                 "tileid":262
+                }, 
+                {
+                 "duration":275,
+                 "tileid":263
+                }, 
+                {
+                 "duration":275,
+                 "tileid":264
+                }, 
+                {
+                 "duration":275,
+                 "tileid":265
+                }],
+         "id":265,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"die"
+                }, 
+                {
+                 "name":"repeat",
+                 "type":"bool",
+                 "value":false
                 }]
         }],
  "tilewidth":64,

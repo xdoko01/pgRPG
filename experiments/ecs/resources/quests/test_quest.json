@@ -24,7 +24,7 @@
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "wooden_bow", "name" : "Wooden Bow"}},
 						{"type" : "Debug", "params" : {}},
-						{"type" : "Position", "params" : {"x" : 200, "y" : 600, "map" : "test_map"}}
+						{"type" : "Position", "params" : {"x" : 200, "y" : 350, "map" : "test_map"}}
 					]
 				},
 
@@ -165,7 +165,7 @@
 				},
 				{
 					"id" : "npc01",
-					"templates" : ["human"],
+					"templates" : ["human", "darkmale"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
 						{"type" : "Position", "params" : {"x" : 800, "y" : 200, "map" : "test_map"}},
@@ -185,7 +185,7 @@
 				},
 				{
 					"id" : "npc02",
-					"templates" : ["human"],
+					"templates" : ["human", "darkmale"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
 						{"type" : "Position", "params" : {"x" : 400, "y" : 1100, "map" : "test_map"}},
@@ -202,7 +202,20 @@
 			],
 
 			"event_handling" : {
-			
+
+				"DAMAGE" : [
+					{
+						"conditions" : {
+							"params" : {
+								"damaged" : "npc02"
+							}
+						},
+						"actions" : [
+							["execute_script", {"script_body" : "print(f'NPC02 was hitted')"}]
+						]
+					}
+				],
+
 				"COLLISION" : [
 					{
 						"conditions" : {

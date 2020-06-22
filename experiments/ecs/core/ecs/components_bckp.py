@@ -31,7 +31,8 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 	'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
 	'CanWear', \
 	'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container',\
-	'Factory', 'LinearMotion']
+	'Factory', 'LinearMotion',\
+	'IsDead']
 
 ########################################################
 ### Module functions
@@ -113,6 +114,16 @@ class Component(object):
 		''' Regenerate all non-serializable objects for the component
 		'''
 		pass
+
+
+class IsDead(Component):
+	'''
+	'''
+
+	def __init__(self, *args, **kwargs):
+		'''
+		'''
+		super().__init__()
 
 
 class LinearMotion(Component):
@@ -758,7 +769,7 @@ class CanTalk(Component):
 
 		# Font parameters
 		self.text_color = kwargs.get('text_color', (255, 255, 255))
-		self.font = kwargs.get('font', config.FONT_PATH + 'FiraCode-Regular.ttf')
+		self.font = kwargs.get('font', str(config.FONT_PATH / 'FiraCode-Regular.ttf'))
 		self.font_size = kwargs.get('font_size', 12)
 
 		# Check that parameters have correct type
@@ -957,6 +968,22 @@ class Position(Component):
 		self.lastx = self.x
 		self.lasty = self.y
 		self.lastmap = self.map
+	
+	def set_direction(self, dir_name):
+		'''
+		'''
+		try:
+			assert dir_name in ('up', 'down', 'left', 'right'), f'Position direction is not defined for {self.__class__} component.'
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+		
+		self.dir_name = dir_name 
+
+		if self.dir_name == 'down': self.direction = (0, 1)
+		if self.dir_name == 'up': self.direction = (0, -1)
+		if self.dir_name == 'left': self.direction = (-1, 0)
+		if self.dir_name == 'right': self.direction = (1, 0)
 
 
 class Teleport(Component):
@@ -1123,7 +1150,7 @@ class Renderable(Component):
 			self.image_file = kwargs.get("image", "")
 			assert isinstance(self.image_file, str), f'Image file name {self.image_file} is not valid.'
 
-			self.image = pygame.image.load(config.IMAGE_PATH + self.image_file).convert()
+			self.image = pygame.image.load(str(config.IMAGE_PATH / self.image_file)).convert()
 		except FileNotFoundError:
 			print(f'Image file {config.IMAGE_PATH + self.image_file} not found')
 			# Notify component factory that initiation has failed
@@ -1269,7 +1296,7 @@ class RenderableModel(Component):
 		Just update the frame and that is it.
 		'''
 
-		# Get no of the animated frames for given action and direction
+		# Get no of the animated frames for given action and direction - if direction not found, use down
 		anim_length = self.model.texture_length.get(self.action).get(direction)
 		
 		# Fix the last_frame so it is always within 0 .. anim_length

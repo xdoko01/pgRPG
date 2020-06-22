@@ -1,12 +1,4 @@
 { "columns":13,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"",
-         "target":"."
-        }
-    },
  "image":"darkmale.png",
  "imageheight":1344,
  "imagewidth":832,
@@ -14,7 +6,7 @@
  "name":"darkmale",
  "spacing":0,
  "tilecount":273,
- "tiledversion":"1.3.1",
+ "tiledversion":"1.2.4",
  "tileheight":64,
  "tiles":[
         {
@@ -661,6 +653,11 @@
                  "value":"swing"
                 }, 
                 {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
                  "name":"direction",
                  "type":"string",
                  "value":"up"
@@ -708,6 +705,11 @@
                  "name":"action",
                  "type":"string",
                  "value":"swing"
+                }, 
+                {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":2
                 }, 
                 {
                  "name":"direction",
@@ -759,6 +761,11 @@
                  "value":"swing"
                 }, 
                 {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
                  "name":"direction",
                  "type":"string",
                  "value":"down"
@@ -806,6 +813,11 @@
                  "name":"action",
                  "type":"string",
                  "value":"swing"
+                }, 
+                {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":2
                 }, 
                 {
                  "name":"direction",
@@ -885,6 +897,11 @@
                  "value":"shoot"
                 }, 
                 {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":8
+                }, 
+                {
                  "name":"direction",
                  "type":"string",
                  "value":"up"
@@ -960,6 +977,11 @@
                  "name":"action",
                  "type":"string",
                  "value":"shoot"
+                }, 
+                {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":8
                 }, 
                 {
                  "name":"direction",
@@ -1039,6 +1061,11 @@
                  "value":"shoot"
                 }, 
                 {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":8
+                }, 
+                {
                  "name":"direction",
                  "type":"string",
                  "value":"down"
@@ -1116,6 +1143,11 @@
                  "value":"shoot"
                 }, 
                 {
+                 "name":"action_frame",
+                 "type":"int",
+                 "value":8
+                }, 
+                {
                  "name":"direction",
                  "type":"string",
                  "value":"right"
@@ -1124,30 +1156,41 @@
         {
          "animation":[
                 {
-                 "duration":101,
+                 "duration":150,
                  "tileid":260
                 }, 
                 {
-                 "duration":101,
+                 "duration":150,
                  "tileid":261
                 }, 
                 {
-                 "duration":101,
+                 "duration":150,
                  "tileid":262
                 }, 
                 {
-                 "duration":101,
+                 "duration":150,
                  "tileid":263
                 }, 
                 {
-                 "duration":101,
+                 "duration":150,
                  "tileid":264
                 }, 
                 {
-                 "duration":101,
+                 "duration":150,
                  "tileid":265
                 }],
-         "id":260
+         "id":265,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"die"
+                }, 
+                {
+                 "name":"repeat",
+                 "type":"bool",
+                 "value":false
+                }]
         }],
  "tilewidth":64,
  "transparentcolor":"#000000",

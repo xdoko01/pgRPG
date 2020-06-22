@@ -55,6 +55,7 @@ __all__ = [
 	'RenderMapProcessor',
 	'RenderDebugProcessor',
 	'RenderBackgroundProcessor',
+	'RenderCameraBackgroundProcessor',
 	'InputProcessor',
 	'CollisionMapProcessor',
 	'CollisionEntityGeneratorProcessor',

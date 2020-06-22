@@ -3,6 +3,8 @@ __all__ = ['RenderableModelAnimationActionProcessor']
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 
+from .functions import filter_only_visible
+
 class RenderableModelAnimationActionProcessor2(esper.Processor):
 	''' Change the action of renderable model in order to display
 	correct action animation.
@@ -64,32 +66,49 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 		super().__init__()
 
 	def process(self, *args, **kwargs):
-		
-		# Get all states
-		for ent, renderable_model in self.world.get_component(components.RenderableModel):
-			
-			# try to get motion, has_weapon - returns None if not present
-			motion = self.world.try_component(ent, components.Motion)
-			has_weapon = self.world.try_component(ent, components.HasWeapon)
 
-			if motion and motion.has_moved:
-				
-				# If entity has moved, action is set to 'walk'
-				renderable_model.set_action('walk')
-			
-			elif has_weapon and has_weapon.weapon_in_use and has_weapon.has_attacked:
-				
-				# If entity has weapon and the weapon has attacked, set action to proper value
-				renderable_model.set_action(has_weapon.get_weapon_action_anim())
-				
-				# Reset the attack - in case attack key is released animation of attack is no longer displayed
-				has_weapon.has_attacked = False
+		# Remember updated entities - to prevent several updates on simgle entity
+		already_updated = set()
 
-			elif has_weapon and has_weapon.weapon_in_use:
+		# Iterate all camaeras
+		for cam, (camera) in self.world.get_component(components.Camera):
+
+			# Get all states
+			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 				
-				# If entity has weapon but is not attacking, display idle weapon animation
-				renderable_model.set_action(has_weapon.get_weapon_idle_anim())
-			
-			else:
-				# Has no weapon, is not moving,
-				renderable_model.set_action('idle')
+				# try to get motion, has_weapon - returns None if not present
+				motion = self.world.try_component(ent, components.Motion)
+				has_weapon = self.world.try_component(ent, components.HasWeapon)
+				is_dead = self.world.try_component(ent, components.IsDead)
+
+				if is_dead:
+					renderable_model.set_action('die')
+					
+					# Direction must be down because only down direction is animated for the dead animation
+					position.set_direction('down')
+
+				elif motion and motion.has_moved:
+					
+					# If entity has moved, action is set to 'walk'
+					renderable_model.set_action('walk')
+				
+				elif has_weapon and has_weapon.weapon_in_use and has_weapon.has_attacked:
+					
+					# If entity has weapon and the weapon has attacked, set action to proper value
+					renderable_model.set_action(has_weapon.get_weapon_action_anim())
+					
+					# Reset the attack - in case attack key is released animation of attack is no longer displayed
+					has_weapon.has_attacked = False
+
+				elif has_weapon and has_weapon.weapon_in_use:
+					
+					# If entity has weapon but is not attacking, display idle weapon animation
+					renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+				
+				else:
+					# Has no weapon, is not moving,
+					renderable_model.set_action('idle')
+
+				# Remember that entity was updated
+				already_updated.add(ent)
+

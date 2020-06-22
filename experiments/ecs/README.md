@@ -147,21 +147,63 @@
 
 ####
 
-### Background is not erased properly
+### Indicate error in quest definition if weapon or wearable has Position component and at the same time is in inventory of the player. If this is done it is causing error in rendering the object. The reason is that this object is in idle status when displaying at position and might be shifting the frames in this action status???
+
+### Implement death after helth is up including animation - collision_damage_processor
+  - collision processor - add IsDead, remove Motion comp, remove Brain comp, add temp component (to disappear after some time) - DONE
+  - action processor - get RenderableModel and Position - DONE
+    - set direction down when IsDead - DONE
+  - animation is repeating - new dictionary to the model tex_repeat... - TODO
+
+### New model version
+  - do we need tex_dynamic? It is always dynamic
+  - new tex_data dict
+  - new dict storing only sprites (number : sprite)
+  - can we easily get if action exists, and if direction action exists?
+  {
+    'walk' : {
+      'up' : {
+        'texture' : [102, 103, 104, 105, 106],
+        'length' : 5,
+        'dynamic' : True,
+        'repetitive' : True
+      }
+    }
+  }
+  - no default, only idle
+  - if idle without direction then automatically fill all directions
+
+
+### Where to put pygame.Vector2 so that it is used in the whole game
+  - config??
+
+
+
+### Destroy Arrow on collision
+  - currently arrow flies till map is hitted
+  - newly we need it to stop on entity hit - to prevent multiple hits
+
+### Pickup collision of generator implementation - add to HasWeapon
+  - picking up bunch of arrows
+
+
 
 ### Probably create also Render processor for generation on the foreground
+  - in order to show some statistics , bars etc.
+  - when presing some key, dislay inventory on top of the game window
 
 ### Adjust move command so we can pass parameters about speed - new command
 
 ### Rename HasWeapon to CanAttack
-
-### NPCs are not generated after changes on test_quest. Why?
 
 ### Properly support default action if no other action exist in model - or have idle/down on all models????? or default/down???
 
 ### How to solve comunication between components?
   - State/Status entity for all (basically default component similar to label)???
   - Just use some component as a tag that component is in some particular status? How fast is that solution?
+
+### Merge Renderable Action and Renderable Update processors
+  - both processors are iterating over the same set
 
 ### Group processors into domains modules - Physics, Rendering, ...
 
@@ -174,19 +216,16 @@
 ### Model system for weapons in DRAW.IO sketch
 
 ### Rewrite model
+  - Fix `tex_actions` - currently filled with random characters
   - one set of pictures - so that one picture can be used by many animations
   - substitute default by idle
   - how to implement that some entity has all idle up down left right the same picture?
   - can I do this directly in Tiled - many properties
   - or just use default as a value if no idle is found
 
-### Fix `tex_actions` - currently filled with random characters
 
 ### Number of max projectiles - currently on weapon - how much generated at the same time
   - we need to incorporate also units of projectiles available in ammo_pack
-
-### Pickup collision of generator implementation - add to HasWeapon
-  - picking up bunch of arrows
 
 ### Implement nice textboxes
 
@@ -196,8 +235,6 @@
 ### Implelent some spear as a weapon spear pilot
 
 ### Implelent some fireball as a weapon pilot
-
-### Implement death after helth is up including animation
 
 ### Destroy projectile on impact
   - DestroyOnCollision component as a tag??
@@ -215,6 +252,9 @@
 
 ### Internet play - sockets - client and server part
 
+### Think about re-implementation of collisions
+  - now we iterate entity per entity through the list of entities that have collided. Is it optimal for ECS?
+  - what about having new Tag? what about performance of such solution?
 
 ## Bugs
 

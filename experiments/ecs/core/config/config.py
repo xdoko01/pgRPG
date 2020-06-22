@@ -1,11 +1,16 @@
-FONT_PATH = 'experiments/ecs/resources/fonts/'
-MODEL_PATH = 'experiments/ecs/resources/models/'
-IMAGE_PATH = 'experiments/ecs/resources/images/'
-QUEST_PATH = 'experiments/ecs/resources/quests/'
-ENTITY_PATH = 'experiments/ecs/resources/entities/'
-MAP_PATH = 'experiments/ecs/resources/maps/'
-LOG_PATH = 'experiments/ecs/logs/'
-SAVE_PATH = 'experiments/ecs/save/'
+from collections import namedtuple # for Tile namedtuple used in the Model class
+from pygame import Vector2 as vect # for width and height of the tile of the model
+from pathlib import Path
+
+
+FONT_PATH = Path('experiments/ecs/resources/fonts/')
+MODEL_PATH = Path('experiments/ecs/resources/models/')
+IMAGE_PATH = Path('experiments/ecs/resources/images/')
+QUEST_PATH = Path('experiments/ecs/resources/quests/')
+ENTITY_PATH = Path('experiments/ecs/resources/entities/')
+MAP_PATH = Path('experiments/ecs/resources/maps/')
+LOG_PATH = Path('experiments/ecs/logs/')
+SAVE_PATH = Path('experiments/ecs/save/')
 
 DEBUG = {
 	'show_health' : True,

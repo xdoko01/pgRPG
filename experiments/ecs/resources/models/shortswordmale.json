@@ -141,11 +141,6 @@
                  "name":"action",
                  "type":"string",
                  "value":"idle"
-                }, 
-                {
-                 "name":"direction",
-                 "type":"string",
-                 "value":"down"
                 }]
         }, 
         {
