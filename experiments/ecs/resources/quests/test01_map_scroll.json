@@ -1,13 +1,13 @@
 {
 	"id" : "test01_map_scroll",
-	"name" : "Testing map scrolling",
-	"description" : "Testing of map scrolling",
-	"objective" : "Enjoy the test - use W,A,S,D to move around",
+	"name" : "Testing normal map scrolling",
+	"description" : "Testing of normal map scrolling",
+	"objective" : "Enjoy the test - use W,A,S,D to move around. Camera is always centered so there is nothing preventing scrolling out of the map.",
 	"init_phase" : "phase01",
 
 	"phases" : {
 		"phase01" :{
-			"name" : "Testing map scrolling",
+			"name" : "Testing normal map scrolling",
 			"objective" : "Have fun",
 			"maps" : ["test_map"],
 			
@@ -36,22 +36,6 @@
 							"screen_height" : 850}
 						},
 						{"type" : "Debug", "params" : {}}
-					]
-				},
-				{
-					"id" : "npc02",
-					"templates" : ["human", "darkmale"],
-					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
-						{"type" : "Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
-
-						{"type" : "Debug", "params" : {}},
-						{"type" : "Brain", "params" : {"commands" : [
-							[0, 	"move_to", {"x" : 200, "y" : 300}],
-							[1, 	"move_to", {"x" : 400, "y" : 300}],
-							[0, 	"goto", {}]
-						]}}
-
 					]
 				}
 			],

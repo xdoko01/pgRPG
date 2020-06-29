@@ -142,51 +142,120 @@
     - last attack animation frame creates new entity (projectile) by calling HasWeapon -> Factory
     - there is new collision processor *CollisionDamageProcessor* that decreases health represented by *Damagable* component.
 
+### Cached models (flyweight) implemented
+
+  - Model stored in cached class Model. 
+  - All images used for model animations are stored in images dictionary, where key is tile_id and value is surface containing the actual image.
+  - All information about animation actions and directions are stored in frames dictionary - see example below
+
+      {
+        'walk' : {
+            'up' : {
+                'tiles' : [ # Reference to images dictionary
+                    NamedTuple(tileid=102,duration=75),
+                    NamedTuple(tileid=103,duration=75),
+                    NamedTuple(tileid=104,duration=75),
+                    NamedTuple(tileid=105,duration=75),
+                    NamedTuple(tileid=106,duration=75)
+                ],
+                'repeat' : True, # TILED SW parameter - OPTIONAL - it is always True unless it is set to false in the json parameters - False means that it stops on the last frame
+                'action_frame' : 3 # TILED SW parameter - OPTIONAL - on which of the frame generate action (swing object, arrow object generation). It is last frame unless stated otherwise by the parameter
+            }
+        }
+     }
+
+  - Following conditions must be met to successful load model from the tileset.
+    - Action must be in the list of supported actions `Model.ACTIONS` - otherwise, error is raised
+    - Action can have either None or all directions - otherwise, error is raised
+    - Direction must be in the list of valid directions `Model.DIRECTIONS`
+    - 'idle' action must always be present in the model (default game action)
+
+### Death implemented
+
+  - Adjustment of *CollisionDamageProcessor* - after health is below 0, following happens:
+    - New component *IsDead* is assigned to the entity 
+    - Components *Brain*, *Motion*, *Camera*, *Collidable* are removed 
+    - Component *Temporary* is added in order to remove the dead body after some time.
+
+### Deletion of entities upon collision implemented
+
+  - New component *DeleteOnCollision* that is only a tag that indicates that entity should be deleted after processing of collisions
+  - Adjustment of *Collidable* component that newly contains new flag has_collided (indicates if entity has collided with something in current processor loop)
+  - Adjustment of *CollisionEntityGeneratorProcessor* processor
+    - processor newly resets has_collided flag on all entities with Collidable component (at the beginning of collision processing)
+    - processor newly sets has_collided flag to `True` on all entities for which some collision event was created 
+  - New processor *CollisionDeletionProcessor* deletes entities that have component `DeleteOnCollision` and `has_collided` set to `True`
 
 ## To Do
 
 ####
 
+
+### Prepare test_empty_map.tmx and do quests for testing of collisions
+  - several moving entities that are hitting each other
+
+### Prepare quests for testing of teleportation
+  - including moving teleport
+  - including teleport that teleports to other map and back
+  - prepare RenderableModel for teleport
+  - write teleport events on console
+
+### Entity Resolvers might contain parameter that will decide if the collision event is deleted after processing or not
+
+### Temporary processor and collision deletion processor share the same deletion functionality
+  - maybe those processor should only mark entity as for deletion and the new processor then deletes it
+
+### Re-think collisions
+
+  - **Resolution** 
+    - collision generator processor resets all has_collided flags to False at the beginning of the loop
+    - collision generator sets Collidable.has_collided flag to True on entities where collision occured
+    - collision deletion processor search and deletes entities that has_collided + DeleteOnCollision
+    - maybe that temporary and delete on collision processors will just put tag ForDeletion + new processor at the end that will do the actual deletion
+  
+  1. `collision_map_processor`
+    - FOR ALL `Position`, `Collidable`
+    - IF map is hit, return to position.lastx, position.lasty
+
+  #### Collision Generators
+
+  2. `collision_entity_generator_processor`
+    - For ALL Viewable `Position`, `Collidable`
+    - If hit by one another, add to `Collidable.CollisionEvents(entity)`
+    - **Possible Solution** - add `has_collided` variable to Collidable component and check it at the end of all collisions in `DeleteOnCollision` processor
+  
+  #### Collision Resolvers
+
+  3. `collision_damage_processor`
+    - For ALL `Damaging`, `Collidable`
+    - If hit `Damageable`, decrease the health + get rid of the event with `Damageable` component
+    - **Possible limitation** - if entity is damaging it cannot be teleport or pickable at the same time. I.e. I cannot damage entity and then teleport it. Is it a problem? Also I cannot damage entity and then let the entity pick it. Is it a problem?
+
+  4. `collision_teleport_processor`
+    - For ALL `Teleport`, `Collidable`
+    - If hit `Teleportable`, `Position`, `Collidable`, check if key is required and do teleportation + get rid of the event with `Teleportable` entity
+    - **Possible limitation** - if entity acts as Teleport it cannot be Pickable, Weapon or Wearable. Because the event is deleted.
+
+  5. `collision_weapon_processor`	# Resolves weapon pickups collisions + generates events to the main program where those can be further processed
+  6. `collision_wearable_processor`	# Resolves wearable pickups collisions + generates events to the main program where those can be further processed
+  7. `collision_item_processor` # Resolves item pickups collisions + generates events to the main program where those can be further processed
+
+  8. `collision_entity_processor` # Resolves entity collisions + generates events to the main program where those can be further processed
+    - For All `Position`, `Collidable`
+    - If hit other `Position`, `Collidable`, issue move command + get rid of the collision event
+
+
+
+### Create custom font library - as a separate experiment
+
 ### Indicate error in quest definition if weapon or wearable has Position component and at the same time is in inventory of the player. If this is done it is causing error in rendering the object. The reason is that this object is in idle status when displaying at position and might be shifting the frames in this action status???
-
-### Implement death after helth is up including animation - collision_damage_processor
-  - collision processor - add IsDead, remove Motion comp, remove Brain comp, add temp component (to disappear after some time) - DONE
-  - action processor - get RenderableModel and Position - DONE
-    - set direction down when IsDead - DONE
-  - animation is repeating - new dictionary to the model tex_repeat... - TODO
-
-### New model version
-  - do we need tex_dynamic? It is always dynamic
-  - new tex_data dict
-  - new dict storing only sprites (number : sprite)
-  - can we easily get if action exists, and if direction action exists?
-  {
-    'walk' : {
-      'up' : {
-        'texture' : [102, 103, 104, 105, 106],
-        'length' : 5,
-        'dynamic' : True,
-        'repetitive' : True
-      }
-    }
-  }
-  - no default, only idle
-  - if idle without direction then automatically fill all directions
 
 
 ### Where to put pygame.Vector2 so that it is used in the whole game
   - config??
 
-
-
-### Destroy Arrow on collision
-  - currently arrow flies till map is hitted
-  - newly we need it to stop on entity hit - to prevent multiple hits
-
 ### Pickup collision of generator implementation - add to HasWeapon
   - picking up bunch of arrows
-
-
 
 ### Probably create also Render processor for generation on the foreground
   - in order to show some statistics , bars etc.
@@ -215,14 +284,6 @@
 
 ### Model system for weapons in DRAW.IO sketch
 
-### Rewrite model
-  - Fix `tex_actions` - currently filled with random characters
-  - one set of pictures - so that one picture can be used by many animations
-  - substitute default by idle
-  - how to implement that some entity has all idle up down left right the same picture?
-  - can I do this directly in Tiled - many properties
-  - or just use default as a value if no idle is found
-
 
 ### Number of max projectiles - currently on weapon - how much generated at the same time
   - we need to incorporate also units of projectiles available in ammo_pack
@@ -232,12 +293,11 @@
 ### Implement move_to command using A* algorithm
   - create graph from collision map on map init
 
-### Implelent some spear as a weapon spear pilot
+### Implement some spear as a weapon spear pilot
 
-### Implelent some fireball as a weapon pilot
+### Implement some fireball as a weapon pilot
 
-### Destroy projectile on impact
-  - DestroyOnCollision component as a tag??
+### 
 
 ### ParticleEffecOnCollision component
   - parameter might be effect_id

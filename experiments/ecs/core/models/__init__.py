@@ -1,5 +1,4 @@
 from .model import *
-from .model2 import *
 
 
-__all__ = ['Model', 'Model2']
+__all__ = ['load_model', 'Model']

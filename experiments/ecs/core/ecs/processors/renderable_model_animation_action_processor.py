@@ -75,40 +75,42 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 
 			# Get all states
 			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
-				
-				# try to get motion, has_weapon - returns None if not present
-				motion = self.world.try_component(ent, components.Motion)
-				has_weapon = self.world.try_component(ent, components.HasWeapon)
-				is_dead = self.world.try_component(ent, components.IsDead)
 
-				if is_dead:
-					renderable_model.set_action('die')
-					
-					# Direction must be down because only down direction is animated for the dead animation
-					position.set_direction('down')
+				if ent not in already_updated:
 
-				elif motion and motion.has_moved:
-					
-					# If entity has moved, action is set to 'walk'
-					renderable_model.set_action('walk')
-				
-				elif has_weapon and has_weapon.weapon_in_use and has_weapon.has_attacked:
-					
-					# If entity has weapon and the weapon has attacked, set action to proper value
-					renderable_model.set_action(has_weapon.get_weapon_action_anim())
-					
-					# Reset the attack - in case attack key is released animation of attack is no longer displayed
-					has_weapon.has_attacked = False
+					# try to get motion, has_weapon - returns None if not present
+					motion = self.world.try_component(ent, components.Motion)
+					has_weapon = self.world.try_component(ent, components.HasWeapon)
+					is_dead = self.world.try_component(ent, components.IsDead)
 
-				elif has_weapon and has_weapon.weapon_in_use:
-					
-					# If entity has weapon but is not attacking, display idle weapon animation
-					renderable_model.set_action(has_weapon.get_weapon_idle_anim())
-				
-				else:
-					# Has no weapon, is not moving,
-					renderable_model.set_action('idle')
+					if is_dead:
+						renderable_model.set_action('die')
+						
+						# Direction must be down because only down direction is animated for the dead animation
+						position.set_direction('down')
 
-				# Remember that entity was updated
-				already_updated.add(ent)
+					elif motion and motion.has_moved:
+						
+						# If entity has moved, action is set to 'walk'
+						renderable_model.set_action('walk')
+					
+					elif has_weapon and has_weapon.weapon_in_use and has_weapon.has_attacked:
+
+						# If entity has weapon and the weapon has attacked, set action to proper value
+						renderable_model.set_action(has_weapon.get_weapon_action_anim())
+						
+						# Reset the attack - in case attack key is released animation of attack is no longer displayed
+						has_weapon.has_attacked = False
+
+					elif has_weapon and has_weapon.weapon_in_use:
+
+						# If entity has weapon but is not attacking, display idle weapon animation
+						renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+					
+					else:
+						# Has no weapon, is not moving,
+						renderable_model.set_action('idle')
+
+					# Remember that entity was updated
+					already_updated.add(ent)
 

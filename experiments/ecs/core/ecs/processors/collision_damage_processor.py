@@ -3,6 +3,7 @@ __all__ = ['CollisionDamageProcessor']
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 import core.events.event as event # for creation of events
+import core.config.config as config # for the time before dead body disappears
 
 class CollisionDamageProcessor(esper.Processor):
 	def __init__(self, damage_event_queue):
@@ -13,7 +14,7 @@ class CollisionDamageProcessor(esper.Processor):
 
 		for ent, (damaging, collision) in self.world.get_components(components.Damaging, components.Collidable):
 
-			# Process everything that collided with Damaging entity
+			# Process everything that collided with Damaging entity (typically arrow, projectile, ...)
 			for col_event_entity in collision.collision_events.copy():
 
 				# If hitted component has Damageble component then proceed
@@ -33,11 +34,13 @@ class CollisionDamageProcessor(esper.Processor):
 					#except KeyError:
 					#	pass
 
+					######################
 					# Remove the col_event_entity from Damagable entity
 					collision.collision_events.remove(col_event_entity)
 
 					# Remove the col event related to item from the Damaging
 					col_event_entity_coll.collision_events.remove(ent)
+					#####################
 
 					# Report that item was hit - generate event
 					damage_event = event.Event('DAMAGE', ent, col_event_entity, params={'damaging' : ent, 'damaged' : col_event_entity})
@@ -59,25 +62,31 @@ class CollisionDamageProcessor(esper.Processor):
 						# Add IsDead tag/component to the entity col_event_entity
 						self.world.add_component(col_event_entity, components.IsDead())
 
-						# Remove Motion component from the entity
+						# Remove Motion component from the entity - nobody wants to see dead body moving
 						try:
-							self.world.remove_component(col_event_entity, components.Motion) 
+							self.world.remove_component(col_event_entity, components.Motion)
 						except KeyError:
 							pass
 
-						# Remove Brain component from the entity
+						# Remove Brain component from the entity - nobody wants to see dead body performing commands
 						try:
-							self.world.remove_component(col_event_entity, components.Brain) 
+							self.world.remove_component(col_event_entity, components.Brain)
 						except KeyError:
 							pass
 
-						# Remove Collidable component from the entity
+						# Remove Collidable component from the entity - dead body does not colide with anything
 						try:
-							self.world.remove_component(col_event_entity, components.Collidable) 
+							self.world.remove_component(col_event_entity, components.Collidable)
+						except KeyError:
+							pass
+
+						# Remove Camera component from the entity - dead entity is no longer focused
+						try:
+							self.world.remove_component(col_event_entity, components.Camera)
 						except KeyError:
 							pass
 
 						# Add temporary component to the entity - visible for 20s
-						self.world.add_component(col_event_entity, components.Temporary(ttl=20000))
+						self.world.add_component(col_event_entity, components.Temporary(ttl=config.DEAD_TIME_TO_DISAPPEAR))
 
 

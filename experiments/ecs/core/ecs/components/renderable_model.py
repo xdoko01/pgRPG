@@ -11,7 +11,7 @@ class RenderableModel(Component):
 		-	RenderModelWorldProcessor
 
 	Tests:
-		>>> c = RenderableModel2()
+		>>> c = RenderableModel()
 	'''
 
 	__slots__ = ['model', 'last_frame', 'last_time', 'is_action_frame', 'action']
@@ -40,7 +40,7 @@ class RenderableModel(Component):
 		# Check the model name and the action name for validity
 		try:
 			assert isinstance(model_file, str), f'Model file name {model_file} is not valid.'
-			assert isinstance(self.action, str) and self.action in model.Model2.ACTIONS, f'Action "{self.action}" is not allowed animation.'
+			assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Action "{self.action}" is not allowed animation.'
 		except AssertionError:
 			# Notify component factory that initiation has failed
 			raise ValueError

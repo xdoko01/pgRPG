@@ -23,6 +23,7 @@ from .collision_weapon_processor import *
 from .collision_wearable_processor import *
 from .collision_item_processor import *
 from .collision_entity_processor import *
+from .collision_deletion_processor import *
 from .brain_processor import *
 from .game_events_processor import *
 from .command_processor import *
@@ -65,6 +66,7 @@ __all__ = [
 	'CollisionWearableProcessor',
 	'CollisionItemProcessor',
 	'CollisionEntityProcessor',
+	'CollisionDeletionProcessor',
 	'BrainProcessor',
 	'GameEventsProcessor',
 	'CommandProcessor',

@@ -21,7 +21,7 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
     'CanWear', \
     'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container',\
-    'Factory', 'LinearMotion',\
+    'Factory', 'LinearMotion', 'DeleteOnCollision',\
     'IsDead']
 
 ########################################################
@@ -89,6 +89,7 @@ from .controllable import *
 from .damageable import *
 from .damaging import *
 from .debug import *
+from .delete_on_collision import *
 from .factory import *
 from .has_inventory import *
 from .has_weapon import *
@@ -122,6 +123,7 @@ __all__ = [
     'Damageable',
     'Damaging',
     'Debug',
+    'DeleteOnCollision',
     'Factory',
     'HasInventory',
     'HasWeapon',

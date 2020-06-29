@@ -1,17 +1,17 @@
 {
-	"id" : "test01_map_scroll",
-	"name" : "Testing map scrolling",
-	"description" : "Testing of map scrolling",
-	"objective" : "Enjoy the test - use W,A,S,D to move around",
+	"id" : "test02_big_map_scroll",
+	"name" : "Testing big map scrolling",
+	"description" : "Testing of big map scrolling",
+	"objective" : "Enjoy the test - use arrows to move around",
 	"init_phase" : "phase01",
 
 	"phases" : {
 		"phase01" :{
-			"name" : "Testing map scrolling",
+			"name" : "Testing Big map scrolling",
 			"objective" : "Have fun",
-			"maps" : "test_big_map",
+			"maps" : ["test_big_map"],
 			
-			"cleanup" : [],
+			"cleanup" : {},
 
 			"entities" : [
 				

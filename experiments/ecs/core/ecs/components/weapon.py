@@ -1,5 +1,5 @@
 from .component import Component
-import core.models.model as model
+import core.models as model
 
 class Weapon(Component):
 	''' Entity is a weapon if having this component.

@@ -28,3 +28,5 @@ DEBUG = {
 FPS = 120
 MOVE_SPEED = 120 # in px per second
 TILE_RES = 64
+
+DEAD_TIME_TO_DISAPPEAR = 10000 # in ms

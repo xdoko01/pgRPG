@@ -1,48 +1,56 @@
 from .component import Component
 
 class Collidable(Component):
-	''' Entity collides with other collidable entities.
+    ''' Entity collides with other collidable entities.
 
-	Used by:
-		-	RenderDebugProcessor
-		-	CollisionMapProcessor
-		-	CollisionEntityGeneratorProcessor
-		-	CollisionTeleportProcessor
-		-	CollisionItemProcessor
-		-	CollisionEntityProcessor
-		-	CollisionCorrectorProcessor	
+    Used by:
+        - RenderDebugProcessor
+        - CollisionMapProcessor
+        - CollisionEntityGeneratorProcessor
+        - CollisionDamageProcessor
+        - CollisionWeaponProcessor
+        - CollisionWearableProcessor
+        - CollisionTeleportProcessor
+        - CollisionItemProcessor
+        - CollisionEntityProcessor
+        - CollisionDeletionProcessor
+        - OBSOLETE: CollisionCorrectorProcessor
 
-	Tests:
-		>>> c = Collidable()
-	'''
+    Tests:
+        >>> c = Collidable()
+    '''
 
-	__slots__ = ['x', 'y', 'collision_events']
+    __slots__ = ['x', 'y', 'has_collided', 'collision_events']
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate values for the new Collidable component.
+    def __init__(self, *args, **kwargs):
+        ''' Initiate values for the new Collidable component.
 
-		Parameters:
-			:param x: X-axis collision zone +- from the x-centre of the entity in pixel coordinates
-			:type x: int
+        Parameters:
+            :param x: X-axis collision zone +- from the x-centre of the entity in pixel coordinates
+            :type x: int
 
-			:param y: Y-axis collision zone +- from the y-centre of the entity in pixel coordinates
-			:type y: int
+            :param y: Y-axis collision zone +- from the y-centre of the entity in pixel coordinates
+            :type y: int
 
-			:raise: ValueError - in case of incorrect collision borders
-		'''
+            :raise: ValueError - in case of incorrect collision borders
+        '''
 
-		super().__init__()
-		
-		# With and height of the collision zone - from the center +/-x and +/-y
-		self.x = kwargs.get('x', 0)
-		self.y = kwargs.get('y', 0)
+        super().__init__()
 
-		try:
-			assert isinstance(self.x, int) and self.x >= 0, f'Collision x-axis must be passed as positive int.'
-			assert isinstance(self.y, int) and self.x >= 0, f'Collision y-axis must be passed as positive int.'
-		except AssertionError:
-			# Notify component factory that initiation has failed
-			raise ValueError		
+        # With and height of the collision zone - from the center +/-x and +/-y
+        self.x = kwargs.get('x', 0)
+        self.y = kwargs.get('y', 0)
 
-		# Keep track with whom the entity collided
-		self.collision_events = set()
+        try:
+            assert isinstance(self.x, int) and self.x >= 0, f'Collision x-axis must be passed as positive int.'
+            assert isinstance(self.y, int) and self.x >= 0, f'Collision y-axis must be passed as positive int.'
+        except AssertionError:
+            # Notify component factory that initiation has failed
+            raise ValueError
+
+        # Indicate if entity has collided with anything
+        self.has_collided = False
+
+        # Keep track with whom the entity collided
+        self.collision_events = set()
+

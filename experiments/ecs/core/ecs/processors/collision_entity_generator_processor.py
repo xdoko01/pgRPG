@@ -22,11 +22,17 @@ class CollisionEntityGeneratorProcessor(esper.Processor):
 
 	def process(self, *args, **kwargs):
 
+		# Reset  has_collided flag to False on all valid entities - it is used for deleting entities on collision
+		for _, (coll) in self.world.get_component(components.Collidable):
+			coll.has_collided = False
+
 		# For all camera screens in the game window
 		for _, (camera) in self.world.get_component(components.Camera):
 
 			# Get all entities that have Motion and Collidable (only those can activelly hit something) - i.e. that could have moved and iterate those
 			for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.Collidable)):
+				
+
 				# Compare that all collision + position entities - DUMMY WAY
 				for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.Collidable)):
 					
@@ -53,6 +59,12 @@ class CollisionEntityGeneratorProcessor(esper.Processor):
 						pos_moved.y - coll_moved.y < pos_other.y + coll_other.y and
 						pos_moved.y + coll_moved.y > pos_other.y - coll_other.y):
 						
-						# Add collision to the collision component 
+						# Add collision to the collision component
 						coll_other.collision_events.add(ent_moved)
 						#coll_moved.collision_events.add(ent_other)
+
+						# Indicate the collision has happened - used for example in collision_deletion_processor
+						coll_other.has_collided = True
+
+
+

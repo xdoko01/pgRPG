@@ -1,7 +1,7 @@
 
 import core.config.config as config  # For load_quest QUEST_PATH_PATH
 import core.scripts.script as script
-import core.commands.commands as commands
+import core.commands as commands
 import core.engine as engine # to call _create_entity() fnc (probably in the future also to call _create_map)
 
 import json # For loading quest from json
@@ -19,7 +19,7 @@ def load_quest(quest_id):
 			json_quest_data = quest_file.read()
 			quest_data = json.loads(json_quest_data)
 	except FileNotFoundError:
-		print(f'File {QUEST_PATH + quest_id + ".json"} not found.')
+		print(f'File {config.QUEST_PATH / str(quest_id + ".json")} not found.')
 		raise
 
 	# Load the quest
