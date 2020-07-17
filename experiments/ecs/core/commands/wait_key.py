@@ -15,3 +15,4 @@ def cmd_wait_key(*args, **kwargs):
         return 0
     else:
         return -1
+

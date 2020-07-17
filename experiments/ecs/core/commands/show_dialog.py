@@ -28,8 +28,15 @@ def cmd_show_dialog(*args, **kwargs):
     # time for every character to display
     d_char = time / len(text) if len(text) != 0 else 0
 
-    # If text displayed long enough or SPACE is pressed then end
-    if (current_time - brain.cmd_first_call_time >= time) or keys[pygame.K_SPACE]:
+    # If RETURN is pressed, finish displaying the dialog
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            #if pygame.key.get_pressed()[pygame.K_RETURN]:
+            can_talk.text = ''
+            return 0
+
+    # If text displayed long enough, finish the dialog
+    if (current_time - brain.cmd_first_call_time >= time):
 
         # Text has been shown long enough - continue without exception and reset the text
         # in can_talk component (as a result it will not be drawn by the render function)

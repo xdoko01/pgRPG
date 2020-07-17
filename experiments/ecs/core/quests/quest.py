@@ -1,3 +1,4 @@
+import core.events.event as event # for creation of QUEST_START, QUEST_FINISH, PHASE_START, PHASE_FINISH events
 
 import core.config.config as config  # For load_quest QUEST_PATH_PATH
 import core.scripts.script as script
@@ -10,7 +11,7 @@ import json # For loading quest from json
 ### Module functions
 ########################################################
 
-def load_quest(quest_id):
+def load_quest(quest_id, event_queue):
 	''' load quest data from the json file and calls quest constructor
 	'''
 	# Open the quest file	
@@ -23,7 +24,7 @@ def load_quest(quest_id):
 		raise
 
 	# Load the quest
-	q = Quest(quest_data)
+	q = Quest(quest_data, event_queue)
 
 	# Return the quest
 	return q
@@ -39,7 +40,7 @@ class Quest:
 		- should remember mapping between entity_id and game_id in some dictionary
 		- should contain event handlers
 	'''
-	def __init__(self, quest_data={}):
+	def __init__(self, quest_data, event_queue):
 		''' Load the data from quest dictionary
 		'''
 		# All quest data
@@ -56,8 +57,14 @@ class Quest:
 		self.phase_name = self.phase_objective = None
 		self.maps = self.entities = self.event_handlers = None
 		
+		# Remember the queue for storing quest/phase events
+		self.event_queue = event_queue
+
 		# Phase data load
 		self.load_phase(self.phase_id)
+
+		# Report that quest was loaded - generate event
+		self.event_queue.append(event.Event('QUEST_START', self, None, params={'quest_id' : self.id}))
 
 		# Phase details
 		#phase_data = quest_data.get("phases").get(self.phase_id)
@@ -97,6 +104,7 @@ class Quest:
 		# Check if there are any actions defined for the event_type and iterate through
 		for event_handle in self.event_handlers.get(event.event_type, []):
 
+			#print(f'Handler found for {event.event_type}')
 			# Check that conditions are fulfilled - if no conditions are stated then False
 			# If no condition then always False
 			# Conditions PARAM and SCRIPT and FUNCTION must be fulfilled at the same time
@@ -238,6 +246,10 @@ class Quest:
 
 		# Event handlers
 		self.event_handlers = phase_data.get("event_handling")
+
+		# Report that phase was loaded - generate event
+		self.event_queue.append(event.Event('PHASE_START', self, None, params={'phase_id' : self.phase_id}))
+
 
 	def set_phase(self, phase_id):
 		''' Change the phase

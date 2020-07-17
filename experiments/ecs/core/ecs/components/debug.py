@@ -1,5 +1,4 @@
 from .component import Component
-import pygame
 
 class Debug(Component):
 	''' Display debug information on entities that are tagged by this component.
@@ -11,7 +10,7 @@ class Debug(Component):
 		>>> c = Debug()
 	'''
 
-	__slots__ = 'font'
+	__slots__ = []
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new component
@@ -19,16 +18,14 @@ class Debug(Component):
 
 		super().__init__()
 
-		# Font used for displaying debug information
-		self.font = pygame.font.Font(None, 16)
 
 	def pre_save(self):
 		''' Prepare component for saving - remove all nreferences to
 		non-serializable objects
 		'''
-		self.font = None
+		pass
 
 	def post_load(self):
 		''' Regenerate all non-serializable objects for the component
 		'''
-		self.font = pygame.font.Font(None, 16)
+		pass

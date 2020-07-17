@@ -203,6 +203,36 @@
 
 			"event_handling" : {
 
+				"QUEST_START" : [
+					{
+						"conditions" : {
+							"script" : "self.id == 'q01'"
+						},
+						"actions" : [
+							["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
+							["script_show_text", {
+								"texts" : [
+									"Once upon a time", 
+									"there was a lovely little sausage called Boldrick", 
+									"and he lived happily ever after"
+								]
+							}]
+
+						]
+					}
+				],
+
+				"PHASE_START" : [
+					{
+						"conditions" : {
+							"script" : "self.phase_id == 'phase01'"
+						},
+						"actions" : [
+							["execute_script", {"script_body" : "print(f'PHASE HAS STARTED')"}]
+						]
+					}
+				],
+
 				"DAMAGE" : [
 					{
 						"conditions" : {

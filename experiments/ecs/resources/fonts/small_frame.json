@@ -1,0 +1,7 @@
+{
+    "frame_image" : "experiments/ecs/resources/images/small_font_frame.png",
+    "frame_color" : "#FF0000",
+	"colorkey" : "#000000",
+    "separator_color" : "#7F7F7F",
+    "elements_order" : ["TL", "TR", "T", "BL", "BR", "R", "L", "B", "M"]
+}

@@ -17,10 +17,12 @@ import math
 import json
 import pickle # for savegame
 
+global window
+global clock
+
 global world
 global _maps
 global _quests
-global window
 global c_event_queue
 global command_queue
 global _entity_map
@@ -29,8 +31,26 @@ global _entity_map
 ### Package init commands
 ########################################################
 
-if not pygame.get_init():
-    pygame.init()
+pygame.init()
+window = pygame.display.set_mode((850, 850), 0, 32)
+clock = pygame.time.Clock()
+
+command_queue = []
+c_event_queue = []
+_maps = {}
+_entity_map = {}
+_quests = {}
+
+########################################################
+### Init engine globals
+########################################################
+
+def init_world():
+
+    global world
+
+    world = esper.World(timed=False)
+    create_processors(world)
 
 ########################################################
 ### Game commands handler
@@ -102,8 +122,10 @@ def process_game_events():
     '''
     while c_event_queue:
 
+        
         # out event from the beginning of the queue
         event = c_event_queue.pop(0)
+
 
         # Send every event to every quest for handling
         for quest_name, quest_object in _quests.items():
@@ -389,6 +411,13 @@ def delete_entity(entity_name):
 ### Save and load game
 ########################################################
 
+def new_game():
+    global _quests
+    global c_event_queue
+
+    sample_quest = quest.load_quest('test_quest', c_event_queue)
+    _quests.update({'test_quest' : sample_quest})
+
 def load_game():
     ''' Load game state 
     '''
@@ -559,89 +588,91 @@ def save_game():
 ### Main program
 ########################################################
 
-def main():
+def run(key_events, key_pressed):
     # Initialize Pygame stuff - at the beginning due to convert() function
-    global window
+    ##global window
 
-    pygame.init()
-    window = pygame.display.set_mode((850, 850), 0, 32)
-    clock = pygame.time.Clock()
+    ##pygame.init()
+    ##window = pygame.display.set_mode((850, 850), 0, 32)
+    ##clock = pygame.time.Clock()
 
     # All commands are queued here
-    global command_queue
-    command_queue = []
+    ##global command_queue
+    ##command_queue = []
 
     # All events are queued here
-    global c_event_queue
-    c_event_queue = []
+    ##global c_event_queue
+    ##c_event_queue = []
 
     # All maps are here
-    global _maps
-    _maps = {}
+    ##global _maps
+    ##_maps = {}
 
     # Entity name vs id is stored here
-    global _entity_map
-    _entity_map = {}
+    ##global _entity_map
+    ##_entity_map = {}
 
     #####
     # Initialize Esper world with entites and processors
     #####
-    global world
+    ##global world
 
-    world = esper.World(timed=False)
-    create_processors(world)
+    ##world = esper.World(timed=False)
+    ##create_processors(world)
 
     # All quests are here
-    global _quests
-    _quests = {}
+    ##global _quests
+    ##_quests = {}
 
-    sample_quest = quest.load_quest('test_quest')
-    _quests.update({'test_quest' : sample_quest})
+    ##sample_quest = quest.load_quest('test_quest', c_event_queue)
+    ##_quests.update({'test_quest' : sample_quest})
 
     # Print entity mappings
-    print(_entity_map)
+    ##print(_entity_map)
 
     #####
     # The main loop
     #####
-    running = True
-    while running:
+    ##running = True
+    ##while running:
 
-        # Keep game at constant FPS
-        dt = clock.tick(config.FPS)
+    global clock
 
-        # Read the keys pressed, mouse, win resize etc.
-        key_events = pygame.event.get()
-        key_pressed = pygame.key.get_pressed()
+    # Keep game at constant FPS
+    dt = clock.tick(config.FPS)
 
-        # Check for End Game
-        for event in key_events:
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-                if event.key == pygame.K_F1:
-                    print(f'Saving game ...')
-                    save_game()
-                    print(f'Game saved.')
-                if event.key == pygame.K_F2:
-                    print(f'Loading game ...')
-                    load_game()
-                    print(f'Game loaded.')
+    # Read the keys pressed, mouse, win resize etc.
+    ##key_events = pygame.event.get()
+    ##key_pressed = pygame.key.get_pressed()
 
-        # Update all the processors, pass key events as a parameter
-        # and dt (how long the previous frame was processed)
-        # Parameter will be passed to all processors. Those who want it
-        # will process it.
-        world.process(events=key_events, keys=key_pressed, dt=dt, debug=config.DEBUG)
+    # Check for End Game
+    for event in key_events:
+        if event.type == pygame.QUIT:
+            return 'QUIT_GAME'
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return 'MAIN_MENU'
+            if event.key == pygame.K_F1:
+                print(f'Saving game ...')
+                return 'SAVE_GAME' #save_game()
+            if event.key == pygame.K_F2:
+                print(f'Loading game ...')
+                return 'LOAD_GAME' # load_game()
 
-        # Flip the framebuffers
-        #pygame.display.update()
-        pygame.display.flip()
+    # Update all the processors, pass key events as a parameter
+    # and dt (how long the previous frame was processed)
+    # Parameter will be passed to all processors. Those who want it
+    # will process it.
+    world.process(events=key_events, keys=key_pressed, dt=dt, debug=config.DEBUG)
 
-        # Display FPS in window title
-        pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
+    # Flip the framebuffers
+    #pygame.display.update()
+    pygame.display.flip()
 
+    # Display FPS in window title
+    pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
+
+    return 'GAME'
+
+def quit():
     pygame.quit()
-    #print(f'Process times: {world.process_times}')
