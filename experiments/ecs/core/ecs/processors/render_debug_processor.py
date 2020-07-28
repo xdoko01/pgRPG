@@ -3,9 +3,8 @@ __all__ = ['RenderDebugProcessor']
 import pygame	# for pygame.time, pygame.font and pygame.Color
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
-import core.config.config as config # for font path
-import utils # for bitmap font
 
+from core.config.fonts import GAME_DEBUG_FONT # for the debug font
 
 from .functions import filter_only_visible # for filtering only entities with position on the cameras
 
@@ -23,9 +22,6 @@ class RenderDebugProcessor(esper.Processor):
 		super().__init__()
 
 		self.window = window
-
-		# Font used for displaying debug information
-		self.font = utils.BitmapFont(str(config.FONT_PATH) + '/small_font.json', color=pygame.Color('#EFEFEF'))
 
 	def process(self, *args, **kwargs):
 		''' Dictionary containing Debug settings is passed to
@@ -130,9 +126,9 @@ class RenderDebugProcessor(esper.Processor):
 					except KeyError:
 						pass
 
-	
+				
 				# Blit debug text info gathered above - except brain process
-				text_surf = self.font.render_new(debug_text) # Text to Surface
+				text_surf = GAME_DEBUG_FONT.render(debug_text) # Text to Surface
 				cam_cam.screen.blit(
 					text_surf,
 					cam_cam.apply(
@@ -140,25 +136,27 @@ class RenderDebugProcessor(esper.Processor):
 						)
 					)
 
+				
 				# Show brain processing
 				if debug.get('show_brain', False):
 					try:
 						brain_debug = self.world.component_for_entity(debug_entity, components.Brain)
 						for cmd_idx, cmd_txt in enumerate(brain_debug.commands):
 							color = pygame.Color('red') if cmd_idx == brain_debug.current_cmd_idx else pygame.Color('white')
-							cmd_surf = self.font.render_new(f'{cmd_idx} -> {cmd_txt}', color=color)
+							cmd_surf = GAME_DEBUG_FONT.render(f'{cmd_idx} -> {cmd_txt}', color=color)
 							cam_cam.screen.blit(
 								cmd_surf, 
 								cam_cam.apply(
-									(pos_comp.x, pos_comp.y + (cmd_idx * self.font._get_text_height()))
+									(pos_comp.x, pos_comp.y + (cmd_idx * GAME_DEBUG_FONT._get_text_height()))
 									)
 								)
 					except KeyError:
 						pass
+				
 
 			# Show the area of the displayed map
 			if debug.get('show_map_screen_area', False):
-				map_display_area = self.font.render_new(f'({int(cam_cam.map_screen_rect[0])}, {int(cam_cam.map_screen_rect[1])})', color=pygame.Color('white'))
+				map_display_area = GAME_DEBUG_FONT.render(f'({int(cam_cam.map_screen_rect[0])}, {int(cam_cam.map_screen_rect[1])})', color=pygame.Color('white'))
 				cam_cam.screen.blit(map_display_area, (0,0))
 
 			# Blit the camera screen on the main game window
@@ -169,7 +167,6 @@ class RenderDebugProcessor(esper.Processor):
 		non-serializable components (window).
 		'''
 		self.window = None
-		self.font = None
 
 
 	def post_load(self, window):
@@ -177,5 +174,4 @@ class RenderDebugProcessor(esper.Processor):
 		the reference to window again.
 		'''
 		self.window = window
-		self.font = utils.BitmapFont(str(config.FONT_PATH) + '/small_font.json', color=pygame.Color('#EFEFEF'))
 

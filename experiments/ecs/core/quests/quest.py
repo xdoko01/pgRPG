@@ -1,6 +1,7 @@
 import core.events.event as event # for creation of QUEST_START, QUEST_FINISH, PHASE_START, PHASE_FINISH events
 
-import core.config.config as config  # For load_quest QUEST_PATH_PATH
+from core.config.paths import QUEST_PATH
+
 import core.scripts.script as script
 import core.commands as commands
 import core.engine as engine # to call _create_entity() fnc (probably in the future also to call _create_map)
@@ -16,11 +17,11 @@ def load_quest(quest_id, event_queue):
 	'''
 	# Open the quest file	
 	try:		
-		with open(config.QUEST_PATH / str(quest_id +'.json'), 'r') as quest_file:
+		with open(QUEST_PATH / str(quest_id +'.json'), 'r') as quest_file:
 			json_quest_data = quest_file.read()
 			quest_data = json.loads(json_quest_data)
 	except FileNotFoundError:
-		print(f'File {config.QUEST_PATH / str(quest_id + ".json")} not found.')
+		print(f'File {QUEST_PATH / str(quest_id + ".json")} not found.')
 		raise
 
 	# Load the quest

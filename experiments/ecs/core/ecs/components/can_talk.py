@@ -1,12 +1,74 @@
 from .component import Component
 import core.config.config as config
 import pygame 
-import pygame.freetype 	# for CanTalk component
-
 
 
 class CanTalk(Component):
 	''' Entity can generate the text bubble that is displayed on the screen.
+
+	Unlike CanTalk(previous version) this one is not having new font instance
+	per every component.
+	
+	Used by:
+		-	RenderWorldProcessor
+
+	Tests:
+		>>> c = CanTalk()
+	'''
+
+	__slots__ = ['text', 'text_color', 'text_surf', 'text_dim', 'text_speed']
+
+	def __init__(self, *args, **kwargs):
+		''' Initiate values for the new CanTalk2 component.
+
+		Parameters:
+			:param text_color: Color of the text
+			:type text_color: tuple
+
+			:param text_speed: Speed of displaying the speach in ms
+			:type font: int
+
+		'''
+
+		super().__init__()
+
+		# Text parameters
+		self.text_color = kwargs.get('text_color', None)
+		self.text_speed = kwargs.get('text_speed', 100)
+
+
+		# Check that parameters have correct type
+		try:
+			assert isinstance(self.text_color, str) if self.text_color != None else True, f"Incorrect value: '{self.text_color}'. Text color be passed in the form of string (e.g. #FF00FF)."
+		except AssertionError:
+			# Notify component factory that initiation has failed
+			raise ValueError
+
+		# Text to display
+		self.text = ''
+
+		# Surface representing the text in graphics
+		self.text_surf = pygame.Surface((0, 0))
+		self.text_dim = (self.text_surf.get_width(), self.text_surf.get_height())
+
+	def pre_save(self):
+		''' Prepare component for saving - remove all references to
+		non-serializable objects.
+		'''
+		self.text_surf = None
+	
+	def post_load(self):
+		''' Regenerate all non-serializable objects for the component.
+		'''
+		self.text_surf = pygame.Surface((0, 0))
+
+
+
+
+class CanTalkObsolete(Component):
+	''' Entity can generate the text bubble that is displayed on the screen.
+
+	This one is using pygame.freetype.Font for every entity
 
 	Used by:
 		-	RenderWorldProcessor

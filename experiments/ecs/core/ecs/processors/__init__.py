@@ -9,6 +9,7 @@ from .clear_temporary_entity_processor import *
 from .renderable_model_animation_action_processor import *
 from .renderable_model_animation_update_processor import *
 from .render_model_world_processor import *
+from .render_talk_processor import *
 from .update_camera_offset_processor import *
 from .movement_processor import *
 from .render_map_processor import *
@@ -48,6 +49,8 @@ __all__ = [
 	'RenderableModelAnimationActionProcessor',
 	'RenderableModelAnimationUpdateProcessor',
 	'RenderModelWorldProcessor',
+	'RenderTalkProcessor',
+	'RenderTalkProcessor2',
 	'UpdateCameraOffsetProcessor',
 
 	'LinearMovementProcessor',	

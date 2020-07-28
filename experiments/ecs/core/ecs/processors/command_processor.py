@@ -14,4 +14,9 @@ class CommandProcessor(esper.Processor):
 		''' Call external function that processes all commands
 		'''
 
-		self.game_commands_handler(self.debug)
+		# In order to pass pressed keys to commands (such as ENTER is pressed)
+		keys = kwargs.get('keys', [])
+		events = kwargs.get('events', [])
+
+		# Call command handler - processing commands from the queue
+		self.game_commands_handler(keys=keys, events=events, debug=self.debug)

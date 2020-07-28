@@ -1,11 +1,55 @@
-''' Module for handling bitmap fonts.
+''' Module for handling bitmap fonts
 
-Bitmap font is defined by picture and json definition.
+Bitmap font is defined by picture and json definition. Picture needs to be in
+non-data-loss format (png/bmp). All characters are on one row and are delimited
+by pixel on the first row that is in specified color (separator_color). The JSON
+definition of the font specifies information needed for font initiation and
+rendering, i.e.
+
+    - font_image - Specifies path to the bitmap picture with the font
+
+    - font_color - Specifies the color of the font. It is used when the user
+        wants to change the color of the font (substitute font_color by other
+        color)
+
+    - colorkey - Specifies the background color of the font. It is needed for
+        keying-out the color in the font image.
+
+    - separator_color - Specifies the color of the pixel that is used to separate
+        individual font characters in the font_image file.
+
+    - character_order - Specifies list of characters in the same order that those
+        are present in the font_image file
+
+    - spacing - Specifies space between text characters in pixels (horizontal/vertical)
+
+Example of JSON font file is below:
+
+    {
+        "font_image" : "experiments/bitmap_font/red_gradient_capital_font.png",
+        "font_color" : "#FF0000",
+        "colorkey" : "#000000",
+        "separator_color" : "#7F7F7F",
+        "character_order" : ["Aa", "Bb", "Cc", "Dd", "Ee", "Ff", "Gg", "Hh", "Ii", "Jj", "Kk", "Ll", "Mm", "Nn", "Oo", "Pp", "Qq", "Rr", "Ss", "Tt", "Uu", "Vv", "Ww", "Xx", "Yy", "Zz", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!", "?", " "],
+        "spacing" : [1, 1]
+    }
+
+Notes:
+    - Character_order values can have several characters. In example below, value "Aa" means
+        that the first character image in font_image file will be assign to letter "A" and
+        also to letter "a". This is useful in case font is missing for example lower case
+        characters.
 
 '''
 
-import pygame, json
+__all__ = ['BitmapFont']
 
+import pygame # For picture manipulation
+import json # For reading the JSON font definition
+
+########################################################
+### Module functions
+########################################################
 
 def clip(surf, x, y, x_size, y_size):
     ''' Get defined surface from the larger surface
@@ -15,6 +59,7 @@ def clip(surf, x, y, x_size, y_size):
     clip_rect = pygame.Rect(x, y, x_size, y_size)
     handle_surf.set_clip(clip_rect)
     image = surf.subsurface(handle_surf.get_clip())
+
     return image.copy()
 
 def color_swap(surf, old_color, new_color):
@@ -33,18 +78,33 @@ def color_swap(surf, old_color, new_color):
 
     return img_copy
 
+########################################################
+### Module classes
+########################################################
 
 class BitmapFont():
-    '''
+    ''' Class containing character font pictures and necessary information.
     '''
 
-    #__slots__ = []
+    __slots__ = ['font_color', 'colorkey', 'separator_color', 'font_image_path', 'character_order', 'spacing', 'characters', 'font_height', 'char_width']
 
     def __init__(self, path, size=None, color=None):
-        '''
+        ''' Prepare bitmap font from predefined path in given size and color.
+
+        Parameters:
+            :param path: Path to the JSON file defining the font
+            :type path: str
+
+            :param size: Size of the font in pixels. Default value is hight of the font_image file.
+            :type size: int
+
+            :param color: Color of the font. Swaps default font_color with required color.
+            :type color: pygame.Color
+
+            :raise: ValueError - in case there is a problem with font initiation
         '''
 
-        # Open the model json file
+        # Open the font json file
         try:
             with open(path, 'r') as font_file:
                 json_font_data = font_file.read()
@@ -59,9 +119,9 @@ class BitmapFont():
         self.font_image_path = font_data.get('font_image')
 
         try:
-            assert(color != self.colorkey, 'Color cannot be the same as the color key')
+            assert color != self.colorkey, 'Color cannot be the same as the color key'
         except AssertionError:
-            raise
+            raise ValueError
 
         # List of characters included in the font file in the correct order
         self.character_order = font_data.get('character_order')
@@ -71,6 +131,9 @@ class BitmapFont():
 
         # Store the char images - keys are the letters, numbers and chars
         self.characters = {}
+
+        # Store char width in pixels - keys are the letters, numbers and chars
+        self.char_width = {}
 
         # Load the PNG with the font
         font_img = pygame.image.load(self.font_image_path).convert()
@@ -101,41 +164,47 @@ class BitmapFont():
                 if color is not None:
                     char_img = color_swap(char_img, self.font_color, color)
 
-                # Set colorkey
-                char_img.set_colorkey(self.colorkey)
+                # Set colorkey - not necessary here. The colorkey is used in the final render function
+                # char_img.set_colorkey(self.colorkey)
 
                 # Save it to the characters dictionary, key is the name of the character
-                self.characters[self.character_order[character_count]] = char_img
+                # Multiple characters are supported
+                for char in self.character_order[character_count]:
+                    self.characters[char] = char_img
+                    self.char_width[char] = char_img.get_width()
 
                 character_count += 1
                 current_char_width = 0
 
             else:
                 current_char_width += 1
-        
+
         # Update the font color
         self.font_color = color
-
-    def render(self, surf, text, loc):
-        x_offset = 0
-
-        for char in text:
-            surf.blit(self.characters[char], (loc[0] + x_offset, loc[1]))
-            x_offset += self.characters[char].get_width() + self.spacing[0]
 
     def _get_text_width(self, text):
         ''' Returns width in pixels of the given text.
         It is used internally tin render function to determine the final dimensions
         of a font surface.
         '''
-        return sum([self.characters[char].get_width() + self.spacing[0] for char in text])
 
-        #x_width = 0
+        return sum([self.char_width[char] for char in text]) + (self.spacing[0] * len(text))
 
-        #for char in text:
-        #    x_width += self.characters[char].get_width() + self.spacing[0]
+        # Almost same speed as above
+        #return sum(self.char_width[char] + self.spacing[0] for char in text)
+
+        # Slower than above
+        #return sum([self.char_width[char] for char in text]) + (self.spacing[0] * len(text))
+
+        # Below is 1-2 frames slower than above
+        #return sum([self.characters[char].get_width() + self.spacing[0] for char in text])
+
+        # Below is 1-2 frames slower than above
+        #return sum([self.characters[char].get_width() + self.spacing[0] for char in text if char in self.characters.keys()])
 
     def _get_text_height(self, text=None):
+        ''' Returns height in pixels of the given text
+        '''
         return self.font_height
 
     def _render_row(self, text):
@@ -146,16 +215,26 @@ class BitmapFont():
         # Prepare empty surface
         row_surf = pygame.Surface((self._get_text_width(text), self._get_text_height(text)))
 
+        # Fill the surface with the font background color
+        row_surf.fill(self.colorkey)
+
         # Blit the text onto the surface
         x_offset = 0
 
         for char in text:
-            row_surf.blit(self.characters[char], (x_offset, 0))
-            x_offset += self.characters[char].get_width() + self.spacing[0]
+            try:
+                row_surf.blit(self.characters[char], (x_offset, 0))
+                x_offset += self.char_width[char] + self.spacing[0]
+            except KeyError:
+                # Skip if the character is not defined by the font
+                pass
 
         return row_surf
 
-    def render_new(self, text, color=None, align='LEFT'):
+    def render(self, text, color=None, align='LEFT'):
+        ''' Renders given text in given color and in given
+        alignment to the new surface.
+        '''
 
         assert color != self.colorkey, 'Color cannot be the same as the color key'
 
@@ -178,6 +257,9 @@ class BitmapFont():
         # Join the rows into one surface
         final_surface = pygame.Surface((max_length, (self._get_text_height() + self.spacing[1]) * len(rows_surfaces)))
 
+        # Fill the surface with the font background color
+        final_surface.fill(self.colorkey)
+
         for i, row_surface in enumerate(rows_surfaces):
 
             # Horizontal alignment
@@ -196,47 +278,63 @@ class BitmapFont():
             if color is not None:
                 final_surface = color_swap(final_surface, self.font_color, color)
 
-            # Must set colorkey otherwise background will not be transparent
-            final_surface.set_colorkey(self.colorkey)
+        # Must set colorkey otherwise background will not be transparent
+        final_surface.set_colorkey(self.colorkey)
 
         return final_surface
 
+########################################################
+### Module DEMO
+########################################################
 
 if __name__ == '__main__':
 
-    import sys
+    import sys, pathlib
 
     pygame.init()
-    pygame.display.set_caption('game base')
+    pygame.display.set_caption('Bitmap Font Test')
     screen = pygame.display.set_mode((500, 500), 0, 32)
 
+    # Where to find the JSON fonts
+    FONT_PATH = pathlib.Path('experiments/ecs/resources/fonts')
+
     # One way to init font
-    my_first_font = BitmapFont('experiments/bitmap_font/small_font.json', color=pygame.Color('grey'))
+    my_first_font = BitmapFont(FONT_PATH / 'small_font.json', color=pygame.Color('grey'))
 
     # Other way to init font (size included)
-    my_second_font = BitmapFont('experiments/bitmap_font/small_font.json', 16)
+    my_second_font = BitmapFont(FONT_PATH / 'small_font.json', 16)
 
     # Yet another way ti init font (color included)
-    my_third_font = BitmapFont('experiments/bitmap_font/small_font.json', 16, pygame.Color('purple'))
+    my_third_font = BitmapFont(FONT_PATH /'small_font.json', 16, pygame.Color('purple'))
+
+    # Yet another font - gradient
+    my_fourth_font = BitmapFont(FONT_PATH /'red_gradient_capital_font.json', 15)
+
+    # Yet another font - good neighbours
+    my_fifth_font = BitmapFont(FONT_PATH /'good_neighbours_font.json', 32, pygame.Color('blue'))
 
     while True:
 
-        screen.fill((255, 255, 255))
-
-        # First render method - where and what to blit
-        my_first_font.render(screen, 'Hello World', (20, 20))
+        screen.fill((128, 0, 128))
 
         # Second render method - blit manually
         screen.blit(my_second_font._render_row('Render row text'), (40, 40))
 
         # Third render method - blit manually multiple lines, alignment left
-        screen.blit(my_third_font.render_new(f'Render text\nthat is rendered\nonto multiple\nlines.'), (60, 60))
+        screen.blit(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.'), (60, 60))
 
         # Third render method - blit manually multiple lines, alignment right
-        screen.blit(my_third_font.render_new(f'Render text\nthat is rendered\nonto multiple\nlines.', align='RIGHT'), (260, 60))
+        screen.blit(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', align='RIGHT'), (260, 60))
 
         # Third render method - blit manually multiple lines, alignment center
-        screen.blit(my_third_font.render_new(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('#010101'), align='CENTER'), (260, 260))
+        screen.blit(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('#010101'), align='CENTER'), (260, 260))
+
+        # Gradient font
+        screen.blit(my_fourth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('#010101'), align='CENTER'), (160, 260))
+
+        # Good Neighbours font
+        screen.blit(my_fifth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', align='CENTER'), (60, 260))
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

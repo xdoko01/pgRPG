@@ -126,35 +126,6 @@ class RenderModelWorldProcessor(esper.Processor):
 						except KeyError:
 							pass
 
-			#####
-			# Blit text bubbles
-			#####
-
-			# Blit all Texts that are entities saying (CanSpeak + Position component)
-			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
-
-				# If there is something to say
-				if can_talk.text:
-					
-					# Blit the text bubble on the position offset specified by CanTalk component
-					
-					if position.direction == (1,0): # RIGHT
-						camera.screen.blit(can_talk.text_surf, 
-							camera.apply((position.x - renderable.model.dim_2.x - can_talk.text_rect[2], position.y - can_talk.text_rect[3])))
-					
-					elif position.direction == (-1,0): # if direction is (-1, 0) LEFT
-						camera.screen.blit(can_talk.text_surf, 
-							camera.apply((position.x + renderable.model.dim_2.x, position.y - can_talk.text_rect[3])))
-
-					elif position.direction == (0,-1): # if direction is (0,-1) UP
-						camera.screen.blit(can_talk.text_surf, 
-							camera.apply((position.x - can_talk.text_rect[2] / 2, position.y + renderable.model.dim_2.y )))
-
-					else: # if direction is (0,1) DOWN
-						camera.screen.blit(can_talk.text_surf, 
-							camera.apply((position.x - can_talk.text_rect[2] / 2, position.y - renderable.model.dim_2.y - can_talk.text_rect[3])))
-
-
 			# Blit the camera screen on the main game window
 			self.window.blit(camera.screen, (camera.screen_pos_x, camera.screen_pos_y))
 

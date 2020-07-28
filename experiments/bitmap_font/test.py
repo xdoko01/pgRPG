@@ -101,6 +101,7 @@ class BitmapFont():
                 char_img.set_colorkey(self.colorkey)
 
                 # Save it to the characters dictionary, key is the name of the character
+                print(f'Saving {character_count} - {self.character_order[character_count]}')
                 self.characters[self.character_order[character_count]] = char_img
 
                 character_count += 1
@@ -216,6 +217,9 @@ if __name__ == '__main__':
     # Yet another way ti init font (color included)
     my_third_font = BitmapFont('experiments/ecs/resources/fonts/small_font.json', 16, pygame.Color('purple'))
 
+    # ANother font
+    my_forth_font = BitmapFont('experiments/bitmap_font/red_gradient_capital_font.json')
+
     while True:
 
         screen.fill((255, 255, 255))
@@ -234,6 +238,10 @@ if __name__ == '__main__':
 
         # Third render method - blit manually multiple lines, alignment center
         screen.blit(my_third_font.render_new(f'Rendertext\nthat is rendered\nonto multiple\nlines.', pygame.Color('yellow'), align='CENTER'), (260, 260))
+
+        # Try different font
+        screen.blit(my_forth_font.render_new(f'RENDER TEXT\nTHAT IS RENDERED\nONTO MULTIPLE\nLINES', align='CENTER'), (260, 160))
+
 
         # Test printing of dictionaries
         from pprint import pformat

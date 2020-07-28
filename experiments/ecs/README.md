@@ -186,14 +186,24 @@
     - processor newly sets has_collided flag to `True` on all entities for which some collision event was created 
   - New processor *CollisionDeletionProcessor* deletes entities that have component `DeleteOnCollision` and `has_collided` set to `True`
 
+### Support for bitmap fonts and frames implemented
+
+  - New package `utils` containing 2 modules - `bitmap_font` and `bitmap_frame`
+  - New module  `core.config.fonts`/ `core.config.frames` initiating fonts/frames to be used within the whole game (e.g. debug font, player talk font)
+  - New processor `RenderTalkProcessor` only blits preprepared surfaces from `CanTalk` component on the screen
+  - Component `CanTalk` newly does not contain any font reference, just surface on which text can be blitted by command
+  - Command `show_dialog` is only importing preprepared fonts from `core.config.fonts`/frames from `core.config.frames` and blits the text to `CanTalk` surface
+
+
 ## To Do
 
 ####
 
+### Scripts - divide into individual files
+
+### Processors - skipping of processors based on configuration
+
 ### Prepare splash screen, main menu screen, save and load screen - game.py module implementing those menus?
-
-### Prepare function that has pane dimensions + text on input and returns surface with text ready to be blitted
-
 
 ### Delete on collision processor and temporary processor should delete entity using engine function to unregister it from dict before deletion
 
@@ -209,7 +219,6 @@
   - handlers call function for displaying of text for example, or music or earthquake
   - function to show something on the screen and stop the game
 
-### Fix displaying of dialogs - pressing enter should finish displaying the dialog - prepare separate quest for testing that
 
 ### Prepare test_empty_map.tmx and do quests for testing of collisions
   - several moving entities that are hitting each other
@@ -268,9 +277,6 @@
     - If hit other `Position`, `Collidable`, issue move command + get rid of the collision event
 
 
-
-### Create custom font library - as a separate experiment
-
 ### Indicate error in quest definition if weapon or wearable has Position component and at the same time is in inventory of the player. If this is done it is causing error in rendering the object. The reason is that this object is in idle status when displaying at position and might be shifting the frames in this action status???
 
 
@@ -311,8 +317,6 @@
 ### Number of max projectiles - currently on weapon - how much generated at the same time
   - we need to incorporate also units of projectiles available in ammo_pack
 
-### Implement nice textboxes
-
 ### Implement move_to command using A* algorithm
   - create graph from collision map on map init
 
@@ -343,6 +347,8 @@
 
 ####
 
+### Fix when rats quest dialog is finished and the NPC bounces to the player again, the initial dialog happens again and also the item is given one more time
+
 ### Fix colision correction movement - now it is moving strangelly into the side
 
 ### Fix teleportation into the collision zone - it is impossible to move in this situation
@@ -357,6 +363,9 @@
 
 
 ## Performance fine-tuning questions
+
+### Blitting debug information + Brain information takes away 20 FPS with bitmap font
+  - after removing debug information via config the FPSs are back to +-60
 
 ####
 

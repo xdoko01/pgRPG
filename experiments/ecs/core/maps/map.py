@@ -1,4 +1,6 @@
-import core.config.config as config
+import core.config.config as config # for TILE_RES
+
+from core.config.paths import MAP_PATH
 
 import pygame
 from pytmx.util_pygame import load_pygame
@@ -35,7 +37,7 @@ class Map:
 		#### TMX load map and properties
 
 		# Load map
-		self.tmxdata = load_pygame(config.MAP_PATH / str(map_name + '.tmx'))
+		self.tmxdata = load_pygame(MAP_PATH / str(map_name + '.tmx'))
 
 		# Rescale images
 		self.tmxdata.images = images_rescale(self.tmxdata.images, (config.TILE_RES, config.TILE_RES))

@@ -1,7 +1,8 @@
 from .component import Component
 import core.models as model # For cached animated model in RenderableModel entity
 import pygame
-import core.config.config as config
+import core.config.config as config # For TILE_RES
+from core.config.paths import MODEL_PATH
 
 
 class RenderableModel(Component):
@@ -47,7 +48,8 @@ class RenderableModel(Component):
 
 		# Initiate new model
 		try:
-			self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
+			#self.model = model.load_model(str(MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
+			self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
 		except:
 			print(f'Something went wrong during initiation of the model {model_file}')
 			# Notify component factory that initiation has failed
@@ -116,7 +118,9 @@ class RenderableModel(Component):
 		''' Regenerate all non-serializable objects for the component
 		'''
 		try:
-			self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, cnfig.TILE_RES))
+			#self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
+			self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
+			
 		except:
 			raise ValueError	
 

@@ -1,10 +1,55 @@
 ''' Module for handling frames decoration around surfaces (typically around text)
 
-Frame is defined by picture and json definition.
+Bitmap frame is defined by picture and json definition. Picture needs to be in
+non-data-loss format (png/bmp). All frame picture elements are on one row and 
+are delimited by pixel on the first row that is in specified color (separator_color).
+The JSON definition of the frame specifies information needed for frame initiation and
+rendering, i.e.
+
+    - frame_image - Specifies path to the bitmap picture with the frame elements.
+
+    - frame_color - Specifies the color of the frame. It is used when the user
+        wants to change the color of the frame (substitute frame_color by other
+        color).
+
+    - colorkey - Specifies the background color of the frame. It is needed for
+        keying-out the color in the frame image.
+
+    - separator_color - Specifies the color of the pixel that is used to separate
+        individual frame elements in the frame_image file.
+
+    - elements_order - Specifies list of elements in the same order that those
+        are present in the frame_image file.
+            - TL ... top-left corner element
+            - TR ... top-right corner element
+            - BL ... bottom-left corner element
+            - BR ... bottom-right corner element
+            - T ... top edge element
+            - B ... bottom edge element
+            - L ... left edge element
+            - R ... right edge element
+            - M ... middle element - fills the frame
+
+Example of JSON frame file is below:
+
+{
+    "frame_image" : "experiments/ecs/resources/images/small_font_frame.png",
+    "frame_color" : "#FF0000",
+	"colorkey" : "#FF00FF",
+    "separator_color" : "#7F7F7F",
+    "elements_order" : ["TL", "TR", "T", "BL", "BR", "R", "L", "B", "M"]
+}
+
 '''
 
-import pygame, json
+__all__ = ['BitmapFrame']
 
+import pygame # For picture manipulation
+import json # For reading the JSON font definition
+
+########################################################
+### Module functions
+########################################################
 
 def clip(surf, x, y, x_size, y_size):
     ''' Get defined surface from the larger surface
@@ -14,6 +59,7 @@ def clip(surf, x, y, x_size, y_size):
     clip_rect = pygame.Rect(x, y, x_size, y_size)
     handle_surf.set_clip(clip_rect)
     image = surf.subsurface(handle_surf.get_clip())
+
     return image.copy()
 
 def color_swap(surf, old_color, new_color):
@@ -32,14 +78,30 @@ def color_swap(surf, old_color, new_color):
 
     return img_copy
 
+########################################################
+### Module classes
+########################################################
+
 class BitmapFrame():
-    '''
+    ''' Class containing frame pictures and necessary information.
     '''
 
-    #__slots__ = []
+    __slots__ = ['frame_color', 'colorkey', 'separator_color', 'frame_image_path', 'elements_order', 'elements', 'frame_height']
 
     def __init__(self, path, size=None, color=None):
-        '''
+        ''' Prepare bitmap frame from predefined path in given size and color.
+
+        Parameters:
+            :param path: Path to the JSON file defining the frame
+            :type path: str
+
+            :param size: Size of the frame in pixels. Default value is hight of the frame_image file.
+            :type size: int
+
+            :param color: Color of the frame. Swaps default frame_color with required color.
+            :type color: pygame.Color
+
+            :raise: ValueError - in case there is a problem with frame initiation
         '''
 
         # Open the model json file
@@ -57,15 +119,12 @@ class BitmapFrame():
         self.frame_image_path = frame_data.get('frame_image')
 
         try:
-            assert(color != self.colorkey, 'Color cannot be the same as the color key')
+            assert color != self.colorkey, 'Color cannot be the same as the color key'
         except AssertionError:
-            raise
+            raise ValueError
 
         # List of characters included in the font file in the correct order
         self.elements_order = frame_data.get('elements_order')
-
-        # How many pixels of space between characters
-        #self.spacing = font_data.get('spacing', [1, 1])
 
         # Store the char images - keys are the letters, numbers and chars
         self.elements = {}
@@ -99,8 +158,8 @@ class BitmapFrame():
                 if color is not None:
                     element_img = color_swap(element_img, self.frame_color, color)
 
-                # Set colorkey
-                element_img.set_colorkey(self.colorkey)
+                # Set colorkey - not necessary here. The colorkey is used in the final render function
+                #element_img.set_colorkey(self.colorkey)
 
                 # Save it to the characters dictionary, key is the name of the character
                 self.elements[self.elements_order[element_count]] = element_img
@@ -114,14 +173,18 @@ class BitmapFrame():
         # Update the font color
         self.frame_color = color
 
-    def _get_frame_height(self):
-        return self.frame_height
-
     def _get_frame_width(self, element):
+        ''' Returns width in pixels of the given frame element.
+        '''
         return self.elements[element].get_width()
 
+    def _get_frame_height(self):
+        ''' Returns height in pixels of the given frame
+        '''
+        return self.frame_height
+
     def render(self, text_surf):
-        ''' Returns surface that is framed
+        ''' Returns surface that is framed by the bitmap frame
         '''
 
         # Calculate dimensions of the new surface
@@ -185,52 +248,57 @@ class BitmapFrame():
         # Must set colorkey otherwise background will not be transparent
         final_surf.set_colorkey(self.colorkey)
 
+
         return final_surf
 
-
+########################################################
+### Module DEMO
+########################################################
 
 if __name__ == '__main__':
 
-    import sys
-    from bitmap_font import *
+    import sys, pathlib
+    from bitmap_font import * # to test together with the bitmap font
 
     pygame.init()
-    pygame.display.set_caption('game base')
+    pygame.display.set_caption('Bitmap Frame Test')
     screen = pygame.display.set_mode((500, 500), 0, 32)
 
+    # Where to find the JSON frames and fonts
+    FRAME_PATH = pathlib.Path('experiments/ecs/resources/frames')
+    FONT_PATH = pathlib.Path('experiments/ecs/resources/fonts')
+
     # One way to init font
-    my_first_font = BitmapFont('experiments/bitmap_font/small_font.json', color=pygame.Color('grey'))
+    my_first_font = BitmapFont(FONT_PATH / 'small_font.json', color=pygame.Color('grey'))
 
-    # Other way to init font (size included)
-    my_second_font = BitmapFont('experiments/bitmap_font/small_font.json', 16)
+    # Other way to init font
+    my_second_font = BitmapFont(FONT_PATH / 'good_neighbours_font.json')
 
-    # Yet another way ti init font (color included)
-    my_third_font = BitmapFont('experiments/bitmap_font/small_font.json', 16, pygame.Color('purple'))
+    # Yet another way to init font (color included)
+    my_third_font = BitmapFont(FONT_PATH / 'small_font.json', 16, pygame.Color('purple'))
 
     # New frame
-    my_frame = BitmapFrame('experiments/bitmap_font/small_frame.json', color=pygame.Color('blue'))
+    my_frame = BitmapFrame(FRAME_PATH / 'small_frame.json', 16, pygame.Color('#00FF00'))
 
     while True:
 
-        screen.fill((255, 255, 255))
-
-        # First render method - where and what to blit
-        my_first_font.render(screen, 'Hello World', (20, 20))
+        screen.fill((127, 127, 255))
 
         # Second render method - blit manually
         screen.blit(my_frame.render(my_second_font._render_row('Render row text')), (40, 40))
 
         # Third render method - blit manually multiple lines, alignment left
-        screen.blit(my_frame.render(my_third_font.render_new(f'Render text\nthat is rendered\nonto multiple\nlines.')), (60, 60))
+        screen.blit(my_frame.render(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.')), (60, 60))
 
         # Third render method - blit manually multiple lines, alignment right
-        screen.blit(my_frame.render(my_third_font.render_new(f'Render text\nthat is rendered\nonto multiple\nlines.', align='RIGHT')), (260, 60))
+        screen.blit(my_frame.render(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', align='RIGHT')), (260, 60))
 
         # Third render method - blit manually multiple lines, alignment center
-        screen.blit(my_frame.render(my_third_font.render_new(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('yellow'), align='CENTER')), (260, 260))
+        screen.blit(my_frame.render(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('yellow'), align='CENTER')), (260, 260))
 
         # Render frame
-        screen.blit(my_frame.render(my_third_font.render_new(f'Render text that is rendered onto multiple\nlines.', align='CENTER')), (30, 300))
+        screen.blit(my_frame.render(my_second_font.render(f'Render text that is rendered onto multiple\nlines.', align='CENTER')), (30, 300))
+        screen.blit(my_second_font.render(f'Render text that is rendered onto multiple\nlines.', align='CENTER'), (30, 400))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

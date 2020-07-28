@@ -1,7 +1,6 @@
 from .component import Component
 import pygame
-import core.config.config as config  # For renderable component IMAGE_PATH
-
+from core.config.paths import IMAGE_PATH
 
 class Renderable(Component):
 	''' Entity is displayable on the game screen.
@@ -33,9 +32,11 @@ class Renderable(Component):
 			self.image_file = kwargs.get("image", "")
 			assert isinstance(self.image_file, str), f'Image file name {self.image_file} is not valid.'
 
-			self.image = pygame.image.load(str(config.IMAGE_PATH / self.image_file)).convert()
+			#self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
+			self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
+
 		except FileNotFoundError:
-			print(f'Image file {config.IMAGE_PATH + self.image_file} not found')
+			print(f'Image file {IMAGE_PATH / self.image_file} not found')
 			# Notify component factory that initiation has failed
 			raise ValueError
 		except AssertionError:
@@ -74,7 +75,7 @@ class Renderable(Component):
 	def post_load(self):
 		''' Regenerate all non-serializable objects for the component
 		'''
-		self.image = pygame.image.load(config.IMAGE_PATH + self.image_file).convert()
+		self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
 		
 		self.w = self.image.get_width()
 		self.h = self.image.get_height()

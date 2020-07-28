@@ -176,9 +176,9 @@
 
 						{"type" : "Brain", "params" : {"commands" : [
 							[0, 	"move_to", {"x" : 600, "y" : 200}],
-							[1, 	"show_dialog", {"time" : 3000, "text" : "... who will help me ...?"}],
+							[1, 	"show_dialog", {"time" : 3000, "text" : "... who will\nhelp me ...?", "can_skip" : false}],
 							[2, 	"move_to", {"x" : 1000, "y" : 200}],
-							[3, 	"show_dialog", {"time" : 3000, "text" : "... Somebody please help me !!"}],
+							[3, 	"show_dialog", {"time" : 3000, "text" : "... Somebody please\nhelp me !!", "can_skip" : false}],
 							[0, 	"goto", {}]
 						]}}
 					]
@@ -275,13 +275,13 @@
 									[null, "face_entity", {"entity" : "npc01", "face" : "player01"}], 
 									[null, "face_entity", {"entity" : "player01", "face" : "npc01"}], 
 										
-									[10, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi, do jou have some job for me?"}],
+									[10, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi,\ndo jou have\nsome job for me?"}],
 									
-									[11, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "Sure, I need to get rid of those bloody rats."}],
+									[11, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "Sure,\nI need to get\nrid of those\nbloody rats."}],
 									
-									[12, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "No, problem. Where can I find them?"}], 
+									[12, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "No, problem.\nWhere can\nI find them?"}], 
 									
-									[13, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "They are in the cellar. Here is the key"}], 
+									[13, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "They are\nin the cellar.\nHere is the key"}], 
 									
 									[null, "remove_from_inventory", {"entity" : "npc01", "item" : "key01"}], 
 									[null, "add_to_inventory", {"entity" : "player01", "item" : "key01"}], 
@@ -334,9 +334,9 @@
 									[null, "face_entity", {"entity" : "npc01", "face" : "player01"}], 
 									[null, "face_entity", {"entity" : "player01", "face" : "npc01"}], 
 
-									[10, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi, its harder than I though"}], 
+									[10, "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi, its harder\nthan I though"}], 
 
-									[11, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "Go on, finish them"}], 
+									[11, "show_dialog", {"entity" : "npc01", "time" : 5000, "text" : "Go on,\nfinish them"}], 
 
 									[null, "toggle_motion", {"entity" : "player01", "enable" : true}], 
 									[null, "toggle_motion", {"entity" : "npc01", "enable" : true}], 
@@ -369,7 +369,7 @@
 							["modify_brain", {
 								"entity" : "player01", 
 								"commands" : [
-									[0, "show_dialog", {"time" : 5000, "text" : "I have just been teleported!"}]
+									[0, "show_dialog", {"time" : 5000, "text" : "I have just\nbeen teleported!"}]
 									]
 								}
 							]
