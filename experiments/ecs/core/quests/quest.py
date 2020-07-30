@@ -2,7 +2,7 @@ import core.events.event as event # for creation of QUEST_START, QUEST_FINISH, P
 
 from core.config.paths import QUEST_PATH
 
-import core.scripts.script as script
+import core.scripts as scripts
 import core.commands as commands
 import core.engine as engine # to call _create_entity() fnc (probably in the future also to call _create_map)
 
@@ -157,15 +157,17 @@ class Quest:
 			cond_function_result = False
 
 			# Evaluate condition FUNCTION - python func must evaluate to True in order the condition to pass			
-			[cond_function, cond_function_params] = conditions.get("function", ["script_condition_always_true", {}])
+			[cond_function, cond_function_params] = conditions.get("function", ["condition_always_true", {}])
 
 
 			# Evaluate the function condition
 			try:
 				#cond_function_result = globals()[cond_function](event, **cond_function_params)
-				cond_function_result = getattr(script, cond_function)(event, **cond_function_params)
-			except SyntaxError:
-				print('Error in function condition for event {event}.')
+				##cond_function_result = getattr(scripts, scripts.get_script_fnc(cond_function))(event, **cond_function_params)
+				cond_function_result = scripts.get_script_fnc(cond_function)(event, **cond_function_params)
+			except TypeError:
+				print(f'Function {scripts.get_script_fnc(cond_function)} cannot be called')
+				raise
 
 			#print(f'Cond_function_result: {cond_function_result}')
 
@@ -187,9 +189,11 @@ class Quest:
 
 					try:
 						#action_function_result = globals()[action_function](event, **action_function_params)
-						action_function_result = getattr(script, action_function)(event, **action_function_params)
-					except SyntaxError:
-						print('Error in action function for event {event}.')
+						##action_function_result = getattr(scripts, scripts.get_script_fnc(action_function))(event, **action_function_params)
+						action_function_result = scripts.get_script_fnc(action_function)(event, **action_function_params)
+					except TypeError:
+						print(f'Function {scripts.get_script_fnc(action_function)} cannot be called')
+						raise
 					
 		#print(f'*Finishing quest event processing')
 

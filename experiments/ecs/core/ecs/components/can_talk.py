@@ -16,7 +16,7 @@ class CanTalk(Component):
 		>>> c = CanTalk()
 	'''
 
-	__slots__ = ['text', 'text_color', 'text_surf', 'text_dim', 'text_speed']
+	__slots__ = ['text', 'text_color', 'text_surf', 'text_dim', 'text_speed', 'frame_surf', 'frame_dim', 'frame_text_offset']
 
 	def __init__(self, *args, **kwargs):
 		''' Initiate values for the new CanTalk2 component.
@@ -32,14 +32,16 @@ class CanTalk(Component):
 
 		super().__init__()
 
-		# Text parameters
+		# Text and frame parameters
 		self.text_color = kwargs.get('text_color', None)
-		self.text_speed = kwargs.get('text_speed', 100)
+		self.text_color = kwargs.get('frame_color', None)
 
+		self.text_speed = kwargs.get('text_speed', 100)
 
 		# Check that parameters have correct type
 		try:
-			assert isinstance(self.text_color, str) if self.text_color != None else True, f"Incorrect value: '{self.text_color}'. Text color be passed in the form of string (e.g. #FF00FF)."
+			assert isinstance(self.text_color, str) if self.text_color != None else True, f"Incorrect value: 'text_color = {self.text_color}'. Text color be passed in the form of string (e.g. #FF00FF)."
+			assert isinstance(self.text_speed, int) and self.text_speed > 0, f"Incorrect value: 'text_speed = {self.text_speed}'. Must be integer greater than 0."
 		except AssertionError:
 			# Notify component factory that initiation has failed
 			raise ValueError
@@ -51,17 +53,24 @@ class CanTalk(Component):
 		self.text_surf = pygame.Surface((0, 0))
 		self.text_dim = (self.text_surf.get_width(), self.text_surf.get_height())
 
+		# Surface representing the frame in graphics
+		self.frame_surf = pygame.Surface((0, 0))
+		self.frame_dim = (self.frame_surf.get_width(), self.frame_surf.get_height())
+		self.frame_text_offset = (0, 0)
+
 	def pre_save(self):
 		''' Prepare component for saving - remove all references to
 		non-serializable objects.
 		'''
 		self.text_surf = None
+		self.frame_surf = None
+
 	
 	def post_load(self):
 		''' Regenerate all non-serializable objects for the component.
 		'''
 		self.text_surf = pygame.Surface((0, 0))
-
+		self.frame_surf = pygame.Surface((0, 0))
 
 
 

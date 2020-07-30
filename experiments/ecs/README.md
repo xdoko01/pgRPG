@@ -194,12 +194,20 @@
   - Component `CanTalk` newly does not contain any font reference, just surface on which text can be blitted by command
   - Command `show_dialog` is only importing preprepared fonts from `core.config.fonts`/frames from `core.config.frames` and blits the text to `CanTalk` surface
 
+### Support for transparent dialog bubble frames
+
+  - `CanTalk` component adjusted by new parameters - `frame_surf`, `frame_dim` and `frame_text_offset` in order for `RenderTalkProcessor` to blit frame and text individually on the game screen (to achieve transparent frame but not transparent text).
+  - `show_dialog` command adjusted to prepare both surfaces - for frame and for the text and save them both into `CanTalk` component
+
+### Support for dynamic text dialogs
+
+  - `CanTalk` component has new attribute `text_speed` that is managing the speed of displaying text for the particular entity (NPC/player).
+  - `show_dialog` module has now 2 functions `show_dialog_static` and `show_dialog_dynamic`. Static fcion is the original function whereas the dynamic is the new one.
+  - Based on elapsed time from the first command call, the command is showing portion of the text. `frame_surf` is static and generated only on the first call of the command wherease the `test_surf` is generated every time the command is called internally. Hence, it is slower than `show_dialog_static` function.
 
 ## To Do
 
 ####
-
-### Scripts - divide into individual files
 
 ### Processors - skipping of processors based on configuration
 

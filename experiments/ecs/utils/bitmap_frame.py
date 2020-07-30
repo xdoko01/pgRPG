@@ -183,6 +183,20 @@ class BitmapFrame():
         '''
         return self.frame_height
 
+    def get_frame_dim(self, text_surf_dim):
+        ''' Returns dimensions of the framed surface
+        '''
+
+        # Calculate dimensions of the new surface
+        TM_element_count = text_surf_dim[0] // self._get_frame_width('T') + 1
+        BM_element_count = text_surf_dim[0] // self._get_frame_width('B') + 1
+        LM_element_count = RM_element_count = text_surf_dim[1] // self._get_frame_height() + 1
+
+        return (
+            (TM_element_count * self._get_frame_width('T')) + self._get_frame_width('TL') + self._get_frame_width('TR'),
+            (LM_element_count * self._get_frame_height()) + self._get_frame_width('TL') + self._get_frame_width('BL')
+            )
+
     def render(self, text_surf):
         ''' Returns surface that is framed by the bitmap frame
         '''
@@ -248,8 +262,147 @@ class BitmapFrame():
         # Must set colorkey otherwise background will not be transparent
         final_surf.set_colorkey(self.colorkey)
 
-
         return final_surf
+
+    def render_on(self, target_surf, dest, text_surf, alpha=100):
+        ''' Returns surface that is framed by the bitmap frame
+        '''
+
+        # Calculate dimensions of the new surface
+        TM_element_count = text_surf.get_width() // self._get_frame_width('T') + 1
+        BM_element_count = text_surf.get_width() // self._get_frame_width('B') + 1
+        LM_element_count = RM_element_count = text_surf.get_height() // self._get_frame_height() + 1
+
+        # Create new surface
+        final_surf = pygame.Surface(
+            ((TM_element_count * self._get_frame_width('T'))  + self._get_frame_width('TL') + self._get_frame_width('TR'),
+            (LM_element_count * self._get_frame_height()) + self._get_frame_width('TL') + self._get_frame_width('BL'))
+            )
+
+        # Blit frame on the new surface
+        x_offset = y_offset = 0
+
+        for y in range(LM_element_count + 2):
+
+            if y == 0:
+                final_surf.blit(self.elements['TL'], (x_offset, y_offset))
+                x_offset += self._get_frame_width('TL')
+
+            elif y == LM_element_count + 1:
+                final_surf.blit(self.elements['BL'], (x_offset, y_offset))
+                x_offset += self._get_frame_width('BL')
+
+            else:
+                final_surf.blit(self.elements['L'], (x_offset, y_offset))
+                x_offset += self._get_frame_width('L')
+
+            for x in range(TM_element_count):
+                if y == 0:
+                    final_surf.blit(self.elements['T'], (x_offset, y_offset))
+                    x_offset += self._get_frame_width('T')
+                
+                elif y == LM_element_count + 1:
+                    final_surf.blit(self.elements['B'], (x_offset, y_offset))
+                    x_offset += self._get_frame_width('B')
+
+                else:
+                    final_surf.blit(self.elements['M'], (x_offset, y_offset))
+                    x_offset += self._get_frame_width('M')
+
+            if y == 0:
+                final_surf.blit(self.elements['TR'], (x_offset, y_offset))
+                x_offset = 0
+                y_offset += self._get_frame_height()
+
+            elif y == LM_element_count + 1:
+                final_surf.blit(self.elements['BR'], (x_offset, y_offset))
+                # Finished!
+
+            else:
+                final_surf.blit(self.elements['R'], (x_offset, y_offset))
+                x_offset = 0
+                y_offset += self._get_frame_height()
+
+        # Must set colorkey otherwise background will not be transparent
+        final_surf.set_colorkey(self.colorkey)
+
+        # Must set colorkey otherwise background will not be transparent
+        final_surf.set_alpha(alpha)
+
+        # Get target coordinates
+        (x_dest, y_dest) = dest
+
+        # Blit the frame to the target surface
+        target_surf.blit(final_surf, (x_dest, y_dest))
+
+        # Blit text on the target surface - in the center
+        target_surf.blit(text_surf, (x_dest + int(final_surf.get_width() / 2 - text_surf.get_width() / 2), y_dest + int(final_surf.get_height() / 2 - text_surf.get_height() / 2)))
+
+    def render_frame_only(self, text_surf_dim, alpha=255):
+        ''' Returns only frame without text blitted on it
+        '''
+        # Calculate dimensions of the new surface
+        TM_element_count = text_surf_dim[0] // self._get_frame_width('T') + 1
+        BM_element_count = text_surf_dim[0] // self._get_frame_width('B') + 1
+        LM_element_count = RM_element_count = text_surf_dim[1] // self._get_frame_height() + 1
+
+        # Create new surface
+        final_surf = pygame.Surface(
+            ((TM_element_count * self._get_frame_width('T'))  + self._get_frame_width('TL') + self._get_frame_width('TR'),
+            (LM_element_count * self._get_frame_height()) + self._get_frame_width('TL') + self._get_frame_width('BL'))
+            )
+
+        # Blit frame on the new surface
+        x_offset = y_offset = 0
+
+        for y in range(LM_element_count + 2):
+
+            if y == 0:
+                final_surf.blit(self.elements['TL'], (x_offset, y_offset))
+                x_offset += self._get_frame_width('TL')
+
+            elif y == LM_element_count + 1:
+                final_surf.blit(self.elements['BL'], (x_offset, y_offset))
+                x_offset += self._get_frame_width('BL')
+
+            else:
+                final_surf.blit(self.elements['L'], (x_offset, y_offset))
+                x_offset += self._get_frame_width('L')
+
+            for x in range(TM_element_count):
+                if y == 0:
+                    final_surf.blit(self.elements['T'], (x_offset, y_offset))
+                    x_offset += self._get_frame_width('T')
+                
+                elif y == LM_element_count + 1:
+                    final_surf.blit(self.elements['B'], (x_offset, y_offset))
+                    x_offset += self._get_frame_width('B')
+
+                else:
+                    final_surf.blit(self.elements['M'], (x_offset, y_offset))
+                    x_offset += self._get_frame_width('M')
+
+            if y == 0:
+                final_surf.blit(self.elements['TR'], (x_offset, y_offset))
+                x_offset = 0
+                y_offset += self._get_frame_height()
+
+            elif y == LM_element_count + 1:
+                final_surf.blit(self.elements['BR'], (x_offset, y_offset))
+                # Finished!
+
+            else:
+                final_surf.blit(self.elements['R'], (x_offset, y_offset))
+                x_offset = 0
+                y_offset += self._get_frame_height()
+
+        # Must set colorkey otherwise background will not be transparent
+        final_surf.set_colorkey(self.colorkey)
+
+        final_surf.set_alpha(alpha)
+
+        return (final_surf, ((int(final_surf.get_width() / 2 - text_surf_dim[0] / 2), int(final_surf.get_height() / 2 - text_surf_dim[1] / 2))))
+
 
 ########################################################
 ### Module DEMO
@@ -298,7 +451,10 @@ if __name__ == '__main__':
 
         # Render frame
         screen.blit(my_frame.render(my_second_font.render(f'Render text that is rendered onto multiple\nlines.', align='CENTER')), (30, 300))
-        screen.blit(my_second_font.render(f'Render text that is rendered onto multiple\nlines.', align='CENTER'), (30, 400))
+        #screen.blit(my_second_font.render(f'Render text that is rendered onto multiple\nlines.', align='CENTER'), (30, 400))
+
+        # Render alpha frame
+        my_frame.render_on(screen, (30, 400), my_second_font.render(f'Render text that is rendered onto multiple\nlines.', align='CENTER'), alpha=127)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

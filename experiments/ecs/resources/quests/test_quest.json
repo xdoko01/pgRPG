@@ -210,7 +210,7 @@
 						},
 						"actions" : [
 							["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
-							["script_show_text", {
+							["show_text", {
 								"texts" : [
 									"Once upon a time", 
 									"there was a lovely little sausage called Boldrick", 
@@ -360,12 +360,12 @@
 								"teleport" : "tele01",
 								"teleportee" : "player01"
 							},
-							"function" : ["script_condition_example", { "test_param" : "this is not atest"}]
+							"function" : ["condition_example", { "test_param" : "this is not atest"}]
 						},
 						"actions" : [ 
 							["execute_script", { "script_body" : "pygame.time.wait(500)" }], 
-							["script_shake_screen", {}], 
-							["script_disable_teleport", {}],
+							["shake_screen", {}], 
+							["disable_teleport", {}],
 							["modify_brain", {
 								"entity" : "player01", 
 								"commands" : [

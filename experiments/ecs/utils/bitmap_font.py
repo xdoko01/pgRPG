@@ -231,6 +231,30 @@ class BitmapFont():
 
         return row_surf
 
+    def get_text_dim(self, text):
+        ''' Return the dimensions of the surface with generated text
+        '''
+
+        return (max([self._get_text_width(row_text) for row_text in text.split('\n')]), (self._get_text_height() + self.spacing[1]) * len(text.split('\n')))
+
+        #### Above is analog to the below
+        #################################
+        ## Generate each row on a separate surface
+        #rows_surfaces = 0
+        #max_length = 0
+
+        ## Prepare individual surface for every row
+        #for row_text in text.split('\n'):
+
+        #    # Update the max row width value
+        #    max_length = max(max_length, self._get_text_width(row_text))
+
+        #    # Count row surfaces
+        #    rows_surfaces += 1
+
+        ## Return dimensions (width, height)
+        #return (max_length, (self._get_text_height() + self.spacing[1]) * rows_surfaces )
+
     def render(self, text, color=None, align='LEFT'):
         ''' Renders given text in given color and in given
         alignment to the new surface.
@@ -253,9 +277,15 @@ class BitmapFont():
 
             # Add to the list of row surfaces
             rows_surfaces.append(row_surf)
+        
+        # New solution analogous to the one above - seems slower
+        #rows_surfaces = [self._render_row(row_text) for row_text in text.split('\n')]
 
-        # Join the rows into one surface
+        # Generate the new surface
         final_surface = pygame.Surface((max_length, (self._get_text_height() + self.spacing[1]) * len(rows_surfaces)))
+        # New solution analogous to the one above - seems slower
+        #text_dim = self.get_text_dim(text)
+        #final_surface = pygame.Surface(text_dim)
 
         # Fill the surface with the font background color
         final_surface.fill(self.colorkey)
@@ -266,9 +296,13 @@ class BitmapFont():
             if align == 'LEFT':
                 x_align = 0
             elif align == 'RIGHT':
+                #x_align = text_dim[0] - row_surface.get_width()
                 x_align = max_length - row_surface.get_width()
+
             elif align in ['CENTER', 'CENTRE']:
+                #x_align = (text_dim[0] - row_surface.get_width()) // 2
                 x_align = (max_length - row_surface.get_width()) // 2
+
             else:
                 x_align = 0
 
@@ -330,7 +364,7 @@ if __name__ == '__main__':
         screen.blit(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('#010101'), align='CENTER'), (260, 260))
 
         # Gradient font
-        screen.blit(my_fourth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('#010101'), align='CENTER'), (160, 260))
+        screen.blit(my_fourth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines', pygame.Color('#010101'), align='CENTER'), (160, 260))
 
         # Good Neighbours font
         screen.blit(my_fifth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', align='CENTER'), (60, 260))

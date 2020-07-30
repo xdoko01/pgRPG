@@ -1,15 +1,15 @@
 {
 	"debug" : {
-		"show_health" : false,
-		"show_state" : false,
-		"show_weapons" : false,
-		"show_wearables" : false,
-		"show_inventory" : false,
-		"show_labels" : false,
-		"show_position" : false,
-		"show_brain" : false,
-		"show_collision" : false,
-		"show_direction" : false,
+		"show_health" : true,
+		"show_state" : true,
+		"show_weapons" : true,
+		"show_wearables" : true,
+		"show_inventory" : true,
+		"show_labels" : true,
+		"show_position" : true,
+		"show_brain" : true,
+		"show_collision" : true,
+		"show_direction" : true,
 		"show_map_screen_area" : true
 	}
 }
