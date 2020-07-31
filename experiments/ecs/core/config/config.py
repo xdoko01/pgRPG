@@ -23,6 +23,23 @@ PATHS = {
     "save_path" : "experiments/ecs/save/"
 }
 
+CONSOLE = {
+    'global' : {
+        'cli_module' : None,
+        'bck_alpha' : 150,
+        },
+    'input' : {
+        'font_file' : 'JackInput.ttf',
+        'bck_alpha' : 0
+        },
+    'output' : {
+        'font_file' : 'JackInput.ttf',
+        'bck_alpha' : 0,
+        'display_lines' : 20,
+        'display_columns' : 100
+        }
+    }
+
 DEBUG = {
     'show_health' : False,
     'show_state' : False,
@@ -84,6 +101,9 @@ except FileNotFoundError:
 
 # Override PATHS with config paths
 PATHS = {**PATHS, **config_data.get('paths', {})}
+
+# Override CONSOLE with config console
+CONSOLE = {**CONSOLE, **config_data.get('console', {})}
 
 # Override DEBUG with config debug
 DEBUG = {**DEBUG, **config_data.get('debug', {})}

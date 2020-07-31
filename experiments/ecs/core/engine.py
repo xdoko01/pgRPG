@@ -1,5 +1,22 @@
 ''' core.engine module
 '''
+########################################################
+########################################################
+###             MODULE IMPORT INIT
+########################################################
+########################################################
+
+########################################################
+### Module Import Init - Import libs
+########################################################
+
+import math
+import json
+import pickle # for savegame
+
+########################################################
+### Module Import Init - Init pygame
+########################################################
 
 import pygame
 
@@ -10,14 +27,16 @@ pygame.init()
 window = pygame.display.set_mode((850, 850), 0, 32)
 clock = pygame.time.Clock()
 
-import math
-import json
-import pickle # for savegame
+########################################################
+### Module Import Init - Import game packages and modules
+########################################################
 
 import core.config.fonts # Initiate fonts for the game
 import core.config.config as config # for FPS
 
 from core.config.paths import ENTITY_PATH, SAVE_PATH
+
+import core.config.console # Initiate console
 
 import core.ecs.esper as esper
 import core.ecs.components as components
@@ -28,6 +47,11 @@ import core.commands as commands
 import core.maps.map as map
 import core.quests.quest as quest
 
+########################################################
+### Module Import Init - Init global variables
+########################################################
+
+global console
 global world
 global _maps
 global _quests
@@ -35,21 +59,26 @@ global c_event_queue
 global command_queue
 global _entity_map
 
-########################################################
-### Package init commands
-########################################################
-
 command_queue = []
 c_event_queue = []
 _maps = {}
 _entity_map = {}
 _quests = {}
+console = core.config.console.game_console
 
 ########################################################
-### Init engine globals
+########################################################
+###             MODULE FUNCTIONS
+########################################################
+########################################################
+
+########################################################
+### Module Functions - Module Init Functions
 ########################################################
 
 def init_world():
+    ''' Prepare ECS instances for the game
+    '''
 
     global world
 
@@ -57,7 +86,7 @@ def init_world():
     create_processors(world)
 
 ########################################################
-### Game commands handler
+### Module Functions - Game commands handler
 ########################################################
 
 def process_game_commands(keys=None, events=None, debug=False):
@@ -107,7 +136,7 @@ def process_game_commands(keys=None, events=None, debug=False):
         #print(f'*process_game_commands: POST calling process_result: {command_queue}')
 
 ########################################################
-### Game event handler
+### Module Functions - Game event handler
 ########################################################
 
 def process_game_events():
@@ -142,7 +171,7 @@ def process_game_events():
             quest_object.event_handler(event)
 
 ########################################################
-### Game world creator/destructor methods
+### Module Functions - Game world creator/destructor methods
 ########################################################
 
 def _create_entity(json_ent_obj, register=True, child_ref=None):
@@ -420,7 +449,7 @@ def delete_entity(entity_name):
         del _entity_map[entity_name]
 
 ########################################################
-### Save and load game
+### Module Functions - Save and load game
 ########################################################
 
 def new_game():
@@ -597,7 +626,7 @@ def save_game():
     return 0
 
 ########################################################
-### Main program
+### Module Functions - Main game loop
 ########################################################
 
 def run(key_events, key_pressed):
@@ -649,6 +678,7 @@ def run(key_events, key_pressed):
     ##while running:
 
     global clock
+    global console
 
     # Keep game at constant FPS
     dt = clock.tick(config.FPS)
@@ -670,12 +700,21 @@ def run(key_events, key_pressed):
             if event.key == pygame.K_F2:
                 print(f'Loading game ...')
                 return 'LOAD_GAME' # load_game()
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_F5:
+                console.toggle()
 
     # Update all the processors, pass key events as a parameter
     # and dt (how long the previous frame was processed)
     # Parameter will be passed to all processors. Those who want it
     # will process it.
     world.process(events=key_events, keys=key_pressed, dt=dt, debug=config.DEBUG)
+
+    # Read and process events related to the console in case console is enabled
+    console.update(key_events)
+
+    # Display the console if enabled or animation is still in progress
+    console.show(window)
 
     # Flip the framebuffers
     #pygame.display.update()

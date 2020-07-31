@@ -10,7 +10,7 @@ class CanTalk(Component):
 	per every component.
 	
 	Used by:
-		-	RenderWorldProcessor
+		-	RenderTalkProcessor
 
 	Tests:
 		>>> c = CanTalk()
@@ -19,7 +19,7 @@ class CanTalk(Component):
 	__slots__ = ['text', 'text_color', 'text_surf', 'text_dim', 'text_speed', 'frame_surf', 'frame_dim', 'frame_text_offset']
 
 	def __init__(self, *args, **kwargs):
-		''' Initiate values for the new CanTalk2 component.
+		''' Initiate values for the new CanTalk component.
 
 		Parameters:
 			:param text_color: Color of the text
@@ -27,7 +27,6 @@ class CanTalk(Component):
 
 			:param text_speed: Speed of displaying the speach in ms
 			:type font: int
-
 		'''
 
 		super().__init__()

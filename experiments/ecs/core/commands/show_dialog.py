@@ -5,9 +5,6 @@
     - Dialog text displayed at one and displayed 3s - cannot be skipped by pressing RETURN
         "show_dialog", {"time" : 3000, "text" : "... Somebody please\nhelp me !!", "can_skip" : false}
 
-
-    "show_dialog", {"entity" : "player01", "time" : 5000, "text" : "Hi,\ndo jou have\nsome job for me?"}
-
 '''
 import core.engine as engine # To reference the world
 import core.ecs.components as components # To work with components in commands (remove search add ...)
