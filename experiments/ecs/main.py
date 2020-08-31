@@ -1,13 +1,30 @@
-''' Experiments with ECS
+''' Main module
 '''
 
+# Initiates pygame window and clock
+# Initiate fonts
 import core.engine
+
+# Initiate keys
+import core.config.keys as keys
+
+# Initiate console
+import core.config.console 
+
+
+
 import pygame
+
+from core.config.config import DISPLAY, DEBUG
 
 # Definition of game states
 GAME_MODES = ['MAIN_MENU', 'GAME']
 
 global game_mode
+global console
+
+console = core.config.console.game_console
+
 
 def main():
     ''' Starts the game in the MAIN MENU
@@ -27,12 +44,18 @@ def main():
 
     # run the main loop
     run()
-    
+
 def run():
+
+    global game_mode
+    global console
+
+    console_enabled = False
 
     while True:
 
-        global game_mode
+        # Get the time of the frame
+        dt = core.engine.clock.tick(DISPLAY['max_fps'])
 
         # Read the keys pressed, mouse, win resize etc.
         key_events = pygame.event.get()
@@ -43,15 +66,50 @@ def run():
             if event.type == pygame.QUIT:
                 end()
                 break
-
-        if game_mode == 'MAIN_MENU':
-            game_mode = main_menu(key_events=key_events, key_pressed=key_pressed)
-
-        elif game_mode == 'GAME':
-            game_mode = core.engine.run(key_events=key_events, key_pressed=key_pressed)
+            elif event.type == pygame.KEYUP:
+                if event.key == keys.K_CONSOLE_TOGGLE:
+                    console.toggle()
+                    console_enabled = not console_enabled
 
 
-def main_menu(key_events, key_pressed):
+        if game_mode == 'GAME':
+            game_mode = core.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
+
+        elif game_mode == 'PAUSE_GAME':
+            game_mode = pause_game(key_events=key_events, key_pressed=key_pressed, dt=dt)
+
+        elif game_mode == 'MAIN_MENU':
+            game_mode = main_menu(key_events=key_events, key_pressed=key_pressed, dt=dt)
+
+        # Read and process events related to the console in case console is enabled
+        console.update(key_events)
+
+        # Display the console if enabled or animation is still in progress
+        console.show(core.engine.window)
+
+        # Flip the frame buffers
+        #pygame.display.update()
+        pygame.display.flip()
+
+        # Display FPS in window title
+        pygame.display.set_caption('FPS: ' + str(int(core.engine.clock.get_fps())))
+
+
+def pause_game(key_events, key_pressed, dt):
+
+    # Here you can draw pause window
+    core.engine.pause_game()
+
+    for event in key_events:
+        if event.type == pygame.QUIT:
+            return 'QUIT_GAME'
+        elif event.type == pygame.KEYDOWN:
+            if event.key == keys.K_PAUSE_GAME:
+                return 'GAME'
+
+    return 'PAUSE_GAME'
+
+def main_menu(key_events, key_pressed, dt):
     print('In MAIN MENU')
     return 'MAIN_MENU'
 

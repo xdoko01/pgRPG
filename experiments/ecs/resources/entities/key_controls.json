@@ -1,0 +1,6 @@
+{
+	"id" : "key_controls",
+	"components" : [
+		{"type" : "Controllable", "params" : {}}
+	]
+}

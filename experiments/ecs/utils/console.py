@@ -1303,7 +1303,7 @@ class Console(pygame.Surface):
 			# If console is enabled, I need to continue animation or show full console if animation is finished or no animation is requested.
 			# If console is disabled, I need to continue hiding animation or fully hide the console if animation is finished
 			if (self.enabled and self.anim_perc < 100) or (not self.enabled and self.anim_perc > 0):
-				self.anim_perc = self.anim_perc + (1 if self.enabled else -1) * (current_time - self.anim_last_time) * self.anim_velocity 
+				self.anim_perc = self.anim_perc + (1 if self.enabled else -1) * (current_time - self.anim_last_time) * self.anim_velocity
 				self.anim_last_time = current_time 
 
 			# Do correction in case that console is fully displayed or fully hidden

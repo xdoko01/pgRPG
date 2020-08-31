@@ -6,10 +6,82 @@
 
 CONFIG_FILE = "experiments/ecs/config.json"
 
-FPS = 120
 MOVE_SPEED = 120 # in px per second
 TILE_RES = 64
 DEAD_TIME_TO_DISAPPEAR = 10000 # in ms
+
+''' KEYS contain mapping of functionalities to keyboard keys.
+It also defines key_schemas - set of keys for manipulating the
+characters.
+'''
+KEYS = {
+
+    # List of key profiles for manipulating of characters
+    "key_profiles" : ["default", "key_controls_1", "key_controls_2", "key_controls_3", "key_controls_4"],
+
+    # Default must be always present, it is used in controllable component
+    "default" : {
+        "up" : "K_UP",
+        "down" : "K_DOWN",
+        "left" : "K_LEFT",
+        "right" : "K_RIGHT",
+        "attack" : "K_z"
+    },
+
+    "key_controls_1" : {
+        "up" : None,
+        "down" : None,
+        "left" : None,
+        "right" : None,
+        "attack" : None
+    },
+
+    "key_controls_2" : {
+        "up" : None,
+        "down" : None,
+        "left" : None,
+        "right" : None,
+        "attack" : None
+    },
+
+    "key_controls_3" : {
+        "up" : None,
+        "down" : None,
+        "left" : None,
+        "right" : None,
+        "attack" : None
+    },
+
+    "key_controls_4" : {
+        "up" : None,
+        "down" : None,
+        "left" : None,
+        "right" : None,
+        "attack" : None
+    },
+
+    # Keys for game management
+    "console_toggle" : None,
+    "save_game" : None,
+    "load_game" : None,
+    "pause_game" : None,
+
+    # Keys for navigating through menus
+    "nav_up" : "K_UP",
+    "nav_down" : "K_DOWN",
+    "nav_left" : "K_LEFT",
+    "nav_right" : "K_RIGHT",
+    "submit" : "K_RETURN"
+
+}
+
+DISPLAY = {
+    "resolution" : [850, 850],
+    "bitdepth" : 32,
+    "fullscreen" : False,
+    "max_fps" : 120,
+    "show_fps" : True
+}
 
 PATHS = {
     "font_path" : "experiments/ecs/resources/fonts/",
@@ -99,6 +171,12 @@ except FileNotFoundError:
     print(f"Config file '{CONFIG_FILE}' not found, using defaults.")
     config_data = {}
 
+# Override KEYS with config keys
+KEYS = {**KEYS, **config_data.get('keys', {})}
+
+# Override DISPLAY with config display
+DISPLAY = {**DISPLAY, **config_data.get('display', {})}
+
 # Override PATHS with config paths
 PATHS = {**PATHS, **config_data.get('paths', {})}
 
@@ -112,7 +190,6 @@ DEBUG = {**DEBUG, **config_data.get('debug', {})}
 PROCESSORS = [*PROCESSORS, *config_data.get('processors', [])]
 
 # Override GAME config with data from config file
-FPS = config_data.get('fps', FPS)
 MOVE_SPEED = config_data.get('move_speed', MOVE_SPEED)
 TILE_RES = config_data.get('tile_res', TILE_RES)
 DEAD_TIME_TO_DISAPPEAR = config_data.get('dead_time_to_disappear', DEAD_TIME_TO_DISAPPEAR)

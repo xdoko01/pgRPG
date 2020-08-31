@@ -68,15 +68,10 @@
 				},
 				{
 					"id" : "player01",
-					"templates" : ["player", "darkmale"],
+					"templates" : ["player", "darkmale", "key_controls"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
 						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
-
-						{"type" : "Controllable", "params" :  {
-							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move", "attack": "attack"}
-							}
-						},
 
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
 						{"type" : "Debug", "params" : {}},

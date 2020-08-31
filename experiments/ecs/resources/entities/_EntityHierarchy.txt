@@ -61,5 +61,10 @@ thing.json 		# no components
 				-> pants.json		# +Wearable, +Pickable
 				-> helmet.json		# +Wearable, +Pickable
 
-
+key_controls.json	# +Controllable by default key profile
+		|
+		-> key_controls_1.json	# ++Controllable (by key_controls_1 key_profile)
+		-> key_controls_2.json	# ++Controllable (by key_controls_2 key_profile)
+		-> key_controls_3.json	# ++Controllable (by key_controls_3 key_profile)
+		-> key_controls_4.json	# ++Controllable (by key_controls_4 key_profile)
 

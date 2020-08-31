@@ -13,6 +13,8 @@ import pygame
 from core.config.fonts import PLAYER_TALK_FONT
 from core.config.frames import PLAYER_TALK_FRAME
 
+from  core.config.keys import K_SUBMIT
+
 def cmd_show_dialog_dynamic(*args, **kwargs):
     ''' Show text dialog - dynamic
     Speed of text displaying is managed by CanTalk parameter speed
@@ -39,7 +41,7 @@ def cmd_show_dialog_dynamic(*args, **kwargs):
     # If RETURN is pressed and the text can be skipped, finish displaying the dialog
     for event in events:
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN and can_skip:
+            if event.key == K_SUBMIT and can_skip:
                 can_talk.text = ''
                 return 0
 
@@ -98,7 +100,7 @@ def cmd_show_dialog_static(*args, **kwargs):
     # If RETURN is pressed and the text can be skipped, finish displaying the dialog
     for event in events:
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RETURN and can_skip:
+            if event.key == K_SUBMIT and can_skip:
                 can_talk.text = ''
                 return 0
 

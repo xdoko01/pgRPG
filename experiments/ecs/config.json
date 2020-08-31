@@ -1,4 +1,26 @@
 {
+	"keys" : {
+		"key_controls_1" : {
+			"up" : "K_u",
+			"down" : "K_j",
+			"left" : "K_h",
+			"right" : "K_k",
+			"attack" : "K_z"
+		},
+		"console_toggle" : "K_F9",
+		"save_game" : "K_F5",
+		"load_game" : "K_F6",
+		"pause_game" : "K_p"
+	},
+
+	"display" : {
+		"resolution" : [850, 850],
+		"bitdepth" : 32,
+		"fullscreen" : false,
+		"max_fps" : 120,
+		"show_fps" : true
+	},
+
 	"debug" : {
 		"show_health" : true,
 		"show_state" : true,

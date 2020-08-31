@@ -60,7 +60,7 @@ class RenderableModel(Component):
 		self.last_time = pygame.time.get_ticks()
 		self.is_action_frame = False
 
-		print(self.model)
+		#print(self.model)
 
 	def set_action(self, action):
 		''' Reset frame and time in case new action is

@@ -206,11 +206,94 @@
   - Based on elapsed time from the first command call, the command is showing portion of the text. `frame_surf` is static and generated only on the first call of the command wherease the `test_surf` is generated every time the command is called internally. Hence, it is slower than `show_dialog_static` function.
   - The command remains the same, i.e. `show_command`. The decision if dynamic or static function is to be used must be done in commands package mapping.
 
+### Keys are defined as config parameters and as entity templates
+
+  - There is a new dictionary in `core.config.config` module called KEYS. The KEYS dictionary consist of list of key profiles, individual key profiles and other keys. Key profile is dictionary of keys that can be used to manipulate game entity (character, NPC, camera, ...). Every key profile has up, down, left, right and action key. The particular keyboard key is defined as a string that must follow the same convention as pygame keys. For example the string 'K_UP' represents `pygame.K_UP` key.
+  - Default profiles and assigned keys are hardcoded in the `core.config.config` module and those are overwritten by settings present in the `config.json` file.
+  - There is a new `core.config.keys` module. This module holds the actual key values that are used in the game. On the module init, keys are read from `core.config.config.KEYS` dictionary and translated to real pygame key values.
+  - If  some part of the game wants to work with keys, it must import the `core.config.keys` module and use the constant that represent the keys from this module. For example, if I want to reference the key that toggles game console, I refer to that key as `core.config.keys.K_CONSOLE_TOGGLE`. If I want to refer to key profile 'up' key, I can do it by calling `core.config.keys.K_PROFILE['key_controls_1']['up']`.
+  - In order to be able to assign different key profiles to different game entities (for example each of 2 players will have different key profile assigned), I can create `Controllable` entity with parameter refereing to a key profile that should be used - `{"type" : "Controllable", "params" : {"key_profile" : "key_controls_1"}}`.
+  - To make the functionality easier to use, there have been created *key control json definition entities* as a part of entity hierarchy (key_controls.json, ...). If we want to define new game entity that should be controllable by keys defined in key_controls_1 it is enough to say that this entity inherits from template `key_controls_1`. By doing so, `Controllable` component referencing `key_controls_1` config keys will be added to such entity.
+
+### Game windows that can be shown as actions for quest or quest phase start (stopping any other action from happening)
+
+  - New events *QUEST_START* and *PHASE_START* were created. Those events are automatically added to the event queue on every quest init and phase init (hardcoded).
+  - Quest definition json contains even handler that handles *QUEST_START* and *PHASE_START* events. 
+  - In the *condition* of the even handler there is definition of phase that we want to have linked with displaying of the game window, i.e. `"conditions" : {"script" : "self.phase_id == 'phase01'"}`
+  - In the *action* of the event handler there is `show_text` script being called. The `show_text` script function uses `engine.world` processors to draw the game map and draws the text on the window. While `show_text` is executed, the rest of the game is frozen.
+
 ## To Do
 
 ####
 
-### Update console library so that it has the paths encapsulated in str() to support libpath
+### Implement new processor for showing the messages during the game (not stopping the game)- things like 'item picked', 'NPC died', 'new phase changed'
+  - create something like a game message queue. ANy part of the game can add any message to the queue.
+  - new processor to process the messages from the queue and display them on the window in transparent box
+  - `show_text` would be in this case obsolete.
+  - Currently, we have `command_queue` and `c_event_queue` - both of these have their functions in `engine` module - `process_game_events()` and `process_game_commands()`
+  - Newly, we will add new global list `game_message_queue` that will contain MSG object (text, color, ttl)
+    - lets tothis withou function handler in engine.module
+    - new processor `ProcessGameMessages(game_message_queue, window)` referencing the queue and the window on which it will be generated
+      - remove messages whos ttl expired
+      - display all the living messages in the game_message_queue in the order
+        - display requires font and transparent window rendering
+
+### Keys
+  - implement pause key window
+
+### Transparent window on the beginning
+  - define the window and text and pictures by json
+  {
+	  frames : [
+		  {
+			  background_color:
+			  background_transparency:
+			  ttl: 300
+			  texts: [
+				  {
+					  text : 'sdfsdf dsffsda asdfsdf'
+					  position : [100, 100]
+				  },
+				  {
+					  text : 'sdfsdf dsffsda asdfsdf'
+					  position : [200, 200]
+				  }
+			  ],
+			  pictures : [
+				  {
+					  picture : imaes/sdfsdf.png
+					  position: [30,30]
+				  },
+				  {
+					  picture : imaes/sdfsdf.png
+					  position: [30,30]
+				  }
+			  ]
+		  }
+  }
+  - function that will prepare surface from the definition
+	- script_show_text_json(example.json or dictionary)
+  - call script command that will read from json and display from it
+
+
+### have the possibility to change the configuration via console during game in JSON and reload it
+
+### key mapping as config parameters
+  - Controllable has parameters up/down/left/right/attack
+    - controllable - control_keys dict now there are numbers in quest json
+        default_keys = {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274, 'attack' : 122}
+    - newly I need something better
+        default_keys = {'left' : 'left_arrow', 'right': 'right_arrow', 'up' : 'up_arrow', 'down' : 'down_arrow', 'attack' : 'left_ctrl'}
+    - keys config K_UP, K_DOWN
+    - new COmponent 'Player' - value 1,2,3,4 - id of the player
+    - config will define keys for player1-4 ... in json keys[player1][up] = 'K_UP' string
+    - component controllable will have key_scheme = 'player1' - it will load keys from the config
+
+### dt as parameter for console.show?
+
+### Stop the game while console is displayed - to avoid keys to be used both in console and in the game - parameter in Config.
+
+### Update console library so that it has the paths encapsulated in str() to support libpath + if function is not defined the text on console should scroll the error
 
 ### Processors - skipping of processors based on configuration
 

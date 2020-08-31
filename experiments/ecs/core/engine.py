@@ -12,7 +12,7 @@
 
 import math
 import json
-import pickle # for savegame
+import pickle # for savegame/loadgame
 
 ########################################################
 ### Module Import Init - Init pygame
@@ -24,7 +24,15 @@ global window
 global clock
 
 pygame.init()
-window = pygame.display.set_mode((850, 850), 0, 32)
+
+from core.config.config import DISPLAY
+
+window = pygame.display.set_mode(
+                DISPLAY['resolution'],
+                pygame.FULLSCREEN if DISPLAY['fullscreen'] else 0,
+                DISPLAY['bitdepth']
+            )
+
 clock = pygame.time.Clock()
 
 ########################################################
@@ -32,11 +40,10 @@ clock = pygame.time.Clock()
 ########################################################
 
 import core.config.fonts # Initiate fonts for the game
-import core.config.config as config # for FPS
+
+import core.config.keys as keys
 
 from core.config.paths import ENTITY_PATH, SAVE_PATH
-
-import core.config.console # Initiate console
 
 import core.ecs.esper as esper
 import core.ecs.components as components
@@ -51,7 +58,6 @@ import core.quests.quest as quest
 ### Module Import Init - Init global variables
 ########################################################
 
-global console
 global world
 global _maps
 global _quests
@@ -64,7 +70,6 @@ c_event_queue = []
 _maps = {}
 _entity_map = {}
 _quests = {}
-console = core.config.console.game_console
 
 ########################################################
 ########################################################
@@ -369,7 +374,7 @@ def create_processors(world):
     # Update all cameras
     world.add_processor(update_camera_offset_processor)
 
-    ### Change the entity state basedon everything what has happened before rendering
+    ### Change the entity state based on everything what has happened before rendering
     world.add_processor(render_model_anim_action_processor)
 
     ### Update the entity animation
@@ -625,11 +630,16 @@ def save_game():
 
     return 0
 
+def pause_game():
+    global window
+    pygame.draw.rect(window, (128, 128, 128, 0), pygame.Rect(100, 100, 200, 100))
+
+
 ########################################################
 ### Module Functions - Main game loop
 ########################################################
 
-def run(key_events, key_pressed):
+def run(key_events, key_pressed, dt, debug):
     # Initialize Pygame stuff - at the beginning due to convert() function
     ##global window
 
@@ -677,11 +687,10 @@ def run(key_events, key_pressed):
     ##running = True
     ##while running:
 
-    global clock
-    global console
+    #global clock
 
     # Keep game at constant FPS
-    dt = clock.tick(config.FPS)
+    #dt = clock.tick(config.FPS)
 
     # Read the keys pressed, mouse, win resize etc.
     ##key_events = pygame.event.get()
@@ -694,36 +703,34 @@ def run(key_events, key_pressed):
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return 'MAIN_MENU'
-            if event.key == pygame.K_F1:
+            elif event.key == keys.K_SAVE_GAME:
                 print(f'Saving game ...')
                 return 'SAVE_GAME' #save_game()
-            if event.key == pygame.K_F2:
+            elif event.key == keys.K_LOAD_GAME:
                 print(f'Loading game ...')
                 return 'LOAD_GAME' # load_game()
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_F5:
-                console.toggle()
+            elif event.key == keys.K_PAUSE_GAME:
+                print(f'Pausing game')
+                return 'PAUSE_GAME' # load_game()
+
 
     # Update all the processors, pass key events as a parameter
     # and dt (how long the previous frame was processed)
     # Parameter will be passed to all processors. Those who want it
     # will process it.
-    world.process(events=key_events, keys=key_pressed, dt=dt, debug=config.DEBUG)
+    world.process(events=key_events, keys=key_pressed, dt=dt, debug=debug)
 
-    # Read and process events related to the console in case console is enabled
-    console.update(key_events)
-
-    # Display the console if enabled or animation is still in progress
-    console.show(window)
 
     # Flip the framebuffers
     #pygame.display.update()
-    pygame.display.flip()
+    #pygame.display.flip()
 
     # Display FPS in window title
-    pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
+    #pygame.display.set_caption('FPS: ' + str(int(clock.get_fps())))
 
     return 'GAME'
+
+
 
 def quit():
     pygame.quit()

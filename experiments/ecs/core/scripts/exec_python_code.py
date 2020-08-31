@@ -1,3 +1,5 @@
+import pygame # in order to execute pygame scripts in exec statements
+
 def script_exec_python_code(event=None, *args, **kwargs):
 
     # Get the body of the script from the arguments
