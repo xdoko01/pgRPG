@@ -1,7 +1,7 @@
 from .component import Component
 from .weapon import Weapon
 from .factory import Factory
-import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+import core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 
 class HasWeapon(Component):
 	''' Entity can pickup and carry a Weapon 
@@ -44,11 +44,11 @@ class HasWeapon(Component):
 				
 				# Translate entity id name to entity id number if needed
 				weapon_ent = w_value.get('weapon')
-				weapon_ent = engine._entity_map.get(weapon_ent) if isinstance(weapon_ent, str) else weapon_ent
+				weapon_ent = engine.alias_to_entity.get(weapon_ent) if isinstance(weapon_ent, str) else weapon_ent
 
 				# Translate entity id name to entity id number if needed
 				generator_ent = w_value.get('generator')
-				generator_ent = engine._entity_map.get(generator_ent) if isinstance(generator_ent, str) else generator_ent
+				generator_ent = engine.alias_to_entity.get(generator_ent) if isinstance(generator_ent, str) else generator_ent
 
 				# TODO - check that generator has factory component!!
 
@@ -135,7 +135,7 @@ class HasWeapon(Component):
 			#			{"type" : "Debug", "params" : {}},
 			#			{"type" : "Container", "params" : {"contained_in" : self}} # reference to has_weapon instance
 			#		]
-			##	# Do not register in engine global variable _entity_map - not needed
+			##	# Do not register in engine global variable alias_to_entity - not needed
 			#	register=False)
 			
 			new_projectile = factory.create_entity(owner=owner_ent, pos=(pos_x, pos_y, pos_comp.dir_name, pos_map), container=self, reg_at_engine=False)

@@ -2,7 +2,7 @@ from .component import Component
 from .position import Position
 from .container import Container
 
-import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+import core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 
 
 class Factory(Component):
@@ -50,7 +50,7 @@ class Factory(Component):
 		new_entity = engine._create_entity(
 			self.prescription,
 			
-			# Do not register in engine global variable _entity_map - not needed
+			# Do not register in engine global variable alias_to_entity - not needed
 			register=reg_at_engine
 		)
 

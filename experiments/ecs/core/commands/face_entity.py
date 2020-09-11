@@ -14,7 +14,7 @@ def cmd_face_entity(*args, **kwargs):
     # Get the entity towards the entity should face
     face_to = kwargs.get("face", None)
 
-    face_ent = engine._entity_map.get(face_to, face_to)
+    face_ent = engine.alias_to_entity.get(face_to, face_to)
     assert(isinstance(face_ent, int), f'Entity {face_ent} is not defined and/or must be an integer')
 
     # Sign function

@@ -1,0 +1,7 @@
+{
+	"id" : "darkmale",
+	"templates" : ["character_model"],
+	"components" : [
+		{"type" : "RenderableModel", "params" : {"model" : "darkmale.json"}}		
+	]
+}

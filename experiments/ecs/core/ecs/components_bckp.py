@@ -10,7 +10,7 @@ import pygame.freetype 	# for CanTalk component
 
 if __name__ != '__main__':
 	import core.config.config as config  # For renderable component IMAGE_PATH
-	import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+	import core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory) + engine._maps
 	import core.models.model as model # For cached animated model in RenderableModel entity
 
 ########################################################
@@ -192,7 +192,7 @@ class Factory(Component):
 		new_entity = engine._create_entity(
 			self.prescription,
 			
-			# Do not register in engine global variable _entity_map - not needed
+			# Do not register in engine global variable alias_to_entity - not needed
 			register=reg_at_engine
 		)
 
@@ -376,11 +376,11 @@ class HasWeapon(Component):
 				
 				# Translate entity id name to entity id number if needed
 				weapon_ent = w_value.get('weapon')
-				weapon_ent = engine._entity_map.get(weapon_ent) if isinstance(weapon_ent, str) else weapon_ent
+				weapon_ent = engine.alias_to_entity.get(weapon_ent) if isinstance(weapon_ent, str) else weapon_ent
 
 				# Translate entity id name to entity id number if needed
 				generator_ent = w_value.get('generator')
-				generator_ent = engine._entity_map.get(generator_ent) if isinstance(generator_ent, str) else generator_ent
+				generator_ent = engine.alias_to_entity.get(generator_ent) if isinstance(generator_ent, str) else generator_ent
 
 				# TODO - check that generator has factory component!!
 
@@ -467,7 +467,7 @@ class HasWeapon(Component):
 			#			{"type" : "Debug", "params" : {}},
 			#			{"type" : "Container", "params" : {"contained_in" : self}} # reference to has_weapon instance
 			#		]
-			##	# Do not register in engine global variable _entity_map - not needed
+			##	# Do not register in engine global variable alias_to_entity - not needed
 			#	register=False)
 			
 			new_projectile = factory.create_entity(owner=owner_ent, pos=(pos_x, pos_y, pos_comp.dir_name, pos_map), container=self, reg_at_engine=False)
@@ -551,7 +551,7 @@ class CanWear(Component):
 			for w_key, w_value in kwargs.items():
 				
 				# Translate the value (Wearable) to Entity instance if necessary
-				wearable_entity = engine._entity_map.get(w_value) if isinstance(w_value, str) else w_value
+				wearable_entity = engine.alias_to_entity.get(w_value) if isinstance(w_value, str) else w_value
 
 				# If it is possible to wear the entity (known bodypart and empty slot for wearable) then wear it
 				if w_key in CanWear.BODYPARTS and not self.wearables.get(w_key):
@@ -887,7 +887,7 @@ class HasInventory(Component):
 		# Substitute the inventory items that are specified by id (str) with entity ids (int)
 		# based on mapping in engine class
 		try:
-			self.inventory = [engine._entity_map.get(item) if isinstance(item, str) else item for item in kwargs.get('inventory', [])]
+			self.inventory = [engine.alias_to_entity.get(item) if isinstance(item, str) else item for item in kwargs.get('inventory', [])]
 		except KeyError:
 			# Notify component factory that initiation has failed
 			print(f'Item in the inventory is not initiated in global list of entities.')
@@ -947,7 +947,7 @@ class Position(Component):
 
 		# Assert that map exists in the global list of all initiated maps engine
 		try:
-			assert self.map in engine._maps.keys(), f'Map {self.map} is not initialized for {self.__class__} component.'
+			assert self.map in engine.maps.keys(), f'Map {self.map} is not initialized for {self.__class__} component.'
 			assert isinstance(self.x, int), f'Position x is not an integer for {self.__class__} component.'
 			assert isinstance(self.y, int), f'Position y is not an integer for {self.__class__} component.'
 			assert self.dir_name in ('up', 'down', 'left', 'right'), f'Position direction is not defined for {self.__class__} component.'
@@ -1032,7 +1032,7 @@ class Teleport(Component):
 
 		# Assert that targetmap exists in the global list of all initiated maps engine and position is integer
 		try:
-			assert self.dest_map in engine._maps.keys(), f'Destination map {self.dest_map} is not initialized for {self.__class__} component.'
+			assert self.dest_map in engine.maps.keys(), f'Destination map {self.dest_map} is not initialized for {self.__class__} component.'
 			assert isinstance(self.dest_x, int), f'Position x is not an integer for {self.__class__} component.'
 			assert isinstance(self.dest_y, int), f'Position y is not an integer for {self.__class__} component.'
 		except AssertionError:
@@ -1045,7 +1045,7 @@ class Teleport(Component):
 		
 		# Check that the key entity exists in global list of entities
 		try:
-			self.key = engine._entity_map.get(teleport_key) if isinstance(teleport_key, str) else teleport_key
+			self.key = engine.alias_to_entity.get(teleport_key) if isinstance(teleport_key, str) else teleport_key
 		except KeyError:
 			# Notify component factory that initiation has failed
 			print(f'Key {teleport_key} is not present in list of entities.')

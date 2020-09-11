@@ -224,7 +224,7 @@ def cmd_set_quest_phase(*args, **kwargs):
 
 	# Update the quest's phase
 	try:
-		engine._quests.get(quest, None).set_phase(phase)
+		engine.quests.get(quest, None).set_phase(phase)
 		
 		# Everything went smoothly
 		return 0
@@ -285,10 +285,10 @@ def cmd_add_to_inventory(*args, **kwargs):
 	receiver_ent = kwargs.get("entity", None)
 	item_ent = kwargs.get("item", None)
 
-	# First try to find value based on key in _entity_map. If nothing found, use item (integer)
+	# First try to find value based on key in alias_to_entity. If nothing found, use item (integer)
 	# If entity nod defined by integer, raise error
 	item = kwargs.get("item", None)
-	item_ent = engine._entity_map.get(item, item)
+	item_ent = engine.alias_to_entity.get(item, item)
 	assert(isinstance(item_ent, int), f'Entity {item} is not defined and/or must be an integer')
 	
 	# Get HasInventory component for receiver entity - if it has one
@@ -315,10 +315,10 @@ def cmd_remove_from_inventory(*args, **kwargs):
 	giver_ent = kwargs.get("entity", None)
 	item_ent = kwargs.get("item", None)
 
-	# First try to find value based on key in _entity_map. If nothing found, use item (integer)
+	# First try to find value based on key in alias_to_entity. If nothing found, use item (integer)
 	# If entity nod defined by integer, raise error
 	item = kwargs.get("item", None)
-	item_ent = engine._entity_map.get(item, item)
+	item_ent = engine.alias_to_entity.get(item, item)
 	assert(isinstance(item_ent, int), f'Entity {item} is not defined and/or must be an integer')
 
 	# Get HasInventory component for giver entity - if it has one
@@ -570,7 +570,7 @@ def cmd_face_entity(*args, **kwargs):
 	# Get the entity towards the entity should face
 	face_to = kwargs.get("face", None)
 
-	face_ent = engine._entity_map.get(face_to, face_to)
+	face_ent = engine.alias_to_entity.get(face_to, face_to)
 	assert(isinstance(face_ent, int), f'Entity {face_ent} is not defined and/or must be an integer')
 
 	# Sign function

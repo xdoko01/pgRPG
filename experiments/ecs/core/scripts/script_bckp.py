@@ -23,7 +23,7 @@ def modify_brain(event=None, *args, **kwargs):
 	''' Called from quest 
 	'''
 	# Get the entity whose brain I will be working with
-	entity = engine._entity_map.get(kwargs.get("entity", None))
+	entity = engine.alias_to_entity.get(kwargs.get("entity", None))
 
 	# Get the brain of the entity
 	try:

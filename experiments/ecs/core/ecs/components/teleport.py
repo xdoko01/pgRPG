@@ -1,5 +1,5 @@
 from .component import Component
-import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+import core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 
 class Teleport(Component):
 	''' Entity is a teleport - i.e. on collision it changes position of
@@ -47,7 +47,9 @@ class Teleport(Component):
 
 		# Assert that targetmap exists in the global list of all initiated maps engine and position is integer
 		try:
-			assert self.dest_map in engine._maps.keys(), f'Destination map {self.dest_map} is not initialized for {self.__class__} component.'
+			# Following assertion commented in order not to address global 'maps' directory from component.
+			# assert self.dest_map in engine.maps.keys(), f'Destination map {self.dest_map} is not initialized for {self.__class__} component.'
+			assert isinstance(self.dest_map, str), f'Map "{self.dest_map}" is not a string for {self.__class__} component.'
 			assert isinstance(self.dest_x, int), f'Position x is not an integer for {self.__class__} component.'
 			assert isinstance(self.dest_y, int), f'Position y is not an integer for {self.__class__} component.'
 		except AssertionError:
@@ -60,7 +62,7 @@ class Teleport(Component):
 		
 		# Check that the key entity exists in global list of entities
 		try:
-			self.key = engine._entity_map.get(teleport_key) if isinstance(teleport_key, str) else teleport_key
+			self.key = engine.alias_to_entity.get(teleport_key) if isinstance(teleport_key, str) else teleport_key
 		except KeyError:
 			# Notify component factory that initiation has failed
 			print(f'Key {teleport_key} is not present in list of entities.')

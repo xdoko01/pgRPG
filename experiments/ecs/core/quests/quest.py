@@ -127,7 +127,7 @@ class Quest:
 
 				# Find the value for the key in the event.params and compare it with the value in the condition
 				# This value then AND with the value cond_param_result
-				cond_param_result = cond_param_result and (event.params.get(cond_param_key, None) == engine._entity_map.get(cond_param_value))
+				cond_param_result = cond_param_result and (event.params.get(cond_param_key, None) == engine.alias_to_entity.get(cond_param_value))
 
 			#print(f'Cond_param_result: {cond_param_result}')
 

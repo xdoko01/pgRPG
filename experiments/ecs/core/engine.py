@@ -54,22 +54,29 @@ import core.commands as commands
 import core.maps.map as map
 import core.quests.quest as quest
 
+from core.config.config import MESSAGES # to decide if message should be generater on event
+import core.messages.messages as messages # Fore in-game messages
+
 ########################################################
 ### Module Import Init - Init global variables
 ########################################################
 
 global world
-global _maps
-global _quests
-global c_event_queue
+global maps
+global quests
+global event_queue
 global command_queue
-global _entity_map
+global message_queue
+global alias_to_entity
+global entity_to_alias # mapping of entity id to alias id - for displaying of in-game messages
 
+message_queue = []
 command_queue = []
-c_event_queue = []
-_maps = {}
-_entity_map = {}
-_quests = {}
+event_queue = []
+maps = {}
+alias_to_entity = {}
+quests = {}
+entity_to_alias = {}
 
 ########################################################
 ########################################################
@@ -99,7 +106,7 @@ def process_game_commands(keys=None, events=None, debug=False):
     Processes the command_queue.
     '''
     global command_queue
-    global _entity_map
+    global alias_to_entity
 
     if debug and command_queue:
         print(f'*Command Queue: {command_queue}')
@@ -123,7 +130,7 @@ def process_game_commands(keys=None, events=None, debug=False):
         # Check if in cmd_params there is entity parameter that is not an integer but a string.
         # Such commands can be submitted by the global script processor Brain
         entity_id = cmd_params.get('entity')
-        if isinstance(entity_id, str): cmd_params.update({'entity' : _entity_map.get(entity_id)})
+        if isinstance(entity_id, str): cmd_params.update({'entity' : alias_to_entity.get(entity_id)})
 
         brain = cmd_params.get("brain", None)
 
@@ -147,33 +154,43 @@ def process_game_commands(keys=None, events=None, debug=False):
 def process_game_events():
     ''' Process game/quest events. It is called by GameEventProcessor
     '''
-    global _quests
+    global quests
+    global message_queue
 
     # Process every waiting event
-    '''
-    for event in c_event_queue:
+    while event_queue:
 
-        # Send every event to every quest for handling
-        for quest in _quests:
-
-            # Call event handler
-            quest.event_handler(event)
-
-        # Remove the event from the queue
-        c_event_queue.remove(event)
-    '''
-    while c_event_queue:
-
-        
         # out event from the beginning of the queue
-        event = c_event_queue.pop(0)
+        event = event_queue.pop(0)
 
+        # add information to the message queue if event returns a message
+        event_message = event.to_string()
+        message_queue.append(messages.Message(text=event_message)) if event_message else None
 
         # Send every event to every quest for handling
-        for quest_name, quest_object in _quests.items():
+        for quest_name, quest_object in quests.items():
 
             # Call event handler
             quest_object.event_handler(event)
+
+########################################################
+### Module Functions - Game messages handler
+########################################################
+
+def process_game_messages():
+    ''' Process game text messages. It is called by GameMessagesProcessor
+    '''
+    global message_queue
+    global window
+
+    # Get current time to evaluate ttl of the message
+    current_time = pygame.time.get_ticks()
+
+    # Remove all the expired messages from the message queue
+    message_queue = [msg for msg in message_queue if current_time - msg.created < msg.ttl]
+
+    # Process the valid queued messages
+    messages.process(window, message_queue)
 
 ########################################################
 ### Module Functions - Game world creator/destructor methods
@@ -184,7 +201,8 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
     '''
 
     global world
-    global _entity_map
+    global alias_to_entity
+    global entity_to_alias
 
     # Prepare new_entity obj
     new_entity_obj = None
@@ -192,7 +210,7 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
     # Decode entity id 
     new_entity_id = json_ent_obj.get("id")
 
-    # Create new entity obj for the root elntity
+    # Create new entity obj for the root entity
     if not child_ref: 
         new_entity_obj = world.create_entity()
         print(f'\n*Creating new entity "{new_entity_id}", id: {new_entity_obj}')
@@ -240,16 +258,18 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
 
     # Add entity to the entity map - for the root entity
     if not child_ref and register:
-        _entity_map.update({new_entity_id : new_entity_obj})
+        alias_to_entity.update({new_entity_id : new_entity_obj})
+        entity_to_alias.update({new_entity_obj: new_entity_id})
 
     return new_entity_obj
 
 def create_processors(world):
 
     global window
-    global c_event_queue
+    global event_queue
     global command_queue
-    global _maps
+    global message_queue
+    global maps
 
     # Processor that updates constant speed movement
     linear_movement_processor = processors.LinearMovementProcessor()
@@ -276,7 +296,7 @@ def create_processors(world):
     render_camera_background_processor = processors.RenderCameraBackgroundProcessor()
 
     # Render processor to display map
-    render_map_processor = processors.RenderMapProcessor(window=window, maps=_maps)
+    render_map_processor = processors.RenderMapProcessor(window=window, maps=maps)
 
     # Render processor to place renderable entities with position on the screen
     render_world_processor = processors.RenderWorldProcessor(window=window)
@@ -295,25 +315,25 @@ def create_processors(world):
     collision_entity_generator_processor = processors.CollisionEntityGeneratorProcessor()
 
     # Collision Map processor
-    collision_map_processor = processors.CollisionMapProcessor(maps=_maps)
+    collision_map_processor = processors.CollisionMapProcessor(maps=maps)
 
     # Teleport Collision processor
-    collision_teleport_processor = processors.CollisionTeleportProcessor(c_event_queue)
+    collision_teleport_processor = processors.CollisionTeleportProcessor(event_queue)
 
     # Damaging Collision processor
-    collision_damage_processor = processors.CollisionDamageProcessor(c_event_queue)
+    collision_damage_processor = processors.CollisionDamageProcessor(event_queue)
 
     # Weapon Collision processor
-    collision_weapon_processor = processors.CollisionWeaponProcessor(c_event_queue)
+    collision_weapon_processor = processors.CollisionWeaponProcessor(event_queue)
 
     # Wearable Collision processor
-    collision_wearable_processor = processors.CollisionWearableProcessor(c_event_queue)
+    collision_wearable_processor = processors.CollisionWearableProcessor(event_queue)
 
     # Item Collision processor
-    collision_item_processor = processors.CollisionItemProcessor(c_event_queue)
+    collision_item_processor = processors.CollisionItemProcessor(event_queue)
 
     # Entity Collision processor - added command queue processor to generate corrective movements
-    collision_entity_processor = processors.CollisionEntityProcessor(c_event_queue,command_queue)
+    collision_entity_processor = processors.CollisionEntityProcessor(event_queue, command_queue)
 
     # Collision Deletion processor - deletes entities with component DeleteOnCollision
     collision_deletion_processor = processors.CollisionDeletionProcessor()
@@ -322,7 +342,7 @@ def create_processors(world):
     #collision_corrector_processor = processors.CollisionCorrectorProcessor()
 
     # Camera processor - update position of the camera
-    update_camera_offset_processor = processors.UpdateCameraOffsetProcessor(maps=_maps)
+    update_camera_offset_processor = processors.UpdateCameraOffsetProcessor(maps=maps)
 
     # Game events processor - triggers actions based on previously generated events
     game_events_processor = processors.GameEventsProcessor(process_game_events)
@@ -332,6 +352,9 @@ def create_processors(world):
 
     # Brain processor
     brain_processor = processors.BrainProcessor(command_queue)
+
+    # Game messages processor
+    game_messages_processor = processors.GameMessagesProcessor(process_game_messages)
 
     ##### #### #### ####
     # Beware of order of the processors
@@ -403,6 +426,9 @@ def create_processors(world):
     # Render additional debug information on the screen
     world.add_processor(render_debug_processor)
 
+    # Render game messages on the screen
+    world.add_processor(game_messages_processor)
+
     ##################################
     ### Clearing processors
     ##################################
@@ -416,53 +442,53 @@ def create_map(map_name):
     '''
 
     # All maps are here
-    global _maps
+    global maps
 
     # Create map, if not exists
-    if not _maps.get(map_name, None):
+    if not maps.get(map_name, None):
         new_map = map.Map(map_name)	
-        _maps.update({map_name : new_map})
+        maps.update({map_name : new_map})
 
 def delete_map(map_name):
     ''' Unregister and delete the map object
     '''
 
     # All maps are here
-    global _maps
+    global maps
 
     # If map is registered - de-reference it
     # As map reference is stored only in global dictionary and
     # not on individual entities, it is enough to dereference it
     # here and not on individual entities.
-    if _maps.get(map_name, None):
-        del _maps[map_name]
+    if maps.get(map_name, None):
+        del maps[map_name]
 
 def delete_entity(entity_name):
     ''' Delete and un-register entity from the world
     '''
 
     global world
-    global _entity_map
+    global alias_to_entity
 
     # If entity is registered, delete it
-    if _entity_map.get(entity_name, None):
+    if alias_to_entity.get(entity_name, None):
 
         # Delete it from Esper world
-        world.delete_entity(_entity_map.get(entity_name))
+        world.delete_entity(alias_to_entity.get(entity_name))
         
         # Un-register the entity
-        del _entity_map[entity_name]
+        del alias_to_entity[entity_name]
 
 ########################################################
 ### Module Functions - Save and load game
 ########################################################
 
 def new_game():
-    global _quests
-    global c_event_queue
+    global quests
+    global event_queue
 
-    sample_quest = quest.load_quest('test_quest', c_event_queue)
-    _quests.update({'test_quest' : sample_quest})
+    sample_quest = quest.load_quest('test_quest', event_queue)
+    quests.update({'test_quest' : sample_quest})
 
 def load_game():
     ''' Load game state 
@@ -475,24 +501,24 @@ def load_game():
     command_queue = game_state.get('command_queue')
 
     # Restore event queue
-    global c_event_queue
-    c_event_queue = game_state.get('event_queue')
+    global event_queue
+    event_queue = game_state.get('event_queue')
 
     # Restore maps
-    global _maps
-    _maps = {}
+    global maps
+    maps = {}
 
     for map_name in game_state.get('maps'):
         sample_map = map.Map(map_name)	
-        _maps.update({ map_name : sample_map})
+        maps.update({ map_name : sample_map})
 
     # Restore entity mapping
-    global _entity_map
-    _entity_map = game_state.get('entity_map')
+    global alias_to_entity
+    alias_to_entity = game_state.get('entity_map')
 
     # Restore quests
-    global _quests
-    _quests = game_state.get('quests')
+    global quests
+    quests = game_state.get('quests')
 
     ##### Restore world
     global world
@@ -509,16 +535,16 @@ def load_game():
     # Restore processor references
     global window
 
-    world.get_processor(processors.CollisionMapProcessor).post_load(_maps)
+    world.get_processor(processors.CollisionMapProcessor).post_load(maps)
     print(world.get_processor(processors.CollisionMapProcessor))
 
-    world.get_processor(processors.UpdateCameraOffsetProcessor).post_load(_maps)
+    world.get_processor(processors.UpdateCameraOffsetProcessor).post_load(maps)
     print(world.get_processor(processors.UpdateCameraOffsetProcessor))
 
     world.get_processor(processors.RenderBackgroundProcessor).post_load(window) 
     print(world.get_processor(processors.RenderBackgroundProcessor))
 
-    world.get_processor(processors.RenderMapProcessor).post_load(window, _maps) 
+    world.get_processor(processors.RenderMapProcessor).post_load(window, maps) 
     print(world.get_processor(processors.RenderMapProcessor))
 
     world.get_processor(processors.RenderWorldProcessor).post_load(window) 
@@ -536,11 +562,11 @@ def save_game():
 
     global window
     global command_queue
-    global c_event_queue
-    global _maps
-    global _entity_map
+    global event_queue
+    global maps
+    global alias_to_entity
     global world
-    global _quests
+    global quests
 
     game_state = {}
 
@@ -548,17 +574,17 @@ def save_game():
     game_state.update({'command_queue' : command_queue})
 
     # Prepare event queue for save
-    game_state.update({'event_queue' : c_event_queue})
+    game_state.update({'event_queue' : event_queue})
 
     # Preapare maps for save - we will only save list of names
     # and reload maps from scratch during load game
-    game_state.update({'maps' : [map_name for map_name in _maps.keys()]})
+    game_state.update({'maps' : [map_name for map_name in maps.keys()]})
     
     # Prepare entity name -> entity id mapping for save
-    game_state.update({'entity_map' : _entity_map})
+    game_state.update({'entity_map' : alias_to_entity})
 
     # Prepare quests for save
-    game_state.update({'quests' : _quests})
+    game_state.update({'quests' : quests})
     
     # Prepare game world for save - first it is needed
     # to remove all pygame.Surface references from components
@@ -610,16 +636,16 @@ def save_game():
             print(f'SAVE: Finished post-load steps for entity {entity_id} and component {component}')
 
     ### Restore processor references
-    world.get_processor(processors.CollisionMapProcessor).post_load(_maps)
+    world.get_processor(processors.CollisionMapProcessor).post_load(maps)
     print(world.get_processor(processors.CollisionMapProcessor))
 
-    world.get_processor(processors.UpdateCameraOffsetProcessor).post_load(_maps)
+    world.get_processor(processors.UpdateCameraOffsetProcessor).post_load(maps)
     print(world.get_processor(processors.UpdateCameraOffsetProcessor))
 
     world.get_processor(processors.RenderBackgroundProcessor).post_load(window) 
     print(world.get_processor(processors.RenderBackgroundProcessor))
 
-    world.get_processor(processors.RenderMapProcessor).post_load(window, _maps) 
+    world.get_processor(processors.RenderMapProcessor).post_load(window, maps) 
     print(world.get_processor(processors.RenderMapProcessor))
 
     world.get_processor(processors.RenderWorldProcessor).post_load(window) 
@@ -652,16 +678,16 @@ def run(key_events, key_pressed, dt, debug):
     ##command_queue = []
 
     # All events are queued here
-    ##global c_event_queue
-    ##c_event_queue = []
+    ##global event_queue
+    ##event_queue = []
 
     # All maps are here
-    ##global _maps
-    ##_maps = {}
+    ##global maps
+    ##maps = {}
 
     # Entity name vs id is stored here
-    ##global _entity_map
-    ##_entity_map = {}
+    ##global alias_to_entity
+    ##alias_to_entity = {}
 
     #####
     # Initialize Esper world with entites and processors
@@ -672,14 +698,14 @@ def run(key_events, key_pressed, dt, debug):
     ##create_processors(world)
 
     # All quests are here
-    ##global _quests
-    ##_quests = {}
+    ##global quests
+    ##quests = {}
 
-    ##sample_quest = quest.load_quest('test_quest', c_event_queue)
-    ##_quests.update({'test_quest' : sample_quest})
+    ##sample_quest = quest.load_quest('test_quest', event_queue)
+    ##quests.update({'test_quest' : sample_quest})
 
     # Print entity mappings
-    ##print(_entity_map)
+    ##print(alias_to_entity)
 
     #####
     # The main loop
@@ -718,6 +744,8 @@ def run(key_events, key_pressed, dt, debug):
     # and dt (how long the previous frame was processed)
     # Parameter will be passed to all processors. Those who want it
     # will process it.
+
+    # maps and quests added in order that command can be informed about quest to change the phase
     world.process(events=key_events, keys=key_pressed, dt=dt, debug=debug)
 
 

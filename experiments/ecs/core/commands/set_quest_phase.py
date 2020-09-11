@@ -21,7 +21,7 @@ def cmd_set_quest_phase(*args, **kwargs):
 
     # Update the quest's phase
     try:
-        engine._quests.get(quest, None).set_phase(phase)
+        engine.quests.get(quest, None).set_phase(phase)
 
         # Everything went smoothly
         return 0

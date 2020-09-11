@@ -1,5 +1,5 @@
 from .component import Component
-import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+import core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 
 class HasInventory(Component):
 	''' Entity has inventory - can pick items and add it to the inventory.
@@ -35,7 +35,7 @@ class HasInventory(Component):
 		# Substitute the inventory items that are specified by id (str) with entity ids (int)
 		# based on mapping in engine class
 		try:
-			self.inventory = [engine._entity_map.get(item) if isinstance(item, str) else item for item in kwargs.get('inventory', [])]
+			self.inventory = [engine.alias_to_entity.get(item) if isinstance(item, str) else item for item in kwargs.get('inventory', [])]
 		except KeyError:
 			# Notify component factory that initiation has failed
 			print(f'Item in the inventory is not initiated in global list of entities.')

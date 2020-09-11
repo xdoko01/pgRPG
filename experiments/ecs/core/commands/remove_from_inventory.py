@@ -14,10 +14,10 @@ def cmd_remove_from_inventory(*args, **kwargs):
     giver_ent = kwargs.get("entity", None)
     item_ent = kwargs.get("item", None)
 
-    # First try to find value based on key in _entity_map. If nothing found, use item (integer)
+    # First try to find value based on key in alias_to_entity. If nothing found, use item (integer)
     # If entity nod defined by integer, raise error
     item = kwargs.get("item", None)
-    item_ent = engine._entity_map.get(item, item)
+    item_ent = engine.alias_to_entity.get(item, item)
     assert(isinstance(item_ent, int), f'Entity {item} is not defined and/or must be an integer')
 
     # Get HasInventory component for giver entity - if it has one

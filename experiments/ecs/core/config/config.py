@@ -10,6 +10,26 @@ MOVE_SPEED = 120 # in px per second
 TILE_RES = 64
 DEAD_TIME_TO_DISAPPEAR = 10000 # in ms
 
+''' MESSAGES contain format of message that should be generated
+upon game event generation. Such message is then displayed on 
+the game window. If event is not represented as a key in 'on_events'
+dictionary it means that such event is not generating any message (for
+example collision - that would generat too much unncesessary messages)
+'''
+MESSAGES = {
+		'on_events' : {
+			'TELEPORTATION' : ['Entity {} was teleported using teleport {}.', ['generator_obj', 'other_obj']],
+			'ITEM_PICKUP' : ['Entity {} was picked up by entity {}.', ['generator_obj', 'other_obj']],
+			'WEARABLE_WEARED' : ['Entity {} weared {}.', ['generator_obj', 'other_obj']],
+			'WEAPON_ARMED' : ['Entity {} picked up weapon {}.', ['generator_obj', 'other_obj']],
+			'DAMAGE' : ['Entity {} was hit.', ['other_obj']],
+			'KILL' : ['Entity {} was killed.', ['other_obj']],
+			'QUEST_START' : ['Quest {} has started.', ['generator_obj']],
+			'PHASE_START' : ['Phase {} has started.', ['generator_obj']]
+		},
+		'default_ttl' : 2000
+}
+
 ''' KEYS contain mapping of functionalities to keyboard keys.
 It also defines key_schemas - set of keys for manipulating the
 characters.
@@ -170,6 +190,10 @@ try:
 except FileNotFoundError:
     print(f"Config file '{CONFIG_FILE}' not found, using defaults.")
     config_data = {}
+
+# Override MESSAGES with config messages
+MSG_EVENT_FORMAT = {**MESSAGES.get('on_events'), **config_data.get('messages', {}).get('on_events', {})}
+MSG_DEFAULT_TTL = config_data.get('messages', {}).get('default_ttl', MESSAGES.get('default_ttl'))
 
 # Override KEYS with config keys
 KEYS = {**KEYS, **config_data.get('keys', {})}

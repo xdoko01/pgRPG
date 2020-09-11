@@ -1,5 +1,5 @@
 from .component import Component
-import core.engine as engine # For checking the engine._entity_map - if component has entity as a str as a parameter (HasInventory) + engine._maps
+import core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory) 
 
 class CanWear(Component):
 	''' Entity can pickup and wear Wearable entities
@@ -36,7 +36,7 @@ class CanWear(Component):
 			for w_key, w_value in kwargs.items():
 				
 				# Translate the value (Wearable) to Entity instance if necessary
-				wearable_entity = engine._entity_map.get(w_value) if isinstance(w_value, str) else w_value
+				wearable_entity = engine.alias_to_entity.get(w_value) if isinstance(w_value, str) else w_value
 
 				# If it is possible to wear the entity (known bodypart and empty slot for wearable) then wear it
 				if w_key in CanWear.BODYPARTS and not self.wearables.get(w_key):

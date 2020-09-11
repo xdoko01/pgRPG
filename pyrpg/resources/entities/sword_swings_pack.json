@@ -1,0 +1,17 @@
+{
+	"id" : "sword_swings_pack",
+	"templates" : ["ammo_pack"],
+	"components" : [
+		{
+			"type" : "Factory", 
+			"params" : {
+				"prescription" : {
+					"templates" : ["sword_swing"],
+					"components" : [
+						{"type" : "Debug", "params" : {}}
+					]
+				} 
+			}
+		}
+	]
+}

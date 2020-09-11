@@ -1,4 +1,11 @@
 {
+	"messages" : {
+		"on_events" : {
+			"ITEM_PICKUP" : ["FROM JSON: {} was picked up by entity {}", ["generator_obj", "other_obj"]]
+		},
+		"default_ttl" : 10000
+	},
+
 	"keys" : {
 		"key_controls_1" : {
 			"up" : "K_u",
