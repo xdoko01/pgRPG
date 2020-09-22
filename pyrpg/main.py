@@ -1,53 +1,93 @@
-''' Main module
+''' pyrpg/pyrpg/main.py
+
+    Called from:
+    -> pyrpg/pyrpg.py
+
+    Aim:
+    -> Implements the main game loop - switching between game and the menus
+
+    Usage:
+    -> Implements the main game loop - switching between game and the menus
+
+    Notes:
+    -> Contains `main.game_mode` variable that holds state of the game
+    -> Contains `main.console` variable that holds reference to console
+
+    Examples:
 '''
 
-# Initiates pygame window and clock
-# Initiate fonts
+# Initiates pygame window
+# Initiates pygame clock
 import pyrpg.core.engine
 
-# Initiate keys
-import pyrpg.core.config.keys as keys
-
-# Initiate console
+# Initiates console
 import pyrpg.core.config.console
 
 
+# Initiate keys used for the console toggle anywhere in the game
+from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
 
+# It is needed to import pygame in order to have access to key events in the main game loop
 import pygame
 
 from pyrpg.core.config.config import DISPLAY, DEBUG
 
 # Definition of game states
-GAME_MODES = ['MAIN_MENU', 'GAME']
+GAME_STATE = ['MAIN_MENU', 'GAME']
 
-global game_mode
+global _game_state
+global _prev_game_state # Introduced to remember from which game status I come to Console
 global console
+global show_cons_on_sys_msg
 
-console = pyrpg.core.config.console.game_console
+def init(state='MAIN_MENU', cons_enabled=True):
 
 
-def main():
-    ''' Starts the game in the MAIN MENU
+    ##################
+    # Init the console
+    ##################
+    global console
+    global show_cons_on_sys_msg # remember if system messages should force displaying of the console
 
-        game_mode = 'MAIN_MENU'
-        run()
-    '''
+    show_cons_on_sys_msg = cons_enabled
 
-    global game_mode
+    console = pyrpg.core.config.console.game_console
 
+    # Enable console for startup messages
+    console.toggle(enable=show_cons_on_sys_msg)
+
+    # Send reference to console text display function to engine
+    pyrpg.core.engine.init_console_fnc(update_console)
+
+
+    ##################
     # Init the game
+    ##################
+
+    # Init world and put the messages to the console
     pyrpg.core.engine.init_world()
 
-    # Start game in the GAME MODE
-    game_mode = 'GAME'
+    #####################################
+    # Start game in the given GAME STATE
+    #####################################
+
+    global _game_state
+    _game_state = state
     pyrpg.core.engine.new_game()
+
+    ##################
+    # Hide the console
+    ##################
+
+    # Enable console for startup messages
+    console.toggle(enable=False)
 
     # run the main loop
     run()
 
 def run():
 
-    global game_mode
+    global _game_state
     global console
 
     console_enabled = False
@@ -67,19 +107,30 @@ def run():
                 end()
                 break
             elif event.type == pygame.KEYUP:
-                if event.key == keys.K_CONSOLE_TOGGLE:
+                if event.key == K_CONSOLE_TOGGLE and console:
                     console.toggle()
                     console_enabled = not console_enabled
+                    if console_enabled: 
+                        pyrpg.core.engine.save_screen_copy() # Store the game screen
+                        _prev_game_state = _game_state
+                        _game_state = 'CONSOLE'
+                    else:
+                        _game_state = _prev_game_state
+                        _prev_game_state = 'CONSOLE'
 
 
-        if game_mode == 'GAME':
-            game_mode = pyrpg.core.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
+        if _game_state == 'GAME':
+            _game_state = pyrpg.core.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
 
-        elif game_mode == 'PAUSE_GAME':
-            game_mode = pause_game(key_events=key_events, key_pressed=key_pressed, dt=dt)
+        elif _game_state == 'PAUSE_GAME':
+            _game_state = pyrpg.core.engine.pause_game(key_events=key_events, key_pressed=key_pressed, dt=dt)
 
-        elif game_mode == 'MAIN_MENU':
-            game_mode = main_menu(key_events=key_events, key_pressed=key_pressed, dt=dt)
+        elif _game_state == 'MAIN_MENU':
+            _game_state = main_menu(key_events=key_events, key_pressed=key_pressed, dt=dt)
+
+        elif _game_state == 'CONSOLE':
+            _game_state = pyrpg.core.engine.show_console(key_events=key_events, key_pressed=key_pressed, dt=dt)
+
 
         # Read and process events related to the console in case console is enabled
         console.update(key_events)
@@ -95,19 +146,25 @@ def run():
         pygame.display.set_caption('FPS: ' + str(int(pyrpg.core.engine.clock.get_fps())))
 
 
-def pause_game(key_events, key_pressed, dt):
+def update_console(text):
+    ''' Function is used to generate messages on the console
+    during startup of the game. Reference to this function is
+    passed as an argument in init functions and those functions
+    are then adding messages to the console.
 
-    # Here you can draw pause window
-    pyrpg.core.engine.pause_game()
+    In order to supress console animation, `disable_anim` parameter
+    is used - it overrides default settings of the console.
+    '''
 
-    for event in key_events:
-        if event.type == pygame.QUIT:
-            return 'QUIT_GAME'
-        elif event.type == pygame.KEYDOWN:
-            if event.key == keys.K_PAUSE_GAME:
-                return 'GAME'
+    global console
+    global show_cons_on_sys_msg # remember if system messages should force displaying of the console
 
-    return 'PAUSE_GAME'
+    console.write(text)
+    
+    if show_cons_on_sys_msg:
+        console.show(pyrpg.core.engine.window, disable_anim=True)
+        pygame.display.flip()
+
 
 def main_menu(key_events, key_pressed, dt):
     print('In MAIN MENU')
@@ -115,5 +172,3 @@ def main_menu(key_events, key_pressed, dt):
 
 def end():
     pyrpg.core.engine.quit()
-
-main()

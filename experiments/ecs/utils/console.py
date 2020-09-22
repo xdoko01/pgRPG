@@ -1264,7 +1264,7 @@ class Console(pygame.Surface):
 			# Update the footer - in order to update the dynamic values shown in the footer
 			if self.console_footer: self.console_footer.update()
 
-	def show(self, surf, pos=None):
+	def show(self, surf, pos=None, disable_anim=None):
 		''' Manages bliting of console (background, textoutput, textinput)
 		to the given surf surface and on given pos position. Also manages displaying
 		of proper animation, if enabled by configuration.
@@ -1279,7 +1279,7 @@ class Console(pygame.Surface):
 		#####		
 
 		# No animation required - no delta from original position. Console is either fully shown or fully hidden.
-		if not self.animation:
+		if not self.animation or disable_anim:
 			
 			# In no position is entered go for upper left corner
 			pos = (0,0) if not pos else pos
@@ -1414,12 +1414,12 @@ class Console(pygame.Surface):
 		# Without calling prepare_surface the text will not be shown immediatelly
 		self.console_output.prepare_surface()
 
-	def toggle(self):
+	def toggle(self, enable=None):
 		''' Toggle on/off the console. Influences if updade and show console functions are 
 		working.
 		'''
 		# Toggle on/off the console
-		self.enabled = not self.enabled
+		self.enabled = not self.enabled if enable is None else enable
 
 		# Remember toggle time for smooth animation purposes
 		if self.animation: self.anim_last_time = pygame.time.get_ticks()

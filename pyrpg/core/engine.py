@@ -70,6 +70,12 @@ global message_queue
 global alias_to_entity
 global entity_to_alias # mapping of entity id to alias id - for displaying of in-game messages
 
+global cons_update_fnc # remember the function that is bliting text to the console
+
+global screen_copy # make copy of the window - used for pause game
+
+cons_update_fnc = lambda x: None # console update function is empty function by default
+
 message_queue = []
 command_queue = []
 event_queue = []
@@ -88,14 +94,39 @@ entity_to_alias = {}
 ### Module Functions - Module Init Functions
 ########################################################
 
+def show_console(key_events, key_pressed, dt):
+    global window
+    global screen_copy
+
+    window.blit(screen_copy, (0, 0))
+
+    return 'CONSOLE'
+
+def save_screen_copy():
+    # Make copy of the window content
+    global screen_copy
+    global window
+    screen_copy = window.copy()
+    print(f'Screen has been copied')
+
+def init_console_fnc(cns_fnc):
+    ''' Assign the function that prints and displays messages onto
+    the console.
+    '''
+    global cons_update_fnc
+
+    cons_update_fnc = cns_fnc if cns_fnc is not None else (lambda x: None)
+
 def init_world():
     ''' Prepare ECS instances for the game
     '''
 
     global world
 
+    cons_update_fnc('engine->init_world. World initiation started.')
     world = esper.World(timed=False)
     create_processors(world)
+    cons_update_fnc('engine->init_world. World initiation finished.')
 
 ########################################################
 ### Module Functions - Game commands handler
@@ -362,17 +393,26 @@ def create_processors(world):
 
     ### First lets read input from player or/and AI. The resulting commands are stored in cmd_stream
     world.add_processor(input_processor)
+    cons_update_fnc('InputProcessor initiated.')
+    
     world.add_processor(brain_processor)
+    cons_update_fnc('BrainProcessor initiated.')
 
     ### Process all the commands from the command stream
     world.add_processor(command_processor)
+    cons_update_fnc('CommandProcessor initiated.')
 
     ### Move the entities based on their movement vector
     world.add_processor(linear_movement_processor)  # update entities that are moving at constant speed (projectiles/arrows)
+    cons_update_fnc('LinearMovementProcessor initiated.')
+
     world.add_processor(movement_processor)
+    cons_update_fnc('MovementProcessor initiated.')
 
     ### Generate projectiles GenerateProjectileProcessor
     world.add_processor(generate_projectiles_processor)
+    cons_update_fnc('GenerateProjectilesProcessor initiated.')
+
 
     ### Process all collisions and produce events where necessary
     world.add_processor(collision_map_processor)	# Resolves all the collisions on the map - correct movements and nothing more
@@ -489,6 +529,7 @@ def new_game():
 
     sample_quest = quest.load_quest('test_quest', event_queue)
     quests.update({'test_quest' : sample_quest})
+    cons_update_fnc('engine->new_game. Game Loaded.')
 
 def load_game():
     ''' Load game state 
@@ -656,9 +697,29 @@ def save_game():
 
     return 0
 
-def pause_game():
+def pause_game(key_events, key_pressed, dt):
+
     global window
-    pygame.draw.rect(window, (128, 128, 128, 0), pygame.Rect(100, 100, 200, 100))
+    global screen_copy
+
+    # Paste window copy
+    window.blit(screen_copy, (0, 0))
+
+    # Paste pause dialog - transparent
+    pause = pygame.Surface((200,100))
+    pause.fill((128,128,128))
+    pause.set_alpha(128)
+    window.blit(pause, (100, 100))
+
+
+    for event in key_events:
+        if event.type == pygame.QUIT:
+            return 'QUIT_GAME'
+        elif event.type == pygame.KEYDOWN:
+            if event.key == keys.K_PAUSE_GAME:
+                return 'GAME'
+
+    return 'PAUSE_GAME'
 
 
 ########################################################
@@ -737,6 +798,8 @@ def run(key_events, key_pressed, dt, debug):
                 return 'LOAD_GAME' # load_game()
             elif event.key == keys.K_PAUSE_GAME:
                 print(f'Pausing game')
+                # Do copy of the game window
+                save_screen_copy()
                 return 'PAUSE_GAME' # load_game()
 
 

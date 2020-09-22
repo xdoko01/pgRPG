@@ -1,17 +1,15 @@
-''' Main module
+''' Main module 
 '''
 
-# Initiates pygame window and clock
-# Initiate fonts
+# Init clock and pygame
 import core.engine
 
-# Initiate keys
-import core.config.keys as keys
-
-# Initiate console
+# Init console
 import core.config.console 
 
 
+# Initiate keys
+import core.config.keys as keys
 
 import pygame
 
@@ -23,29 +21,40 @@ GAME_MODES = ['MAIN_MENU', 'GAME']
 global game_mode
 global console
 
-console = core.config.console.game_console
-
-
 def main():
-    ''' Starts the game in the MAIN MENU
 
-        game_mode = 'MAIN_MENU'
-        run()
-    '''
+    ######################
+    # Init Window
+    ######################
 
-    global game_mode
+    ######################
+    # Init Console
+    ######################
+    global console
+    console = core.config.console.game_console
+
+    # Force displaying console for game init messages
+    console.toggle(enable=True)
+
+    ######################
+    # Init Game
+    ######################
 
     # Init the game
-    core.engine.init_world()
+    core.engine.init_world(update_console) # passing console update function so that can write some info to the console
 
-    # Start game in the GAME MODE
+    ######################
+    # Start game in the desired game mode
+    ######################
+    global game_mode
     game_mode = 'GAME'
-    core.engine.new_game()
+
+    core.engine.new_game(update_console)
 
     # run the main loop
-    run()
+    run(update_console)
 
-def run():
+def run(cns_fnc):
 
     global game_mode
     global console
@@ -94,6 +103,22 @@ def run():
         # Display FPS in window title
         pygame.display.set_caption('FPS: ' + str(int(core.engine.clock.get_fps())))
 
+
+def update_console(text):
+    ''' Function is used to generate messages on the console
+    during startup of the game. Reference to this function is
+    passed as an argument in init functions and those functions
+    are then adding messages to the console.
+
+    In order to supress console animation, `disable_anim` parameter
+    is used - it overrides default settings of the console.
+    '''
+
+    global console
+
+    console.write(text)
+    console.show(pyrpg.core.engine.window, disable_anim=True)
+    pygame.display.flip()
 
 def pause_game(key_events, key_pressed, dt):
 

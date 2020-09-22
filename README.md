@@ -233,8 +233,21 @@
     - by script function - i.e. function `core.scripts.add_msg` - this can be used when generating message as an quest event handler action
     - by command function - i.e. function `core.commands.add_msg` - this can be used from brain component
 
+### Console configured to be available anytime, not only in game, and to display system messages
+  - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pyrpg.main.init` function called `cons_enabled`. Value of this parameter is stored as `pyrpg.main.show_cons_on_sys_msg` variable for further use.
+  - Console can be toggled from every game state by pressing `K_CONSOLE_TOGGLE` button.
+  - Functions that are serving the console are executed in every game cycle for every game state. By doing so, we can achieve rolling-out effect even if the game state has no longer value `CONSOLE`.
+  - In order to always keep the console transparent, a copy of a screen is taken once console is enabled, and blitted before the console. For capturing the game screen, new function has been introduced in `pyrpg.core.engine` module called `save_screen_copy()`. The function stores the copy of the screen in `pygame.core.engine.screen_copy` variable.
+  - In order to disable any functional keys for controlling the game/menus when the console is enabled, new game state `CONSOLE` has been introduced. While being in this game state, only console is consuming all the inputs.
+  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.main.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden.
 
 ## To Do
+
+### Module for displaying and processing of the MENUS - main menu
+
+### Check validity of the game states in the MAIN module
+
+### YES / NO decision during conversation??? How this can be achieved.
 
 ### Maybe engine.py divide into world.py and engine.py. In world.py there is all the load save create run. In engine.py all the queues and related functions
   - first rename the global variables properly
@@ -378,8 +391,6 @@
     - component controllable will have key_scheme = 'player1' - it will load keys from the config
 
 ### dt as parameter for console.show?
-
-### Stop the game while console is displayed - to avoid keys to be used both in console and in the game - parameter in Config.
 
 ### Update console library so that it has the paths encapsulated in str() to support libpath + if function is not defined the text on console should scroll the error
 
@@ -538,10 +549,6 @@
 ### Fix save and load, probably some processors have problem
 
 ### Fix problem - not changing position when face command is executed
-
-### rename _entity_map to entity_map or mapping, it is global so it should not start by _
-
-### *Show* text command to have time parameter but also to disapear when space is pressed (or action key)
 
 
 ## Performance fine-tuning questions

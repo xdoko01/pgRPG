@@ -1,4 +1,4 @@
-''' core.engine module  
+''' core.engine module
 '''
 ########################################################
 ########################################################
@@ -25,7 +25,7 @@ global clock
 
 pygame.init()
 
-from core.config.config import DISPLAY
+from pyrpg.core.config.config import DISPLAY
 
 window = pygame.display.set_mode(
                 DISPLAY['resolution'],
@@ -39,23 +39,23 @@ clock = pygame.time.Clock()
 ### Module Import Init - Import game packages and modules
 ########################################################
 
-#import core.config.fonts # Initiate fonts for the game - is this really necessary
+import pyrpg.core.config.fonts # Initiate fonts for the game
 
-import core.config.keys as keys # For K_SAVE_GAME, K_LOAD_GAME, K_PAUSE_GAME (game.py)
+import pyrpg.core.config.keys as keys
 
-from core.config.paths import ENTITY_PATH, SAVE_PATH # for create entity and saving of the game (game.py)
+from pyrpg.core.config.paths import ENTITY_PATH, SAVE_PATH
 
-import core.ecs.esper as esper # for creating world and deleting entities (game.py)
-import core.ecs.components as components # for creating an entity (game.py)
-import core.ecs.processors as processors # for creating processors (game.py)
+import pyrpg.core.ecs.esper as esper
+import pyrpg.core.ecs.components as components
+import pyrpg.core.ecs.processors as processors
 
-import core.commands as commands # for processing commands queue (engine.py)
+import pyrpg.core.commands as commands
 
-import core.maps.map as map # for create map and load game (game.py)
-import core.quests.quest as quest 
+import pyrpg.core.maps.map as map
+import pyrpg.core.quests.quest as quest
 
-from core.config.config import MESSAGES # to decide if message should be generater on event (engine.py)
-import core.messages.messages as messages # Fore in-game messages (engine.py)
+from pyrpg.core.config.config import MESSAGES # to decide if message should be generater on event
+import pyrpg.core.messages.messages as messages # Fore in-game messages
 
 ########################################################
 ### Module Import Init - Init global variables
@@ -88,7 +88,7 @@ entity_to_alias = {}
 ### Module Functions - Module Init Functions
 ########################################################
 
-def init_world(cns_fnc):
+def init_world():
     ''' Prepare ECS instances for the game
     '''
 
@@ -483,7 +483,7 @@ def delete_entity(entity_name):
 ### Module Functions - Save and load game
 ########################################################
 
-def new_game(cns_fnc):
+def new_game():
     global quests
     global event_queue
 
@@ -656,9 +656,19 @@ def save_game():
 
     return 0
 
-def pause_game():
+def pause_game(key_events, key_pressed, dt):
+
     global window
     pygame.draw.rect(window, (128, 128, 128, 0), pygame.Rect(100, 100, 200, 100))
+
+    for event in key_events:
+        if event.type == pygame.QUIT:
+            return 'QUIT_GAME'
+        elif event.type == pygame.KEYDOWN:
+            if event.key == keys.K_PAUSE_GAME:
+                return 'GAME'
+
+    return 'PAUSE_GAME'
 
 
 ########################################################

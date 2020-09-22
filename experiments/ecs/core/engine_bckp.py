@@ -1,4 +1,4 @@
-''' core.engine module  
+''' core.engine module 
 '''
 ########################################################
 ########################################################
@@ -52,7 +52,7 @@ import core.ecs.processors as processors # for creating processors (game.py)
 import core.commands as commands # for processing commands queue (engine.py)
 
 import core.maps.map as map # for create map and load game (game.py)
-import core.quests.quest as quest 
+import core.quests.quest as quest (game.py)
 
 from core.config.config import MESSAGES # to decide if message should be generater on event (engine.py)
 import core.messages.messages as messages # Fore in-game messages (engine.py)
@@ -88,7 +88,7 @@ entity_to_alias = {}
 ### Module Functions - Module Init Functions
 ########################################################
 
-def init_world(cns_fnc):
+def init_world():
     ''' Prepare ECS instances for the game
     '''
 
@@ -483,7 +483,7 @@ def delete_entity(entity_name):
 ### Module Functions - Save and load game
 ########################################################
 
-def new_game(cns_fnc):
+def new_game():
     global quests
     global event_queue
 
