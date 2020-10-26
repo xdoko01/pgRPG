@@ -216,11 +216,10 @@
   - To make the functionality easier to use, there have been created *key control json definition entities* as a part of entity hierarchy (key_controls.json, ...). If we want to define new game entity that should be controllable by keys defined in key_controls_1 it is enough to say that this entity inherits from template `key_controls_1`. By doing so, `Controllable` component referencing `key_controls_1` config keys will be added to such entity.
 
 ### Game windows that can be shown as actions for quest or quest phase start (stopping any other action from happening)
-
   - New events *QUEST_START* and *PHASE_START* were created. Those events are automatically added to the event queue on every quest init and phase init (hardcoded).
   - Quest definition json contains even handler that handles *QUEST_START* and *PHASE_START* events. 
   - In the *condition* of the even handler there is definition of phase that we want to have linked with displaying of the game window, i.e. `"conditions" : {"script" : "self.phase_id == 'phase01'"}`
-  - In the *action* of the event handler there is `show_text` script being called. The `show_text` script function uses `engine.world` processors to draw the game map and draws the text on the window. While `show_text` is executed, the rest of the game is frozen.
+  - In the *action* of the event handler there is `show_dlg_window` script being called. The `show_dlg_window` script function uses `utils.dialog` to draw window on the screen. While `show_dlg_window` is executed, the rest of the game is frozen.
 
 ### Showing the messages during the game (not stopping the game)- things like 'item picked', 'NPC died', 'new phase changed'
   - New global variable `engine.message_queue` stores message objects to be displayed (or any other action)
@@ -239,15 +238,82 @@
   - Functions that are serving the console are executed in every game cycle for every game state. By doing so, we can achieve rolling-out effect even if the game state has no longer value `CONSOLE`.
   - In order to always keep the console transparent, a copy of a screen is taken once console is enabled, and blitted before the console. For capturing the game screen, new function has been introduced in `pyrpg.core.engine` module called `save_screen_copy()`. The function stores the copy of the screen in `pygame.core.engine.screen_copy` variable.
   - In order to disable any functional keys for controlling the game/menus when the console is enabled, new game state `CONSOLE` has been introduced. While being in this game state, only console is consuming all the inputs.
-  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.main.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden.
+  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.main.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
+
+### New functionality for displaying in-game windows
 
 ## To Do
+
+### Rework event queue - ignore some events, not address event_queue directly but via function, log event creation and processing in a file
+  - event queue must remain as a list in order to be processed from oldest to newest events - causality in game must be kept
+  - if event queue is processed as dictionary, I would loose the information about which event was generated first and which second etc. So list is good option
+  - still it is useful to have processor that processes only selected event types and ignore the other types
+
+  - some processors are created with event_queue as a parameter - this is not probably right, better to pass some function engine.add_to_event_queue(event) that will manage everything necessary for adding (can have feature to add with priority etc.)
+
+### Clear dialog code amd sum up the functionality in text above
+
+### when there is dialog displayed it is not possible to show the console
+
+### processing of event is happening before the world is drawn on the display - parametrize procesor for event processing to have specific list of events to process 
+  - simply postponing the processing of PHASE START after render processors will help because there will be already some objects displayed in the screen buffer and the command for displaying dialog will force screen update - or better taking the screen copy function of engine will force the update (based on parameter)
+  - by doing so - phase start and quest start events can be processed after some image is drawn on the screen and not before
+  - all_events_processor = processors.GameEventsProcessor(process_game_events) ... this will take all events
+  - quest_events_processor = processors.GameEventsProcessor(process_game_events, ['QUEST_START', 'PHASE_START']) ... this will take selected events only
+    - game_event_handler must have event_type on input
+
+    - must be done smartly - list of indexes cannot be parsed for deletion
+      - list of indices ... can be used for processing of events on given positions
+      - for deletion we need to create a copy of event queue [event for i, event in enumarate(event_queue) if i not in indices]
+
+### Command that will Pause the whole game or that will stop all entities including the main character - brain freeze + input freeze
+  - such command then added to script engine entity
+
+### Command that displays dialog and manages key presses
+
+
+
+### Rewrite `show_text` using dialogs as a json configuration
+  - dialog is specified in a form of json
+  - dialogs are part of quest json specification
+  - upon start of the phase, dialogs for given phase are loaded and stored in engine dictionary - dialog_id : dialog data dict / instance of the object
+  ----
+  - during game dialogs are poped out as an action on some event by calling `show_dialog` script
+  - parameter of `show_dialog` is `dialog_id`
+  - `show_dialog` will call display_dlg(target=window, position, dlg_dictionary, keys_and_events)
+  - this will display dlg and stopped the game until some key is pressed - the key for continue will be part of dialog specification.
+  ----
+  - upgrade - dialog to read key input and return some value that can be used to further change the flow of the game
+  - example, accepting the new quest by some selection done in the dialog
+  ----
+  - dialog as a class? vs
+  - dialog as a dictionary that has stored the surfaces
+  - top-down approach
+    - function display_dlg(target, position, dictionary)
+
+    - script `show_dialog` - parameter dialog_id that is saved during loading of the quest into the new engine global table. Similarly, for `modify_brain` action `entity_id` is used.
+    - 
+  - dialog is configured as a part of the quest
+  - create dialog function that will create dialog from the hierarchy and templates ...???
+    - must know about FONT PATH and IMG PATH ...
+
+
+### Loging of all events happening in the world
+
+### All resources have description about the json structure.
+  - Dialogs - DONE
+  - Quests
+  - Fonts
+  - Frames
 
 ### Module for displaying and processing of the MENUS - main menu
 
 ### Check validity of the game states in the MAIN module
 
 ### YES / NO decision during conversation??? How this can be achieved.
+
+### IMPROVEMENT: rework events processing - event_queue as dict not as list?
+  -- does ECS support multiple instances of the same processor? YES
 
 ### Maybe engine.py divide into world.py and engine.py. In world.py there is all the load save create run. In engine.py all the queues and related functions
   - first rename the global variables properly

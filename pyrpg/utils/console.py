@@ -1411,7 +1411,7 @@ class Console(pygame.Surface):
 	def write(self, text, color=None):
 		''' Put some text onto a console by calling this function
 		'''
-		self.console_output.write(text, color)
+		self.console_output.write(str(text), color)
 
 		# Without calling prepare_surface the text will not be shown immediatelly
 		self.console_output.prepare_surface()

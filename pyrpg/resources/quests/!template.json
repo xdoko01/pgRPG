@@ -16,6 +16,21 @@
 				"entities" : ["list of entities", "that are no longer needed"]
 			},
 
+			"dialogs" : [
+				{
+					"id" : "welcome_dlg",
+					"data" : {
+						"frames" : [
+							{
+								"dimensions" : [100, 100],
+								"background_color" : "#FFFFFF",
+								"background_alpha" : 128
+							}
+						]
+					}
+				}
+			],
+
 			"entities" : [
 
 				{

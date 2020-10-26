@@ -43,7 +43,7 @@ import pyrpg.core.config.fonts # Initiate fonts for the game
 
 import pyrpg.core.config.keys as keys
 
-from pyrpg.core.config.paths import ENTITY_PATH, SAVE_PATH
+from pyrpg.core.config.paths import ENTITY_PATH, DIALOG_PATH, SAVE_PATH, IMAGE_PATH, FONT_PATH
 
 import pyrpg.core.ecs.esper as esper
 import pyrpg.core.ecs.components as components
@@ -57,6 +57,8 @@ import pyrpg.core.quests.quest as quest
 from pyrpg.core.config.config import MESSAGES # to decide if message should be generater on event
 import pyrpg.core.messages.messages as messages # Fore in-game messages
 
+import pyrpg.utils.dialog as dialog # for creation of dialogs
+
 ########################################################
 ### Module Import Init - Init global variables
 ########################################################
@@ -69,6 +71,7 @@ global command_queue
 global message_queue
 global alias_to_entity
 global entity_to_alias # mapping of entity id to alias id - for displaying of in-game messages
+global dialogs # stores all the dialogs that are necessary for the quest phase
 
 global cons_update_fnc # remember the function that is bliting text to the console
 
@@ -83,6 +86,7 @@ maps = {}
 alias_to_entity = {}
 quests = {}
 entity_to_alias = {}
+dialogs = {}
 
 ########################################################
 ########################################################
@@ -102,10 +106,17 @@ def show_console(key_events, key_pressed, dt):
 
     return 'CONSOLE'
 
-def save_screen_copy():
+def save_screen_copy(flip_before_copy=False):
+    ''' Parameter is used to force displaying everything on screen.
+    Was prepared due to PHASE start of the first quest that was processed
+    before anything was blitted on the screen
+    '''
     # Make copy of the window content
     global screen_copy
     global window
+
+    if flip_before_copy: pygame.display.update()
+    
     screen_copy = window.copy()
     print(f'Screen has been copied')
 
@@ -182,6 +193,49 @@ def process_game_commands(keys=None, events=None, debug=False):
 ### Module Functions - Game event handler
 ########################################################
 
+def process_game_events_ex(process=None, ignore=None):
+    ''' Process particular game/quest event types that are specified on the input.
+    '''
+
+    global quests
+    global message_queue
+    global event_queue
+
+    # This will be filled by the events that are outstanding for processing
+    new_event_queue = []
+
+    while event_queue:
+
+        # Pop out event from the beginning of the queue
+        event = event_queue.pop(0)
+
+        # If event is to be ignored move it to the new queue
+        if ignore is not None and event.event_type in ignore:
+          new_event_queue.append(event)
+
+        # If event is not in process list
+        elif process is not None and event.event_type not in process:
+          new_event_queue.append(event)
+
+        # Process the rest of the events
+        else:
+
+            # add information to the message queue if event returns a message
+            event_message = event.to_string()
+            message_queue.append(messages.Message(text=event_message)) if event_message else None
+
+            # Send every event to every quest for handling
+            for quest_name, quest_object in quests.items():
+
+                # Call event handler
+                quest_object.event_handler(event)
+
+    # Renew the value of the event queue - it must be done via extend. I cannot reassigned like
+    # event_queue = new_event_queue because other processors have stored link directly to original
+    # global event_queue
+    event_queue.extend(new_event_queue)
+
+
 def process_game_events():
     ''' Process game/quest events. It is called by GameEventProcessor
     '''
@@ -226,6 +280,69 @@ def process_game_messages():
 ########################################################
 ### Module Functions - Game world creator/destructor methods
 ########################################################
+
+def create_dialog(dlg_data):
+    ''' Create dialog from dictionary definition contained in dictionary
+    json_dlg_obj and stores it in global engine.dialogs dictionary
+
+     - dlg_data - original data from the quest
+     - new_dlg_data - data after taking into account all templates
+     - new_dlg_obj - dictionary with surface objects generated from the data
+    '''
+
+    global dialogs
+
+    def prepare_dlg_data_from_template(dlg_template):
+        ''' Returns dictionary based of json file with dialog 
+        template specification.
+        '''
+
+        # Add suffix to the template file
+        dlg_template = str(dlg_template) + '.json'
+
+        # Read the json file with dialog definition
+        try:
+            with open(DIALOG_PATH / dlg_template, 'r') as dlg_file:
+                json_dlg_data = dlg_file.read()
+                dlg_data = json.loads(json_dlg_data)
+        except FileNotFoundError:
+            print(f"Dialog file '{file}' not found.")
+            raise
+
+        # Final dlg data - empty at the start
+        final_dlg_data = {}
+
+        # Check if some template is used - first merge templates together - deeper and first go first
+        for template in dlg_data.get('templates', []):
+            
+            # Get the json definition of the template and merge it
+            final_dlg_data = { **prepare_dlg_data_from_template(template), **final_dlg_data }
+
+        final_dlg_data = { **final_dlg_data, **dlg_data }
+
+        return final_dlg_data
+
+    # Prepare new empty dictionary that will hold the dialog's data
+    new_dlg_data = {}
+
+    # Decode dialog's id (name) - mandatory
+    new_dlg_id = dlg_data.get('id')
+
+    # Create the final dictionary definition using existing templates
+    for template in dlg_data.get("templates", []):
+
+        # Get the json definition of the template and merge it
+        new_dlg_data = { **prepare_dlg_data_from_template(template), **new_dlg_data }
+
+    # Now the final dialog description is stored here
+    new_dlg_data = { **new_dlg_data, **dlg_data }
+    cons_update_fnc(new_dlg_data)
+
+    # Now there is time to make surfaces and register the data object
+    new_dlg_obj = dialog.prepare_dlg_obj_from_data(new_dlg_data, img_path=IMAGE_PATH, font_path=FONT_PATH)
+
+    # Store the dialog
+    dialogs.update({new_dlg_id : new_dlg_obj})
 
 def _create_entity(json_ent_obj, register=True, child_ref=None):
     ''' Create entity from json definition. See Quest for definitions
@@ -376,7 +493,12 @@ def create_processors(world):
     update_camera_offset_processor = processors.UpdateCameraOffsetProcessor(maps=maps)
 
     # Game events processor - triggers actions based on previously generated events
-    game_events_processor = processors.GameEventsProcessor(process_game_events)
+    #game_events_processor = processors.GameEventsProcessor(process_game_events)
+    #game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'COLLISION', 'TELEPORTATION', 'ITEM_PICKUP', 'WEARABLE_WEARED', 'WEAPON_ARMED', 'DAMAGE', 'KILL')
+    #game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'COLLISION')
+    #quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'PHASE_START')
+    game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, ignore=('PHASE_START','QUEST_START'))
+    quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, process=('PHASE_START','QUEST_START'))
 
     # Command processor - processes all commands from the command queue
     command_processor = processors.CommandProcessor(process_game_commands)
@@ -469,12 +591,22 @@ def create_processors(world):
     # Render game messages on the screen
     world.add_processor(game_messages_processor)
 
+
+    ##################################
+    ### Process the quest related events
+    ##################################
+
+    ### Process phase and quest start here - when I want to show dialog on start of the first quest there is no background game picture
+    # that is why I need to put it here after rendering has happened above in procesors.
+    world.add_processor(quest_events_processor)
+
     ##################################
     ### Clearing processors
     ##################################
 
     # Delete entities with Temporary component from the world
     world.add_processor(clear_temporary_entity_processor)
+
 
 def create_map(map_name):
     ''' Register and create new map if not already created
@@ -509,15 +641,33 @@ def delete_entity(entity_name):
 
     global world
     global alias_to_entity
+    global entity_to_alias
+
+    # Get entity number
+    entity = alias_to_entity.get(entity_name, None)
 
     # If entity is registered, delete it
-    if alias_to_entity.get(entity_name, None):
+    if entity is not None:
 
         # Delete it from Esper world
-        world.delete_entity(alias_to_entity.get(entity_name))
+        world.delete_entity(entity)
         
         # Un-register the entity
         del alias_to_entity[entity_name]
+        del entity_to_alias[entity]
+
+def delete_dialog(dialog_name):
+    ''' Delete and unregister dialog object
+    '''
+
+    global dialogs
+
+    # Get dialog object based on its name
+    dialog = dialogs.get(dialog_name, None)
+
+    # If dialog exists, delete it
+    if dialog is not None:
+        del dialogs[dialog_name]
 
 ########################################################
 ### Module Functions - Save and load game

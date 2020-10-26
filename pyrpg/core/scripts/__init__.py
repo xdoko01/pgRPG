@@ -14,7 +14,7 @@ from .modify_brain import *
 from .exec_python_code import *
 from .disable_teleport import *
 from .shake_screen import *
-from .show_text import *
+from .show_dlg_window import *
 from .condition_always_true import *
 from .condition_example import *
 from .add_msg import *
@@ -28,7 +28,7 @@ __all__ = [
     'script_exec_python_code',
     'script_disable_teleport',
     'script_shake_screen',
-    'script_show_text',
+    'script_show_dlg_window',
     'script_add_msg',
 
     # Condition scripts
@@ -44,7 +44,8 @@ SCRIPT_DICT = {
     'execute_script' : script_exec_python_code,
     'disable_teleport' : script_disable_teleport,
     'shake_screen' : script_shake_screen,
-    'show_text' : script_show_text,
+    'show_dlg_window' : script_show_dlg_window,
+
     'add_msg' : script_add_msg,
 
     # Conditions

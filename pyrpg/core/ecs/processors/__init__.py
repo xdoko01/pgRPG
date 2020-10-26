@@ -73,6 +73,7 @@ __all__ = [
 	'CollisionDeletionProcessor',
 	'BrainProcessor',
 	'GameEventsProcessor',
+	'GameEventsExProcessor',
 	'CommandProcessor',
 	'RenderModelWorldProcessor',
 	'GameMessagesProcessor',

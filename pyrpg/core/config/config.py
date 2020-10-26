@@ -104,15 +104,16 @@ DISPLAY = {
 }
 
 PATHS = {
-    "font_path" : "experiments/ecs/resources/fonts/",
-    "frame_path" : "experiments/ecs/resources/frames/",
-    "model_path" : "experiments/ecs/resources/models/",
-    "image_path" : "experiments/ecs/resources/images/",
-    "quest_path" : "experiments/ecs/resources/quests/",
-    "entity_path" : "experiments/ecs/resources/entities/",
-    "map_path" : "experiments/ecs/resources/maps/",
-    "log_path" : "experiments/ecs/logs/",
-    "save_path" : "experiments/ecs/save/"
+    "font_path" : "pyrpg/resources/fonts/",
+    "frame_path" : "pyrpg/resources/frames/",
+    "dialog_path" : "pyrpg/resources/dialogs/",
+    "model_path" : "pyrpg/resources/models/",
+    "image_path" : "pyrpg/resources/images/",
+    "quest_path" : "pyrpg/resources/quests/",
+    "entity_path" : "pyrpg/resources/entities/",
+    "map_path" : "pyrpg/resources/maps/",
+    "log_path" : "pyrpg/logs/",
+    "save_path" : "pyrpg/save/"
 }
 
 CONSOLE = {

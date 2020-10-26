@@ -6,15 +6,47 @@
 	"init_phase" : "phase01",
 
 	"phases" : {			
-		"phase01" :{
+		"phase01" : {
 			"name" : "Meeting the merchant",
 			"objective" : "Speak to the merchant and get the key to the cellar",
 			"maps" : ["test_map"],
 			
 			"cleanup" : {
 				"maps" : [],
-				"entities" : []
+				"entities" : [],
+				"dialogs" : []
 			},
+
+			"dialogs" : [
+				{
+					"id" : "dlg_quest_start",
+					"templates" : ["basic"],
+					"texts" : [
+						{
+							"text" : "Welcome to the new world\nPress ENTER to continue ...",
+							"position" : [5, 5]
+						}
+					],
+					"frames" : [
+						{
+							"texts" : [
+								{
+									"text" : "This is first frame with index 0",
+									"position" : [5, 65]
+								}
+							]
+						},
+						{
+							"texts" : [
+								{
+									"text" : "This is second frame with index 1",
+									"position" : [5, 65]
+								}
+							]
+						}
+					]
+				}
+			],
 
 			"entities" : [
 
@@ -205,14 +237,7 @@
 						},
 						"actions" : [
 							["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
-							["show_text", {
-								"texts" : [
-									"Once upon a time", 
-									"there was a lovely little sausage called Boldrick", 
-									"and he lived happily ever after"
-								]
-							}]
-
+							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [200,200], "frames" : [1] }]
 						]
 					}
 				],
@@ -224,6 +249,14 @@
 						},
 						"actions" : [
 							["add_msg", {"position" : [1, 1], "text" : "Phase has started - by adding msg", "ttl" : 10000 }]
+						]
+					},
+					{
+						"conditions" : {
+							"script" : "self.phase_id == 'phase02'"
+						},
+						"actions" : [
+							["show_dialog", {"dialog_id" : "phase_start_dlg"}]
 						]
 					}
 				],

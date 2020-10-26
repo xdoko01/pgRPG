@@ -223,11 +223,18 @@ class Quest:
 		for map_name_to_clean in maps_to_clean:
 			engine.delete_map(map_name_to_clean)
 
+		# Clean the dialogs that are no longer needed
+		dialogs_to_clean = phase_data.get("cleanup", {}).get("dialogs", [])
+
+		for dialog_name_to_clean in dialogs_to_clean:
+			engine.delete_dialog(dialog_name_to_clean)
+
+
 		#####
 		# LOAD PHASE
 		#####
 
-		# Maps
+		# Load Maps #####
 		self.maps = phase_data.get("maps", [])
 
 		# Create maps existing in the world
@@ -238,12 +245,23 @@ class Quest:
 			print(f'Problem with initiation of maps for quest (id-name-phase-map): {self.id} - {self.name} - {self.phase_id} - {map_name}')
 			raise ValueError
 
-		# Entities
+		# Load Dialogs #####
+		self.dialogs = phase_data.get("dialogs")
+
+		# Create dialogs necessery for the phase
+		try:
+			for dialog in self.dialogs:
+				engine.create_dialog(dialog)
+		except ValueError:
+			print(f'Problem with initiation of dialogs for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
+			raise ValueError
+
+		# Load Entities #####
 		self.entities = phase_data.get("entities")
 
 		# Create entities in the world
 		try:
-			for entity in self.entities: 
+			for entity in self.entities:
 				engine._create_entity(entity)
 		except ValueError:
 			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
@@ -254,7 +272,6 @@ class Quest:
 
 		# Report that phase was loaded - generate event
 		self.event_queue.append(event.Event('PHASE_START', self, None, params={'phase_id' : self.phase_id}))
-
 
 	def set_phase(self, phase_id):
 		''' Change the phase

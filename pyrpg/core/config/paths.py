@@ -3,6 +3,7 @@ from pathlib import Path
 
 FONT_PATH = Path(PATHS.get('font_path'))
 FRAME_PATH = Path(PATHS.get('frame_path'))
+DIALOG_PATH = Path(PATHS.get('dialog_path'))
 MODEL_PATH = Path(PATHS.get('model_path'))
 IMAGE_PATH = Path(PATHS.get('image_path'))
 QUEST_PATH = Path(PATHS.get('quest_path'))

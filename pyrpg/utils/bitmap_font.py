@@ -1,45 +1,44 @@
 ''' Module for handling bitmap fonts
 
-Bitmap font is defined by picture and json definition. Picture needs to be in
-non-data-loss format (png/bmp). All characters are on one row and are delimited
-by pixel on the first row that is in specified color (separator_color). The JSON
-definition of the font specifies information needed for font initiation and
-rendering, i.e.
+    Bitmap font is defined by picture and json definition. Picture needs to be in
+    non-data-loss format (png/bmp). All characters are on one row and are delimited
+    by pixel on the first row that is in specified color (separator_color). The JSON
+    definition of the font specifies information needed for font initiation and
+    rendering, i.e.
 
-    - font_image - Specifies path to the bitmap picture with the font
+        - font_image - Specifies path to the bitmap picture with the font
 
-    - font_color - Specifies the color of the font. It is used when the user
-        wants to change the color of the font (substitute font_color by other
-        color)
+        - font_color - Specifies the color of the font. It is used when the user
+            wants to change the color of the font (substitute font_color by other
+            color)
 
-    - colorkey - Specifies the background color of the font. It is needed for
-        keying-out the color in the font image.
+        - colorkey - Specifies the background color of the font. It is needed for
+            keying-out the color in the font image.
 
-    - separator_color - Specifies the color of the pixel that is used to separate
-        individual font characters in the font_image file.
+        - separator_color - Specifies the color of the pixel that is used to separate
+            individual font characters in the font_image file.
 
-    - character_order - Specifies list of characters in the same order that those
-        are present in the font_image file
+        - character_order - Specifies list of characters in the same order that those
+            are present in the font_image file
 
-    - spacing - Specifies space between text characters in pixels (horizontal/vertical)
+        - spacing - Specifies space between text characters in pixels (horizontal/vertical)
 
-Example of JSON font file is below:
+    Example of JSON font file is below:
 
-    {
-        "font_image" : "experiments/bitmap_font/red_gradient_capital_font.png",
-        "font_color" : "#FF0000",
-        "colorkey" : "#000000",
-        "separator_color" : "#7F7F7F",
-        "character_order" : ["Aa", "Bb", "Cc", "Dd", "Ee", "Ff", "Gg", "Hh", "Ii", "Jj", "Kk", "Ll", "Mm", "Nn", "Oo", "Pp", "Qq", "Rr", "Ss", "Tt", "Uu", "Vv", "Ww", "Xx", "Yy", "Zz", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!", "?", " "],
-        "spacing" : [1, 1]
-    }
+        {
+            "font_image" : "experiments/bitmap_font/red_gradient_capital_font.png",
+            "font_color" : "#FF0000",
+            "colorkey" : "#000000",
+            "separator_color" : "#7F7F7F",
+            "character_order" : ["Aa", "Bb", "Cc", "Dd", "Ee", "Ff", "Gg", "Hh", "Ii", "Jj", "Kk", "Ll", "Mm", "Nn", "Oo", "Pp", "Qq", "Rr", "Ss", "Tt", "Uu", "Vv", "Ww", "Xx", "Yy", "Zz", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!", "?", " "],
+            "spacing" : [1, 1]
+        }
 
-Notes:
-    - Character_order values can have several characters. In example below, value "Aa" means
-        that the first character image in font_image file will be assign to letter "A" and
-        also to letter "a". This is useful in case font is missing for example lower case
-        characters.
-
+    Notes:
+        - Character_order values can have several characters. In example below, value "Aa" means
+            that the first character image in font_image file will be assign to letter "A" and
+            also to letter "a". This is useful in case font is missing for example lower case
+            characters.
 '''
 
 __all__ = ['BitmapFont']

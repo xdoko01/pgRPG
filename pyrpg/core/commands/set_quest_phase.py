@@ -27,5 +27,7 @@ def cmd_set_quest_phase(*args, **kwargs):
         return 0
     
     except:
-        # Error occured
-        return -1
+        # Error occured during phase init
+
+        raise ValueError
+        #return -1
