@@ -673,13 +673,21 @@ def delete_dialog(dialog_name):
 ### Module Functions - Save and load game
 ########################################################
 
-def new_game():
+def new_game(quest_name):
+    ''' Loads definitions and objects from the defined quest
+    into the game world.
+
+    Parameters:
+        :param quest_name: Name of the quest with definitions (mapped to json file)
+        :type quest_name: str
+    '''
+
     global quests
     global event_queue
 
-    sample_quest = quest.load_quest('test_quest', event_queue)
-    quests.update({'test_quest' : sample_quest})
-    cons_update_fnc('engine->new_game. Game Loaded.')
+    new_quest = quest.load_quest(quest_name, event_queue)
+    quests.update({quest_name : new_quest})
+    cons_update_fnc(f'engine->new_game. Game definition contained in "{quest_name}" was loaded.')
 
 def load_game():
     ''' Load game state 
@@ -851,16 +859,12 @@ def pause_game(key_events, key_pressed, dt):
 
     global window
     global screen_copy
+    global dialogs
 
     # Paste window copy
     window.blit(screen_copy, (0, 0))
 
-    # Paste pause dialog - transparent
-    pause = pygame.Surface((200,100))
-    pause.fill((128,128,128))
-    pause.set_alpha(128)
-    window.blit(pause, (100, 100))
-
+    dialog.display_dlg(window, [100, 100], dialogs.get('dlg_pause'))
 
     for event in key_events:
         if event.type == pygame.QUIT:

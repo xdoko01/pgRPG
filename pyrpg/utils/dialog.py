@@ -100,6 +100,8 @@
     - display_dlg function will handle key presses and ttls to display the whole dialog workflow
     - idealy display_dlg should be able to return some value that is specified in json - and based on returned
       value to generate event or direct the flow of the brain algorithm.
+    - Add shadow to the window
+    - New templates for SUBMIT/OK dialog, YES/NO dialog, NEXT dialog
 '''
 
 import json
@@ -551,7 +553,7 @@ if __name__ == "__main__":
     pprint(dlg_data)
 
     # Convert the dialog data to dialog object containing surfaces and positions
-    dlg_obj = prepare_dlg_obj_from_data(dlg_data, img_path=Path('pyrpg/resources/images'), font_path=Path('pyrpg/resources/fonts'))
+    dlg_object = prepare_dlg_obj_from_data(dlg_data, img_path=Path('pyrpg/resources/images'), font_path=Path('pyrpg/resources/fonts'))
 
     pprint(dlg_obj)
 
@@ -559,7 +561,7 @@ if __name__ == "__main__":
     # DISPLAY DIALOG
     ##############
 
-    display_dlg(target=window, position=(100, 100), dlg_obj=dlg_obj, frame=None)
+    display_dlg(target=window, position=(100, 100), dlg_obj=dlg_object, frame=None)
 
     # Show the result
     pygame.display.update()

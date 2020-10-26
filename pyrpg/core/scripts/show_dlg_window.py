@@ -29,7 +29,6 @@ def script_show_dlg_window(event, *args, **kwargs):
     no_of_frames = dialog.get_no_of_frames(dlg_obj)
     dlg_frames = dlg_frames if dlg_frames else (list(range(no_of_frames)) if no_of_frames else [None])
 
-    print(dlg_obj)
 
     # Iterate and display dialog with all required frames
     for frame_id in dlg_frames:

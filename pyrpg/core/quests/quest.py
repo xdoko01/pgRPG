@@ -127,7 +127,10 @@ class Quest:
 
 				# Find the value for the key in the event.params and compare it with the value in the condition
 				# This value then AND with the value cond_param_result
-				cond_param_result = cond_param_result and (event.params.get(cond_param_key, None) == engine.alias_to_entity.get(cond_param_value))
+				# First, check if required value is contained in alias_to_entity global dictionary.
+				# If not found there, check against plain value - the reason for this is the fact that not all events are
+				# having entity as parameter. For example QUEST_START has quest id string as a value.
+				cond_param_result = cond_param_result and (event.params.get(cond_param_key, None) == engine.alias_to_entity.get(cond_param_value, cond_param_value))
 
 			#print(f'Cond_param_result: {cond_param_result}')
 
@@ -246,7 +249,7 @@ class Quest:
 			raise ValueError
 
 		# Load Dialogs #####
-		self.dialogs = phase_data.get("dialogs")
+		self.dialogs = phase_data.get("dialogs", [])
 
 		# Create dialogs necessery for the phase
 		try:
@@ -257,7 +260,7 @@ class Quest:
 			raise ValueError
 
 		# Load Entities #####
-		self.entities = phase_data.get("entities")
+		self.entities = phase_data.get("entities", [])
 
 		# Create entities in the world
 		try:
@@ -268,7 +271,7 @@ class Quest:
 			raise ValueError
 
 		# Event handlers
-		self.event_handlers = phase_data.get("event_handling")
+		self.event_handlers = phase_data.get("event_handling", {})
 
 		# Report that phase was loaded - generate event
 		self.event_queue.append(event.Event('PHASE_START', self, None, params={'phase_id' : self.phase_id}))

@@ -240,9 +240,30 @@
   - In order to disable any functional keys for controlling the game/menus when the console is enabled, new game state `CONSOLE` has been introduced. While being in this game state, only console is consuming all the inputs.
   - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.main.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
 
+### Init quest created that is always loaded before any other quest
+  - This quest is **always** loaded on the pyRPG start and contains game definitions that are common for the whole game - first example is definition of PAUSE dialog.
+  - There is still possibility that quests (game definitions) that are loaded later can overrule the *init* quest definitions by specifying its objects in *cleanup* section of the quest definition.
+
 ### New functionality for displaying in-game windows
+ - even pause window implemented as a dialog!
 
 ## To Do
+
+
+### Add shadow to the window
+
+
+### Create documentation to the event processing - how to define conditions on the events
+  - i have troubles catching quest id for the QUEST_START event
+  - rewrite conditions for event handling
+    - "params" currently check only alias for entity objects - example of example below - system search for `ent` and `col_event_entity` in `alias_to_entity` dictionary
+      - teleport_event = event.Event('TELEPORTATION', ent, col_event_entity, params={'teleport' : ent, 'teleportee' : col_event_entity})
+    - now I have QUEST_START that does not have entity integer as a parameter - instead it hase some elementary value - string
+      - self.event_queue.append(event.Event('QUEST_START', self, None, params={'quest_id' : self.id}))
+    *SOLUTION*
+      - event handler must first check alias_to_entity and next plain condition if key not found in alias_to_entity
+
+
 
 ### Rework event queue - ignore some events, not address event_queue directly but via function, log event creation and processing in a file
   - event queue must remain as a list in order to be processed from oldest to newest events - causality in game must be kept

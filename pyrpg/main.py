@@ -73,7 +73,13 @@ def init(state='MAIN_MENU', cons_enabled=True):
 
     global _game_state
     _game_state = state
-    pyrpg.core.engine.new_game()
+
+    # Load the definitions contained in the init quest
+    pyrpg.core.engine.new_game('init')
+
+    # Load the example test quest
+    # TODO - in the future this will be triggered from the menu
+    pyrpg.core.engine.new_game('test_quest')
 
     ##################
     # Hide the console

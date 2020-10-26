@@ -21,9 +21,12 @@
 				{
 					"id" : "dlg_quest_start",
 					"templates" : ["basic"],
+
+					"dimensions" : [500, 500],
+
 					"texts" : [
 						{
-							"text" : "Welcome to the new world\nPress ENTER to continue ...",
+							"text" : "New Quest - Kill the Rats",
 							"position" : [5, 5]
 						}
 					],
@@ -31,7 +34,7 @@
 						{
 							"texts" : [
 								{
-									"text" : "This is first frame with index 0",
+									"text" : "Once upon the time there was a merchant\nwho had problem with rats in his cellar.",
 									"position" : [5, 65]
 								}
 							]
@@ -39,7 +42,7 @@
 						{
 							"texts" : [
 								{
-									"text" : "This is second frame with index 1",
+									"text" : "Your objective is to kill all the rats in the cellar.",
 									"position" : [5, 65]
 								}
 							]
@@ -233,11 +236,13 @@
 				"QUEST_START" : [
 					{
 						"conditions" : {
-							"script" : "self.id == 'q01'"
+							"params" : {
+								"quest_id" : "q01"
+							}
 						},
 						"actions" : [
 							["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
-							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [200,200], "frames" : [1] }]
+							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [200,200]}]
 						]
 					}
 				],
