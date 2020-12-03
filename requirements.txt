@@ -4,7 +4,7 @@ pygame 1.9.6 # due to pygame.get_init()
 ---
 
 create custom logging handler that will feed the logs to a pygame surface or game Screen ... there are examples online - inherit logging.StreamHandler - emit function
-++
++++
 global command procesor - will have some list of commands - will be filled by the quest - command will have entity_id
 so on ENgine level I should be able to call processor.processCommand() - hence engine will need reference to processor
 Proessor will need to call something like this ... hence take somewhere reference - ... entity_id.move(1,1)
