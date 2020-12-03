@@ -293,7 +293,7 @@ def create_dialog(dlg_data):
     global dialogs
 
     def prepare_dlg_data_from_template(dlg_template):
-        ''' Returns dictionary based of json file with dialog 
+        ''' Returns dictionary based of json file with dialog
         template specification.
         '''
 

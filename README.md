@@ -249,9 +249,96 @@
 
 ## To Do
 
+### Allow comment in json using commentjson library ...
+
+### Proceed with rewriting dialogs to class with buttons
+
+### How to implement key actions to the dialog window - dialogs_v2
+  - in the script `show_dlg_window` - there would need to be loop for every frame
+   - read the keys 
+   - if pressed, do something -> CONTINUE  to the next frame, to previous frame
+   - if TAB is pressed next button is selected
+   - if K_SUBMIT button is pressed ... run the function associated
+  - DIALOG must have some elements - buttons
+
+    "buttons" : [
+      {
+        "position" : [100, 100],
+        "dimensions" : [50,20],
+        "label" : "OK"
+        "key" : [K_o, K_O]
+        "on_submit" : function
+      }
+    ],
+  - dialog is a class containing buttons as instances
+    - button has btn.onSubmit function - how this function is defined?
+
+  - **I would need to reimplement dialogs as class in order to implement buttons**
+     - simple quit game dialog as a start excersise
+     - dialog definition from json
+     - dialog __init__ reads the json and transforms the dictionary to instance od dialog
+      - dialog has array of button objects ordered list - moving using arrows and tab
+      - dialog remembers button that is selected
+      - button object has position, label, dimension, display function, ON_SUBMIT dunction
+        - ON_SUBMIT function can do following things
+          - close the dialog and nothing else (x to close the window)
+          - show some other dialog (are you sure yes/no) and wait for the return of that dialog
+          - create event in the event queue (can be defined in dialog definition)
+          - execute command (can be defined in dialog definition) - for example if accept deny the next quest
+          - execute script (can be defined in dialog definition)
+        - after execution of on_submit either close the dialog or proceed to the next frame or keep the dialog
+    
+    "id" : "dlg_quit",
+    "template" : ["dlg_yes_no"],
+    "buttons" : [
+      {
+        "position" : [100, 100],
+        "dimensions" : [50,20],
+        "label" : "OK"
+        "submit_key" : [K_o, K_O]
+        "post_submit" : "CLOSE_DIALOG" || "NEXT_FRAME || NOTHING (keep the dialog as it is)"
+        "on_submit" : [  
+
+          ////////////////////////////////////////////
+          // List of actions similar to event handling
+          ////////////////////////////////////////////
+
+          // Show yet another dialog window
+          ["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [200,200]}]
+
+          // Execute some other command
+          ["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
+
+          // Modify brain
+          ["modify_brain", {
+              "entity" : "script_engine", 	 
+              "commands" : [
+                  [null, "disable_talk", {"entity" : "player01"}], ...
+        }
+      }
+    ]
+
+    **How will be the whole dialog functionality handled??**
+    - show_dlg_window script? Preferable. There will be loop inside, so the whole game will be stopped during the dialogs. That is ok.
+
+    **What about PAUSE dialog**
+    - should be compatible with the old dialogs definition
+      - we will pop pouse dialog from the dialogs and just display it
+        - dialogs.get('pause_dlg').display()
+    
+    **Where to process the key pressed and actions**
+    - does script has keys that are pressed in the moment? Nope, only commands have keys.
+      - script_dlg_window
+       - blit copy of game screen
+       - dialog.update(k_up=K_NAV_UP, k_down=K_NAV_DOWN, k_submit=K_SUBMIT) ... here read the input and do action based on input if any - K_NAV_keys are defined in config. To keep dialog module reusable, pass the update keys here
+       - dialog.display()
+       - pygame.display.update()
+
+
+
+
 
 ### Add shadow to the window
-
 
 ### Create documentation to the event processing - how to define conditions on the events
   - i have troubles catching quest id for the QUEST_START event

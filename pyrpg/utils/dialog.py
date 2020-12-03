@@ -555,7 +555,7 @@ if __name__ == "__main__":
     # Convert the dialog data to dialog object containing surfaces and positions
     dlg_object = prepare_dlg_obj_from_data(dlg_data, img_path=Path('pyrpg/resources/images'), font_path=Path('pyrpg/resources/fonts'))
 
-    pprint(dlg_obj)
+    pprint(dlg_object)
 
     ##############
     # DISPLAY DIALOG

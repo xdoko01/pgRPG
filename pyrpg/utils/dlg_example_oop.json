@@ -1,0 +1,122 @@
+{
+	"id" : "dlg_example",
+	
+	"templates" : ["basic_dlg"],
+
+	"dimensions" : [400, 300],
+
+	"background" : {
+		"color" : "#990000",
+		"alpha" : 128,
+		"image" : {
+			"file" : "quake.png",
+			"alpha" : 128
+		}
+	},
+
+	"buttons" : [
+		{
+			"position" : [50, 50],
+			
+			"dimensions" : [100, 30],
+
+			"background" : {
+				"color" : "#990000",
+				"alpha" : 128,
+				"image" : {
+					"file" : "quake.png",
+					"alpha" : 128
+				}
+			},
+
+			"text" : {
+				"font" : {
+					"color" : "#FF0000"
+				},
+				"text" : "OK",
+				"align" : "CENTER"
+			}
+		}
+	],
+
+	"font" : {
+		"font_file" : "small_font.json",
+		"size" : 16,
+		"color" : "#FFFFFF"
+		},
+
+	"texts" : [
+		{
+			"font" : {
+				"color" : "#FF0000"
+			},
+			"text" : "Text on position [0,0],\ncentered, size 16,\nsmall font, color red",
+			"position" : [0, 0],
+			"align" : "CENTER"
+		},
+		{
+			"text" : "Text on position [0,20]\nright, size 16\nsmall font, color white",
+			"position" : [0, -20],
+			"align" : "RIGHT"
+		},
+		{
+			"text" : "Text on position [50,100]\nleft, size 16\ngood neighbours, color white",
+			"position" : [350, 100],
+			"font" : {
+				"font_file" : "good_neighbours_font.json"
+			}
+		}
+	],
+	"images" : [
+		{
+			"file" : "quake.png",
+			"position" : [200, 150],
+			"alpha" : 128,
+			"dimensions" : [500, 200]
+		}
+	],
+
+	"frames" : [
+		{
+			"font" : {
+				"font_file" : "small_font.json",
+				"size" : 8,
+				"color" : "#00FFFF"
+			},
+
+			"images" : [
+				{
+					"file" : "quake.png",
+					"position" : [100, 150]
+				},
+				{
+					"file" : "bluesquare.png",
+					"position" : [100, 100]
+				}
+			],
+
+			"texts" : [
+				{
+					"text" : "Once upon\nthe time",
+					"position" : [0, 100]
+				}
+			]
+		},
+		{
+			"texts" : [
+				{
+					"text" : "There was\nlovely little sausage called\nBaldrick",
+					"position" : [100, 100]
+				}
+			]
+		},
+		{
+			"texts" : [
+				{
+					"text" : "And he lived happily\never after",
+					"position" : [0, 100]
+				}
+			]
+		}
+	]
+}
