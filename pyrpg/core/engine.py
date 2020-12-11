@@ -393,6 +393,7 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
         try:
             result = components.create_component(
                 world,
+                alias_to_entity, # Part of the init of component might be reference to other entity in form of string alias. Hence we need to pass the translation dictionary to the component factory
                 new_entity_obj if not child_ref else child_ref,
                 comp_type,
                 comp_params

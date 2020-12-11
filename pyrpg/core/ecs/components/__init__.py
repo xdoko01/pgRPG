@@ -28,12 +28,15 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 ### Module functions
 ########################################################
 
-def create_component(world, entity: int, comp_class: str, comp_params: dict):
+def create_component(world, alias_dict, entity: int, comp_class: str, comp_params: dict):
     ''' Add a new component to the given entity in given world.
 
     Parameters:
         :param world: ECS world in which the component should be created.
         :type world: esper.World()
+
+        :param alias_dict: Reference to dictionary holding information about translation from entity alias name to entity id.
+        :type alias_dict: dict
 
         :param entity: Entity to which component should be assigned.
         :type entity: int
@@ -65,8 +68,27 @@ def create_component(world, entity: int, comp_class: str, comp_params: dict):
 
     # Try to create instance of the component
     try:
+        # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
+        # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
+        # integer from alias_dict values.
+
+        # New dictionary containing aliases substituted with integer entity IDs
+        comp_params_substituted = {}
+
+        # Do the substitution
+        for comp_param_key, comp_param_value in comp_params.items():
+
+            try:
+                substituted_value = alias_dict.get(comp_param_value, comp_param_value)
+            except TypeError:
+                # If value is list or dictionary keep the value as is
+                substituted_value = comp_param_value
+
+            comp_params_substituted.update({comp_param_key : substituted_value})
+
         # Create the instance of the component
-        comp_inst = comp_name(**comp_params)
+        comp_inst = comp_name(**comp_params_substituted)
+
     except ValueError:
         print(f'Incorrect parameters while creating component {comp_class} for entity {entity}')
         raise ValueError
