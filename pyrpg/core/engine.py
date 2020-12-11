@@ -94,6 +94,19 @@ dialogs = {}
 ########################################################
 ########################################################
 
+def get_entity_id(entity_alias):
+    ''' Translate entity alias (string) to entity id (integer)
+    based on alias_to_entity dictionary.
+    '''
+
+    global alias_to_entity
+
+    try:
+        return alias_to_entity.get(entity_alias, None)
+    except TypeError:
+        # If entity_alias is list or dictionary (non hashable)
+        return None
+
 ########################################################
 ### Module Functions - Module Init Functions
 ########################################################
