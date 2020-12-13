@@ -1,3 +1,5 @@
+from  pyrpg.functions import translate # for translation of entity alias to entity id
+
 #####################################################################
 ## Package core.ecs.components
 #####################################################################
@@ -73,18 +75,7 @@ def create_component(world, alias_dict, entity: int, comp_class: str, comp_param
         # integer from alias_dict values.
 
         # New dictionary containing aliases substituted with integer entity IDs
-        comp_params_substituted = {}
-
-        # Do the substitution
-        for comp_param_key, comp_param_value in comp_params.items():
-
-            try:
-                substituted_value = alias_dict.get(comp_param_value, comp_param_value)
-            except TypeError:
-                # If value is list or dictionary keep the value as is
-                substituted_value = comp_param_value
-
-            comp_params_substituted.update({comp_param_key : substituted_value})
+        comp_params_substituted = translate(alias_dict, comp_params)
 
         # Create the instance of the component
         comp_inst = comp_name(**comp_params_substituted)
