@@ -16,6 +16,9 @@ class Collidable(Component):
         - CollisionDeletionProcessor
         - OBSOLETE: CollisionCorrectorProcessor
 
+    Examples of JSON definition:
+        {"type" : "Collidable", "params" : {"x" : 20, "y" : 20}}
+
     Tests:
         >>> c = Collidable()
     '''

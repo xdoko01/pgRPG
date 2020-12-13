@@ -39,13 +39,13 @@ class CanWear(Component):
 				
 				# Translate the value (Wearable) to Entity instance if necessary
 				#wearable_entity = engine.alias_to_entity.get(w_value) if isinstance(w_value, str) else w_value
-				wearable_entity = self.alias_dict.get(w_value) if isinstance(w_value, str) else w_value
+				#wearable_entity = self.alias_dict.get(w_value) if isinstance(w_value, str) else w_value
 
 				# If it is possible to wear the entity (known bodypart and empty slot for wearable) then wear it
 				if w_key in CanWear.BODYPARTS and not self.wearables.get(w_key):
-					self.wearables.update({w_key : wearable_entity})
+					self.wearables.update({w_key : w_value})
 
 		except KeyError:
 			# Notify component factory that initiation has failed
-			print(f'Problem with wearing of the entity')
+			print(f'Problem with wearing of the entity - {w_key} : {w_value}')
 			raise ValueError
