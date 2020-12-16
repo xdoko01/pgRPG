@@ -1,19 +1,27 @@
-from .component import Component
+''' Module "pyrpg.core.ecs.components.weapon" contains
+Weapon component implemented as a Weapon class.
+
+Use 'python -m pyrpg.core.ecs.components.brain -v' to run
+module tests.
+'''
+
 import pyrpg.core.models as model
+from .component import Component
 
 class Weapon(Component):
     ''' Entity is a weapon if having this component. Weapon has its parameters
     determined by weapon type.
 
     Used by:
-        - TBD
+        - HasWeapon component
+        - CollisionWeaponProcessor
 
     Examples of JSON definition:
         {"type" : "Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
         {"type" : "Weapon", "params" : {"type" : "sword"}}
 
    Tests:
-        >>> c = Weapon()
+        >>> c = Weapon(**{"type" : "bow",	"max_projectiles" : 5})
     '''
 
     WEAPONS = {
@@ -58,3 +66,8 @@ class Weapon(Component):
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

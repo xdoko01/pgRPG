@@ -1,15 +1,40 @@
+''' Module "pyrpg.core.ecs.components.container" contains
+Container component implemented as a Container class.
+
+Use 'python -m pyrpg.core.ecs.components.container -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Container(Component):
-	''' Component containing back reference to the
-	master component.
-	'''
+    ''' Component containing back reference to the
+    master component.
 
-	__slots__ = ['contained_in']
+    Used by:
+        - Factory component
+        - HasWeapon component
+        - ClearTemporaryEntityProcessor
+        - CollisionDeletionProcessor
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate values for the Container component.
-		'''
-		super().__init__()
+    Examples of JSON definition:
+        {"type" : "Container", "params" : {}}
 
-		self.contained_in = kwargs.get("contained_in", None)
+    Tests:
+        >>> c = Container()
+    '''
+
+    __slots__ = ['contained_in']
+
+    def __init__(self, *args, **kwargs):
+        ''' Initiate values for the Container component.
+        '''
+        super().__init__()
+
+        self.contained_in = kwargs.get("contained_in", None)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+

@@ -1,7 +1,12 @@
-from .component import Component
-import pyrpg.core.config.config as config
-import pygame 
+''' Module "pyrpg.core.ecs.components.can_talk" contains
+CanTalk component implemented as a CanTalk class.
 
+Use 'python -m pyrpg.core.ecs.components.can_talk -v' to run
+module tests.
+'''
+
+import pygame
+from .component import Component
 
 class CanTalk(Component):
     ''' Entity can generate the text bubble that is displayed on the screen.
@@ -16,9 +21,9 @@ class CanTalk(Component):
         {"type" : "CanTalk", "params" : {}}
         {"type" : "CanTalk", "params" : {"text_color" : "#FF00FF", "text_speed" : 50}}
 
-
     Tests:
         >>> c = CanTalk()
+        >>> c = CanTalk(**{"text_color" : "#FF00FF", "text_speed" : 50})
     '''
 
     __slots__ = ['text', 'text_color', 'text_surf', 'text_dim', 'text_speed', 'frame_surf', 'frame_dim', 'frame_text_offset']
@@ -73,6 +78,11 @@ class CanTalk(Component):
         '''
         self.text_surf = pygame.Surface((0, 0))
         self.frame_surf = pygame.Surface((0, 0))
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
 """
 class CanTalkObsolete(Component):

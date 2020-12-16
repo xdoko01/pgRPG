@@ -1,5 +1,12 @@
-from .component import Component
+''' Module "pyrpg.core.ecs.components.controllable" contains
+Controllable component implemented as a Controllable class.
+
+Use 'python -m pyrpg.core.ecs.components.controllable -v' to run
+module tests.
+'''
+
 from pyrpg.core.config.keys import K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
+from .component import Component
 
 class Controllable(Component):
     ''' Entity can be controlled by the keyboard commands.
@@ -17,7 +24,10 @@ class Controllable(Component):
         }
 
     Tests:
-        >>> c = Controllable()
+        >>> c = Controllable(**{"key_profile" : "key_controls_1",\
+            "control_keys" : {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274, 'attack' : 122},\
+            "control_cmds" : { 'left' : 'move', 'right': 'move', 'up' : 'move', 'down' : 'move', 'attack' : 'attack'}\
+            })
     '''
 
     __slots__ = ['control_keys', 'enabled', 'control_cmds']
@@ -77,3 +87,8 @@ class Controllable(Component):
 
         # Merge defaults with defined commands
         self.control_cmds = {**default_cmds, **control_cmds}
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

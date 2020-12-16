@@ -1,3 +1,10 @@
+''' Module "pyrpg.core.ecs.components.brain" contains
+Brain component implemented as a Brain class.
+
+Use 'python -m pyrpg.core.ecs.components.brain -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Brain(Component):
@@ -25,9 +32,9 @@ class Brain(Component):
     Examples of JSON definition:
         {"type" : "Brain", "params" : {"commands" : []}}
         {"type" : "Brain", "params" : {"commands" : [
-            [null, "move", {"dx" : -120}],
+            [None, "move", {"dx" : -120}],
             [0, loop", {"iterations" : 1}]
-        ]
+        ]}
 
     Tests:
         >>> c = Brain()
@@ -35,6 +42,11 @@ class Brain(Component):
         []
         >>> c.enabled
         False
+        >>> c = Brain(**{"commands" : [[None, "move", {"dx" : -120}], [0, "loop", {"iterations" : 1}]]})
+        >>> c.enabled
+        True
+        >>> c.next_cmd_idx
+        0
     '''
 
     __slots__ = ['commands', 'enabled', 'next_cmd_idx', 'current_cmd_idx', 'last_cmd_idx',\
@@ -57,7 +69,7 @@ class Brain(Component):
             assert isinstance(self.commands, list), f'Commands must be passed as a list.'
         except AssertionError:
             # Notify component factory that initiation has failed
-            raise ValueError		
+            raise ValueError
 
         # Should the brain process commands (True) or not (False).
         # If there are some commands passed then enable processing
@@ -95,7 +107,7 @@ class Brain(Component):
             :type exception: int
 
         Called from:
-            engine module -> process_game_commands function		
+            engine module -> process_game_commands function
         '''
 
         # If the command finished succesfully - move to the next command
@@ -124,7 +136,7 @@ class Brain(Component):
             :type commands: list
 
         Called from:
-            scripts module -> modify_brain function		
+            scripts module -> modify_brain function
         '''
 
         # Should the brain process commands (True) or not (False).
@@ -148,3 +160,8 @@ class Brain(Component):
 
         # Init the Loop counter
         self.loop_counter = 0
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

@@ -1,5 +1,11 @@
+''' Module "pyrpg.core.ecs.components.has_inventory" contains
+HasInventory component implemented as a HasInventory class.
+
+Use 'python -m pyrpg.core.ecs.components.has_inventory -v' to run
+module tests.
+'''
+
 from .component import Component
-import pyrpg.core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 
 class HasInventory(Component):
     ''' Entity has inventory - can pick items and add it to the inventory.
@@ -15,6 +21,7 @@ class HasInventory(Component):
 
     Tests:
         >>> c = HasInventory()
+        >>> c = HasInventory(**{"inventory" : ["key", "other_key", "money", 4]})
     '''
 
     __slots__ = ['inventory']
@@ -36,11 +43,9 @@ class HasInventory(Component):
             # Notify component factory that initiation has failed
             raise ValueError
 
-        # Substitute the inventory items that are specified by id (str) with entity ids (int)
-        # based on mapping in engine class
-        try:
-            self.inventory = [engine.alias_to_entity.get(item) if isinstance(item, str) else item for item in kwargs.get('inventory', [])]
-        except KeyError:
-            # Notify component factory that initiation has failed
-            print(f'Item in the inventory is not initiated in global list of entities.')
-            raise ValueError
+        self.inventory = kwargs.get('inventory', [])
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

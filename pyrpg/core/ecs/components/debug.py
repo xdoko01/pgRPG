@@ -1,31 +1,34 @@
+''' Module "pyrpg.core.ecs.components.debug" contains
+Debug component implemented as a Debug class.
+
+Use 'python -m pyrpg.core.ecs.components.debug -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Debug(Component):
-	''' Display debug information on entities that are tagged by this component.
+    ''' Display debug information on entities that are tagged by this component.
 
-	Used by:
-		-	RenderDebugProcessor
-	
-	Tests:
-		>>> c = Debug()
-	'''
+    Used by:
+        - RenderDebugProcessor
 
-	__slots__ = []
+    Examples of JSON definition:
+        {"type" : "Debug", "params" : {}}
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate values for the new component
-		'''
+    Tests:
+        >>> c = Debug()
+    '''
 
-		super().__init__()
+    __slots__ = []
+
+    def __init__(self, *args, **kwargs):
+        ''' Initiate values for the new component
+        '''
+
+        super().__init__()
 
 
-	def pre_save(self):
-		''' Prepare component for saving - remove all nreferences to
-		non-serializable objects
-		'''
-		pass
-
-	def post_load(self):
-		''' Regenerate all non-serializable objects for the component
-		'''
-		pass
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

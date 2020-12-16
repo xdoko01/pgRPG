@@ -1,3 +1,10 @@
+''' Module "pyrpg.core.ecs.components.teleportable" contains
+Teleportable component implemented as a Teleportable class.
+
+Use 'python -m pyrpg.core.ecs.components.teleportable -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Teleportable(Component):
@@ -20,3 +27,8 @@ class Teleportable(Component):
         ''' Initiate values for the new Teleportable component.
         '''
         super().__init__()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

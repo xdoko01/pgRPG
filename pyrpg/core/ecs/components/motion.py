@@ -1,5 +1,12 @@
-from .component import Component
+''' Module "pyrpg.core.ecs.components.motion" contains
+Motion component implemented as a Motion class.
+
+Use 'python -m pyrpg.core.ecs.components.motion -v' to run
+module tests.
+'''
+
 import pygame
+from .component import Component
 
 class Motion(Component):
     ''' Entity can move.
@@ -11,7 +18,9 @@ class Motion(Component):
         {"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
 
     Tests:
-        >>> c = Motion()
+        >>> c = Motion(**{"dx" : 0, "dy" : 0})
+        >>> c.dx
+        0
     '''
 
     __slots__ = ['dx', 'dy', 'enabled', 'last_move']
@@ -51,3 +60,8 @@ class Motion(Component):
         # Remember time when the entity last moved
         # Necessary to know when to reset the direction of the entity due to rendering
         self.last_move = pygame.time.get_ticks()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

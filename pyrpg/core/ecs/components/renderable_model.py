@@ -1,8 +1,15 @@
-from .component import Component
-import pyrpg.core.models as model # For cached animated model in RenderableModel entity
+''' Module "pyrpg.core.ecs.components.renderable_model" contains
+RenderableModel component implemented as a RenderableModel class.
+
+Use 'python -m pyrpg.core.ecs.components.renderable_model -v' to run
+module tests.
+'''
+
 import pygame
+import pyrpg.core.models as model # For cached animated model in RenderableModel entity
 import pyrpg.core.config.config as config # For TILE_RES
 from pyrpg.core.config.paths import MODEL_PATH
+from .component import Component
 
 class RenderableModel(Component):
     ''' Entity is displayable as animated model on the game screen.
@@ -15,7 +22,7 @@ class RenderableModel(Component):
         {"type" : "RenderableModel", "params" : {"model" : "darkfemale.json", "action" : "idle"}}
 
     Tests:
-        >>> c = RenderableModel()
+        >>> c = RenderableModel(**{"model" : "darkfemale.json", "action" : "idle"})
     '''
 
     __slots__ = ['model', 'last_frame', 'last_time', 'is_action_frame', 'action']
@@ -39,7 +46,7 @@ class RenderableModel(Component):
         model_file = kwargs.get('model', '')
 
         # Get the initial action of the model
-        self.action = kwargs.get('action', 'idle') 
+        self.action = kwargs.get('action', 'idle')
 
         # Check the model name and the action name for validity
         try:
@@ -123,7 +130,12 @@ class RenderableModel(Component):
             self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
 
         except:
-            raise ValueError	
+            raise ValueError
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
 
 ### ORIGINAL CLASS WITH ORIGINAL MODEL

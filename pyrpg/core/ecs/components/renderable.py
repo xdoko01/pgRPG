@@ -1,84 +1,99 @@
-from .component import Component
+''' Module "pyrpg.core.ecs.components.renderable" contains
+Renderable component implemented as a Renderable class.
+
+Use 'python -m pyrpg.core.ecs.components.renderable -v' to run
+module tests.
+'''
+
 import pygame
 from pyrpg.core.config.paths import IMAGE_PATH
+from .component import Component
 
 class Renderable(Component):
-	''' Entity is displayable on the game screen.
+    ''' Entity is displayable on the game screen.
 
-	Used by:
-		-	RenderWorldProcessor
-		-	RenderDebugProcessor
+    Used by:
+        - RenderWorldProcessor
+        - RenderDebugProcessor
 
-	Tests:
-		>>> c = Renderable()
-	'''
+    Examples of JSON definition:
+        {"type" : "Renderable", "params" : {"image" : "key.png"}}
 
-	__slots__ = ['image', 'w', 'h', 'd_h', 'd_w']
+    Tests:
+        >>> c = Renderable(**{"image" : "key.png"})
+    '''
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate values for the new Renderable component.
+    __slots__ = ['image', 'w', 'h', 'd_h', 'd_w']
 
-		Parameters:
-			:param image_file: Name of the image stored in IMAGE_PATH directory, including suffix
-			:type image_file: str
+    def __init__(self, *args, **kwargs):
+        ''' Initiate values for the new Renderable component.
 
-			:raise: ValueError - in case image file is not found
-		'''
+        Parameters:
+            :param image_file: Name of the image stored in IMAGE_PATH directory, including suffix
+            :type image_file: str
 
-		super().__init__()
+            :raise: ValueError - in case image file is not found
+        '''
 
-		# Image and its parameters
-		try:
-			self.image_file = kwargs.get("image", "")
-			assert isinstance(self.image_file, str), f'Image file name {self.image_file} is not valid.'
+        super().__init__()
 
-			#self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
-			self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
+        # Image and its parameters
+        try:
+            self.image_file = kwargs.get("image", "")
+            assert isinstance(self.image_file, str), f'Image file name {self.image_file} is not valid.'
 
-		except FileNotFoundError:
-			print(f'Image file {IMAGE_PATH / self.image_file} not found')
-			# Notify component factory that initiation has failed
-			raise ValueError
-		except AssertionError:
-			# Notify component factory that initiation has failed
-			raise ValueError
+            #self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
+            self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
 
-		self.w = self.image.get_width()
-		self.h = self.image.get_height()
+        except FileNotFoundError:
+            print(f'Image file {IMAGE_PATH / self.image_file} not found')
+            # Notify component factory that initiation has failed
+            raise ValueError
+        except AssertionError:
+            # Notify component factory that initiation has failed
+            raise ValueError
 
-		# Diff vector from centre of the sprite to the topleft corner
-		# it is used by Render processor to get the right point where
-		# to render the sprite. i.e. position of the character can be 
-		# 100, 100 but in order to be centered on this position, render 
-		# processor must blit the sprite on 75,75 (example w,h=50)
-		self.d_w = self.w / 2
-		self.d_h = self.h / 2
+        self.w = self.image.get_width()
+        self.h = self.image.get_height()
 
-	def topleft(self, pos):
-		''' Returns correction of coordinates to display the sprite correctly
+        # Diff vector from centre of the sprite to the topleft corner
+        # it is used by Render processor to get the right point where
+        # to render the sprite. i.e. position of the character can be
+        # 100, 100 but in order to be centered on this position, render
+        # processor must blit the sprite on 75,75 (example w,h=50)
+        self.d_w = self.w / 2
+        self.d_h = self.h / 2
 
-		Parameters:
-			:param pos: Position on the map in pixels.
-			:type pos: tuple, list
-			
-			:return: Position of the topleft corner of the image as a tuple.
-		'''
-		return (pos[0] - self.d_w, pos[1] - self.d_h)
+    def topleft(self, pos):
+        ''' Returns correction of coordinates to display the sprite correctly
 
-	def pre_save(self):
-		''' Prepare component for saving - remove all nreferences to
-		non-serializable objects
-		'''
-		self.image = None
-		self.w = self.h = self.d_h = self.d_w = None
-	
-	def post_load(self):
-		''' Regenerate all non-serializable objects for the component
-		'''
-		self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
-		
-		self.w = self.image.get_width()
-		self.h = self.image.get_height()
-		
-		self.d_w = self.w / 2
-		self.d_h = self.h / 2		
+        Parameters:
+            :param pos: Position on the map in pixels.
+            :type pos: tuple, list
+
+            :return: Position of the topleft corner of the image as a tuple.
+        '''
+        return (pos[0] - self.d_w, pos[1] - self.d_h)
+
+    def pre_save(self):
+        ''' Prepare component for saving - remove all nreferences to
+        non-serializable objects
+        '''
+        self.image = None
+        self.w = self.h = self.d_h = self.d_w = None
+
+    def post_load(self):
+        ''' Regenerate all non-serializable objects for the component
+        '''
+        self.image = pygame.image.load(str(IMAGE_PATH / self.image_file)).convert()
+
+        self.w = self.image.get_width()
+        self.h = self.image.get_height()
+
+        self.d_w = self.w / 2
+        self.d_h = self.h / 2
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

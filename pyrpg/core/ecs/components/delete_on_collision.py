@@ -1,22 +1,34 @@
+''' Module "pyrpg.core.ecs.components.delete_on_collision" contains
+DeleteOnCollision component implemented as a DeleteOnCollision class.
+
+Use 'python -m pyrpg.core.ecs.components.delete_on_collision -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class DeleteOnCollision(Component):
-	''' Entity is deleted after collision with other entity
+    ''' Entity is deleted after collision with other entity
 
-	Used by:
-		-	CollisionDeletionProcessor	
+    Used by:
+        - CollisionDeletionProcessor
 
-	Tests:
-		>>> c = DeleteOnCollision()
-	'''
+    Examples of JSON definition:
+        {"type" : "DeleteOnCollision", "params" : {}}
 
-	__slots__ = []
+    Tests:
+        >>> c = DeleteOnCollision()
+    '''
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate the new DeleteOnCollision component.
+    __slots__ = []
 
-		Parameters:
-			none
-		'''
+    def __init__(self, *args, **kwargs):
+        ''' Initiate the new DeleteOnCollision component.
+        '''
 
-		super().__init__()
+        super().__init__()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

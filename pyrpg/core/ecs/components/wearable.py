@@ -1,3 +1,10 @@
+''' Module "pyrpg.core.ecs.components.wearable" contains
+Wearable component implemented as a Wearable class.
+
+Use 'python -m pyrpg.core.ecs.components.wearable -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Wearable(Component):
@@ -10,7 +17,7 @@ class Wearable(Component):
         {"type" : "Wearable", "params" : {"bodypart" : "head"}}
 
     Tests:
-        >>> c = Wearable()
+        >>> c = Wearable(**{"bodypart" : "head"})
     '''
 
     __slots__ = ['bodypart']
@@ -38,3 +45,8 @@ class Wearable(Component):
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
