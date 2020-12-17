@@ -1,3 +1,5 @@
+from  pyrpg.functions import translate # for translation of entity alias to entity id
+
 #####################################################################
 ## Package core.ecs.components
 #####################################################################
@@ -28,12 +30,15 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
 ### Module functions
 ########################################################
 
-def create_component(world, entity: int, comp_class: str, comp_params: dict):
+def create_component(world, alias_dict, entity: int, comp_class: str, comp_params: dict):
     ''' Add a new component to the given entity in given world.
 
     Parameters:
         :param world: ECS world in which the component should be created.
         :type world: esper.World()
+
+        :param alias_dict: Reference to dictionary holding information about translation from entity alias name to entity id.
+        :type alias_dict: dict
 
         :param entity: Entity to which component should be assigned.
         :type entity: int
@@ -54,7 +59,7 @@ def create_component(world, entity: int, comp_class: str, comp_params: dict):
 
     # Get the component class - check if such class exists and is allowed
     try:
-        # Check if component exists 
+        # Check if component exists
         assert comp_class in ALL_COMPONENTS, f'Trying to assign unknown component {comp_class} to entity {entity}.'
 
         comp_name = globals()[comp_class]
@@ -65,8 +70,16 @@ def create_component(world, entity: int, comp_class: str, comp_params: dict):
 
     # Try to create instance of the component
     try:
+        # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
+        # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
+        # integer from alias_dict values.
+
+        # New dictionary containing aliases substituted with integer entity IDs
+        comp_params_substituted = translate(alias_dict, comp_params)
+
         # Create the instance of the component
-        comp_inst = comp_name(**comp_params)
+        comp_inst = comp_name(**comp_params_substituted)
+
     except ValueError:
         print(f'Incorrect parameters while creating component {comp_class} for entity {entity}')
         raise ValueError

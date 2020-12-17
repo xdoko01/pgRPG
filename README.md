@@ -249,6 +249,27 @@
 
 ## To Do
 
+### Component classes are using engine for translation of alias to id - get rid of those back referencing
+  - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
+  - WHY? to translate entity alias to entity id. Entity alias is stored in `engine.alias_to_entity` dictionary. This can be omitted by implementing translation from entity alias to entity id in `create_component` method that is part of `pyrpg.core.ecs.components` package init code.
+
+  - Following components are problematic:
+    - *HasWeapon* - is using engine.world.component_for_entity calls. Can I somehow get around that?
+    - *Factory* - 
+    - ... more
+
+### Component classes are using engine for calling the world - get rid of those back referencing
+  - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
+  - WHY? to call `engine.world.component_for_entity`. In order to get some property for component that contains reference to some other entity. For example `HasWeapon` component class has reference to `weapon` entity and `generator` entity. Is this good approach? Should Component has reference to entity?
+  - Following components are problematic:
+    - *HasWeapon* - is using engine.world.component_for_entity calls. Can I somehow get around that?
+    - *Factory* - 
+    - ... more
+
+### Rethink Factory component - can stay but the generation it self might be handled by some processor rather than the component method.
+
+### Is it correct that HasWeapon has all those methods? Like create_projectile? SHould this be on generator?
+
 ### Allow comment in json using commentjson library ...
 
 ### Proceed with rewriting dialogs to class with buttons

@@ -94,6 +94,19 @@ dialogs = {}
 ########################################################
 ########################################################
 
+def get_entity_id(entity_alias):
+    ''' Translate entity alias (string) to entity id (integer)
+    based on alias_to_entity dictionary.
+    '''
+
+    global alias_to_entity
+
+    try:
+        return alias_to_entity.get(entity_alias, None)
+    except TypeError:
+        # If entity_alias is list or dictionary (non hashable)
+        return None
+
 ########################################################
 ### Module Functions - Module Init Functions
 ########################################################
@@ -393,6 +406,7 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
         try:
             result = components.create_component(
                 world,
+                alias_to_entity, # Part of the init of component might be reference to other entity in form of string alias. Hence we need to pass the translation dictionary to the component factory
                 new_entity_obj if not child_ref else child_ref,
                 comp_type,
                 comp_params

@@ -1,62 +1,73 @@
-from .component import Component
+''' Module "pyrpg.core.ecs.components.weapon" contains
+Weapon component implemented as a Weapon class.
+
+Use 'python -m pyrpg.core.ecs.components.brain -v' to run
+module tests.
+'''
+
 import pyrpg.core.models as model
+from .component import Component
 
 class Weapon(Component):
-	''' Entity is a weapon if having this component.
-	Weapon has its parameters determined by weapon type.
-	'''
+    ''' Entity is a weapon if having this component. Weapon has its parameters
+    determined by weapon type.
 
-	WEAPONS = {
-		'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
-		'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
-		'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
-		'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
-	}
- 
-	__slots__ = ['action', 'idle', 'type']
+    Used by:
+        - HasWeapon component
+        - CollisionWeaponProcessor
 
-	def __init__(self, *args, **kwargs):
+    Examples of JSON definition:
+        {"type" : "Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+        {"type" : "Weapon", "params" : {"type" : "sword"}}
 
-		super().__init__()
+   Tests:
+        >>> c = Weapon(**{"type" : "bow",	"max_projectiles" : 5})
+    '''
 
-		# Read the weapon attributes
-		try:
+    WEAPONS = {
+        'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
+        'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
+        'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
+        'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
+    }
 
-			# Weapon type
-			self.type = kwargs.get('type')
+    __slots__ = ['action', 'idle', 'type', 'max_projectiles']
 
-			# Weapon animation for attack action
-			self.action = Weapon.WEAPONS.get(self.type).get('action')
-			
-			# Weapon animation for idle action
-			self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
-			
-			# Weapon can generate max projectiles
-			self.max_projectiles = kwargs.get('max_projectiles', 1)
-			
-			#self.projectile_collision_zones = kwargs.get('projectiles', {}).get('projectile_collision_zones', {})
+    def __init__(self, *args, **kwargs):
 
-			# Weapon causes damage - default 10 points
-			#self.damage = kwargs.get('projectiles', {}).get('damage', 1)
+        super().__init__()
 
-			#self.projectile_ttl =  kwargs.get('projectiles', {}).get('ttl', 100)
+        # Read the weapon attributes
+        try:
 
-			#self.projectile_speed =  kwargs.get('projectiles', {}).get('speed', 100)
+            # Weapon type
+            self.type = kwargs.get('type')
 
-		except KeyError:
-			# Notify component factory that initiation has failed
-			print(f'Mandatory parameters are missing.')
-			raise ValueError
+            # Weapon animation for attack action
+            self.action = Weapon.WEAPONS.get(self.type).get('action')
 
-		# Assert that weapon type exists in list of WEAPONS
-		try:
-			assert isinstance(self.type, str) and self.type in Weapon.WEAPONS, f'Unknown weapon type "{self.type}" for {self.__class__} component.'
-			assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Unknown animation action "{self.action}" for {self.__class__} component.'
-			assert isinstance(self.idle, str) and self.action in model.Model.ACTIONS, f'Unknown idle animation "{self.idle}" for {self.__class__} component.'
-			assert isinstance(self.max_projectiles, int), f'Max no. of projectiles must be an integer "{self.max_projectiles}" for {self.__class__} component.'
-			#assert isinstance(self.damage, int), f' Damage must be an integer "{self.damage}" for {self.__class__} component.'
-			#assert isinstance(self.projectile_ttl, int), f' Projectile ttl must be an integer "{self.projectile_ttl}" for {self.__class__} component.'
-			#assert isinstance(self.projectile_speed, int), f' Projectile speed must be an integer "{self.projectile_speed}" for {self.__class__} component.'
-		except AssertionError:
-			# Notify component factory that initiation has failed
-			raise ValueError
+            # Weapon animation for idle action
+            self.idle  = Weapon.WEAPONS.get(self.type).get('idle')
+
+            # Weapon can generate max projectiles
+            self.max_projectiles = kwargs.get('max_projectiles', 1)
+
+        except KeyError:
+            # Notify component factory that initiation has failed
+            print(f'Mandatory parameter weapon type is missing.')
+            raise ValueError
+
+        # Assert that weapon type exists in list of WEAPONS
+        try:
+            assert isinstance(self.type, str) and self.type in Weapon.WEAPONS, f'Unknown weapon type "{self.type}" for {self.__class__} component.'
+            assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Unknown animation action "{self.action}" for {self.__class__} component.'
+            assert isinstance(self.idle, str) and self.action in model.Model.ACTIONS, f'Unknown idle animation "{self.idle}" for {self.__class__} component.'
+            assert isinstance(self.max_projectiles, int), f'Max no. of projectiles must be an integer "{self.max_projectiles}" for {self.__class__} component.'
+        except AssertionError:
+            # Notify component factory that initiation has failed
+            raise ValueError
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

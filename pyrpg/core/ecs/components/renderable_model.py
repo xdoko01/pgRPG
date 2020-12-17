@@ -1,128 +1,141 @@
-from .component import Component
-import pyrpg.core.models as model # For cached animated model in RenderableModel entity
+''' Module "pyrpg.core.ecs.components.renderable_model" contains
+RenderableModel component implemented as a RenderableModel class.
+
+Use 'python -m pyrpg.core.ecs.components.renderable_model -v' to run
+module tests.
+'''
+
 import pygame
+import pyrpg.core.models as model # For cached animated model in RenderableModel entity
 import pyrpg.core.config.config as config # For TILE_RES
 from pyrpg.core.config.paths import MODEL_PATH
-
+from .component import Component
 
 class RenderableModel(Component):
-	''' Entity is displayable as animated model on the game screen.
+    ''' Entity is displayable as animated model on the game screen.
 
-	Used by:
-		-	RenderModelWorldProcessor
+    Used by:
+        - RenderModelWorldProcessor
 
-	Tests:
-		>>> c = RenderableModel()
-	'''
+    Examples of JSON definition:
+        {"type" : "RenderableModel", "params" : {"model" : "darkfemale.json"}}
+        {"type" : "RenderableModel", "params" : {"model" : "darkfemale.json", "action" : "idle"}}
 
-	__slots__ = ['model', 'last_frame', 'last_time', 'is_action_frame', 'action']
+    Tests:
+        >>> c = RenderableModel(**{"model" : "darkfemale.json", "action" : "idle"})
+    '''
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate values for the new RenderableModel component.
+    __slots__ = ['model', 'last_frame', 'last_time', 'is_action_frame', 'action']
 
-		Parameters:
-			:param model_name: Name of the model stored in MODEL_PATH directory
-			:type model_name: str
+    def __init__(self, *args, **kwargs):
+        ''' Initiate values for the new RenderableModel component.
 
-			:param action: Initial animated action of the model
-			:type action: str
-			
-			:raise: ValueError - in case model file is not found or has problem
-		'''
+        Parameters:
+            :param model_name: Name of the model stored in MODEL_PATH directory (mandatory)
+            :type model_name: str
 
-		super().__init__()
+            :param action: Initial animated action of the model (optional, default = idle)
+            :type action: str
 
-		# Get the model name
-		model_file = kwargs.get('model', '')
+            :raise: ValueError - in case model file is not found or has problem
+        '''
 
-		# Get the initial action of the model
-		self.action = kwargs.get('action', 'idle') 
+        super().__init__()
 
-		# Check the model name and the action name for validity
-		try:
-			assert isinstance(model_file, str), f'Model file name {model_file} is not valid.'
-			assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Action "{self.action}" is not allowed animation.'
-		except AssertionError:
-			# Notify component factory that initiation has failed
-			raise ValueError
+        # Get the model name
+        model_file = kwargs.get('model', '')
 
-		# Initiate new model
-		try:
-			#self.model = model.load_model(str(MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
-			self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
-		except:
-			print(f'Something went wrong during initiation of the model {model_file}')
-			# Notify component factory that initiation has failed
-			raise ValueError
+        # Get the initial action of the model
+        self.action = kwargs.get('action', 'idle')
 
-		# Time and frame must be remembered for animation
-		self.last_frame = 0
-		self.last_time = pygame.time.get_ticks()
-		self.is_action_frame = False
+        # Check the model name and the action name for validity
+        try:
+            assert isinstance(model_file, str), f'Model file name "{model_file}" is not valid.'
+            assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Action "{self.action}" is not allowed animation.'
+        except AssertionError:
+            # Notify component factory that initiation has failed
+            raise ValueError
 
-		#print(self.model)
+        # Initiate new model
+        try:
+            #self.model = model.load_model(str(MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
+            self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
+        except:
+            print(f'Something went wrong during initiation of the model "{model_file}"')
+            # Notify component factory that initiation has failed
+            raise ValueError
 
-	def set_action(self, action):
-		''' Reset frame and time in case new action is
-		assigned.
-		'''
+        # Time and frame must be remembered for animation
+        self.last_frame = 0
+        self.last_time = pygame.time.get_ticks()
+        self.is_action_frame = False
 
-		# In case of action change - reset the anim variables
-		if action != self.action:
-			self.action = action
-			self.last_frame = 0
-			self.last_time = pygame.time.get_ticks()
+    def set_action(self, action):
+        ''' Reset frame and time in case new action is
+        assigned.
+        '''
 
-	def topleft(self, pos):
-		''' Returns correction of coordinates to display the sprite correctly
+        # In case of action change - reset the anim variables
+        if action != self.action:
+            self.action = action
+            self.last_frame = 0
+            self.last_time = pygame.time.get_ticks()
 
-		Parameters:
-			:param pos: Position on the map in pixels.
-			:type pos: tuple, list
-			
-			:return: Position of the topleft corner of the image as a tuple.
-		'''
-		return pos - self.model.dim_2
+    def topleft(self, pos):
+        ''' Returns correction of coordinates to display the sprite correctly
 
-	def get_current_frame(self, direction, action=None, frame_id=None):
-		''' Only get the frame, do not do any animation shifting
-		In case frame, action or direction does not exist, returns empty frame.
-		'''
-		return self.model.get_frame_image(self.action if action is None else action, direction, self.last_frame if frame_id is None else frame_id)
+        Parameters:
+            :param pos: Position on the map in pixels.
+            :type pos: tuple, list
 
-	def update_frame(self, direction):
-		''' Update last_frame, last_time, is_action_frame based
-		on elapsed time. 
-		'''
-		# Get the currect time and measure the delay from last_time
-		current_time = pygame.time.get_ticks()
+            :return: Position of the topleft corner of the image as a tuple.
+        '''
+        return pos - self.model.dim_2
 
-		# if delay is greater move to the next frame and reset timer
-		if current_time - self.last_time > self.model.get_frame_duration(self.action, direction, self.last_frame):
-			self.last_time = current_time
-			self.last_frame = self.model.get_next_frame(self.action, direction, self.last_frame)
-			self.is_action_frame = self.model.is_action_frame(self.action, direction, self.last_frame)
-			#print(f'Frame set to {self.last_frame} for model {self.model.name}')
-		else: 
-			# Set the flag to False, I want to have it True only once when the animation changes. Otherwise
-			# I will have multiple actions triggered.
-			self.is_action_frame = False
+    def get_current_frame(self, direction, action=None, frame_id=None):
+        ''' Only get the frame, do not do any animation shifting
+        In case frame, action or direction does not exist, returns empty frame.
+        '''
+        return self.model.get_frame_image(self.action if action is None else action, direction, self.last_frame if frame_id is None else frame_id)
 
-	def pre_save(self):
-		''' Prepare component for saving - remove all references to
-		non-serializable objects
-		'''
-		self.model = None
-	
-	def post_load(self):
-		''' Regenerate all non-serializable objects for the component
-		'''
-		try:
-			#self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
-			self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
-			
-		except:
-			raise ValueError	
+    def update_frame(self, direction):
+        ''' Update last_frame, last_time, is_action_frame based
+        on elapsed time. 
+        '''
+        # Get the currect time and measure the delay from last_time
+        current_time = pygame.time.get_ticks()
+
+        # if delay is greater move to the next frame and reset timer
+        if current_time - self.last_time > self.model.get_frame_duration(self.action, direction, self.last_frame):
+            self.last_time = current_time
+            self.last_frame = self.model.get_next_frame(self.action, direction, self.last_frame)
+            self.is_action_frame = self.model.is_action_frame(self.action, direction, self.last_frame)
+            #print(f'Frame set to {self.last_frame} for model {self.model.name}')
+        else: 
+            # Set the flag to False, I want to have it True only once when the animation changes. Otherwise
+            # I will have multiple actions triggered.
+            self.is_action_frame = False
+
+    def pre_save(self):
+        ''' Prepare component for saving - remove all references to
+        non-serializable objects
+        '''
+        self.model = None
+
+    def post_load(self):
+        ''' Regenerate all non-serializable objects for the component
+        '''
+        try:
+            #self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
+            self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
+
+        except:
+            raise ValueError
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 
 
 ### ORIGINAL CLASS WITH ORIGINAL MODEL

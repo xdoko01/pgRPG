@@ -1,3 +1,10 @@
+''' Module "pyrpg.core.ecs.components.collidable" contains
+Collidable component implemented as a Collidable class.
+
+Use 'python -m pyrpg.core.ecs.components.collidable -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Collidable(Component):
@@ -16,8 +23,16 @@ class Collidable(Component):
         - CollisionDeletionProcessor
         - OBSOLETE: CollisionCorrectorProcessor
 
+    Examples of JSON definition:
+        {"type" : "Collidable", "params" : {"x" : 20, "y" : 20}}
+
     Tests:
         >>> c = Collidable()
+        >>> c.x
+        0
+        >>> c = Collidable(**{"x" : 20, "y" : 20})
+        >>> c.x
+        20
     '''
 
     __slots__ = ['x', 'y', 'has_collided', 'collision_events']
@@ -53,4 +68,9 @@ class Collidable(Component):
 
         # Keep track with whom the entity collided
         self.collision_events = set()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
 

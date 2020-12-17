@@ -1,21 +1,35 @@
+''' Module "pyrpg.core.ecs.components.pickable" contains
+Pickable component implemented as a Pickable class.
+
+Use 'python -m pyrpg.core.ecs.components.pickable -v' to run
+module tests.
+'''
+
 from .component import Component
 
 class Pickable(Component):
-	''' Entity is pickable by HasInventory entity.
+    ''' Entity is pickable by HasInventory component.
 
-	Used by:
-		-	CollisionItemProcessor
+    Used by:
+        - CollisionItemProcessor
 
-	Tests:
-		>>> c = Pickable()
-	'''
+    Examples of JSON definition:
+        {"type" : "Pickable", "params" : {}}
 
-	__slots__ = []
+    Tests:
+        >>> c = Pickable()
+    '''
 
-	def __init__(self, *args, **kwargs):
-		''' Initiate values for the new Item component. Component has
-		no arguments, it is just a tag, in fact.
-		'''
+    __slots__ = []
 
-		super().__init__()
+    def __init__(self, *args, **kwargs):
+        ''' Just a tag marking the entity that it can
+        be picked.
+        '''
 
+        super().__init__()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
