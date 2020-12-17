@@ -59,7 +59,7 @@ def create_component(world, alias_dict, entity: int, comp_class: str, comp_param
 
     # Get the component class - check if such class exists and is allowed
     try:
-        # Check if component exists 
+        # Check if component exists
         assert comp_class in ALL_COMPONENTS, f'Trying to assign unknown component {comp_class} to entity {entity}.'
 
         comp_name = globals()[comp_class]

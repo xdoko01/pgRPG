@@ -5,8 +5,8 @@ Use 'python -m pyrpg.core.ecs.components.camera -v' to run
 module tests.
 '''
 
-from .component import Component
 from pygame import Surface
+from .component import Component
 
 class Camera(Component):
     ''' Entity is in focus of a camera that is displayed in form of a screen

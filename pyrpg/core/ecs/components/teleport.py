@@ -5,7 +5,6 @@ Use 'python -m pyrpg.core.ecs.components.teleport -v' to run
 module tests.
 '''
 
-import pyrpg.core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 from .component import Component
 
 class Teleport(Component):
