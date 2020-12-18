@@ -63,7 +63,7 @@ class Position(Component):
             self.x = kwargs.get('x')
             self.y = kwargs.get('y')
             self.map = kwargs.get('map')
-            self.dir_name = kwargs.get('dir_name', 'down')
+            self.dir_name = kwargs.get('dir', 'down')
         except KeyError:
             # Notify component factory that initiation has failed
             print(f'Mandatory parameters are missing.')
