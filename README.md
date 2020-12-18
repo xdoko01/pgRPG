@@ -247,16 +247,15 @@
 ### New functionality for displaying in-game windows
  - even pause window implemented as a dialog!
 
-## To Do
-
-### Component classes are using engine for translation of alias to id - get rid of those back referencing
+### Component classes are using engine for translation of alias to id - get rid of those back referencing - DONE
   - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
   - WHY? to translate entity alias to entity id. Entity alias is stored in `engine.alias_to_entity` dictionary. This can be omitted by implementing translation from entity alias to entity id in `create_component` method that is part of `pyrpg.core.ecs.components` package init code.
 
-  - Following components are problematic:
-    - *HasWeapon* - is using engine.world.component_for_entity calls. Can I somehow get around that?
-    - *Factory* - 
-    - ... more
+
+## To Do
+
+  - put logic from has_weapon.createprojectile to processor generate_projectile_processor
+  - put projectiles somehow on the factory level where they belong
 
 ### Component classes are using engine for calling the world - get rid of those back referencing
   - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
