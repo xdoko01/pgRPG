@@ -99,7 +99,7 @@ class HasWeapon(Component):
 		self.projectiles.remove(entity)
 		print(f'Projectile {entity} deleted. List of projectiles {self.projectiles}')
 
-
+	"""
 	def create_projectile(self, owner_ent, pos_comp, coll_comp):
 		''' Creates projectile - taking information from the generator of projectile - character entity position and collision
 		closely coupled with GenerateProjectile processor

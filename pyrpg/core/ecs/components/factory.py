@@ -5,10 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.factory -v' to run
 module tests.
 '''
 
-import pyrpg.core.engine as engine # For adding new component to the engine.world
 from .component import Component
-from .position import Position
-from .container import Container
 
 class Factory(Component):
     ''' Factory component enables creation of new entity based
@@ -40,7 +37,7 @@ class Factory(Component):
             })
     '''
 
-    __slots__ = ['prescription', 'units']
+    __slots__ = ['prescription', 'units', 'list_of_entities']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Factory component.
@@ -67,33 +64,15 @@ class Factory(Component):
         except AssertionError:
             raise ValueError
 
-    def create_entity(self, owner=None, pos=None, container=None, reg_at_engine=False):
-        ''' Create entity from the prescription dictionary
+        # Remember the created child entities - set of ints representing entities
+        self.list_of_entities = set()
+
+    def remove_entity(self, entity):
+        ''' Removes child entity from the list of entities
+        that is implemented as a set.
         '''
-        # If we want to register generated entity on engine level, we need to generate
-        # an uniq name for it.
-        if reg_at_engine:
-            id_str = f'{self.prescription.get("id", "")}OWN{owner}ORD{self.units}TS{pygame.time.get_ticks()}'
-            self.prescription.update({"id": id_str})
-
-        new_entity = engine._create_entity(
-            self.prescription,
-
-            # Do not register in engine global variable alias_to_entity - not needed
-            register=reg_at_engine
-        )
-
-        # Add position component pos = (pos_x, pos_y, pos_dir, pos_map)
-        if pos:
-            (pos_x, pos_y, pos_dir, pos_map) = pos
-            engine.world.add_component(new_entity, Position(x=pos_x, y=pos_y, dir=pos_dir, map=pos_map))
-
-        # Add container component
-        if container:
-            engine.world.add_component(new_entity, Container(contained_in=container))
-
-        return new_entity
-
+        self.list_of_entities.remove(entity)
+        print(f'Entity {entity} deleted. List of entities {self.list_of_entities}')
 
 if __name__ == '__main__':
     import doctest

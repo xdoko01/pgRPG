@@ -33,12 +33,15 @@ class RenderableModelAnimationActionProcessor2(esper.Processor):
 		
 		for ent, (renderable_model, has_weapon) in self.world.get_components(components.RenderableModel, components.HasWeapon):
 			if has_weapon.has_attacked and has_weapon.weapon and ent not in changed_ent:
-				renderable_model.set_action(has_weapon.get_weapon_action_anim())
+				#renderable_model.set_action(has_weapon.get_weapon_action_anim())
+				renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action)
+
 				has_weapon.has_attacked = False
 				changed_ent.add(ent)
 
 			elif has_weapon.weapon and ent not in changed_ent:
-				renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+				#renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+				renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).idle)
 				changed_ent.add(ent)
 
 		for ent, renderable_model in self.world.get_component(components.RenderableModel):	
@@ -97,16 +100,18 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 					elif has_weapon and has_weapon.weapon_in_use and has_weapon.has_attacked:
 
 						# If entity has weapon and the weapon has attacked, set action to proper value
-						renderable_model.set_action(has_weapon.get_weapon_action_anim())
-						
+						#renderable_model.set_action(has_weapon.get_weapon_action_anim())
+						renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action)
+
 						# Reset the attack - in case attack key is released animation of attack is no longer displayed
 						has_weapon.has_attacked = False
 
 					elif has_weapon and has_weapon.weapon_in_use:
 
 						# If entity has weapon but is not attacking, display idle weapon animation
-						renderable_model.set_action(has_weapon.get_weapon_idle_anim())
-					
+						# renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+						renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).idle)
+
 					else:
 						# Has no weapon, is not moving,
 						renderable_model.set_action('idle')

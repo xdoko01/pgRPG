@@ -247,16 +247,41 @@
 ### New functionality for displaying in-game windows
  - even pause window implemented as a dialog!
 
-## To Do
-
-### Component classes are using engine for translation of alias to id - get rid of those back referencing
+### Component classes are using engine for translation of alias to id - get rid of those back referencing - DONE
   - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
   - WHY? to translate entity alias to entity id. Entity alias is stored in `engine.alias_to_entity` dictionary. This can be omitted by implementing translation from entity alias to entity id in `create_component` method that is part of `pyrpg.core.ecs.components` package init code.
 
-  - Following components are problematic:
-    - *HasWeapon* - is using engine.world.component_for_entity calls. Can I somehow get around that?
-    - *Factory* - 
-    - ... more
+
+## To Do
+
+  - put logic from has_weapon.createprojectile to processor generate_projectile_processor - DONE
+  - put projectiles somehow on the factory level where they belong - DONE
+    - currently when Factory generates entity and registers it into the world, it adds Container component that references HasWeapon component
+    - what if I want to use factory to generate new game characters, i.e. not to produce projectiles
+      - processor that would iterate all factories that should generate some entity
+        - put the entity into the world
+        - link it to factory component or some entity?????
+        - position will be inherited from the position component on the Factory component level? Or 
+          - put component/tag GenerateEntityTag on WoodenArrowsPack entity
+          - parameter of the component/tag will be Position where to generate??? and entity who has generated it.
+  - get rid of container component (not needed - only to remove from hasWeapon list of entities)
+    - just generate arrow on the correct position and add that component GeneratedBy(Entity ID) - for score, message whatever message ...
+
+  - wouldnt it be better to have processor that iterates all factories ...
+    - projectile generator processor only puts TAG on entity GenerateEntityTag
+	- some new generic processor FactoryGenerator - that iterates GenearateEntityTag
+
+### General - how to handle components that are having reference to other component and components that have reference to entities???
+  - is there some universal approach?
+  - HasWeapon is container that needs to have
+    - reference to Weapon component
+    - reference to Generator component
+
+### In-game messagesm HUD, Inventory - some part of the system can listen to events and then display it. Something that we have with the message queue.
+
+### Rename HasWeapon to CanFIght to have it aligned with CanTalk and CanWear?
+
+### Rename HasInventory to CanPick to have it aligned with CanTalk and CanWear?
 
 ### Component classes are using engine for calling the world - get rid of those back referencing
   - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
@@ -269,6 +294,8 @@
 ### Rethink Factory component - can stay but the generation it self might be handled by some processor rather than the component method.
 
 ### Is it correct that HasWeapon has all those methods? Like create_projectile? SHould this be on generator?
+
+### New branch where map tiles are also components
 
 ### Allow comment in json using commentjson library ...
 
