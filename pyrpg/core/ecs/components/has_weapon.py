@@ -106,10 +106,13 @@ class HasWeapon(Component):
 
     ### GET RID OF THIS
     def get_weapon_action_anim(self):
-        ''' Get the name of attack animation for the weapon that is currently 
+        ''' Get the name of attack animation for the weapon that is currently
         in possesion of the entity.
         '''
         # TODO - wouldnt it be easier to store action and idle action in weapons dictionary??
+        # or to store reference to the Weapon component itself in the weapons dictionary - in
+        # such case this fnction might stay here only adjusted.
+        # But that would be against some patern, only entity reference should be stored in component.
         return engine.world.component_for_entity(self.get_weapon_in_use(), Weapon).action
 
     ### GET RID OF THIS

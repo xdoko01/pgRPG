@@ -5,10 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.factory -v' to run
 module tests.
 '''
 
-import pyrpg.core.engine as engine # For adding new component to the engine.world
 from .component import Component
-from .position import Position
-from .container import Container
 
 class Factory(Component):
     ''' Factory component enables creation of new entity based
@@ -67,6 +64,7 @@ class Factory(Component):
         except AssertionError:
             raise ValueError
 
+    """
     def create_entity(self, owner=None, pos=None, container=None, reg_at_engine=False):
         ''' Create entity from the prescription dictionary
         '''
@@ -93,7 +91,7 @@ class Factory(Component):
             engine.world.add_component(new_entity, Container(contained_in=container))
 
         return new_entity
-
+    """
 
 if __name__ == '__main__':
     import doctest

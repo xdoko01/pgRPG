@@ -437,7 +437,7 @@ def create_processors(world):
     linear_movement_processor = processors.LinearMovementProcessor()
 
     # Processor that generates projectiles
-    generate_projectiles_processor = processors.GenerateProjectileProcessor()
+    generate_projectiles_processor = processors.GenerateProjectileProcessor(create_entity_fnc=_create_entity)
 
     # Processor that deletes entities with Temporary component from the world - once ttl expires
     clear_temporary_entity_processor = processors.ClearTemporaryEntityProcessor()
