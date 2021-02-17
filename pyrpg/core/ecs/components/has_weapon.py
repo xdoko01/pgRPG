@@ -5,10 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.has_weapon -v' to run
 module tests.
 '''
 
-import pyrpg.core.engine as engine # For checking the engine.alias_to_entity - if component has entity as a str as a parameter (HasInventory)
 from .component import Component
-from .weapon import Weapon
-from .factory import Factory
 
 class HasWeapon(Component):
     ''' Entity can pickup and carry a Weapon.
@@ -30,7 +27,7 @@ class HasWeapon(Component):
         >>> c = HasWeapon()
     '''
 
-    __slots__ = ['weapons', 'has_attacked', 'projectiles', 'weapon_in_use']
+    __slots__ = ['weapons', 'has_attacked', 'weapon_in_use']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new HasWeapon component.
@@ -81,9 +78,6 @@ class HasWeapon(Component):
                 # Save the new values in weapons dictionary
                 self.weapons.update({w_key : {"weapon" : weapon_ent, "generator" : generator_ent}})
 
-            # Remember the projectiles - set of ints representing entities
-            self.projectiles = set()
-
         except KeyError:
             # Notify component factory that initiation has failed
             print(f'Problem with initiating a weapon for the entity')
@@ -103,33 +97,6 @@ class HasWeapon(Component):
         ''' Returns currently used generator entity
         '''
         return self.weapons.get(self.weapon_in_use, {}).get('generator', None)
-
-    ### GET RID OF THIS
-    def get_weapon_action_anim(self):
-        ''' Get the name of attack animation for the weapon that is currently
-        in possesion of the entity.
-        '''
-        # TODO - wouldnt it be easier to store action and idle action in weapons dictionary??
-        # or to store reference to the Weapon component itself in the weapons dictionary - in
-        # such case this fnction might stay here only adjusted.
-        # But that would be against some patern, only entity reference should be stored in component.
-        return engine.world.component_for_entity(self.get_weapon_in_use(), Weapon).action
-
-    ### GET RID OF THIS
-    def get_weapon_idle_anim(self):
-        ''' Get the name of idle animation for the weapon that is currently
-        in possesion of the entity.
-        '''
-        return engine.world.component_for_entity(self.get_weapon_in_use(), Weapon).idle
-
-    ### GET RID OF THIS - IMPLEMENT PROJECTILES ON GENERATOR LEVEL
-    def remove_projectile(self, entity):
-        ''' Removes projectile from the list of projectiles
-        that is implemented as a set.
-        '''
-        self.projectiles.remove(entity)
-        print(f'Projectile {entity} deleted. List of projectiles {self.projectiles}')
-
 
 if __name__ == '__main__':
     import doctest

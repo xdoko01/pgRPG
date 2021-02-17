@@ -255,9 +255,7 @@
 ## To Do
 
   - put logic from has_weapon.createprojectile to processor generate_projectile_processor - DONE
-  - get rid of container component (not needed - only to remove from hasWeapon list of entities)
-    - just generate arrow on the correct position and add that component GeneratedBy(Entity ID) - for score, message whatever message ...
-  - put projectiles somehow on the factory level where they belong
+  - put projectiles somehow on the factory level where they belong - DONE
     - currently when Factory generates entity and registers it into the world, it adds Container component that references HasWeapon component
     - what if I want to use factory to generate new game characters, i.e. not to produce projectiles
       - processor that would iterate all factories that should generate some entity
@@ -266,6 +264,8 @@
         - position will be inherited from the position component on the Factory component level? Or 
           - put component/tag GenerateEntityTag on WoodenArrowsPack entity
           - parameter of the component/tag will be Position where to generate??? and entity who has generated it.
+  - get rid of container component (not needed - only to remove from hasWeapon list of entities)
+    - just generate arrow on the correct position and add that component GeneratedBy(Entity ID) - for score, message whatever message ...
 
   - wouldnt it be better to have processor that iterates all factories ...
     - projectile generator processor only puts TAG on entity GenerateEntityTag

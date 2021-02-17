@@ -153,6 +153,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 				
 				# If entity has weapon but is not attacking, display idle weapon animation
 				renderable_model.set_action(has_weapon.get_weapon_idle_anim())
+
 			
 			else:
 				# Has no weapon, is not moving,

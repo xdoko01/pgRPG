@@ -22,7 +22,8 @@ class GenerateProjectileProcessor(esper.Processor):
         for ent, (has_weapon, renderable_model, position) in self.world.get_components(components.HasWeapon, components.RenderableModel, components.Position):
 
             # Check if Model is in the action status and last frame of the action is happening
-            if renderable_model.action == has_weapon.get_weapon_action_anim() and renderable_model.is_action_frame:
+            #if renderable_model.action == has_weapon.get_weapon_action_anim() and renderable_model.is_action_frame:
+            if renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action and renderable_model.is_action_frame:
 
                 # Collidable is optional component - entities who are not collidable can generate projectiles
                 collidable = self.world.try_component(ent, (components.Collidable))

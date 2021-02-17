@@ -26,8 +26,9 @@ class GenerateProjectileProcessor(esper.Processor):
         for ent, (has_weapon, renderable_model, position) in self.world.get_components(components.HasWeapon, components.RenderableModel, components.Position):
             
             # Check if Model is in the action status and last frame of the action is happening
-            if renderable_model.action == has_weapon.get_weapon_action_anim() and renderable_model.is_action_frame:
-                
+            #if renderable_model.action == has_weapon.get_weapon_action_anim() and renderable_model.is_action_frame:
+            if renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action and renderable_model.is_action_frame:
+
                 # Collidable is optional component - entities who are not collidable can generate projectiles
                 collidable = self.world.try_component(ent, (components.Collidable))
 
@@ -43,7 +44,7 @@ class GenerateProjectileProcessor(esper.Processor):
                     return None
 
                 # Check if more projectiles can be created and continue, if yes
-                if len(has_weapon.projectiles) < weapon.max_projectiles:
+                if len(factory.list_of_entities) < weapon.max_projectiles:
 
 
                     # Original function from Factory component is used, newly rewritten to processor
@@ -66,7 +67,8 @@ class GenerateProjectileProcessor(esper.Processor):
                     self.world.add_component(new_entity, components.Position(x=pos_x, y=pos_y, dir=position.dir_name, map=pos_map))
 
                     # Add container component
-                    self.world.add_component(new_entity, components.Container(contained_in=has_weapon))
+                    #self.world.add_component(new_entity, components.Container(contained_in=has_weapon))
+                    self.world.add_component(new_entity, components.Container(contained_in=factory))
 
-                    has_weapon.projectiles.add(new_entity)
-                    print(f'Projectile {new_entity} created. List of projectiles {has_weapon.projectiles}')
+                    factory.list_of_entities.add(new_entity)
+                    print(f'Projectile {new_entity} created. List of projectiles {factory.list_of_entities}')

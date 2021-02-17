@@ -23,9 +23,9 @@ class ClearTemporaryEntityProcessor(esper.Processor):
 				container = self.world.try_component(ent, components.Container)
 				
 				if container:
-					# Remove from the set of projectiles
-					print(f'container.contained_in {container.contained_in}, container.contained_in.projectiles {container.contained_in.projectiles}')
-					container.contained_in.remove_projectile(ent) #HasWeapon component
+					# Remove from the set of entities generated and kept on Factory level
+					print(f'container.contained_in {container.contained_in}, container.contained_in.list_of_entities {container.contained_in.list_of_entities}')
+					container.contained_in.remove_entity(ent) #Entity component
 					
 				
 				# Remove from the world
