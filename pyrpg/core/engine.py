@@ -59,6 +59,8 @@ import pyrpg.core.messages.messages as messages # Fore in-game messages
 
 import pyrpg.utils.dialog as dialog # for creation of dialogs
 
+import pyrpg.core.lua as lua # for usage of lua scripts
+
 ########################################################
 ### Module Import Init - Init global variables
 ########################################################
@@ -357,8 +359,23 @@ def create_dialog(dlg_data):
     # Store the dialog
     dialogs.update({new_dlg_id : new_dlg_obj})
 
-def _create_entity(json_ent_obj, register=True, child_ref=None):
+def _create_entity(json_ent_obj, entity_id=None, register=True, child_ref=None):
     ''' Create entity from json definition. See Quest for definitions
+
+        Parameters:
+            :param json_ent_obj: Description of entity in JSON format (python dict).
+            :type json_ent_obj: dict
+
+            :param entity_id: Parameter overrides entity id that is present in json_ent_obj definition.
+            :type entity_id: str
+
+            :param register: Should the entity be globally registered with engine.
+            :type register: bool
+
+            :param child_ref: Used for recursive creation of entity from templates.
+            :type child_ref: world.entity Object
+
+            :raise: ValueError - in case of problem with component creation
     '''
 
     global world
@@ -368,11 +385,11 @@ def _create_entity(json_ent_obj, register=True, child_ref=None):
     # Prepare new_entity obj
     new_entity_obj = None
 
-    # Decode entity id 
-    new_entity_id = json_ent_obj.get("id")
+    # Decode entity id - use the one from fcion call with priority or the on fron entity description
+    new_entity_id = entity_id if entity_id else json_ent_obj.get("id")
 
     # Create new entity obj for the root entity
-    if not child_ref: 
+    if not child_ref:
         new_entity_obj = world.create_entity()
         print(f'\n*Creating new entity "{new_entity_id}", id: {new_entity_obj}')
 
@@ -454,7 +471,7 @@ def create_processors(world):
     # Render GAME WINDOW background procesor to display game stats and anything else
     render_background_processor = processors.RenderBackgroundProcessor(window=window)
 
-    # Render CAMERA background processor 
+    # Render CAMERA background processor
     render_camera_background_processor = processors.RenderCameraBackgroundProcessor()
 
     # Render processor to display map
@@ -488,6 +505,9 @@ def create_processors(world):
     # Weapon Collision processor
     collision_weapon_processor = processors.CollisionWeaponProcessor(event_queue)
 
+    # AmmoPack Collision processor
+    collision_ammo_pack_processor = processors.CollisionAmmoPackProcessor(event_queue)
+
     # Wearable Collision processor
     collision_wearable_processor = processors.CollisionWearableProcessor(event_queue)
 
@@ -511,8 +531,8 @@ def create_processors(world):
     #game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'COLLISION', 'TELEPORTATION', 'ITEM_PICKUP', 'WEARABLE_WEARED', 'WEAPON_ARMED', 'DAMAGE', 'KILL')
     #game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'COLLISION')
     #quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'PHASE_START')
-    game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, ignore=('PHASE_START','QUEST_START'))
-    quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, process=('PHASE_START','QUEST_START'))
+    game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, ignore=('PHASE_START', 'QUEST_START'))
+    quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, process=('PHASE_START', 'QUEST_START'))
 
     # Command processor - processes all commands from the command queue
     command_processor = processors.CommandProcessor(process_game_commands)
@@ -523,6 +543,14 @@ def create_processors(world):
     # Game messages processor
     game_messages_processor = processors.GameMessagesProcessor(process_game_messages)
 
+    ### NEW FACTORY IMPLEMENTATION
+    # Procesor marks Factory entity with flag that projectile should be generated on certain position
+    prepare_projectile_processor = processors.PrepareProjectileProcessor()
+
+    ### NEW FACTORY IMPLEMENTATION
+    # Factory entity produces new child entity
+    create_entity_on_position_processor = processors.CreateEntityOnPositionProcessor(create_entity_fnc=_create_entity)
+
     ##### #### #### ####
     # Beware of order of the processors
     ##### #### #### ####
@@ -530,7 +558,7 @@ def create_processors(world):
     ### First lets read input from player or/and AI. The resulting commands are stored in cmd_stream
     world.add_processor(input_processor)
     cons_update_fnc('InputProcessor initiated.')
-    
+
     world.add_processor(brain_processor)
     cons_update_fnc('BrainProcessor initiated.')
 
@@ -545,9 +573,15 @@ def create_processors(world):
     world.add_processor(movement_processor)
     cons_update_fnc('MovementProcessor initiated.')
 
-    ### Generate projectiles GenerateProjectileProcessor
-    world.add_processor(generate_projectiles_processor)
-    cons_update_fnc('GenerateProjectilesProcessor initiated.')
+    ### Generate projectiles GenerateProjectileProcessor - old solution
+    #world.add_processor(generate_projectiles_processor)
+    #cons_update_fnc('GenerateProjectilesProcessor initiated.')
+
+    ### Generate projectiles GenerateProjectileProcessor - new solution
+    world.add_processor(prepare_projectile_processor)
+    cons_update_fnc('PrepareProjectilesProcessor initiated.')
+    world.add_processor(create_entity_on_position_processor)
+    cons_update_fnc('CreateEntityOnPositionProcessor initiated.')
 
 
     ### Process all collisions and produce events where necessary
@@ -556,6 +590,7 @@ def create_processors(world):
     world.add_processor(collision_damage_processor) # Makes damage to entity if applicable
     world.add_processor(collision_teleport_processor)	# Resolves teleport collisions + generates events to the main program where those can be further processed
     world.add_processor(collision_weapon_processor)	# Resolves weapon pickups collisions + generates events to the main program where those can be further processed
+    world.add_processor(collision_ammo_pack_processor)	# Resolves ammo pack pickups collisions + generates events to the main program where those can be further processed
     world.add_processor(collision_wearable_processor)	# Resolves wearable pickups collisions + generates events to the main program where those can be further processed
     world.add_processor(collision_item_processor)		# Resolves item pickups collisions + generates events to the main program where those can be further processed
     world.add_processor(collision_entity_processor)		# Resolves entity collisions + generates events to the main program where those can be further processed

@@ -79,7 +79,7 @@ class CommandLineProcessor(cmd.Cmd):
 	https://github.com/Tuxemon/Tuxemon
 	'''
 
-	def __init__(self, app, input=sys.stdin, output=sys.stdout):
+	def __init__(self, app, lua_runtime=None, input=sys.stdin, output=sys.stdout):
 		''' Inherit from Cmd class. Output will need to be redirected 
 		to console graphical output, otherwise it would go to the text
 		window.
@@ -88,6 +88,7 @@ class CommandLineProcessor(cmd.Cmd):
 		# Initiate the parent class
 		cmd.Cmd.__init__(self, stdin=input, stdout=output)
 		self.app = app
+		self.lua = lua_runtime
 		self.output = output
 		self.input = input
 
@@ -105,12 +106,48 @@ class CommandLineProcessor(cmd.Cmd):
 	def do_quit(self, params):
 		'''If "quit" was typed on the command line, set the app's exit variable to True.
 		'''
-		return self.do_exit(params)		
+		return self.do_exit(params)
 	
 	def do_EOF(self, params):
-		'''If you press CTRL-D on the command line, set the app's exit variable to True.
+		''' If you press CTRL-D on the command line, set the app's exit variable to True.
 		'''
 		return self.do_exit(params)
+
+	def do_lua(self, params):
+		''' Executes lua commands in the console. App entity can be accessed
+		by referencing 'game'. See examples of possible usage below:
+
+		 - lua print('Hello world') ... prints Hello World at the console
+		 - lua print(game) ... prints reference to main game instance TestObject
+		 - lua local i for i = 1,500,100 do game.set_pos(i, i) end ... assignes new position to the game rect in cycle
+		'''
+
+		console_out = sys.stdout = StringIO()
+
+		if self.lua is None:
+			print('Lua Runtime not specified')
+			return
+
+		Result = None
+
+		try:
+			# Wrap the script so that it can use python global object 'game' and python print function
+			# in order to display the output on console and not on stdout
+			lua_script_wrapped = 'function(game, py_print_fnc) print = py_print_fnc ' + params + ' end'
+
+			# Prepare function that executes the script and call it with the python global game reference
+			lua_func = self.lua.eval(lua_script_wrapped)
+
+			# Run the lua function with parameters game and python print
+			Result = lua_func(self.app, print)
+
+		except Exception as E:
+			self.output.write(str(E))
+			return -1
+		finally:
+			self.output.write(str(console_out.getvalue()))
+			if Result: self.output.write(str(Result))
+			sys.stdout = sys.__stdout__
 
 	def do_shell(self, params):
 		''' Executes python commands in the console. App entity can be accessed
@@ -135,7 +172,7 @@ class CommandLineProcessor(cmd.Cmd):
 
 		try:
 			exec('Result = ' + params, globals_param, locals_param)
-			Result = locals_param.get('Result')			
+			Result = locals_param.get('Result')
 		except Exception as E:
 			self.output.write(str(E))
 			return -1
@@ -143,6 +180,34 @@ class CommandLineProcessor(cmd.Cmd):
 			self.output.write(str(console_out.getvalue()))
 			if Result: self.output.write(str(Result))
 			sys.stdout = sys.__stdout__
+
+	def do_lua_script(self, filename):
+		''' Run lua scripts
+
+		Script example - write 10-times hello to the console
+			local i
+
+			for i = 1, 10, 1 do
+				print('hello')
+			end
+		'''
+
+		# Read the file into params and call do_lua(params)
+		try:
+			# Open script file
+			with open(filename) as f:
+				self.output.write('>S>Script ' + filename + ' started.')
+
+				lua_script = f.read()
+
+				self.do_lua(lua_script)
+
+			# Inform that script has ended
+			self.output.write('>S>Script finished successfully.')
+
+		except FileNotFoundError:
+			self.output.write('Script file "' + str(filename) + '" not found.')
+			return -1
 
 	def do_script(self, params):
 		''' Run custom scripts that contain commands implemented in this class.
@@ -184,17 +249,6 @@ class CommandLineProcessor(cmd.Cmd):
 				self.output.write('Error loading script file "' + str(params) + '".')
 			else:
 				self.output.write('Error (' + str(error) + ') on line '+ str(script_line_no) + '. Command: ' + str(script_line.strip()))
-			return -1
-
-	def do_move(self, params):
-		''' Example of custom command implementation	
-		It is important to return True if success and False
-		'''
-		try:
-			self.app.move(params)
-			return None
-		except Exception as E:
-			self.output.write(str(E))
 			return -1
 
 class Header:
@@ -1125,9 +1179,10 @@ class Console(pygame.Surface):
 	ANIMATIONS = ['TOP', 'BOTTOM']
 
 
-	def __init__(self, app, width, config={}):
+	def __init__(self, app, lua_runtime, width, config={}):
 		'''
 		:param app: Reference to the instance that is govern (is accessible) by/from the console
+		:param lua_runtime: Reference to lua runtime in order to support lua scripting
 		:param width: Required width of the console window. Height is determined by height of individual console parts.
 		:param config: Dictionary storing all the configs necessary for correct display of console. See keys explanation below:
 			
@@ -1151,6 +1206,7 @@ class Console(pygame.Surface):
 
 		self.app = app
 		self.width = width
+		self.lua = lua_runtime
 
 		# Dictionary with default values
 		default_config = {
@@ -1191,7 +1247,7 @@ class Console(pygame.Surface):
 
 		# Initiace object for processing console commands - output of the class is redirected
 		# if console_output is not defined then standard output is used (sustem text console)
-		self.cli = CommandLineProcessor(self.app, output=self.console_output) if self.console_output else CommandLineProcessor(self.app)
+		self.cli = CommandLineProcessor(self.app, self.lua, output=self.console_output) if self.console_output else CommandLineProcessor(self.app)
 
 		# Correct the height dimension so that all the text rows are displayable
 		self.dim = (self.width, self.padding.up 
@@ -1478,6 +1534,11 @@ if __name__ == "__main__":
 				********************************
 			'''
 
+		def set_pos(self, x, y):
+			self.pos = [x, y]
+			print(f'New position set to {x}, {y}')
+
+
 		def update(self):
 			while not self.exit:
 				
@@ -1558,7 +1619,7 @@ if __name__ == "__main__":
 		def get_console_config(self, sample=None):
 			
 			# Select random console from 1 to 6
-			if not sample: sample = randint(1,6)
+			if not sample: sample = randint(1,1)
 			
 			# Sample 1: Full console features + top animation with 2s timing
 			if sample == 1:

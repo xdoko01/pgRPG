@@ -21,6 +21,7 @@ from .collision_entity_generator_processor import *
 from .collision_teleport_processor import *
 from .collision_damage_processor import *
 from .collision_weapon_processor import *
+from .collision_ammo_pack_processor import *
 from .collision_wearable_processor import *
 from .collision_item_processor import *
 from .collision_entity_processor import *
@@ -45,6 +46,9 @@ from .functions import *
 
 # Make only following modules visible in the  package
 __all__ = [
+	'PrepareProjectileProcessor',
+	'CreateEntityOnPositionProcessor',
+
 	'GenerateProjectileProcessor',
 	'ClearTemporaryEntityProcessor',
 	'RenderableModelAnimationActionProcessor',
@@ -67,6 +71,7 @@ __all__ = [
 	'CollisionTeleportProcessor',
 	'CollisionDamageProcessor',
 	'CollisionWeaponProcessor',
+	'CollisionAmmoPackProcessor',
 	'CollisionWearableProcessor',
 	'CollisionItemProcessor',
 	'CollisionEntityProcessor',

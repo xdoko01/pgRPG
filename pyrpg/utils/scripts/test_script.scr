@@ -1,0 +1,5 @@
+move 300,300
+!print('I have moved the brick')
+!game.surf.fill((0,0,0))
+!print('I have colored the brick')
+lua local i for i = 1,10,1 do print('hello') end

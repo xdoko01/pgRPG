@@ -22,7 +22,7 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'Collidable', 'Camera', 'Brain', 'CanTalk', 'Pickable', 'HasInventory',\
     'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
     'CanWear', \
-    'Weapon', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary', 'Container',\
+    'Weapon','AmmoPack', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary',\
     'Factory', 'LinearMotion', 'DeleteOnCollision',\
     'IsDead']
 
@@ -92,12 +92,12 @@ def create_component(world, alias_dict, entity: int, comp_class: str, comp_param
 
 # Load all component modules
 
+from .ammo_pack import *
 from .brain import *
 from .camera import *
 from .can_talk import *
 from .can_wear import *
 from .collidable import *
-from .container import *
 from .controllable import *
 from .damageable import *
 from .damaging import *
@@ -120,18 +120,21 @@ from .temporary import *
 from .weapon import *
 from .wearable import *
 
+from .flag_create_from_factory import *
+
 # Not used
+#from .container import *
 #from .state import *
 
 
 # Make only following modules visible in the  package
 __all__ = [
+    'AmmoPack',
     'Brain',
     'Camera',
     'CanTalk',
     'CanWear',
     'Collidable',
-    'Container',
     'Controllable',
     'Damageable',
     'Damaging',
@@ -152,9 +155,12 @@ __all__ = [
     'Teleportable',
     'Temporary',
     'Weapon',
-    'Wearable'
+    'Wearable',
+
+    'FlagCreateFromFactory'
 
     # Not used
     #'State',
+    #'Container',
 
     ]

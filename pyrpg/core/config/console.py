@@ -2,7 +2,8 @@ import pyrpg.core.config.paths as paths # for font path used in console
 import pyrpg.core.config.config as cfg  # for console configuration stored in CONSOLE dict
 import pyrpg.utils as utils # for Console class
 import importlib # for passing module name to COnsole as a string from config file
-from pyrpg.core.engine import window # for window get width
+from pyrpg.core.engine import window # for window get width - TODO - isnt it possible to get that from config?
+from pyrpg.core.lua import lua_runtime # for lua functionality in console
 
 ########################################################
 ### Update Console Config Paths
@@ -43,6 +44,7 @@ pprint.pprint(cfg.CONSOLE)
 # Initiate console
 game_console = utils.Console(
             importlib.import_module(cfg.CONSOLE.get('global').get('cli_module', 'pyrpg.core.engine')),
+            lua_runtime,
             window.get_width(),
             cfg.CONSOLE
         )
