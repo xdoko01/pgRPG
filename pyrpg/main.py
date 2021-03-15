@@ -79,7 +79,7 @@ def init(state='MAIN_MENU', cons_enabled=True):
 
     # Load the example test quest
     # TODO - in the future this will be triggered from the menu
-    pyrpg.core.engine.new_game('test_quest')
+    pyrpg.core.engine.new_game('test04_weapons')
 
     ##################
     # Hide the console

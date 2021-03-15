@@ -22,6 +22,7 @@ MESSAGES = {
 			'ITEM_PICKUP' : ['Entity {} was picked up by entity {}.', ['generator_obj', 'other_obj']],
 			'WEARABLE_WEARED' : ['Entity {} weared {}.', ['generator_obj', 'other_obj']],
 			'WEAPON_ARMED' : ['Entity {} picked up weapon {}.', ['generator_obj', 'other_obj']],
+			'AMMO_PACK_ARMED' : ['Entity {} picked up ammo pack {}.', ['generator_obj', 'other_obj']],
 			'DAMAGE' : ['Entity {} was hit.', ['other_obj']],
 			'KILL' : ['Entity {} was killed.', ['other_obj']],
 			'QUEST_START' : ['Quest {} has started.', ['generator_obj']],
@@ -113,7 +114,8 @@ PATHS = {
     "entity_path" : "pyrpg/resources/entities/",
     "map_path" : "pyrpg/resources/maps/",
     "log_path" : "pyrpg/logs/",
-    "save_path" : "pyrpg/save/"
+    "save_path" : "pyrpg/save/",
+    "console_script_path" : "pyrpg/utils/scripts/"
 }
 
 CONSOLE = {

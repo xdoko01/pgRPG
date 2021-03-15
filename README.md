@@ -13,6 +13,9 @@
 
 ### pytmx - https://github.com/bitcraft/PyTMX
 
+### lupa - https://pypi.org/project/lupa
+  - for lua scripting
+
 ## Some solutions
 
 ####
@@ -216,12 +219,14 @@
   - To make the functionality easier to use, there have been created *key control json definition entities* as a part of entity hierarchy (key_controls.json, ...). If we want to define new game entity that should be controllable by keys defined in key_controls_1 it is enough to say that this entity inherits from template `key_controls_1`. By doing so, `Controllable` component referencing `key_controls_1` config keys will be added to such entity.
 
 ### Game windows that can be shown as actions for quest or quest phase start (stopping any other action from happening)
+
   - New events *QUEST_START* and *PHASE_START* were created. Those events are automatically added to the event queue on every quest init and phase init (hardcoded).
   - Quest definition json contains even handler that handles *QUEST_START* and *PHASE_START* events. 
   - In the *condition* of the even handler there is definition of phase that we want to have linked with displaying of the game window, i.e. `"conditions" : {"script" : "self.phase_id == 'phase01'"}`
   - In the *action* of the event handler there is `show_dlg_window` script being called. The `show_dlg_window` script function uses `utils.dialog` to draw window on the screen. While `show_dlg_window` is executed, the rest of the game is frozen.
 
 ### Showing the messages during the game (not stopping the game)- things like 'item picked', 'NPC died', 'new phase changed'
+
   - New global variable `engine.message_queue` stores message objects to be displayed (or any other action)
   - New module `core.messages.messages` that defines the message object (position, text, ttl and time of creation) and defines `messages.process` function that blits all the messages on the game window.
   - Adjustment done in `core.events.Event` class. Every event type has now predefined format to be printed as event string - read from config file.
@@ -233,6 +238,7 @@
     - by command function - i.e. function `core.commands.add_msg` - this can be used from brain component
 
 ### Console configured to be available anytime, not only in game, and to display system messages
+
   - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pyrpg.main.init` function called `cons_enabled`. Value of this parameter is stored as `pyrpg.main.show_cons_on_sys_msg` variable for further use.
   - Console can be toggled from every game state by pressing `K_CONSOLE_TOGGLE` button.
   - Functions that are serving the console are executed in every game cycle for every game state. By doing so, we can achieve rolling-out effect even if the game state has no longer value `CONSOLE`.
@@ -241,20 +247,162 @@
   - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.main.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
 
 ### Init quest created that is always loaded before any other quest
+
   - This quest is **always** loaded on the pyRPG start and contains game definitions that are common for the whole game - first example is definition of PAUSE dialog.
   - There is still possibility that quests (game definitions) that are loaded later can overrule the *init* quest definitions by specifying its objects in *cleanup* section of the quest definition.
 
 ### New functionality for displaying in-game windows
+
  - even pause window implemented as a dialog!
 
-### Component classes are using engine for translation of alias to id - get rid of those back referencing - DONE
+### Component classes are using engine for translation of alias to id - get rid of those back referencing
   - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
   - WHY? to translate entity alias to entity id. Entity alias is stored in `engine.alias_to_entity` dictionary. This can be omitted by implementing translation from entity alias to entity id in `create_component` method that is part of `pyrpg.core.ecs.components` package init code.
+  - Component function `has_weapon.create_projectile` was using `engine` reference for creation of new entities that were representing projectiles. This functionality was moved to `generate_projectile_processor` and reference to `engine` removed from the component. As a side effect, the list of entities generated by the factory was moved from `HasWeapon` component to more generic `Factory` component.
 
+### 
 
 ## To Do
 
-  - put logic from has_weapon.createprojectile to processor generate_projectile_processor - DONE
+### make it possible to change the resolution within the game
+  - used by Camera component - camera should have some possibility to define it as reference to screen variable
+  - for example x : 'RESOLUTION_X div 2 - 10', if RESOLUTION_X is available for Camera component then we can run eval() and that is it
+  - but same as with entity -alias we want to preprocess the data comming from the quest - translate to real data so the components do not need to handle this
+  - so do this translation somewhere else? create_component function in init calls translate fction that already is doing the translation for aliases
+  - put config dict as reference to create entity. And then use eval on every parameter for creation of the component
+  - but eval('hello') will not work - so use try eval if fail then use the original value - TypeError if we are evaluating something else then string, NameError if we are evaluating something that is not known
+
+### Why is lua not needed and how the console scripting works - Put some words above - about console scripting in python
+  - lua is complication when all is in python already
+  - the only advantage of using lua is that you can write for cycle directly on one row in the console
+  - lua scripts are more complicated because they need to use functions that translate from Python structures to lua structures
+  - python scripts are powerful and no additional functions needed
+  - nevertheless, the lua support stays in the console and can be used if needed
+  --- implemented
+  - python scripts can be called with parameters
+  --- TODO
+  - default .py suffix add automatically
+  - prepare interesting scripts with parameters that can handle the game behavior
+  - console commands
+    - 1st level - simple Python command
+        `py print(game.alias_to_entity)`
+        `lua print(game.alias to entity)`
+    - 2nd level - Python scripts
+        `!get_entities 2 3 4`
+        `!set_value player01 Position x=20`
+    - 3rd level - Python scripts called from Lua
+        `lua local i for i=1,4,1 do cmd('set_value '..i..'Position x=20') end`
+    - 4th level - Lua scripts called separately
+        `lua_script test_script.lua`
+    - 5th level - all above integrated into Conslole script - each row contains one of above console calls
+        `script test_script.scr`
+    - 6th level - call console script using lua
+        `lua scr('test.scr')`
+    ----- 
+    - get_entities
+    - set_value
+
+### Incorporate Lua into separate Game-Console project
+### Incorporate bitmap fonts into COnsole
+### Incorporate default folder for the scripts (it takes time to always enter the full path)
+### Incorporate list of lua commands that should happen with every script (dictionary to table)
+
+### when killed it started to produce projectiles without controll - fix situation when player is killed
+
+### Rewrite Factory generation
+  - arrow is shoot - temporary - next IsDead (means just animation state change + change direction down + ignore it for collision)
+  - 
+  - when ammo pack is armed and another is picked, the newly picked should be destroyed completely - not happening now in collision ammo pack processor
+
+  - destroy the pack of arrows if reaches 0 - otherwise there will be arrow displayed still in animation
+    - mark is as temporary
+  FIRST VERSION - DONE
+  --------------------
+  - processor `PrepareProjectileProcessor`
+    - checks the animation frame and compares with the action frame
+    - if the action frame is the current frame
+      - generate new component `FlagCreateFromFactory` with parameters position and parent and more
+  - processor `CreateEntityOnPositionProcessor`
+    - process the components by similar way as currently done with current version of `GenerateProjectileProcessor`
+
+  - Pick up AmmoPack
+    - new component AmmoPack(weapon, type)   
+    - new collision processor
+
+  - TODO: Sword by default has Factory and Weapon in one entity - pickup processors must handle that = create invisible entity as sword swing
+    -
+  - TODO: Count on Factory level number of fired/generated entities - if Factory generated all then what ? Destroy the factory component? Destroy the whole entity?
+  - TODO: Create parent component as part of Factory generation
+  - TODO: PickUp ArrowPack
+    - new component on weaponGenerator, containing weapon type to which  it belongs
+    - move to inventory when new pack is picked
+    - what if same pack is picked as already in use??? Increase and keep just one entity?
+    - Sword has generator in it. How to pickup both properly?
+      - pickup weapon processor - if ammo component also, keep it for later pickup by ammo pack pickup
+  - TODO: How to add weapon experience into the damage effect
+    - damage should be build on experience with the weapon type 
+      - 1. how many generated swings/arrows
+          - PrepareProjectileProcessor 
+            - add on weapon component/has weapon component +1 total swings - this can influence the usability of the weapon
+            - calculate experience on hasWeapon entity and add damage multiplicator to FlagGenerateEntity
+      - 2. how many hits were done by weapon
+          - new component Projectile having entity number as parameter + weapon type as parameter
+          - ProjectileCollisionProcessor
+            - counts the Score - CanScore component on player, FlagAddScore component + CalculateScoreProcessor (selects CanScore + FlagAddScore and ads score)
+            - counts the hits - FlagAddWeaponExperience on player - CalculateWeaponExperienceProcessor (selects FlagAddWeaponExperience and HasWeapon and ads experience)
+      - 3. damage caused as an outcome of experience and damage on the arrow
+          - damage must be adjusted post generation and pre hitting
+          - add new component on the new entity FlagAdjustDamagable(*1.2) and forget it
+          - new porcessor that will select Damage and FlagAdjustDamagable components and adjust the Damage component accordingly
+
+
+  - FURTHER STEPS: create another Generator that will generate people.
+    - NEW version should be slower because it creates and destroys component.
+    - but new version is not using container so some processor will not have this container condition ...
+  - PROBLEMS: How to count score?
+
+  ----------------------------------------
+  LATEST THOUGHTS
+   - use new event generate or parametr factory.generate = TRUE
+   - Factory will have new parameters position, random, scheduled etc. that will be filled by preparateion processor
+   ----
+  - STEP (0) - How do I want Factory to work in general
+    - processor that iterates all Factories
+      - how to determine if it is the right moment for generation
+        1. have a special tag for it
+        2. **have attribute on Factory component - generate = True
+      - how to determine on which position to generate
+        1. have a new option for Position component
+          - something like *relative* - that would mean to take position from the parent???
+        2. **have a new component CopyParentPosition
+          - every picked component has Parent(entity) component
+          - entities with `CopyParentPosition` component will have this component exchanged for the real Position component by some processor
+
+    SCENARIO FOR PROJECTILE GENERATION
+    1. `GenerateProjectileProcessor` checks if frames are aligned and set the attribute on Factory *generate* = True
+    2. New processor `GenerateEntityFromFactoryProcessor`
+      - iterates all factories
+      - calculates and updates time from the last entity generation (for scheduled Factories)
+      - if `Factory.generate == True` - generate Entity with `CopyParentPosition` component and `Parent` component set to Factory entity
+    3. New processor `CopyParentPositionProcessor`
+      - find entities with `Parent` component and `CopyParentPosition` component
+      - get Position from `Parent` entity. If `Parent` entity has no `Position` component go to his parent etc... until you find position or no parent available
+      - delete `CopyParentPosition` and create new regular `Position` component
+    4. How to take into the account the collision zones?
+      1. parameter of `CopyParentPosition(collision_adjustment=True)` - i.e. include calc of Collision component of parent and collision component of himself
+      2. OR ignore collision between parent and generated things???
+      3. **new component `IgnoreCollisionWith(entity_id)`
+
+
+
+  - STEP (1) - with existing projectiles functionality
+    - processor `PrepareProjectileProcessor`
+      - checks the animation frame and compares with the action frame
+      - if the action frame is the current frame
+        - generate new component `FlagCreateFromFactory` with parameters position and parent
+    - processor `CreateEntityOnPositionProcessor`
+      - process the components by similar way as currently done with current version of `GenerateProjectileProcessor`
+-----
   - put projectiles somehow on the factory level where they belong - DONE
     - currently when Factory generates entity and registers it into the world, it adds Container component that references HasWeapon component
     - what if I want to use factory to generate new game characters, i.e. not to produce projectiles
@@ -281,19 +429,22 @@
 
 ### Rename HasWeapon to CanFIght to have it aligned with CanTalk and CanWear?
 
+### New experiments - how to integrate Lua into the python - example is Factorio
+  - possible to call Lua commands from console (example below)
+    /c for key,ent in pairs (game.player.surface.find_entities_filtered{name="locomotive"}) do 
+        ent.train.manual_mode = false
+      end
+
+### Make better console - such as Factorio - https://wiki.factorio.com/Console
+  - with python console it is not possible to write the for loop into the console as pressing Return executes the command and single line statements are hard to support in python
+  /command <command>	Executes a Lua command (if allowed).
+  /c <command>	Executes a Lua command (if allowed).
+  /editor	Toggles the map editor.
+  /measured-command <command>	Executes a Lua command (if allowed) and measures time it took.
+  /silent-command <command>	Executes a Lua command (if allowed) without printing it to the console.
+  /sc <command>	Executes a Lua command (if allowed) without printing it to the console.
+
 ### Rename HasInventory to CanPick to have it aligned with CanTalk and CanWear?
-
-### Component classes are using engine for calling the world - get rid of those back referencing
-  - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
-  - WHY? to call `engine.world.component_for_entity`. In order to get some property for component that contains reference to some other entity. For example `HasWeapon` component class has reference to `weapon` entity and `generator` entity. Is this good approach? Should Component has reference to entity?
-  - Following components are problematic:
-    - *HasWeapon* - is using engine.world.component_for_entity calls. Can I somehow get around that?
-    - *Factory* - 
-    - ... more
-
-### Rethink Factory component - can stay but the generation it self might be handled by some processor rather than the component method.
-
-### Is it correct that HasWeapon has all those methods? Like create_projectile? SHould this be on generator?
 
 ### New branch where map tiles are also components
 
@@ -787,3 +938,4 @@
 ### How much memory is used by the map??
 
 ###  HW sprites support, reducing the bitdepht
+

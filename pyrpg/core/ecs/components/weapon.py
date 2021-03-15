@@ -4,7 +4,6 @@ Weapon component implemented as a Weapon class.
 Use 'python -m pyrpg.core.ecs.components.brain -v' to run
 module tests.
 '''
-
 import pyrpg.core.models as model
 from .component import Component
 

@@ -22,7 +22,7 @@ class Factory(Component):
                         {"type" : "Debug", "params" : {}}
                     ]
                 },
-                "units" : 5
+                "max_units" : 5
             }
         }
 
@@ -33,11 +33,11 @@ class Factory(Component):
                         {"type" : "Debug", "params" : {}}\
                     ]\
                 },\
-                "units" : 5\
+                "max_units" : 5\
             })
     '''
 
-    __slots__ = ['prescription', 'units', 'list_of_entities']
+    __slots__ = ['prescription', 'max_units', 'current_units']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Factory component.
@@ -46,8 +46,12 @@ class Factory(Component):
                 :param prescription: Dictionary with prescription describing new entity (mandatory)
                 :type prescription: dict
 
-                :param units: Number of units to be generated (optional, default None=unlimited)
-                :type units: int
+                :param max_units: Number of units to be generated (optional, default None=unlimited)
+                :type max_units: int
+
+                :param current_units: Number of units already generated
+                :type current_units: int
+
         '''
 
         super().__init__()
@@ -56,23 +60,17 @@ class Factory(Component):
         self.prescription = kwargs.get('prescription')
 
         # Unlimited number of units in case no units passed in the argument
-        self.units = kwargs.get('units', None)
+        self.max_units = kwargs.get('max_units', None)
+
+        # At the start no units are generated
+        self.current_units = 0
 
         try:
-            assert isinstance(self.prescription, dict), f'Prescription must be in a form of dictionary'
-            assert isinstance(self.units, int) or self.units is None, f'Units must be integer or None(unlimited)'
+            assert isinstance(self.prescription, dict), f'Parameter "prescription" must be in a form of a dictionary'
+            assert isinstance(self.max_units, int) or self.max_units is None, f'Parameter "max_units" must be integer or None(unlimited)'
         except AssertionError:
             raise ValueError
 
-        # Remember the created child entities - set of ints representing entities
-        self.list_of_entities = set()
-
-    def remove_entity(self, entity):
-        ''' Removes child entity from the list of entities
-        that is implemented as a set.
-        '''
-        self.list_of_entities.remove(entity)
-        print(f'Entity {entity} deleted. List of entities {self.list_of_entities}')
 
 if __name__ == '__main__':
     import doctest

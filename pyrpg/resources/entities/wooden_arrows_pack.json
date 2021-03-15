@@ -3,9 +3,12 @@
 	"templates" : ["ammo_pack"],
 
 	"components" : [
+		{"type" : "AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+
 		{
 			"type" : "Factory", 
 			"params" : {
+				"max_units" : 5,
 				"prescription" : {
 					"templates" : ["wooden_arrow", "wooden_arrow_model"],
 					"components" : [
