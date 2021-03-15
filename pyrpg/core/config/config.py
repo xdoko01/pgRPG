@@ -114,7 +114,8 @@ PATHS = {
     "entity_path" : "pyrpg/resources/entities/",
     "map_path" : "pyrpg/resources/maps/",
     "log_path" : "pyrpg/logs/",
-    "save_path" : "pyrpg/save/"
+    "save_path" : "pyrpg/save/",
+    "console_script_path" : "pyrpg/utils/scripts/"
 }
 
 CONSOLE = {

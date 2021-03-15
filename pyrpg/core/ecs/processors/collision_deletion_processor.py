@@ -15,15 +15,6 @@ class CollisionDeletionProcessor(esper.Processor):
 			# If entity has collided in this loop cycle
 			if collision.has_collided:
 
-				# Delete from container TODO - must be done generic
-				container = self.world.try_component(ent, components.Container)
-				
-				if container:
-					# Remove from the set of projectiles
-					print(f'container.contained_in {container.contained_in}, container.contained_in.list_of_entities {container.contained_in.list_of_entities}')
-					container.contained_in.remove_entity(ent) #Factory component
-					
-				
 				# Remove from the world
 				self.world.delete_entity(ent)
 

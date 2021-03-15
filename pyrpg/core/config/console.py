@@ -37,6 +37,8 @@ if cfg.CONSOLE.get('input').get('font_file', None):
 if cfg.CONSOLE.get('footer').get('font_file', None):
     cfg.CONSOLE.get('footer').update({'font_file' : paths.FONT_PATH / cfg.CONSOLE.get('footer').get('font_file')})
 
+# Add console_script_path to the console config
+cfg.CONSOLE.get('global').update({'script_path' : paths.CONSOLE_SCRIPT_PATH})
 
 import pprint
 pprint.pprint(cfg.CONSOLE)

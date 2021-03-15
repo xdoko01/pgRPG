@@ -79,7 +79,7 @@ class CommandLineProcessor(cmd.Cmd):
 	https://github.com/Tuxemon/Tuxemon
 	'''
 
-	def __init__(self, app, lua_runtime=None, input=sys.stdin, output=sys.stdout):
+	def __init__(self, app, lua_runtime=None, input=sys.stdin, output=sys.stdout, script_path=None):
 		''' Inherit from Cmd class. Output will need to be redirected 
 		to console graphical output, otherwise it would go to the text
 		window.
@@ -91,6 +91,7 @@ class CommandLineProcessor(cmd.Cmd):
 		self.lua = lua_runtime
 		self.output = output
 		self.input = input
+		self.script_path = script_path
 
 	def emptyline(self):
 		''' In case empty line is entered, nothing happens
@@ -133,13 +134,19 @@ class CommandLineProcessor(cmd.Cmd):
 		try:
 			# Wrap the script so that it can use python global object 'game' and python print function
 			# in order to display the output on console and not on stdout
-			lua_script_wrapped = 'function(game, py_print_fnc) print = py_print_fnc ' + params + ' end'
+			lua_script_wrapped = '''
+				function(game, py_print_fnc, py_scr, lua_scr, con_scr)
+					local py_scr = py_scr
+					local lua_scr = lua_scr
+					local con_scr = con_scr
+					local print = py_print_fnc
+				''' + params + ' end'
 
 			# Prepare function that executes the script and call it with the python global game reference
 			lua_func = self.lua.eval(lua_script_wrapped)
 
 			# Run the lua function with parameters game and python print
-			Result = lua_func(self.app, print)
+			Result = lua_func(self.app, print, self.do_py_script, self.do_lua_script, self.do_con_script)
 
 		except Exception as E:
 			self.output.write(str(E))
@@ -149,7 +156,7 @@ class CommandLineProcessor(cmd.Cmd):
 			if Result: self.output.write(str(Result))
 			sys.stdout = sys.__stdout__
 
-	def do_shell(self, params):
+	def do_py(self, params):
 		''' Executes python commands in the console. App entity can be accessed
 		by referencing self. See examples of possible usage below:
 		 
@@ -181,6 +188,53 @@ class CommandLineProcessor(cmd.Cmd):
 			if Result: self.output.write(str(Result))
 			sys.stdout = sys.__stdout__
 
+	def do_shell(self, params):
+		self.do_py_script(params)
+
+	def do_py_script(self, params):
+		''' Executes python script
+
+			Examples: 
+				py_script test_script.py AmmoPack
+		'''
+
+		console_out = sys.stdout = StringIO()
+
+		globals_param = {'__buildins__' : None}
+
+		locals_param = {'game' : self.app}
+
+		filename = params.split()[0]
+
+		# Add the suffix to the filename, if needed
+		filename += '.py' if filename.split('.')[-1] != 'py' else ''
+
+		try:
+			# Open script file - script filename  is the first parameter params.split()[0]
+			with open(self.script_path / filename) as f:
+				self.output.write('>S>Script ' + str(self.script_path / filename) + ' started.')
+
+				py_script = f.read()
+
+				py_script_with_params = f'# Call parameters\nparams = "{params}"\n\n# Script body\n{py_script}'
+
+				try:
+					exec(py_script_with_params, globals_param, locals_param)
+					self.output.write(str(console_out.getvalue()))
+				except Exception as E:
+					self.output.write(str(console_out.getvalue()))
+					self.output.write(str(E))
+					return -1
+				finally:
+					sys.stdout = sys.__stdout__
+
+			# Inform that script has ended
+			self.output.write('>S>Script finished successfully.')
+
+		except FileNotFoundError:
+			self.output.write('Script file "' + str(self.script_path / filename) + '" not found.')
+			return -1
+
 	def do_lua_script(self, filename):
 		''' Run lua scripts
 
@@ -209,7 +263,7 @@ class CommandLineProcessor(cmd.Cmd):
 			self.output.write('Script file "' + str(filename) + '" not found.')
 			return -1
 
-	def do_script(self, params):
+	def do_con_script(self, params):
 		''' Run custom scripts that contain commands implemented in this class.
 
 		Script example:
@@ -1247,7 +1301,7 @@ class Console(pygame.Surface):
 
 		# Initiace object for processing console commands - output of the class is redirected
 		# if console_output is not defined then standard output is used (sustem text console)
-		self.cli = CommandLineProcessor(self.app, self.lua, output=self.console_output) if self.console_output else CommandLineProcessor(self.app)
+		self.cli = CommandLineProcessor(self.app, self.lua, output=self.console_output, script_path=config.get('global').get('script_path', None)) if self.console_output else CommandLineProcessor(self.app)
 
 		# Correct the height dimension so that all the text rows are displayable
 		self.dim = (self.width, self.padding.up 

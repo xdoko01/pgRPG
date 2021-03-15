@@ -51,52 +51,55 @@ class CreateEntityOnPositionProcessor(esper.Processor):
 
         for ent, (factory, flag_create_from_factory) in self.world.get_components(components.Factory, components.FlagCreateFromFactory):
 
-            # Prepare ID for the new entity
-            id_str = f'ORIG_ID:{factory.prescription.get("id", "")}:SUFF_ID:{flag_create_from_factory.id_suffix}:PARENT_ENT:{flag_create_from_factory.parent}:FACT_ENT:{ent}:TS:{pygame.time.get_ticks()}'
+            # If there are no more entities to produce, just remove the flag FlagCreateFromFactory and end
+            if factory.max_units <= factory.current_units:
+                self.world.remove_component(ent, components.FlagCreateFromFactory)
+                self.world.add_component(ent, components.Temporary(ttl=0))
+                print(f'Cannot generate further entities - destroying')
 
-            new_entity = self.create_entity_fnc(
-                factory.prescription,
+            # If there is still something to generate, generate it
+            else:
+                # Prepare ID for the new entity
+                id_str = f'ORIG_ID:{factory.prescription.get("id", "")}:SUFF_ID:{flag_create_from_factory.id_suffix}:PARENT_ENT:{flag_create_from_factory.parent}:FACT_ENT:{ent}:TS:{pygame.time.get_ticks()}'
 
-                # New ID for new Entity
-                entity_id=id_str,
+                new_entity = self.create_entity_fnc(
+                    factory.prescription,
 
-                # Do not register in engine global variable alias_to_entity - not needed
-                register=False
-            )
+                    # New ID for new Entity
+                    entity_id=id_str,
 
-            # If position is passed in FlagCreateFromFactory, add the Position component to the new entity
-            if flag_create_from_factory.position:
+                    # Do not register in engine global variable alias_to_entity - not needed
+                    register=False
+                )
 
-                self.world.add_component(new_entity, components.Position(**flag_create_from_factory.position))
+                # If position is passed in FlagCreateFromFactory, add the Position component to the new entity
+                if flag_create_from_factory.position:
 
-                # If adjustment of the position needs to take into account collition zone of the newly generated entity
-                if flag_create_from_factory.adjust_col:
+                    self.world.add_component(new_entity, components.Position(**flag_create_from_factory.position))
 
-                    # Try to adjust the position component of the new entity further. Might happen that new entity does
-                    # not have collision component
-                    try:
-                        new_entity_collidable = self.world.component_for_entity(new_entity, components.Collidable)
-                        new_entity_position = self.world.component_for_entity(new_entity, components.Position)
+                    # If adjustment of the position needs to take into account collition zone of the newly generated entity
+                    if flag_create_from_factory.adjust_col:
 
-                        new_entity_position.x += int(new_entity_position.direction[0] * (new_entity_collidable.x + 1))
-                        new_entity_position.y += int(new_entity_position.direction[1] * (new_entity_collidable.y + 1))
+                        # Try to adjust the position component of the new entity further. Might happen that new entity does
+                        # not have collision component
+                        try:
+                            new_entity_collidable = self.world.component_for_entity(new_entity, components.Collidable)
+                            new_entity_position = self.world.component_for_entity(new_entity, components.Position)
 
-                    except KeyError:
-                        return None
+                            new_entity_position.x += int(new_entity_position.direction[0] * (new_entity_collidable.x + 1))
+                            new_entity_position.y += int(new_entity_position.direction[1] * (new_entity_collidable.y + 1))
 
-            # Remove the component flag_create_from_factory as entity was successfully generated
-            self.world.remove_component(ent, components.FlagCreateFromFactory)
+                        except KeyError:
+                            return None
 
-            # Count new entity to the total number of entities created by the Factory
-            factory.current_units += 1
+                # Remove the component flag_create_from_factory as entity was successfully generated
+                self.world.remove_component(ent, components.FlagCreateFromFactory)
 
-            # TODO - If Factory has no more Units to produce max_units = current_units
-            if factory.max_units == factory.current_units:
-                # TODO - either destroy the whole entity or just the component. What are the consequences? 
-                pass
+                # Count new entity to the total number of entities created by the Factory
+                factory.current_units += 1
 
-            # Print information about successful generation
-            print(f'Entity {new_entity} created. No of generated entities: {factory.current_units}. No of remaining units {factory.max_units - factory.current_units}')
+                # Print information about successful generation
+                print(f'Entity {new_entity} created. No of generated entities: {factory.current_units}. No of remaining units {factory.max_units - factory.current_units}')
 
 
 class GenerateProjectileProcessor(esper.Processor):

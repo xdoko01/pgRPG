@@ -30,7 +30,7 @@ class CollisionAmmoPackProcessor(esper.Processor):
 
 						# Add AmmoPack to the HasWeapon - only in case that the slot for AmmoPack is available
 						# For that purpose AmmoPack must have some weapon type assigned
-						if not current_generator_entity:
+						if current_generator_entity is None:
 							col_event_entity_has_weapon.weapons[ammo_pack.weapon]['generator'] = ent
 
 							try:
@@ -64,12 +64,16 @@ class CollisionAmmoPackProcessor(esper.Processor):
 									factory_original_generator.max_units = None
 							except:
 								pass
-
+							
+							# Destroy the entity representing ammo pack completely
 							try:
+								# Destroy the entity immediatelly
+								self.world.add_component(ent, components.Temporary(ttl=0))
+								
 								# Remove Position component from the AmmoPack so that it is not displayable on the map - ammo_pack is picked
-								self.world.remove_component(ent, components.Position) 
+								#self.world.remove_component(ent, components.Position) 
 								# Remove Camera component from the AmmoPack so that the screen disappears - AmmoPack is picked
-								self.world.remove_component(ent, components.Camera)
+								#self.world.remove_component(ent, components.Camera)
 							except KeyError:
 								pass
 

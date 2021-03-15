@@ -19,5 +19,5 @@ class ClearTemporaryEntityProcessor(esper.Processor):
 			# Compare if the entity lived long enough
 			if pygame.time.get_ticks() - temporary.creation_time > temporary.ttl:
 
-				# Remove from the world
+				# Mark for removal from the world
 				self.world.delete_entity(ent)

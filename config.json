@@ -108,7 +108,7 @@
 		"output" : {
 			"padding" : [10,10,10,10],
 			"font_file" : "JackInput.ttf",
-			"font_size" : 16,
+			"font_size" : 12,
 			"font_antialias" : true,
 			"font_color" : [255,255,255],
 			"font_bck_color" : [55,0,0],
@@ -121,7 +121,7 @@
 		"input" : {
 			"padding" : [10,10,10,10],
 			"font_file" : "JackInput.ttf",
-			"font_size" : 16,
+			"font_size" : 12,
 			"font_antialias" : true,
 			"font_color" : [255,0,0],
 			"bck_color" : [0,255,0],
@@ -129,9 +129,9 @@
 			"prompt" : ">>>",
 			"max_string_length" : 10,
 			"repeat_keys_initial_ms" : 400,
-			"repeat_keys_interval_ms" :35
+			"repeat_keys_interval_ms" : 35
 			},
-		"footer" : {						
+		"footer" : {
 			"text" : "{}",
 			"text_params" : ["cons_get_info_footer"],
 			"layout" : ["TEXT_RIGHT"],
