@@ -264,9 +264,58 @@
 
 ## To Do
 
+### make it possible to change the resolution within the game
+  - used by Camera component - camera should have some possibility to define it as reference to screen variable
+  - for example x : 'RESOLUTION_X div 2 - 10', if RESOLUTION_X is available for Camera component then we can run eval() and that is it
+  - but same as with entity -alias we want to preprocess the data comming from the quest - translate to real data so the components do not need to handle this
+  - so do this translation somewhere else? create_component function in init calls translate fction that already is doing the translation for aliases
+  - put config dict as reference to create entity. And then use eval on every parameter for creation of the component
+  - but eval('hello') will not work - so use try eval if fail then use the original value - TypeError if we are evaluating something else then string, NameError if we are evaluating something that is not known
+
+### Why is lua not needed and how the console scripting works - Put some words above - about console scripting in python
+  - lua is complication when all is in python already
+  - the only advantage of using lua is that you can write for cycle directly on one row in the console
+  - lua scripts are more complicated because they need to use functions that translate from Python structures to lua structures
+  - python scripts are powerful and no additional functions needed
+  - nevertheless, the lua support stays in the console and can be used if needed
+  --- implemented
+  - python scripts can be called with parameters
+  --- TODO
+  - default .py suffix add automatically
+  - prepare interesting scripts with parameters that can handle the game behavior
+  - console commands
+    - 1st level - simple Python command
+        `py print(game.alias_to_entity)`
+        `lua print(game.alias to entity)`
+    - 2nd level - Python scripts
+        `!get_entities 2 3 4`
+        `!set_value player01 Position x=20`
+    - 3rd level - Python scripts called from Lua
+        `lua local i for i=1,4,1 do cmd('set_value '..i..'Position x=20') end`
+    - 4th level - Lua scripts called separately
+        `lua_script test_script.lua`
+    - 5th level - all above integrated into Conslole script - each row contains one of above console calls
+        `script test_script.scr`
+    - 6th level - call console script using lua
+        `lua scr('test.scr')`
+    ----- 
+    - get_entities
+    - set_value
+
+### Incorporate Lua into separate Game-Console project
+### Incorporate bitmap fonts into COnsole
+### Incorporate default folder for the scripts (it takes time to always enter the full path)
+### Incorporate list of lua commands that should happen with every script (dictionary to table)
+
 ### when killed it started to produce projectiles without controll - fix situation when player is killed
 
 ### Rewrite Factory generation
+  - arrow is shoot - temporary - next IsDead (means just animation state change + change direction down + ignore it for collision)
+  - 
+  - when ammo pack is armed and another is picked, the newly picked should be destroyed completely - not happening now in collision ammo pack processor
+
+  - destroy the pack of arrows if reaches 0 - otherwise there will be arrow displayed still in animation
+    - mark is as temporary
   FIRST VERSION - DONE
   --------------------
   - processor `PrepareProjectileProcessor`
@@ -889,3 +938,4 @@
 ### How much memory is used by the map??
 
 ###  HW sprites support, reducing the bitdepht
+
