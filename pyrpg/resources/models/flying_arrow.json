@@ -51,7 +51,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"die"
+                 "value":"expire"
                 }, 
                 {
                  "name":"direction",
@@ -93,7 +93,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"die"
+                 "value":"expire"
                 }, 
                 {
                  "name":"direction",
@@ -135,7 +135,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"die"
+                 "value":"expire"
                 }, 
                 {
                  "name":"direction",
@@ -177,7 +177,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"die"
+                 "value":"expire"
                 }, 
                 {
                  "name":"direction",

@@ -14,7 +14,7 @@
 
   3. Add optional custom properties 'repeat' and 'action_frame'
 
-    - property 'repeat' determines if the animation should repeat after the last frame is displayed. Normally, all animations have 'repeat' set to True automatically by the game. If 'repeat' is not specified as property on the tile it is automatically set to True in case that animation has more than 1 frame. If animation has only 1 frame, repeat is set to False automatically by the game. Typical animation with multiple frames that have 'repeat' set to False is 'die' action (once die animation is finished, it is not repeating again).
+    - property 'repeat' determines if the animation should repeat after the last frame is displayed. Normally, all animations have 'repeat' set to True automatically by the game. If 'repeat' is not specified as property on the tile it is automatically set to True in case that animation has more than 1 frame. If animation has only 1 frame, repeat is set to False automatically by the game. Typical animation with multiple frames that have 'repeat' set to False is `expire` action (once `expire` animation is finished, it is not repeating again).
 
     - property 'action_frame' indicates on which frame from the animation the game can generate some action (for example generation of the arrow on 'shoot' action). It is optional parameter. If not present, game will consider the last frame of animation as the action frame.
 
