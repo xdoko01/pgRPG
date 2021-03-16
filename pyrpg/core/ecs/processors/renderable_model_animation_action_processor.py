@@ -88,10 +88,11 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 					is_dead = self.world.try_component(ent, components.IsDead)
 
 					if is_dead:
-						renderable_model.set_action('die')
+						renderable_model.set_action('expire')
 						
 						# Direction must be down because only down direction is animated for the dead animation
-						position.set_direction('down')
+						# OBSOLETE - newly,all expire directions must be part of the model.
+						#position.set_direction('down')
 
 					elif motion and motion.has_moved:
 						

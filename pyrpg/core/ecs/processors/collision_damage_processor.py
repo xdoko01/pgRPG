@@ -50,7 +50,7 @@ class CollisionDamageProcessor(esper.Processor):
 					col_event_entity_damageable.health -= damaging.damage
 
 					# Die if health is up
-					if col_event_entity_damageable.health < 0:
+					if col_event_entity_damageable.health <= 0:
 						
 						# Set health to 0
 						col_event_entity_damageable.health = 0
