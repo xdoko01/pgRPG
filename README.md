@@ -264,6 +264,11 @@
 
 ## To Do
 
+### Branch 'Dying should be possible in all directions'
+  - prepare model animation of dying for all directions - for darkmale it is done
+  - find another word instead of die - I want this animation to be used with any object being destroyed - `expire`
+  - rename all the die occurences and use `expire` instead - done
+
 ### make it possible to change the resolution within the game
   - used by Camera component - camera should have some possibility to define it as reference to screen variable
   - for example x : 'RESOLUTION_X div 2 - 10', if RESOLUTION_X is available for Camera component then we can run eval() and that is it

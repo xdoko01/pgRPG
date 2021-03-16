@@ -65,7 +65,7 @@ class Model(object):
 
 	# Allowed model directions and actions
 	DIRECTIONS = ['up', 'down', 'left', 'right']
-	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing', 'shoot', 'idle_shoot', 'die']
+	ACTIONS = ['default', 'walk', 'idle', 'idle_stab', 'stab', 'idle_swing', 'swing', 'shoot', 'idle_shoot', 'expire']
 
 	def __init__(self, model_file):
 		''' Initiate values for the new RenderableModel component.

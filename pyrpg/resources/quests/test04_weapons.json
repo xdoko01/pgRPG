@@ -124,7 +124,7 @@
 					"templates" : ["darkmale"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc0101", "name" : "Test NPC"}},
-						{"type" : "Position", "params" : {"x" : 250, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "Position", "params" : {"x" : 250, "y" : 450, "dir": "right", "map" : "test_arena_sand"}},
 						{"type" : "Damageable", "params" : {"health" : 5}},
 
 						{"type" : "Debug", "params" : {}}
