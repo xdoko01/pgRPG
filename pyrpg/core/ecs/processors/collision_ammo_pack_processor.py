@@ -33,14 +33,18 @@ class CollisionAmmoPackProcessor(esper.Processor):
 						if current_generator_entity is None:
 							col_event_entity_has_weapon.weapons[ammo_pack.weapon]['generator'] = ent
 
+							# Add FlagAmmoPackArmed component refering to entity with HasWeapon component
+							self.world.add_component(ent, components.FlagAmmoPackArmed(armed_entity=col_event_entity))
+							print('AmmoPack armed')
+
+							# Remove Position component from the AmmoPack so that it is not displayable on the map - ammo_pack is picked
+							self.world.remove_component(ent, components.Position) 
+
 							try:
-								# Remove Position component from the AmmoPack so that it is not displayable on the map - ammo_pack is picked
-								self.world.remove_component(ent, components.Position) 
 								# Remove Camera component from the AmmoPack so that the screen disappears - AmmoPack is picked
 								self.world.remove_component(ent, components.Camera)
 							except KeyError:
 								pass
-
 
 							# Remove the col_event_entity from HasWeapon entity
 							collision.collision_events.remove(col_event_entity)
@@ -55,28 +59,15 @@ class CollisionAmmoPackProcessor(esper.Processor):
 						# If same AmmoPack is picked up as already armed on the weapon, add projectiles
 						elif self.world.component_for_entity(current_generator_entity, components.AmmoPack).type == ammo_pack.type:
 							
-							try:
-								factory_original_generator = self.world.component_for_entity(current_generator_entity, components.Factory)
-								if factory_original_generator.max_units and factory.max_units:
-									factory_original_generator.max_units += (factory.max_units - factory.current_units)
-									print(f'New Max Units value {factory_original_generator.max_units}')
-								elif not factory_original_generator.max_units or not factory.max_units:
-									factory_original_generator.max_units = None
-							except:
-								pass
+							factory_original_generator = self.world.component_for_entity(current_generator_entity, components.Factory)
+							if factory_original_generator.max_units and factory.max_units:
+								factory_original_generator.max_units += (factory.max_units - factory.current_units)
+								print(f'New Max Units value {factory_original_generator.max_units}')
+							elif not factory_original_generator.max_units or not factory.max_units:
+								factory_original_generator.max_units = None
 							
-							# Destroy the entity representing ammo pack completely
-							try:
-								# Destroy the entity immediatelly
-								self.world.add_component(ent, components.Temporary(ttl=0))
-								
-								# Remove Position component from the AmmoPack so that it is not displayable on the map - ammo_pack is picked
-								#self.world.remove_component(ent, components.Position) 
-								# Remove Camera component from the AmmoPack so that the screen disappears - AmmoPack is picked
-								#self.world.remove_component(ent, components.Camera)
-							except KeyError:
-								pass
-
+							# Mark the AmmoPack as depleted - hence for removal
+							self.world.add_component(ent, components.FlagFactoryDepleted())
 
 							# Remove the col_event_entity from HasWeapon entity
 							collision.collision_events.remove(col_event_entity)

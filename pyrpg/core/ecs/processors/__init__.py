@@ -30,6 +30,7 @@ from .brain_processor import *
 from .game_events_processor import *
 from .command_processor import *
 from .game_messages_processor import *
+from .remove_depleted_ammo_pack_processor import *
 
 # Not used
 #from .render_map_processor_full_scan import *
@@ -48,6 +49,8 @@ from .functions import *
 __all__ = [
 	'PrepareProjectileProcessor',
 	'CreateEntityOnPositionProcessor',
+	'DisarmDepletedAmmoPackProcessor',
+	'RemoveDepletedAmmoPackProcessor',
 
 	'GenerateProjectileProcessor',
 	'ClearTemporaryEntityProcessor',

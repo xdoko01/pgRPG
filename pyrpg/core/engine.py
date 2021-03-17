@@ -450,6 +450,12 @@ def create_processors(world):
     global message_queue
     global maps
 
+    # Processor that disarms the depleted ammo pack from the weapon
+    disarm_depleted_ammo_pack_processor = processors.DisarmDepletedAmmoPackProcessor()
+
+    # Processor that removes entity representing empty ammo pack
+    remove_depleted_ammo_pack_processor = processors.RemoveDepletedAmmoPackProcessor(remove_entity_fnc=delete_entity_id)
+
     # Processor that updates constant speed movement
     linear_movement_processor = processors.LinearMovementProcessor()
 
@@ -653,6 +659,12 @@ def create_processors(world):
     ### Clearing processors
     ##################################
 
+    # Remove AmmoPack from weapon when out of ammo
+    world.add_processor(disarm_depleted_ammo_pack_processor)
+
+    # Delete AmmoPack entity when out of ammo
+    world.add_processor(remove_depleted_ammo_pack_processor)
+
     # Delete entities with Temporary component from the world
     world.add_processor(clear_temporary_entity_processor)
 
@@ -684,8 +696,9 @@ def delete_map(map_name):
     if maps.get(map_name, None):
         del maps[map_name]
 
-def delete_entity(entity_name):
-    ''' Delete and un-register entity from the world
+def delete_entity_alias(alias):
+    ''' Delete and un-register entity from the world.
+    Entity Alias on the input.
     '''
 
     global world
@@ -693,17 +706,39 @@ def delete_entity(entity_name):
     global entity_to_alias
 
     # Get entity number
-    entity = alias_to_entity.get(entity_name, None)
+    entity = alias_to_entity.get(alias, None)
 
     # If entity is registered, delete it
     if entity is not None:
 
         # Delete it from Esper world
         world.delete_entity(entity)
-        
+
         # Un-register the entity
-        del alias_to_entity[entity_name]
+        del alias_to_entity[alias]
         del entity_to_alias[entity]
+
+def delete_entity_id(entity_id):
+    ''' Delete and un-register entity from the world.
+    Entity ID on the input.
+    '''
+
+    global world
+    global alias_to_entity
+    global entity_to_alias
+
+    # Get entity alias
+    alias = entity_to_alias.get(entity_id, None)
+
+    # If entity is registered, delete it
+    if entity_id is not None:
+
+        # Delete it from Esper world
+        world.delete_entity(entity_id)
+
+        # Un-register the entity
+        del alias_to_entity[alias]
+        del entity_to_alias[entity_id]
 
 def delete_dialog(dialog_name):
     ''' Delete and unregister dialog object

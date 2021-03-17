@@ -121,6 +121,9 @@ from .weapon import *
 from .wearable import *
 
 from .flag_create_from_factory import *
+from .flag_factory_depleted import *
+from .flag_ammo_pack_armed import *
+
 
 # Not used
 #from .container import *
@@ -157,7 +160,9 @@ __all__ = [
     'Weapon',
     'Wearable',
 
-    'FlagCreateFromFactory'
+    'FlagCreateFromFactory',
+    'FlagFactoryDepleted',
+    'FlagAmmoPackArmed'
 
     # Not used
     #'State',

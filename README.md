@@ -264,6 +264,10 @@
 
 ## To Do
 
+### New component flag to determine when the ammo pack is empty
+  - processors DisarmDepletedAmmoPackProcessor and RemoveDepletedAmmoPackProcessor can be united into RemoveDepletedAmmoPackProcessor only
+  - components AmmoPack and FlagAMmoPackArmed can be probably merged to AmmoPack only - new entity_armed parameter on AmmoPack
+
 ### make it possible to change the resolution within the game
   - used by Camera component - camera should have some possibility to define it as reference to screen variable
   - for example x : 'RESOLUTION_X div 2 - 10', if RESOLUTION_X is available for Camera component then we can run eval() and that is it

@@ -218,7 +218,7 @@ class Quest:
 		entities_to_clean = phase_data.get("cleanup", {}).get("entities", [])
 
 		for entity_name_to_clean in entities_to_clean:
-			engine.delete_entity(entity_name_to_clean)
+			engine.delete_entity_alias(entity_name_to_clean)
 
 		# Clean the maps that are no longer needed
 		maps_to_clean = phase_data.get("cleanup", {}).get("maps", [])

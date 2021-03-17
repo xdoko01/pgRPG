@@ -37,15 +37,13 @@ if __name__ == '__main__':
         "second_value" : 2,
         "third_value" : 3,
         "first_list" : [ "item1", "item2", "item3"],
-        "first_dict" : { "a" : "dict1"},
-        resolution_x : 400
+        "first_dict" : { "a" : "dict1"}
     }
 
     input1 = {
         "first_key" : "first_value",
         "second_key" : ["first_value", "second_value"],
-        "third_key" : { "third_key_1" : ["second_value", {"first_value" : "third_value"}]},
-        "forth_key" : resolution_x / 2
+        "third_key" : { "third_key_1" : ["second_value", {"first_value" : "third_value"}]}
     }
 
     print(f'Translation dict:\n{trans_dict}')
