@@ -32,6 +32,15 @@
                 }]
         }, 
         {
+         "animation":[
+                {
+                 "duration":100,
+                 "tileid":0
+                }, 
+                {
+                 "duration":100,
+                 "tileid":1
+                }],
          "id":1,
          "properties":[
                 {
@@ -74,6 +83,15 @@
                 }]
         }, 
         {
+         "animation":[
+                {
+                 "duration":100,
+                 "tileid":3
+                }, 
+                {
+                 "duration":100,
+                 "tileid":4
+                }],
          "id":4,
          "properties":[
                 {
@@ -116,6 +134,15 @@
                 }]
         }, 
         {
+         "animation":[
+                {
+                 "duration":100,
+                 "tileid":6
+                }, 
+                {
+                 "duration":100,
+                 "tileid":7
+                }],
          "id":7,
          "properties":[
                 {
@@ -158,6 +185,15 @@
                 }]
         }, 
         {
+         "animation":[
+                {
+                 "duration":100,
+                 "tileid":9
+                }, 
+                {
+                 "duration":100,
+                 "tileid":10
+                }],
          "id":10,
          "properties":[
                 {
