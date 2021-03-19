@@ -5,6 +5,7 @@
 
 # Load all processor modules
 from .remove_depleted_ammo_pack_processor import *
+from .disarm_depleted_ammo_pack_processor import *
 from .generate_projectile_processor import *
 from .clear_temporary_entity_processor import *
 from .renderable_model_animation_action_processor import *
@@ -47,7 +48,7 @@ from .functions import *
 
 # Make only following modules visible in the  package
 __all__ = [
-	'DisarmDepletedAmmoPackProcessor', 
+	'DisarmDepletedAmmoPackProcessor',
 	'RemoveDepletedAmmoPackProcessor'
 
 	'PrepareProjectileProcessor',
