@@ -454,7 +454,7 @@ def create_processors(world):
     remove_depleted_ammo_pack_processor = processors.RemoveDepletedAmmoPackProcessor(remove_entity_fnc=delete_entity_id)
 
     # Processor that disarms AmmoPack from the weapon in case it is depleted
-    disarm_depleted_ammo_pack_processor = processors.DisarmDepletedAmmoPackProcessor()
+    disarm_depleted_ammo_pack_processor = processors.DisarmDepletedAmmoPackProcessor(event_queue)
 
     # Processor that updates constant speed movement
     linear_movement_processor = processors.LinearMovementProcessor()

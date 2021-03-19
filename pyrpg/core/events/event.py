@@ -7,9 +7,10 @@ class Event:
 	'''
 
 	EVENT_TYPES = ['COLLISION', 'TELEPORTATION', 'ITEM_PICKUP',\
-		 'WEARABLE_WEARED', 'WEAPON_ARMED', 'AMMO_PACK_ARMED', 'DAMAGE', 'KILL',\
+		 'WEARABLE_WEARED', 'WEAPON_ARMED', 'AMMO_PACK_ARMED', 'AMMO_PACK_DISARMED',\
+		 'DAMAGE', 'KILL',\
 		 'QUEST_START', 'PHASE_START']
-	
+
 
 	def __init__(self, event_type, generator_obj, other_obj, params={}):
 
@@ -19,12 +20,12 @@ class Event:
 		self.generator_obj = generator_obj
 		self.other_obj = other_obj
 		self.params = params
-	
+
 	def __str__(self):
 		return f'*Event type:\t{self.event_type}\nSource entity:\t{self.generator_obj}\nDestination entity:\t{self.other_obj}\nParams:\t{self.params}\n'
 
 	def to_string(self):
-		''' If format of the event message is not present in json config file 
+		''' If format of the event message is not present in json config file
 		or config module, empty string is returned and no message is displayed.
 		'''
 
