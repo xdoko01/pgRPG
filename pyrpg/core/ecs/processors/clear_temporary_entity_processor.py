@@ -6,18 +6,23 @@ import pygame	# for pygame.time.get_ticks()
 
 
 class ClearTemporaryEntityProcessor(esper.Processor):
-	''' Delete for example projectiles
-	'''
-	def __init__(self):
-		super().__init__()
+    ''' Delete for example projectiles
+    '''
+    __slots__ = ['remove_entity_fnc']
 
-	def process(self, *args, **kwargs):
-		
-		# Get all temporary components
-		for ent, temporary in self.world.get_component(components.Temporary):
+    def __init__(self, remove_entity_fnc):
 
-			# Compare if the entity lived long enough
-			if pygame.time.get_ticks() - temporary.creation_time > temporary.ttl:
+        super().__init__()
 
-				# Mark for removal from the world
-				self.world.delete_entity(ent)
+        self.remove_entity_fnc = remove_entity_fnc
+
+    def process(self, *args, **kwargs):
+
+        # Get all temporary components
+        for ent, temporary in self.world.get_component(components.Temporary):
+
+            # Compare if the entity lived long enough
+            if pygame.time.get_ticks() - temporary.creation_time > temporary.ttl:
+
+                # Remove
+                self.remove_entity_fnc(ent)

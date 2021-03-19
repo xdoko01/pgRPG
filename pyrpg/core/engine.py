@@ -450,6 +450,12 @@ def create_processors(world):
     global message_queue
     global maps
 
+    # Processor that deletes AmmoPact that has no Ammo
+    remove_depleted_ammo_pack_processor = processors.RemoveDepletedAmmoPackProcessor(remove_entity_fnc=delete_entity_id)
+
+    # Processor that disarms AmmoPack from the weapon in case it is depleted
+    disarm_depleted_ammo_pack_processor = processors.DisarmDepletedAmmoPackProcessor()
+
     # Processor that updates constant speed movement
     linear_movement_processor = processors.LinearMovementProcessor()
 
@@ -457,7 +463,7 @@ def create_processors(world):
     generate_projectiles_processor = processors.GenerateProjectileProcessor(create_entity_fnc=_create_entity)
 
     # Processor that deletes entities with Temporary component from the world - once ttl expires
-    clear_temporary_entity_processor = processors.ClearTemporaryEntityProcessor()
+    clear_temporary_entity_processor = processors.ClearTemporaryEntityProcessor(remove_entity_fnc=delete_entity_id)
 
     # Update the animation for rendering the model
     render_model_anim_update_processor = processors.RenderableModelAnimationUpdateProcessor()
@@ -518,7 +524,7 @@ def create_processors(world):
     collision_entity_processor = processors.CollisionEntityProcessor(event_queue, command_queue)
 
     # Collision Deletion processor - deletes entities with component DeleteOnCollision
-    collision_deletion_processor = processors.CollisionDeletionProcessor()
+    collision_deletion_processor = processors.CollisionDeletionProcessor(remove_entity_fnc=delete_entity_id)
 
     # Collision position corrector processor - OBSOLETE - substituted by CollisionEntityProcessor
     #collision_corrector_processor = processors.CollisionCorrectorProcessor()
@@ -653,6 +659,12 @@ def create_processors(world):
     ### Clearing processors
     ##################################
 
+    # Remove the AmmoPack entity reference from HasWeapon component
+    world.add_processor(disarm_depleted_ammo_pack_processor)
+
+    # Remove depleted AmmoPack
+    world.add_processor(remove_depleted_ammo_pack_processor)
+
     # Delete entities with Temporary component from the world
     world.add_processor(clear_temporary_entity_processor)
 
@@ -684,8 +696,31 @@ def delete_map(map_name):
     if maps.get(map_name, None):
         del maps[map_name]
 
-def delete_entity(entity_name):
-    ''' Delete and un-register entity from the world
+def delete_entity_id(entity_id):
+    ''' Delete and un-register entity from the world.
+    Entity is represented by its integer id
+    '''
+
+    global world
+    global alias_to_entity
+    global entity_to_alias
+
+    # Get alias
+    alias = entity_to_alias.get(entity_id, None)
+
+    # Delete it from Esper world
+    world.delete_entity(entity_id)
+        
+    # Un-register the entity - ignore if not found, can be unregistered entity
+    try:
+        del alias_to_entity[alias]
+        del entity_to_alias[entity_id]
+    except KeyError:
+        pass
+
+def delete_entity_alias(alias):
+    ''' Delete and un-register entity from the world.
+    Entity is represented by its alias
     '''
 
     global world
@@ -693,17 +728,17 @@ def delete_entity(entity_name):
     global entity_to_alias
 
     # Get entity number
-    entity = alias_to_entity.get(entity_name, None)
+    entity_id = alias_to_entity.get(alias, None)
 
     # If entity is registered, delete it
     if entity is not None:
 
         # Delete it from Esper world
-        world.delete_entity(entity)
+        world.delete_entity(entity_id)
         
         # Un-register the entity
-        del alias_to_entity[entity_name]
-        del entity_to_alias[entity]
+        del alias_to_entity[alias]
+        del entity_to_alias[entity_id]
 
 def delete_dialog(dialog_name):
     ''' Delete and unregister dialog object
