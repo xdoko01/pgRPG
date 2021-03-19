@@ -1,7 +1,0 @@
-{
-	"id" : "lightfemale",
-	"templates" : ["character_model"],
-	"components" : [
-		{"type" : "RenderableModel", "params" : {"model" : "lightfemale.json"}}		
-	]
-}

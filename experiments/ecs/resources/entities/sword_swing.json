@@ -1,9 +1,0 @@
-{
-	"id" : "sword_swing",
-	"templates" : ["projectile"],
-	"components" : [
-		{"type" : "Temporary", "params" : {"ttl" : 100}},
-		{"type" : "Collidable", "params" : {"x" : 16, "y" : 16}},
-		{"type" : "Damaging", "params" : {"damage" : 10}}
-	]
-}
