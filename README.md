@@ -264,6 +264,8 @@
 
 ## To Do
 
+### AmmoPack to inventory if no type is different
+
 ### Branch 'Dying should be possible in all directions'
   - prepare model animation of dying for all directions - for darkmale it is done
   - find another word instead of die - I want this animation to be used with any object being destroyed - `expire`
