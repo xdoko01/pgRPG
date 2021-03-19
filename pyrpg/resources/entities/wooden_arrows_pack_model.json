@@ -2,7 +2,7 @@
 	"id" : "wooden_arrows_pack_model",
 	"templates" : ["ammo_pack_model"],
 	"components" : [
-		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
-		{"type" : "RenderableModel", "params" : {"model" : "arrow.json"}}
+		{"type" : "Collidable", "params" : {"x" : 20, "y" : 20}},
+		{"type" : "RenderableModel", "params" : {"model" : "wooden_arrows_pack.json"}}
 	]
 }
