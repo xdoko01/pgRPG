@@ -264,7 +264,9 @@
 
 ## To Do
 
-### AmmoPack to inventory if no type is different
+### Get spritesheet for quiver and for sticks
+### If AmmoPack is in inventory and the same AmmoPack type is put in inventory - one entity should disappear and arrows should be on one heap
+### Score counting, experience counting
 
 ### Branch 'Dying should be possible in all directions'
   - prepare model animation of dying for all directions - for darkmale it is done
