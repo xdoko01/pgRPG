@@ -1,0 +1,7 @@
+{
+	"id" : "orcmale",
+	"templates" : ["character_model"],
+	"components" : [
+		{"type" : "RenderableModel", "params" : {"model" : "orcmale.json"}}		
+	]
+}

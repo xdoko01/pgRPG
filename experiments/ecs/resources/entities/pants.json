@@ -1,0 +1,8 @@
+{
+	"id" : "pants",
+	"templates" : ["wearable"],
+	"components" : [
+		{"type" : "Wearable", "params" : {"bodypart" : "legs"}},
+		{"type" : "Pickable", "params" : {}}
+	]
+}

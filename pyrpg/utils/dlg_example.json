@@ -1,0 +1,116 @@
+{
+	"id" : "dlg_example",
+	
+	"templates" : ["basic_dlg"],
+
+	"dimensions" : [400, 200],
+
+	"background" : {
+		"color" : "#FFFFFF",
+		"image" : "quake.png",
+		"alpha" : 128
+	},
+
+	"font" : {
+		"path" : "small_font.json",
+		"size" : 16,
+		"color" : "#FFFFFF",
+		"align" : "CENTER"
+		},
+
+	"texts" : [
+		{
+			"font" : {
+				"path" : "small_font.json",
+				"color" : "#FF0000",
+				"align" : "LEFT"
+			},
+			"text" : "This is dialog level text no 1",
+			"position" : [0, 0]
+		},
+		{
+			"text" : "This is dialog\nlevel text no 2",
+			"position" : [0, 20]
+		},
+		{
+			"text" : "This is dialog\nlevel text no 3",
+			"position" : [50, 100],
+			"font" : {
+				"path" : "good_neighbours_font.json"
+			}
+		}
+	],
+
+	"buttons" : [
+		{
+			"position" : [100, 100],
+
+			"dimensions" : [50, 20],
+
+			"background" : {
+				"color" : "#FFFFFF",
+				"image" : "quake.png",
+				"alpha" : 250
+			},
+
+			"font" : {
+				"path" : "small_font.json",
+				"color" : "#FF0000",
+				"size" : 16,
+				"align" : "CENTER"
+			},
+
+			"text": "OK"
+		}
+	],
+
+	"frames" : [
+		{
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 8,
+				"color" : "#00FFFF",
+				"align" : "RIGHT"
+			},
+
+			"background" : {
+				"color" : "#FF0000",
+				"alpha" : 128
+			},
+
+			"images" : [
+				{
+					"path" : "quake.png",
+					"position" : [50, 50]
+				},
+				{
+					"path" : "bluesquare.png",
+					"position" : [100, 50]
+				}
+			],
+
+			"texts" : [
+				{
+					"text" : "Once upon\nthe time",
+					"position" : [0, 100]
+				}
+			]
+		},
+		{
+			"texts" : [
+				{
+					"text" : "There was\nlovely little sausage called\nBaldrick",
+					"position" : [100, 100]
+				}
+			]
+		},
+		{
+			"texts" : [
+				{
+					"text" : "And he lived happily\never after",
+					"position" : [0, 100]
+				}
+			]
+		}
+	]
+}

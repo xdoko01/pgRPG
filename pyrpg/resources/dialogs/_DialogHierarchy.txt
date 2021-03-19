@@ -1,0 +1,7 @@
++ ... means
+++ ... means
+###############################################
+
+empty.json	# empty
+		|
+		-> basic.json	# + dialog background and font settings

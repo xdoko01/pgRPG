@@ -1,0 +1,55 @@
+	#############################################################################################
+	Entity
+		-	 Instead, an entity is a unique ID, and all components that make up an entity 
+		will be tagged with that ID. The entity is an implicit aggregation of the components 
+		tagged with its ID.
+
+		-	Rock (Position, Sprite)
+		-	Crate (Position, Sprite, Health)
+		-	Sign (Position, Sprite, Text)
+		-	Ball (Position, Velocity, Physics, Sprite)
+		-	Enemy (Position, Velocity, Sprite, Character, Input, AI)
+		-	Player (Position, Velocity, Sprite, Character, Input, Player)
+
+	Components
+		-	POSITION - Has a position in the world
+			-	world position (x,y)
+		-	MOTION - Can move (velocity, acceleration)
+			-	velocity, acceleration
+		-	SPRITE - Should display on screen
+			-	file to use spreadsheet, sprite
+		-	COLLISION - Colides with other objects
+			-	size of collision box
+		-	HEALTH - Has health, can take damage
+			-	current health, max health
+		-	FOLLOW - Controll, should follow another enity
+			-	who to follow (entity)
+		-	JOYSTICK (INPUT) - Control - should move based on arrow keys
+			-	key information
+		-	AI - 
+			-	boolean doLeft, doRight, doShoot, ...
+
+		Movement (Position, Velocity) - Adds velocity to position
+		Gravity (Velocity) - Accelerates velocity due to gravity
+		Render (Position, Sprite) - Draws sprites
+		PlayerControl (Input, Player) - Sets the player-controlled entity's input according to a controller.  Adding an empty Player component will tag the entity for the PlayerControl system so that the Input data will be populated based on controller inputs.
+		BotControl (Input, AI) - Sets a bot-controlled entity's input according to an AI agent
+		
+	Component managers
+		-	merge components of the same type together due to performace (memory position)
+		-	https://medium.com/@savas/nomad-game-engine-part-2-ecs-9132829188e5
+
+	Systems(Processors)
+		-	MOVEMENT SYSTEM
+			-	POSITION + MOTION - Updates position based on velocity
+		-	INPUT SYSTEM
+			-	JOYSTICK + MOTION - Changes velocity based on arrow keys pressed
+		-	COLLISION SYSTEM
+			-	COLLISION + POSITION - Checks for collisions and resolves them
+		-	FOLLOW SYSTEM
+			-	POSITION + MOTION + FOLLOW - Changes velocity based on where player is
+		-	RENDER SYSTEM
+			-	POSITION + SPRITE - Render the sprite on the screen
+		-----------
+		-	GAME LOGIC?
+			-Player sends I am here by calling SendMessage

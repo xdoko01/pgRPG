@@ -1,0 +1,5 @@
+{
+	"id" : "projectile",
+	"templates" : ["thing"],
+	"components" : []
+}

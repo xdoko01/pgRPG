@@ -1,0 +1,8 @@
+{
+	"id" : "striped_pants_model",
+	"templates" : ["wearable_model"],
+	"components" : [
+		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
+		{"type" : "RenderableModel", "params" : {"model" : "w_m_legs_formalpantsstripes.json"}}
+	]
+}

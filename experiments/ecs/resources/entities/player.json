@@ -1,0 +1,9 @@
+{
+	"id" : "player",
+	"templates" : ["human"],
+	"components" : [
+		{"type" : "HasInventory", "params" : {}},
+		{"type" : "CanWear", "params" : {}},
+		{"type" : "HasWeapon", "params" : {}}
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"id" : "projectile_model",
+	"templates" : ["model"],
+
+	"components" : [
+		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

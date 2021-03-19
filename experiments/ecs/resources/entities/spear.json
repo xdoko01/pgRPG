@@ -1,0 +1,10 @@
+{
+	"id" : "spear",
+	"templates" : ["weapon"],
+
+	"components" : [
+		{"type" : "Weapon", "params" : {"type" : "spear",	"max_projectiles" :1}},
+		{"type" : "Pickable", "params" : {}},
+		{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

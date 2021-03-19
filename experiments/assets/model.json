@@ -1,0 +1,6 @@
+{
+    "prototype" :   "prototype_model",
+    "name"  :   "model",
+    "id"    :   "model1",
+    "collision" : [5, 5]
+}

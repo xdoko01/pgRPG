@@ -1,0 +1,10 @@
+{
+	"id" : "spell",
+	"templates" : ["weapon"],
+
+	"components" : [
+
+		{"type" : "Weapon", "params" : {"type" : "spell",	"max_projectiles" : 1}}
+
+	]
+}

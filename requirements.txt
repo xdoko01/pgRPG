@@ -1,0 +1,346 @@
+
+pygame 1.9.6 # due to pygame.get_init()
+---
+---
+
+create custom logging handler that will feed the logs to a pygame surface or game Screen ... there are examples online - inherit logging.StreamHandler - emit function
++++
+global command procesor - will have some list of commands - will be filled by the quest - command will have entity_id
+so on ENgine level I should be able to call processor.processCommand() - hence engine will need reference to processor
+Proessor will need to call something like this ... hence take somewhere reference - ... entity_id.move(1,1)
+==
+
+engine as a global variable or distribute engine reference in a constructor for quest, map, and others 
+it seems not effective to init Quest from engine and from quest call engine again to create map.
+Map can be created in Map class and engine reference can be passed to it. 
+What to do with the remove map function???
+
+load%map and load screen should be part of Map and Screen classes with parameters pointing to engine
+same unload should be in respective classes and can be called with parameter engine.
+
+Dict of entities is stored only on MAP level - there is no entity without map 
+Dict of maps is stored only on engine level - MAYBE STORE MAPS ONLY ON QUEST level
+Dict of quests is stored on Engine level only 
+
+==
+
+ECS
+TODO
+	- config file result must be first transfer to correct types and next it can be merged with default confic dict
+	- eg. "True" must be convert to bool
+
+Is it necessary to distribute reference to Engine class to all main subclasses as in original game? Can we live without that?
+
+Requests
+********
+	Request #1 - Support Save and Load Game
+    Request #2 - Support multiple map layers
+    Request #3 - Support quests
+	Request #4 - Implement global script machine for orchestrating all objects during cut scenes 
+	Request #5 - Wearables as items stored on Character level - nice implementation (currently not subclass of item)
+
+ Notes on Anything
+ *****************
+
+	* Game Initiation
+	--------------------------------------------------------------------------------------------------------------
+ 		Idea is that quest file and class manages initiation of everything in the game. QUest would create 
+		everything including the screens - the new game will be initiated by loading the initial quest only.
+
+		The structure of quest file is described in the quest class comments. The basic idea of the workflow 
+		is described below. 
+
+		Workflow
+			- remove items
+			- remove characters
+			- remove players
+
+			- prerequisity screen -> if not exists, create it Engine.load_screen
+			- prerequisity map -> if not exists, create it Engine.load_map
+			- prerequisity player -> if not exists, create it Engine.load_player
+
+			- create items -> put them to the map entity.register_map
+					-> optionally put them on separate screen (entity.register_screen)
+			- create characters -> put them to the map entity.register_map
+					-> optionally put them on separate screen (entity.register_screen)
+			- create player -> put them to the map entity.register_map
+					-> optionally put them on separate screen (entity.register_screen)
+
+	* Load Game Config
+	--------------------------------------------------------------------------------------------------------------
+		LATEST UPDATE: all configuration logic is in pyrpg.constants.config module. As soon as any part of
+		the game code does import pyrpg.constants.config as cfg, loaded configuration is prepared to
+		be used by simple addressing cfg.config. The reason is that on importing the module config, code
+		is executed that loads automaticaly configuration to public dict config (check config.py). On top
+		of that, python ensures that import (and hence loading config from the file) is done only once 
+		because that is what pyton does with imports (no repetitive unnecessary loads of confi json).
+
+		Implemented in the module pyrpg.core.config. Call function load_config with optional parameter path to config
+		file. Returns dictionary where all the confis are loaded. For more information about structure of config file
+		check module pyrpg.core.config comments.
+
+		Workflow
+			- main.py ... load config is called and handed over to Engine instance by creation as a parameter. Engine
+				now can access all the configs.
+				
+		CONFIG = pyrpg.core.config.load_config(paths.CONFIG_PATH)
+
+	* Movement of the player
+	--------------------------------------------------------------------------------------------------------------
+		Playing with the idea that some map method will be responsible for moving player and not MapEntity instance.
+		Map knows position of all map items and player not. So map.move_entity will manage the movement based on 
+		collision with other items. If some collision happens, map entity can call MapEntity.onInteraction and 
+		MapEntity will decide what to do (for example generate event for Engine / Quest).
+
+		Workflow
+			- main loop identifies key is processed
+			- now MapEntity.move must be invoked - or Map.move(entity_id)???
+
+	* Storing of references
+	-------------------------------------------------------------------------------------------------------------
+	Idea #3 -  Let's pass Entity instance around and have only Quests dicts in Entity
+		Enigine has following references - The Dicts contain only instances that are currently part of the game.
+			-	List of Quests
+		Quests has following references	
+			-	List of Maps
+		Maps has following references	- this ... I dont know ....
+			-	List of Entities
+
+	Idea #2 - Let's not pass Entity instance around, let's pass entity as parameter instead - Probably not optimal way - see below
+		It is not a good practice tu pass global variables around. Lets pass reference to Entity as parameter
+		of load_quest function and load_map function and others.
+
+		BUT in order to pass this reference we need to use instance of engine(self) instead of cls 
+		Also how will we be able to send_event from entity for example, entity must know engine instance.
+
+	Idea #1 - Let's pass Entity instance arround to Quest, Map, MapEntity + keep Maps on Entity level
+
+		By doing so we can call EventHandler from Map, Entity class and Engine will process it.
+
+		Enigine has following references - The Dicts contain only instances that are currently part of the game.
+			-	List of Maps
+			-	List of Screens
+			-	List of Quests
+
+		Map has following references
+			-	List of MapEntities (players, characters, items)
+
+	How to move player when Engine does not know directly the Player entity - Engine knows maps and maps knows entities
+		-	iterate all Maps and all entities of the maps
+		- 	call update on all entities (including players)
+		- 	player.update must read and process inputs - YES it works - it is implemented in the original game
+
+	* Registration and unregistration of instances in references
+	-------------------------------------------------------------------------------------------------------------
+	...
+
+	Question #11 - HOW TO ENABLE INTERACTIVE CONSOLE DURING THE GAME
+	----------------------------------------------------------------------------------------------
+	Cmd library and cli module enables it. Check cli_experiments for demo. But what if I want some
+	custom commands such as enable_debug or something similar??
+
+	Question #10 - HOW TO STRUCTURE THE CODE
+	----------------------------------------------------------------------------------------------
+	Get inspiration from Tuxemon RPG game - very nicelly used packages and modules
+
+	Question #9 - HOW TO CACHE MODELS NOT TO WASTE MEMORY BY CREATING REPETITIVE MODELS (ANSWERED)
+	----------------------------------------------------------------------------------------------
+	Decorator lru_cache with parameter does that. As a result na static Assets class is needed.
+	IMPLEMENt prototypes in data structures - for example grey_key prototype:key - Implemented in the assets. py
+	Instead of Assets class try to use decorator that first checks whether model exists and if not then creates it (otherwise returns it) - it seems more pythonic way (memorize and cache)
+	- This mechanism is useful for separating concerns and avoiding external unrelated logic ‘polluting’ the core logic of the function or method. A good example of a piece of functionality that is better handled with decoration is memoization or caching: you want to store the results of an expensive function in a table and use them directly instead of recomputing them when they have already been computed. This is clearly not part of the function logic.
+
+ 	Question #8 - HOW TO INIT THE GAME?
+ 	-----------------------------------
+
+ 	Question #6 - HOW TO INCORPORATE ARROWS NICELY INTO THE DESIGN?
+ 	---------------------------------------------------------------
+
+ 	Question #7 - HOW TO DISPLAY ANIMATED ITEM?
+ 	---------------------------------------------------------------
+ 	
+
+ 	Question #5 - WOULDNT IT BE BETTER TO RENAME MEMORY TO COMMAND CLASS AND MAYBE NEW CLASS COMMAND PROCESSOR?
+ 	-----------------------------------------------------------------------------------------------------------
+ 	Memory is basically list of commands
+
+ 	Question #3 - HOW TO IMPLEMENT GLOBAL SCRIPT MACHINE FOR CUT SCENES? (PENDING)
+ 	--------------------------------------------------------------------------
+ 	The global idea is following. Encapsulate commands that you want to use by the script into Command class
+ 	and respective sub-classes. Parameter of Command sub-class is object, who is performing the command.
+ 	Class ScriptProcessor is storing list of commands. FIll the list of commands and run processCommands. By 
+ 	doing so, the commands start to be executing.
+ 	At the beginning of the main loop ProcessCommands(time) is executed - if list of commands is empty then nothing 
+ 	happens, if not command is started/updated.
+ 	Quest is adding commands to the list of commands machine ScriptProcessor. ScriptProcessor is executing them.
+
+ 	- study Javix(youtube)
+ 		- main game loop
+ 			- if script is not ruling the game - run normal loop checking the inputs
+ 			- if script is ruling the game
+ 				- skip processing input
+ 				- check if the command that is currently being processed is ShowDialog command
+ 				-if yes, then check if SPACE KEY is presses
+ 					- if yes, then mark ShowDialog command as Completed and hide the dialog
+ 					- it would be good to implement some YES, NO decision here and give it back to command processor
+ 		- class Command
+ 			- properties started, completed
+ 			- methods Start, Update(ElapsedTime)
+ 		- subclass Command_MoveTo(object, x, y, duration)
+ 			- method Start - just remember starting position
+ 			- method Update(ElapsedTime) 
+ 				- increase TimeSoFar by elapsed time
+ 				- update objects positon
+ 				- if time so far > duration - destination reached - command completed
+
+ 		- subclass Command_ShowDialog (string)
+ 			- method Start - just Engine.ShowDialog
+
+ 		- subclass Command_CHangeMap(mapName, posX, posY)
+ 		- subclass Command_AddQuest(quest)
+
+ 		- class ScriptProcessor
+ 			- property list of commands, bUsrControlEnabled
+ 			- __init__
+ 				- bUserControlEnabled = True
+ 			
+ 			- method AddCommand(Command), 
+ 				- just add something to the list
+
+ 			- method ProcessCommands(Elapsed time)
+ 				- if list of commands is empty, bUserControlEnabled = True
+ 					- if there is a command to process in the list
+ 						- if the command is not yet started command.started = false
+ 							- then run Command.Start() and set bStarted = True
+ 						- if command is already sterted (bStarted = true)
+ 							- then update the command command.update(elapsed time)
+
+
+ 			- method CompleteCommand - called externally, just setting bCompleted to True
+
+ 	Question #4 - HOW TO ACCEPT THE QUEST BY THE PLAYER DURING THE GAME? (PENDING)
+ 	--------------------------------------------------------------------
+
+
+ 	Question #1 - DO WE NEED TO STORE ENTITY ON QUEST AND ALSO ON MAP? (PENDING)
+ 	------------------------------------------------------------------
+ 	Currently, MapEntity is stored on Quest instance and on Map instance. Also,
+ 	map_id is stored as a parameter of MapEntity instance. Are all of these necessary?
+ 	
+
+
+ 	Question #2 - HOW TO IMPLEMENT EVENTS AND LISTENERS FOR THE QUEST EVENTS? (ANSWERED)
+ 	-------------------------------------------------------------------------
+ 	Engine class is serving as a EventDispatcher, i.e. it distributes events to all relevant
+ 	objects - quests, maps, screens using send_event method. Engine.send_event method is invoked
+ 	by other entities in the game (players, characters). Those entities have also send_event method 
+ 	implemented and this method is just recalling Engine.send_event.
+ 	Quests have implemented event_handler method that is invoked by Engine.send_event. This method
+ 	decides what should happen (if anything) upon receival of the event.
+ 	The behavior is stored on dictionary on quest instance level - it consists of 2 objects: condition
+ 	and action. The whole flow on quest instance level then works as follows:
+ 		- Event received by quest.event_handler
+ 		- Event checked against quest.event_handler dictionary (condition + action data)
+ 		- If event fulfills condition in dictionary, relevant action is performed
+ 	Links: https://www.gamedev.net/forums/topic/652095-help-on-how-to-implement-stories-and-quests-on-an-rpg/
+
+
+
+Random Comments
+*************** 
+ Game
+  - list of items for current map only
+
+ - one player
+ 	- transfering from one map to other map
+ 	HOWTO: teleport item, calls load map(change map in game)
+
+
+ 	Game
+ 	 - has dict of all game maps
+ 	 	- Map
+ 	 		- has list of map items (teleports)
+ 	 		- has list of items filled by adding new quest
+ 	 		- has list of characters filled by adding new quest
+ 	 - has one player
+ 	 	- Player
+ 	 	    - has reference to current map
+ 	 - has list of players quests
+ 	 	- Quest 
+ 	 		- has items and characters to be added to different maps
+
+Wearables
+  What I want
+  - character has inventory
+  - inventory contains items that are non-wearable and wearable
+  - wearable further have category - head, hands, legs, torso, weapon
+  - inventory has only one space for head wearable, hands wearable, legs wearable, torso wearable
+  - wearable items can be placed into those specific places or in the non specific place in inventory
+  How to implement
+  - inventory is property of character implemented as dictionary that looks as follows (empty inventory)
+  		
+
+  		inventory = {
+  			'head' : None,
+  			'torso': None,
+  			'legs' : None,
+  			'hands' : None,
+  			'boots' : None,
+  			'weapon' : None,
+  			'arrow' : None,
+  			'other' : []
+  		}
+  ----------------------------------------------------------------------- 
+
+   event_handlers : {
+
+     onInteraction : {
+       q01_p01_n01 : {
+         player : {
+           addMemory(
+                dialog("nazdar bazar"),
+                
+           )
+    
+        }
+       }
+     }
+   }
+                                          
+                                          
+q01_p01_n01 - on_interaction - player
+ -> event()
+
+class Character
+  onInteraction(object)
+      send_event("onInteraction", self.id, object.id)
+      --send_event("onInteraction", "q01_p01_n01", "player")
+
+class Quest      
+
+  ev_actions = { 
+  
+    "onInteraction" : {
+
+      "q01_p01_n01" : [
+         {
+           condition : "if event.parameters == 'player'",
+           action : "event.object.memory.add ()"
+         }
+      ]
+
+     
+
+  function event_handler(event) 
+    -- event is an object with following properties
+      -- event.type ... for example onInteraction
+      -- event.source ... what object is originator of the event (NPC for example)
+      -- event.parameters ... any information that are passed together with the event
+    if event.type == 'onInteraction' then
+      -- look in ev_actions for key on Interaction -> on key == event.source -> on key == event.parameters
+      for ev_action in  self.ev_actions.get(event_type).get(event.source.id) -- result is list of action conditions
+      -- perform the action from the values
+        if eval(ev_action.get(condition))
+          eval(ev_action.get(action))
+
+Think about usage of global variables - it is not good to use them (Assets) - see Game patterns Singleton chapter - there are ways around - for example passing things as fnction parameters.

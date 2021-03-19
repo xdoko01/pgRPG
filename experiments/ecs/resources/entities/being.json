@@ -1,0 +1,8 @@
+{
+	"id" : "being",
+	"templates" : ["thing"],
+	"components" : [
+		{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+		{"type" : "Damageable", "params" : {}}
+	]
+}
