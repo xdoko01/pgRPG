@@ -1,0 +1,8 @@
+{
+	"id" : "iron_arrows_pack_model",
+	"templates" : ["ammo_pack_model"],
+	"components" : [
+		{"type" : "Collidable", "params" : {"x" : 20, "y" : 20}},
+		{"type" : "RenderableModel", "params" : {"model" : "iron_arrows_pack.json"}}
+	]
+}

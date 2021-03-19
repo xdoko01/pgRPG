@@ -84,6 +84,26 @@
 				},
 
 				{
+					"id" : "pack_of_arrows03",
+					"templates" : ["iron_arrows_pack", "iron_arrows_pack_model"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "pack_of_iron_arrows", "name" : "Pack of Iron Arrows"}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Position", "params" : {"x" : 1000, "y" : 200, "map" : "test_arena_sand"}}
+					]
+				},
+
+				{
+					"id" : "pack_of_arrows04",
+					"templates" : ["iron_arrows_pack", "iron_arrows_pack_model"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "pack_of_iron_arrows", "name" : "Pack of Iron Arrows"}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Position", "params" : {"x" : 1200, "y" : 200, "map" : "test_arena_sand"}}
+					]
+				},
+
+				{
 					"id" : "short_sword",
 					"templates" : ["sword", "short_sword_model"],
 					"components" : [

@@ -21,10 +21,14 @@ model.json		# no components
 		-> ammo_pack_model.json 	# +Collidable
 				|
 				-> wooden_arrows_pack_model.json		# +RenderableModel, ++Collidable
+				-> iron_arrows_pack_model.json			# +RenderableModel, ++Collidable
+
 		|
 		-> projectile_model.json	+Collidable
 				|
 				-> wooden_arrow_model.json		# +RenderableModel, ++Collidable
+				-> iron_arrow_model.json		# +RenderableModel, ++Collidable
+
 		|
 		-> wearable_model.json		+Collidable
 				|
@@ -49,11 +53,14 @@ thing.json 		# no components
 		-> ammo_pack.json	# no components
 				|
 				-> wooden_arrows_pack.json	# +Factory, +Pickable, +Collidable
+				-> iron_arrows_pack.json	# +Factory, +Pickable, +Collidable
+
 				-> sword_swings_pack.json	# +Factory
 		|
 		-> projectile.json	# no components
 				|
 				-> wooden_arrow.json	# +Temporary, +LinearMotion, +Motion, +Damaging
+				-> iron_arrow.json	# +Temporary, +LinearMotion, +Motion, +Damaging
 				-> sword_swing.json		# +Temporary, +Collidable, +Damaging
 		|
 		-> wearable.json	# no components

@@ -1,0 +1,11 @@
+{
+	"id" : "iron_arrow",
+	"templates" : ["projectile"],
+	"components" : [
+		{"type" : "Temporary", "params" : {"ttl" : 3000}},
+		{"type" : "LinearMotion", "params" : {"speed" : 500}},
+		{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+		{"type" : "Damaging", "params" : {"damage" : 20}},
+		{"type" : "DeleteOnCollision", "params" : {}}
+	]
+}
