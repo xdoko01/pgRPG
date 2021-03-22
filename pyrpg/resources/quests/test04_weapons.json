@@ -64,7 +64,7 @@
 				},
 
 				{
-					"id" : "pack_of_arrows01",
+					"id" : "pack_of_wooden_arrows01",
 					"templates" : ["wooden_arrows_pack", "wooden_arrows_pack_model"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "pack_of_arrows", "name" : "Pack of Arrows"}},
@@ -74,7 +74,7 @@
 				},
 
 				{
-					"id" : "pack_of_arrows02",
+					"id" : "pack_of_wooden_arrows02",
 					"templates" : ["wooden_arrows_pack", "wooden_arrows_pack_model"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "pack_of_arrows", "name" : "Pack of Arrows"}},
@@ -84,7 +84,7 @@
 				},
 
 				{
-					"id" : "pack_of_arrows03",
+					"id" : "pack_of_iron_arrows01",
 					"templates" : ["iron_arrows_pack", "iron_arrows_pack_model"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "pack_of_iron_arrows", "name" : "Pack of Iron Arrows"}},
@@ -94,12 +94,22 @@
 				},
 
 				{
-					"id" : "pack_of_arrows04",
+					"id" : "pack_of_iron_arrows02",
 					"templates" : ["iron_arrows_pack", "iron_arrows_pack_model"],
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "pack_of_iron_arrows", "name" : "Pack of Iron Arrows"}},
 						{"type" : "Debug", "params" : {}},
 						{"type" : "Position", "params" : {"x" : 1200, "y" : 200, "map" : "test_arena_sand"}}
+					]
+				},
+
+				{
+					"id" : "pack_of_fireball_spell01",
+					"templates" : ["fireball_spell_pack", "fireball_spell_pack_model"],
+					"components" : [
+						{"type" : "Labeled", "params" : {"id" : "pack_of_fireball_spell", "name" : "Pack of Fireball Spell"}},
+						{"type" : "Debug", "params" : {}},
+						{"type" : "Position", "params" : {"x" : 1400, "y" : 200, "map" : "test_arena_sand"}}
 					]
 				},
 

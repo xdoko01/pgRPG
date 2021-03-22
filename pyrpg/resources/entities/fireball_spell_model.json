@@ -1,0 +1,9 @@
+{
+	"id" : "fireball_spell_model",
+	"templates" : ["projectile_model"],
+
+	"components" : [
+		{"type" : "Collidable", "params" : {"x" : 8, "y" : 8}},
+		{"type" : "RenderableModel", "params" : {"model" : "weapon_spellcast_fireball.json"}}
+	]
+}

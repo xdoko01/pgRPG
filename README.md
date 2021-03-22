@@ -264,6 +264,11 @@
 
 ## To Do
 
+
+### Make Spellcast work - no weapon, only AmmoPack (virtual weapon needed)
+  - rename actions - spellcast, shoot, slash, thrust, move (walkcycle), expire
+### Make spike work
+
 ### Get spritesheet for quiver and for sticks
 ### If AmmoPack is in inventory and the same AmmoPack type is put in inventory - one entity should disappear and arrows should be on one heap
 ### Score counting, experience counting

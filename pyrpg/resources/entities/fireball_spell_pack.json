@@ -1,16 +1,16 @@
 {
-	"id" : "iron_arrows_pack",
+	"id" : "fireball_spell_pack",
 	"templates" : ["ammo_pack"],
 
 	"components" : [
-		{"type" : "AmmoPack", "params" : {"weapon" : "bow", "type" : "iron_arrows_pack"}},
+		{"type" : "AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball_spell_pack"}},
 
 		{
 			"type" : "Factory", 
 			"params" : {
-				"max_units" : 5,
+				"max_units" : null,
 				"prescription" : {
-					"templates" : ["iron_arrow", "iron_arrow_model"],
+					"templates" : ["fireball_spell", "fireball_spell_model"],
 					"components" : [
 						{"type" : "Debug", "params" : {}}
 					]
