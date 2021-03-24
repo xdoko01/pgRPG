@@ -30,6 +30,8 @@ Usage:
 
 Examples:
     python generate_tiled_json_from_template.py . template.json *.png
+    python generate_tiled_json_from_template.py c:\template.json c:\*.png shoot shoot_idle
+
 
 Notes:
     The generated json files are fine to be opened in Tiled SW, but are not nicelly formated

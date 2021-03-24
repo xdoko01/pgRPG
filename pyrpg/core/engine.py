@@ -43,7 +43,7 @@ import pyrpg.core.config.fonts # Initiate fonts for the game
 
 import pyrpg.core.config.keys as keys
 
-from pyrpg.core.config.paths import ENTITY_PATH, DIALOG_PATH, SAVE_PATH, IMAGE_PATH, FONT_PATH
+from pyrpg.core.config.paths import Path, ENTITY_PATH, DIALOG_PATH, SAVE_PATH, IMAGE_PATH, FONT_PATH
 
 import pyrpg.core.ecs.esper as esper
 import pyrpg.core.ecs.components as components
@@ -312,16 +312,13 @@ def create_dialog(dlg_data):
         template specification.
         '''
 
-        # Add suffix to the template file
-        dlg_template = str(dlg_template) + '.json'
-
         # Read the json file with dialog definition
         try:
-            with open(DIALOG_PATH / dlg_template, 'r') as dlg_file:
+            with open(DIALOG_PATH / Path(dlg_template + '.json'), 'r') as dlg_file:
                 json_dlg_data = dlg_file.read()
                 dlg_data = json.loads(json_dlg_data)
         except FileNotFoundError:
-            print(f"Dialog file '{file}' not found.")
+            print(f"Dialog file '{DIALOG_PATH / Path(dlg_template + '.json')}' not found.")
             raise
 
         # Final dlg data - empty at the start
@@ -399,11 +396,11 @@ def _create_entity(json_ent_obj, entity_id=None, register=True, child_ref=None):
 
         # Read the entity.json
         try:
-            with open(ENTITY_PATH / str(template + '.json'), 'r') as entity_file:
+            with open(ENTITY_PATH / Path(template + '.json'), 'r') as entity_file:
                 json_entity_data = entity_file.read()
                 template_entity_data = json.loads(json_entity_data)
         except FileNotFoundError:
-            print(f"Entity file {ENTITY_PATH + template + '.json'} not found.")
+            print(f"Entity file {ENTITY_PATH / Path(template + '.json')} not found.")
             raise
 
         print(f'**Creating components from template {template + ".json"}')
