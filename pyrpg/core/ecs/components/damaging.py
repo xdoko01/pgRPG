@@ -17,22 +17,34 @@ class Damaging(Component):
     Examples of JSON definition:
         {"type" : "Damaging", "params" : {}}
         {"type" : "Damaging", "params" : {"damage" : 20}}
+        {"type" : "Damaging", "params" : {"damage" : 10, "parent" : 2}}
+
 
     Tests:
         >>> c = Damaging()
-        >>> c = Damaging(**{"damage" : 20})
+        >>> c = Damaging(**{"damage" : 10, "parent" : 2})
         >>> c.damage
-        20
+        10
+        >>> c.parent
+        2
     '''
 
-    __slots__ = ['damage']
+    __slots__ = ['damage', 'parent']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Damaging component.
+
+        Parameters:
+            :param damage: Count of Damage points caused by the entity hit
+            :type damage: int
+
+            :param parent: Originator of the damage (optional)
+            :type parent: entity_id
         '''
         super().__init__()
 
-        self.damage = kwargs.get("damage", 10)
+        self.damage = kwargs.get("damage", 1)
+        self.parent = kwargs.get("parent", None)
 
 
 if __name__ == '__main__':

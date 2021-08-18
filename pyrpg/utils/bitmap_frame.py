@@ -46,6 +46,7 @@ __all__ = ['BitmapFrame']
 
 import pygame # For picture manipulation
 import json # For reading the JSON font definition
+import re # For removing C-style comments from JSON file
 
 ########################################################
 ### Module functions
@@ -108,7 +109,7 @@ class BitmapFrame():
         try:
             with open(path, 'r') as frame_file:
                 json_frame_data = frame_file.read()
-                frame_data = json.loads(json_frame_data)
+                frame_data = json.loads(re.sub("//.*", "", json_frame_data, flags=re.MULTILINE))
         except FileNotFoundError:
             print(f"Bitmap frame definition file '{path}' was not found.")
             raise ValueError

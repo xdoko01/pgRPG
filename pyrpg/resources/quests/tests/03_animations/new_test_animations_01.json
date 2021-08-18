@@ -1,0 +1,101 @@
+{
+	"id" : "new_test01_animation",
+	"name" : "Movement Animation Test",
+	"description" : "Test new animation processors for movement action",
+	"objective" : "POC of the new animation system",
+	"init_phase" : "phase01",
+
+	"processors" : [
+		// For commands
+		["NewGenerateCommandFromInputProcessor", {}],
+		["NewPerformCommandProcessor", {"debug" : true}],
+
+		// For movement
+		["NewPerformMovementProcessor", {}],
+
+		// For animation
+		["NewPerformMovementAnimationProcessor", {}],
+		["NewPerformIdleAnimationProcessor", {}],
+		["NewPerformFrameUpdateProcessor", {}],
+
+		// For displaying
+		["UpdateCameraOffsetProcessor", {}],
+		["RenderBackgroundProcessor", {}],
+		["RenderCameraBackgroundProcessor", {}],
+		["RenderMapProcessor", {}],
+		["RenderWorldProcessor", {}],
+		["RenderModelWorldProcessor", {}],
+		["RenderDebugProcessor", {}],
+
+		// For processing input and movements
+		["NewRemoveFlagDoMoveProcessor", {}]
+	],
+
+	"phases" : {
+		"phase01" :{
+			"name" : "Movement Animation Test", "objective" : "","maps" : ["test_arena_sand"],
+			
+			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+
+			"entities" : [
+				{
+					"id" : "player01",
+					"templates" : ["darkmale"],
+					"components" : [
+
+						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+							"control_cmds" : {
+								"left" : [["new_move_add", {"moves" : ["left"]}]],
+								"right": [["new_move_add", {"moves" : ["right"]}]],
+								"up" : [["new_move_add", {"moves" : ["up"]}]],
+								"down" : [["new_move_add", {"moves" : ["down"]}]],
+								"attack" : [["none", {}]]}
+							}
+						},
+
+						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "NewMovable", "params" :  {"velocity" : 200}},
+						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				}
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" : [
+				],
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

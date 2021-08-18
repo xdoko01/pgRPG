@@ -85,7 +85,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 					# try to get motion, has_weapon - returns None if not present
 					motion = self.world.try_component(ent, components.Motion)
 					has_weapon = self.world.try_component(ent, components.HasWeapon)
-					is_dead = self.world.try_component(ent, components.IsDead)
+					is_dead = self.world.try_component(ent, components.IsDestroyed)
 
 					if is_dead:
 						renderable_model.set_action('expire')

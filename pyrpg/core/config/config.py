@@ -17,19 +17,20 @@ dictionary it means that such event is not generating any message (for
 example collision - that would generat too much unncesessary messages)
 '''
 MESSAGES = {
-		'on_events' : {
-			'TELEPORTATION' : ['Entity {} was teleported using teleport {}.', ['generator_obj', 'other_obj']],
-			'ITEM_PICKUP' : ['Entity {} was picked up by entity {}.', ['generator_obj', 'other_obj']],
-			'WEARABLE_WEARED' : ['Entity {} weared {}.', ['generator_obj', 'other_obj']],
-			'WEAPON_ARMED' : ['Entity {} picked up weapon {}.', ['other_obj', 'generator_obj']],
-			'AMMO_PACK_ARMED' : ['Entity {} picked up ammo pack {}.', ['other_obj', 'generator_obj']],
-			'AMMO_PACK_DISARMED' : ['Ammo pack {} was disarmed from {}.', ['generator_obj', 'other_obj']],
-			'DAMAGE' : ['Entity {} was hit.', ['other_obj']],
-			'KILL' : ['Entity {} was killed.', ['other_obj']],
-			'QUEST_START' : ['Quest {} has started.', ['generator_obj']],
-			'PHASE_START' : ['Phase {} has started.', ['generator_obj']]
-		},
-		'default_ttl' : 2000
+        'on_events' : {
+            'TELEPORTATION' : ['Entity {} was teleported using teleport {}.', ['generator_obj', 'other_obj']],
+            'ITEM_PICKUP' : ['Entity {} was picked up by entity {}.', ['generator_obj', 'other_obj']],
+            'WEARABLE_WEARED' : ['Entity {} weared {}.', ['generator_obj', 'other_obj']],
+            'WEAPON_ARMED' : ['Entity {} picked up weapon {}.', ['other_obj', 'generator_obj']],
+            'AMMO_PACK_ARMED' : ['Entity {} picked up ammo pack {}.', ['other_obj', 'generator_obj']],
+            'AMMO_PACK_DISARMED' : ['Ammo pack {} was disarmed from {}.', ['generator_obj', 'other_obj']],
+            'DAMAGE' : ['Entity {} was hit by entity {}.', ['generator_obj', 'other_obj']],
+            'SCORE' : ['Entity {} has scored.', ['generator_obj']],
+            'KILL' : ['Entity {} was killed by entity {}.', ['other_obj', 'generator_obj']],
+            'QUEST_START' : ['Quest {} has started.', ['generator_obj']],
+            'PHASE_START' : ['Phase {} has started.', ['generator_obj']]
+        },
+        'default_ttl' : 2000
 }
 
 ''' KEYS contain mapping of functionalities to keyboard keys.
@@ -98,7 +99,7 @@ KEYS = {
 }
 
 DISPLAY = {
-    "resolution" : [850, 850],
+    "resolution" : [640, 480],
     "bitdepth" : 32,
     "fullscreen" : False,
     "max_fps" : 120,
@@ -150,35 +151,69 @@ DEBUG = {
     'show_map_screen_area' : False
 }
 
-PROCESSORS = [
-    'input_processor',
-    'brain_processor',
-    'command_processor',
-    'linear_movement_processor',
-    'movement_processor',
-    'generate_projectiles_processor',
-    'collision_map_processor',
-    'collision_entity_generator_processor',
-    'collision_damage_processor',
-    'collision_teleport_processor',
-    'collision_weapon_processor',
-    'collision_wearable_processor',
-    'collision_item_processor',
-    'collision_entity_processor',
-    'collision_deletion_processor',
-    'game_events_processor',
-    'update_camera_offset_processor',
-    'render_model_anim_action_processor',
-    'render_model_anim_update_processor',
-    'render_background_processor',
-    'render_camera_background_processor',
-    'render_map_processor',
-    'render_world_processor',
-    'render_model_world_processor',
-    'render_talk_processor',
-    'render_debug_processor',
-    'clear_temporary_entity_processor'
-]
+LOGGING = {
+    "version" : 1.0,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "short": {
+            "format": "%(filename)-45s - %(message)s"
+        },
+        "simple": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        },
+        "extra": {
+            "format":"%(asctime)-2s %(levelname)-6s %(name)-30s %(filename)-15s %(funcName)-18s %(lineno)-6s %(message)s",
+            "datefmt":"%m-%d %H:%M:%S"
+        }
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+        "in_game_console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+            "stream": "ext://pyrpg.core.config.console" # Module containing write function
+        },
+        "file_handler_proc": {
+            "class": "logging.FileHandler",
+            "formatter": "short",
+            "filename": "pyrpg/logs/processors.log",
+            "mode": "w",
+            "encoding": "utf-8"
+      }
+    },
+
+    "loggers" : {
+
+        # Save all the logs from processor classes to the file
+        "pyrpg.core.ecs.processors" : {
+            "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+            "handlers" : ["file_handler_proc"],
+            "propagate" : False # Do not send messages from these loggers to parent (root) logger
+        },
+
+        # Save all the logs other from processor classes to console
+        "pyrpg" : {
+            "level" : "INFO", # Passes INFO and upper logs only, i.e. INFO, WARNING, ERROR, CRITICAL
+            #"level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+            "handlers" : ["in_game_console"],
+            "propagate" : False # Do not send messages from these loggers to parent (root) logger
+        }
+
+    },
+
+    # Display all DEBUG - INFO - WARNING - ERROR - CRITICAL that are not covered by above loggers to console
+    "root" : {
+        "level" : "DEBUG",
+        "handlers" : ["console"]
+    }
+}
+
 
 ########################################################
 ### Override with JSON configuration
@@ -186,11 +221,12 @@ PROCESSORS = [
 
 # Read config from config file
 import json
+import re # for removing C-style comments from JSON
 
 try:
     with open(CONFIG_FILE, 'r') as config_file:
         json_config_data = config_file.read()
-        config_data = json.loads(json_config_data)
+        config_data = json.loads(re.sub('//.*', '', json_config_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
 except FileNotFoundError:
     print(f"Config file '{CONFIG_FILE}' not found, using defaults.")
     config_data = {}
@@ -214,8 +250,8 @@ CONSOLE = {**CONSOLE, **config_data.get('console', {})}
 # Override DEBUG with config debug
 DEBUG = {**DEBUG, **config_data.get('debug', {})}
 
-# Override PROCESSORS with config processors
-PROCESSORS = [*PROCESSORS, *config_data.get('processors', [])]
+# Override PROCESSORS with config processors - obsolete, processors are now configured within the quest
+#PROCESSORS = [*PROCESSORS, *config_data.get('processors', [])]
 
 # Override GAME config with data from config file
 MOVE_SPEED = config_data.get('move_speed', MOVE_SPEED)

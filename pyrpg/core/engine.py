@@ -10,9 +10,13 @@
 ### Module Import Init - Import libs
 ########################################################
 
-import math
 import json
 import pickle # for savegame/loadgame
+import re # for removind comments from json files
+import logging
+
+# Create logger
+logger = logging.getLogger(__name__)
 
 ########################################################
 ### Module Import Init - Init pygame
@@ -149,14 +153,43 @@ def init_world():
 
     global world
 
-    cons_update_fnc('engine->init_world. World initiation started.')
     world = esper.World(timed=False)
-    create_processors(world)
+    #create_processors(world)
     cons_update_fnc('engine->init_world. World initiation finished.')
+    logger.info(f'Init is done.')
 
 ########################################################
 ### Module Functions - Game commands handler
 ########################################################
+
+def get_game_commands():
+    ''' Returns commands contained in the command queue
+    '''
+    global command_queue
+
+    return command_queue
+
+def add_game_command(cmd):
+    ''' Adds single command (tuple) to the command queue
+
+        :param cmd: Command (tuple or list with 2 items)
+        :returns: 0 on success
+    '''
+    global command_queue
+
+    try:
+        cmd_fnc, cmd_params = cmd
+        command_queue.append((cmd_fnc, cmd_params))
+        return 0
+    except ValueError:
+        raise
+
+def clear_game_commands():
+    ''' Deletes all commands from the command queue
+    '''
+    global command_queue
+
+    del command_queue[:]
 
 def process_game_commands(keys=None, events=None, debug=False):
     ''' Process game commands. It is called by CommandsProcessor.
@@ -166,7 +199,7 @@ def process_game_commands(keys=None, events=None, debug=False):
     global alias_to_entity
 
     if debug and command_queue:
-        print(f'*Command Queue: {command_queue}')
+        print(f'{__name__} - command queue content: "{command_queue}"')
 
 
     # Process every command in the queue
@@ -176,7 +209,7 @@ def process_game_commands(keys=None, events=None, debug=False):
         command = command_queue.pop(0)
 
         if debug: 
-            print(f'*Processing command: {command}')
+            print(f'{__name__} - processing command "{command}"')
 
         (cmd_fnc, cmd_params) = command
 
@@ -207,6 +240,31 @@ def process_game_commands(keys=None, events=None, debug=False):
 ########################################################
 ### Module Functions - Game event handler
 ########################################################
+
+def get_game_events():
+    ''' Returns events contained in the event queue
+    '''
+    global event_queue
+
+    return event_queue
+
+def add_game_event(event):
+    ''' Adds single event to the event queue
+
+        :param event: Event object
+        :returns: 0 on success
+    '''
+    global event_queue
+
+    event_queue.append(event)
+    return 0
+
+def clear_game_events():
+    ''' Deletes all events from the event queue
+    '''
+    global event_queue
+
+    del event_queue[:]
 
 def process_game_events_ex(process=None, ignore=None):
     ''' Process particular game/quest event types that are specified on the input.
@@ -249,7 +307,6 @@ def process_game_events_ex(process=None, ignore=None):
     # event_queue = new_event_queue because other processors have stored link directly to original
     # global event_queue
     event_queue.extend(new_event_queue)
-
 
 def process_game_events():
     ''' Process game/quest events. It is called by GameEventProcessor
@@ -316,7 +373,7 @@ def create_dialog(dlg_data):
         try:
             with open(DIALOG_PATH / Path(dlg_template + '.json'), 'r') as dlg_file:
                 json_dlg_data = dlg_file.read()
-                dlg_data = json.loads(json_dlg_data)
+                dlg_data = json.loads(re.sub("//.*","", json_dlg_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
         except FileNotFoundError:
             print(f"Dialog file '{DIALOG_PATH / Path(dlg_template + '.json')}' not found.")
             raise
@@ -398,7 +455,7 @@ def _create_entity(json_ent_obj, entity_id=None, register=True, child_ref=None):
         try:
             with open(ENTITY_PATH / Path(template + '.json'), 'r') as entity_file:
                 json_entity_data = entity_file.read()
-                template_entity_data = json.loads(json_entity_data)
+                template_entity_data = json.loads(re.sub("//.*","", json_entity_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
         except FileNotFoundError:
             print(f"Entity file {ENTITY_PATH / Path(template + '.json')} not found.")
             raise
@@ -438,233 +495,6 @@ def _create_entity(json_ent_obj, entity_id=None, register=True, child_ref=None):
         entity_to_alias.update({new_entity_obj: new_entity_id})
 
     return new_entity_obj
-
-def create_processors(world):
-
-    global window
-    global event_queue
-    global command_queue
-    global message_queue
-    global maps
-
-    # Processor that deletes AmmoPact that has no Ammo
-    remove_depleted_ammo_pack_processor = processors.RemoveDepletedAmmoPackProcessor(remove_entity_fnc=delete_entity_id)
-
-    # Processor that disarms AmmoPack from the weapon in case it is depleted
-    disarm_depleted_ammo_pack_processor = processors.DisarmDepletedAmmoPackProcessor(event_queue)
-
-    # Processor that updates constant speed movement
-    linear_movement_processor = processors.LinearMovementProcessor()
-
-    # Processor that generates projectiles
-    generate_projectiles_processor = processors.GenerateProjectileProcessor(create_entity_fnc=_create_entity)
-
-    # Processor that deletes entities with Temporary component from the world - once ttl expires
-    clear_temporary_entity_processor = processors.ClearTemporaryEntityProcessor(remove_entity_fnc=delete_entity_id)
-
-    # Update the animation for rendering the model
-    render_model_anim_update_processor = processors.RenderableModelAnimationUpdateProcessor()
-
-    # Status procesor updates status of the entity - idle, walk, ...
-    render_model_anim_action_processor = processors.RenderableModelAnimationActionProcessor()
-
-    # Movement processor updates entity position based on the velocity 
-    movement_processor = processors.MovementProcessor()
-
-    # Render GAME WINDOW background procesor to display game stats and anything else
-    render_background_processor = processors.RenderBackgroundProcessor(window=window)
-
-    # Render CAMERA background processor
-    render_camera_background_processor = processors.RenderCameraBackgroundProcessor()
-
-    # Render processor to display map
-    render_map_processor = processors.RenderMapProcessor(window=window, maps=maps)
-
-    # Render processor to place renderable entities with position on the screen
-    render_world_processor = processors.RenderWorldProcessor(window=window)
-    render_model_world_processor = processors.RenderModelWorldProcessor(window=window)
-    render_talk_processor = processors.RenderTalkProcessor2(window=window)
-
-
-    # Render debug processor to display debug information for renderable entities
-    render_debug_processor = processors.RenderDebugProcessor(window=window)
-
-    # Input processor to process keys pressed - the commands are queued and processed later by 
-	# CommandProcessor
-    input_processor = processors.InputProcessor(command_queue)
-
-    # Collision Entity processor
-    collision_entity_generator_processor = processors.CollisionEntityGeneratorProcessor()
-
-    # Collision Map processor
-    collision_map_processor = processors.CollisionMapProcessor(maps=maps)
-
-    # Teleport Collision processor
-    collision_teleport_processor = processors.CollisionTeleportProcessor(event_queue)
-
-    # Damaging Collision processor
-    collision_damage_processor = processors.CollisionDamageProcessor(event_queue)
-
-    # Weapon Collision processor
-    collision_weapon_processor = processors.CollisionWeaponProcessor(event_queue)
-
-    # AmmoPack Collision processor
-    collision_ammo_pack_processor = processors.CollisionAmmoPackProcessor(event_queue)
-
-    # Wearable Collision processor
-    collision_wearable_processor = processors.CollisionWearableProcessor(event_queue)
-
-    # Item Collision processor
-    collision_item_processor = processors.CollisionItemProcessor(event_queue)
-
-    # Entity Collision processor - added command queue processor to generate corrective movements
-    collision_entity_processor = processors.CollisionEntityProcessor(event_queue, command_queue)
-
-    # Collision Deletion processor - deletes entities with component DeleteOnCollision
-    collision_deletion_processor = processors.CollisionDeletionProcessor(remove_entity_fnc=delete_entity_id)
-
-    # Collision position corrector processor - OBSOLETE - substituted by CollisionEntityProcessor
-    #collision_corrector_processor = processors.CollisionCorrectorProcessor()
-
-    # Camera processor - update position of the camera
-    update_camera_offset_processor = processors.UpdateCameraOffsetProcessor(maps=maps)
-
-    # Game events processor - triggers actions based on previously generated events
-    #game_events_processor = processors.GameEventsProcessor(process_game_events)
-    #game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'COLLISION', 'TELEPORTATION', 'ITEM_PICKUP', 'WEARABLE_WEARED', 'WEAPON_ARMED', 'DAMAGE', 'KILL')
-    #game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'COLLISION')
-    #quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, 'PHASE_START')
-    game_events_processor = processors.GameEventsExProcessor(process_game_events_ex, ignore=('PHASE_START', 'QUEST_START'))
-    quest_events_processor = processors.GameEventsExProcessor(process_game_events_ex, process=('PHASE_START', 'QUEST_START'))
-
-    # Command processor - processes all commands from the command queue
-    command_processor = processors.CommandProcessor(process_game_commands)
-
-    # Brain processor
-    brain_processor = processors.BrainProcessor(command_queue)
-
-    # Game messages processor
-    game_messages_processor = processors.GameMessagesProcessor(process_game_messages)
-
-    ### NEW FACTORY IMPLEMENTATION
-    # Procesor marks Factory entity with flag that projectile should be generated on certain position
-    prepare_projectile_processor = processors.PrepareProjectileProcessor()
-
-    ### NEW FACTORY IMPLEMENTATION
-    # Factory entity produces new child entity
-    create_entity_on_position_processor = processors.CreateEntityOnPositionProcessor(create_entity_fnc=_create_entity)
-
-    ##### #### #### ####
-    # Beware of order of the processors
-    ##### #### #### ####
-
-    ### First lets read input from player or/and AI. The resulting commands are stored in cmd_stream
-    world.add_processor(input_processor)
-    cons_update_fnc('InputProcessor initiated.')
-
-    world.add_processor(brain_processor)
-    cons_update_fnc('BrainProcessor initiated.')
-
-    ### Process all the commands from the command stream
-    world.add_processor(command_processor)
-    cons_update_fnc('CommandProcessor initiated.')
-
-    ### Move the entities based on their movement vector
-    world.add_processor(linear_movement_processor)  # update entities that are moving at constant speed (projectiles/arrows)
-    cons_update_fnc('LinearMovementProcessor initiated.')
-
-    world.add_processor(movement_processor)
-    cons_update_fnc('MovementProcessor initiated.')
-
-    ### Generate projectiles GenerateProjectileProcessor - old solution
-    #world.add_processor(generate_projectiles_processor)
-    #cons_update_fnc('GenerateProjectilesProcessor initiated.')
-
-    ### Generate projectiles GenerateProjectileProcessor - new solution
-    world.add_processor(prepare_projectile_processor)
-    cons_update_fnc('PrepareProjectilesProcessor initiated.')
-    world.add_processor(create_entity_on_position_processor)
-    cons_update_fnc('CreateEntityOnPositionProcessor initiated.')
-
-
-    ### Process all collisions and produce events where necessary
-    world.add_processor(collision_map_processor)	# Resolves all the collisions on the map - correct movements and nothing more
-    world.add_processor(collision_entity_generator_processor)	# Fills information about which entities collided together into the Collision components
-    world.add_processor(collision_damage_processor) # Makes damage to entity if applicable
-    world.add_processor(collision_teleport_processor)	# Resolves teleport collisions + generates events to the main program where those can be further processed
-    world.add_processor(collision_weapon_processor)	# Resolves weapon pickups collisions + generates events to the main program where those can be further processed
-    world.add_processor(collision_ammo_pack_processor)	# Resolves ammo pack pickups collisions + generates events to the main program where those can be further processed
-    world.add_processor(collision_wearable_processor)	# Resolves wearable pickups collisions + generates events to the main program where those can be further processed
-    world.add_processor(collision_item_processor)		# Resolves item pickups collisions + generates events to the main program where those can be further processed
-    world.add_processor(collision_entity_processor)		# Resolves entity collisions + generates events to the main program where those can be further processed
-    #world.add_processor(collision_corrector_processor)	# Fixes positions of collided entities - OBSOLETE - substituted by CollisionEntityProcessor
-    world.add_processor(collision_deletion_processor)	# Deletes entities that collided and have DeleteOnCollision component
-
-
-    ### Process all events that were generated by collision processors
-    world.add_processor(game_events_processor)	# Based on events generated by the collisions (teleportation, item pickups) now is the time to see if there are some game actions that we want to do - e.g. cinematics
-
-
-    ##################################
-    ### Render the world on the screen
-    ##################################
-    # Update all cameras
-    world.add_processor(update_camera_offset_processor)
-
-    ### Change the entity state based on everything what has happened before rendering
-    world.add_processor(render_model_anim_action_processor)
-
-    ### Update the entity animation
-    world.add_processor(render_model_anim_update_processor)
-
-    # Render game window background - stats / inventory / picture
-    world.add_processor(render_background_processor)
-
-    # Render cameras background - in order not to have blured screen on
-    # parts where map is not displayed.
-    world.add_processor(render_camera_background_processor)
-
-    # Render maps
-    world.add_processor(render_map_processor)
-
-    # Render objects with Renderable component
-    world.add_processor(render_world_processor)
-
-    # Render world entities
-    #world.add_processor(render_world_processor)
-    world.add_processor(render_model_world_processor)
-
-    # Render text bubbles
-    world.add_processor(render_talk_processor)
-
-    # Render additional debug information on the screen
-    world.add_processor(render_debug_processor)
-
-    # Render game messages on the screen
-    world.add_processor(game_messages_processor)
-
-
-    ##################################
-    ### Process the quest related events
-    ##################################
-
-    ### Process phase and quest start here - when I want to show dialog on start of the first quest there is no background game picture
-    # that is why I need to put it here after rendering has happened above in procesors.
-    world.add_processor(quest_events_processor)
-
-    ##################################
-    ### Clearing processors
-    ##################################
-
-    # Remove the AmmoPack entity reference from HasWeapon component
-    world.add_processor(disarm_depleted_ammo_pack_processor)
-
-    # Remove depleted AmmoPack
-    world.add_processor(remove_depleted_ammo_pack_processor)
-
-    # Delete entities with Temporary component from the world
-    world.add_processor(clear_temporary_entity_processor)
-
 
 def create_map(map_name):
     ''' Register and create new map if not already created
@@ -749,6 +579,85 @@ def delete_dialog(dialog_name):
     # If dialog exists, delete it
     if dialog is not None:
         del dialogs[dialog_name]
+
+########################################################
+### Module Functions - Manage Processors
+########################################################
+
+# List of processor parameters that are maped to core.engine functions
+PROC_PARAMS = {
+    'create_entity_fnc' : _create_entity,
+    'remove_entity_fnc' : delete_entity_id,
+    'ammo_pack_event_queue' : event_queue,
+    'window' : window,
+    'maps' :maps,
+    'input_command_queue' : command_queue,
+    'teleport_event_queue' : event_queue,
+    'weapon_event_queue' : event_queue,
+    'ammo_pack_event_queue' : event_queue,
+    'wearable_event_queue' : event_queue,
+    'item_pickup_event_queue' : event_queue, # obsolete, use add_event_fnc instead
+    'entity_coll_event_queue' : event_queue,
+    'game_event_handler' : process_game_events_ex,
+    'game_commands_handler' : process_game_commands,
+    'game_messages_handler' : process_game_messages,
+    'damage_event_queue' : event_queue,
+    'destroy_event_queue' : event_queue,
+    'score_event_queue' : event_queue,
+    # Commands
+    'add_command_fnc' : add_game_command,
+    'clear_commands_fnc' : clear_game_commands,
+    'get_commands_fnc' : get_game_commands,
+    # Events
+    'add_event_fnc' : add_game_event,
+    'clear_events_fnc' : clear_game_events,
+    'get_events_fnc' : get_game_events
+}
+
+def _create_processor(proc_str):
+    '''
+    Example:
+        _create_processor(['ExampleProcessor', {'example_arg' : arg})
+
+        - adds the processor to the world
+    '''
+
+    # Get processor class and arguments
+    try:
+        proc_class, proc_args = processors.get_processor(proc_str[0])
+    except ValueError:
+        raise ValueError(f'Error in creation of processor "{proc_str}"')
+
+    # Check that the dependencies of the processor on other processors are kept - are already in the world
+    try:
+        prereqs = proc_class.PREREQ
+    except AttributeError:
+        prereqs = []    # no prerequisities if class attr PREREQ does not exist
+
+    for prereq in prereqs:
+
+        # Get class and arguments of the prerequisited processor
+        try:
+            prereq_proc_class, _ = processors.get_processor(prereq)
+        except ValueError:
+            raise ValueError(f'Error in creation of processor "{prereq}"')
+
+        # Verify that the prerequisite processor has been already instantiated
+        if not world.get_processor(prereq_proc_class):
+             print(f'WARNING: Processor "{proc_class}" is missing prereq. processor {prereq}. Game might work incorrectly!')
+
+    # Create and register new processor in the game world
+
+    # First, try to prepare params from PROC_PARAMS dictionary
+    new_proc_params = { arg : PROC_PARAMS.get(arg) for arg in proc_args if PROC_PARAMS.get(arg) is not None}
+    # Second, add params that are passed from the quest definition, to override and add to PROC_PARAMS
+    new_proc_params = {**new_proc_params, **proc_str[1]}
+    new_proc = proc_class(**new_proc_params)
+    
+    # Add processor to the world
+    world.add_processor(new_proc)
+    cons_update_fnc(f'{proc_str[0]} ({new_proc_params}) initiated.')
+    print(f'Processor "{proc_class}" was created')
 
 ########################################################
 ### Module Functions - Save and load game
@@ -1059,4 +968,8 @@ def run(key_events, key_pressed, dt, debug):
 
 
 def quit():
+
+    # Run finalize method on all processors - important for example for closing of files
+    world.finalize()
+
     pygame.quit()

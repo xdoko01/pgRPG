@@ -26,6 +26,7 @@ class Processor:
     `for ent, (rend, vel) in self.world.get_components(Renderable, Velocity):`
     """
     world = None
+    cycle = None # Added by ODO to note the phase of processor for debug reasons
 
     def process(self, *args, **kwargs):
         raise NotImplementedError
@@ -33,6 +34,23 @@ class Processor:
     def __str__(self):
         return f"Processor '{self.__class__.__name__}' at {hex(id(self))}: {self.__dict__}"
 
+    def pre_save(self, *args, **kwargs):
+        """ Prepare processor for serialization by disabling links to 
+        non-serializable components.
+        """
+        raise NotImplementedError
+
+    def post_load(self, *args, **kwargs):
+        """ Reconfigure the processor after de-serialization by attaching
+        the reference to objects again.
+        """
+        raise NotImplementedError
+
+    def finalize(self, *args, **kwargs):
+        """ Finish processing of the processor before end of the program.
+        Do clean-up (ex. close open files).
+        """
+        raise NotImplementedError
 
 class World:
     """A World object keeps track of all Entities, Components, and Processors.
@@ -54,6 +72,8 @@ class World:
     def clear_cache(self) -> None:
         self.get_component.cache_clear()
         self.get_components.cache_clear()
+        self.get_components_ex.cache_clear() # additionally added
+        self.get_components_exs.cache_clear() #additionally added
 
     def clear_database(self) -> None:
         """Remove all Entities and Components from the World."""
@@ -73,6 +93,7 @@ class World:
         assert issubclass(processor_instance.__class__, Processor)
         processor_instance.priority = priority
         processor_instance.world = self
+        processor_instance.cycle = 0
         self._processors.append(processor_instance)
         self._processors.sort(key=lambda proc: proc.priority, reverse=True)
 
@@ -272,19 +293,67 @@ class World:
 
     def _get_components_ex(self, *component_types: _Type, **kwargs) -> _Iterable[_Tuple[int, ...]]:
         """Get an iterator for Entity and multiple Component sets + excluding entities
-		that are having exclude_component_types.
+        that have one specific component_type.
 
-        :param component_types: Two or more Component types.
+        :param component_types: Two or more Component types to include in a list.
+        :param exclude: One Component type to exclude in a list.
         :return: An iterator for Entity, (Component1, Component2, etc)
         tuples.
+
+        example:
+
+        _get_components_ex(c.Pos, c.Move, c.Render, exclude=c.Ai)
         """
         entity_db = self._entities
         comp_db = self._components
-        exclude_component_type = kwargs.get('without', None)
+        exclude_component_type = kwargs.get('exclude', None)
+
+        """
+        comp_db ... is dictionary
+        {
+            <class 'pyrpg.core.ecs.components.collidable.Collidable'>: {1}, 
+            <class 'pyrpg.core.ecs.components.renderable_model.RenderableModel'>: {1}, 
+            <class 'pyrpg.core.ecs.components.new_controllable.NewControllable'>: {1}, 
+            <class 'pyrpg.core.ecs.components.position.Position'>: {1}, 
+            <class 'pyrpg.core.ecs.components.new_movable.NewMovable'>: {1}, 
+            <class 'pyrpg.core.ecs.components.camera.Camera'>: {1}
+        }
+
+        [comp_db[ct] for ct in component_types] ... ex. for 2 components in component types ... [{1}, {1,2}]
+        set.intersection(*[comp_db[ct] for ct in component_types]) ... ex for 2 components above ... {1}
+
+        .difference(comp_db.get(exclude_component_type, {})) ... must be done using get in case no entity has the component assigned, it will fail on KeyError
+        """
 
         try:
-            for entity in set.intersection(*[comp_db[ct] for ct in component_types]).difference(comp_db[exclude_component_type]):
+            for entity in set.intersection(*[comp_db[ct] for ct in component_types]).difference(comp_db.get(exclude_component_type, {})):
                 yield entity, [entity_db[entity][ct] for ct in component_types]
+        except KeyError:
+            pass
+
+    def _get_components_exs(self, **kwargs) -> _Iterable[_Tuple[int, ...]]:
+        """Get an iterator for Entity and multiple Component sets + excluding entities
+        that are in exclude_component_types.
+
+        :param include: Two or more Component types to include in a list.
+        :param exclude: Two or more Component types to exclude in a list.
+        :return: An iterator for Entity, (Component1, Component2, etc)
+        tuples.
+
+        example:
+
+        _get_components_ex(include=(c.Pos, c.Move, c.Render), exclude=(c.Ai, c.Attack))
+
+        """
+        entity_db = self._entities
+        comp_db = self._components
+        include_component_types = kwargs.get('include', None)
+        exclude_component_types = kwargs.get('exclude', None)
+
+        try:
+            #It is important to specify the difference with .get(ct, {}). If component does not exist as a key in comp_db, it must return empty set otherwise exception is thrown and passed
+            for entity in set.intersection(*[comp_db[ct] for ct in include_component_types]).difference(*[comp_db.get(ct, {}) for ct in exclude_component_types]):
+                yield entity, [entity_db[entity][ct] for ct in include_component_types]
         except KeyError:
             pass
 
@@ -295,6 +364,10 @@ class World:
     @_lru_cache()
     def get_components(self, *component_types: _Type):
         return [query for query in self._get_components(*component_types)]
+
+    @_lru_cache()
+    def get_components_exs(self, **kwargs):
+        return [query for query in self._get_components_exs(**kwargs)]
 
     @_lru_cache()
     def get_components_ex(self, *component_types: _Type, **kwargs):
@@ -381,3 +454,21 @@ class World:
         """
         self._clear_dead_entities()
         self._process(*args, **kwargs)
+
+    def _finalize(self, *args, **kwargs):
+        """ Add by xdoko01
+        """
+        for processor in self._processors:
+            processor.finalize(*args, **kwargs)
+
+    def finalize(self, *args, **kwargs):
+        """ Added by xdoko01
+        Call the finalize method on all Processors, in order of their priority.
+
+        Call the *finalize* method on all assigned Processors, respecting their
+        optional priority setting.
+
+        :param args: Optional arguments that will be passed through to the
+                     *finalize* method of all Processors.
+        """
+        self._finalize(*args, **kwargs)

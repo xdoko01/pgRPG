@@ -1,40 +1,4 @@
 {
-	"logging" :	{
-		"version" : 1.0,
-		"disable_existing_loggers": true,
-
-		"formatters": {
-			"simple": {
-				"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-			},
-			"extra": {
-				"format":"%(asctime)-2s %(levelname)-6s %(name)-30s %(filename)-15s %(funcName)-18s %(lineno)-6s %(message)s",
-				"datefmt":"%m-%d %H:%M:%S"
-			}
-		},
-	
-		"handlers": {
-			"console": {
-				"class": "logging.StreamHandler",
-				"level": "DEBUG",
-				"formatter": "extra",
-				"stream": "ext://sys.stdout"
-			}       
-		},
-	
-		"loggers" : {
-			"console_logger" : {
-				"level" : "DEBUG",
-				"handlers" : ["console"]
-			}
-		},
-		
-		"root" : {
-			"level" : "DEBUG",
-			"handlers" : ["console"]
-		}	
-	},
-	
 	"messages" : {
 		"on_events" : {
 			"ITEM_PICKUP" : ["FROM JSON: {} was picked up by entity {}", ["generator_obj", "other_obj"]]
@@ -57,7 +21,7 @@
 	},
 
 	"display" : {
-		"resolution" : [850, 850],
+		"resolution" : [640, 480],
 		"bitdepth" : 32,
 		"fullscreen" : false,
 		"max_fps" : 120,

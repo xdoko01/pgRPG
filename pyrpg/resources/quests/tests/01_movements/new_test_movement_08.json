@@ -1,0 +1,120 @@
+{
+	"id" : "new_test08_movement",
+	"name" : "Movement Test 08",
+	"description" : "Test NewControllable, NewMoveable components and NewMove command",
+	"objective" : "POC of the improved movement system",
+	"init_phase" : "phase01",
+
+	"processors" : [
+		// For commands
+		["NewGenerateCommandFromInputProcessor", {}],
+		["NewGenerateCommandFromBrainProcessor", {}],
+		["NewPerformCommandProcessor", {"debug" : true}],
+
+		// For movement
+		["NewPerformMovementProcessor", {}],
+		
+		// For displaying
+		["UpdateCameraOffsetProcessor", {}],
+		["RenderableModelAnimationActionProcessor", {}],
+		["RenderableModelAnimationUpdateProcessor", {}],
+		["RenderBackgroundProcessor", {}],
+		["RenderCameraBackgroundProcessor", {}],
+		["RenderMapProcessor", {}],
+		["RenderWorldProcessor", {}],
+		["RenderModelWorldProcessor", {}],
+		["RenderDebugProcessor", {}],
+
+		// For processing input and movements
+		["NewRemoveFlagDoMoveProcessor", {}]
+	],
+
+	"phases" : {
+		"phase01" :{
+			"name" : "Movement Test 08", "objective" : "","maps" : ["test_arena_sand"],
+			
+			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+
+			"entities" : [
+				{
+					"id" : "player01",
+					"templates" : ["darkmale"],
+					"components" : [
+
+						/////////////////////////////////////////////////////////
+						// TEST 8 - Movement command based on modify_brain command
+						// - program is added to the brain and executed accross several cycles
+						//
+						/////////////////////////////////////////////////////////
+						{"type" : "Brain", "params" : {"commands" : []}},
+
+						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+							"control_cmds" : {
+								// Do 3 circles upon pressing left
+								"left" : [["new_modify_brain", {"commands" : [
+									[null, "new_move_vect_noadd", {"vector" : [-5, 0]}], // left
+									[null, "new_move_vect_noadd", {"vector" : [0, 5]}], // down
+									[null, "new_move_vect_noadd", {"vector" : [5, 0]}], // right
+									[null, "new_move_vect_noadd", {"vector" : [0, -5]}], // up
+									[0, "loop", {"iterations" : 3}]]}]],
+								
+								"right" : [["new_modify_brain", {"commands" : [
+									[null, "new_move_vect_noadd", {"vector" : [10, 0]}]]}]],
+								
+								"up" : [["new_modify_brain", {"commands" : [
+									[null, "new_move_vect_noadd", {"vector" : [0, -10]}]]}]],
+								
+								"down" : [["new_modify_brain", {"commands" : [
+									[null, "new_move_vect_noadd", {"vector" : [0, 10]}]]}]],
+	
+								"attack" : [["none", {}]]}
+							}
+						},
+
+
+						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
+						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				}
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" : [
+				],
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

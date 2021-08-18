@@ -21,7 +21,8 @@ class Component(object):
     def __str__(self):
         ''' Print representation of the component instance
         '''
-        return f"Component '{self.__class__.__name__}' at {hex(id(self))} ({sys.getsizeof(self)} bytes): {self.__dict__}"
+        slots_dict = {k : getattr(self, k) for k in self.__slots__} # get content of slots for print
+        return f"Component '{self.__class__.__name__}' at {hex(id(self))} ({sys.getsizeof(self)} bytes): {slots_dict}"
 
     def pre_save(self):
         ''' Prepare component for saving - remove all references to

@@ -16,6 +16,8 @@
 '''
 
 import json
+import re # For removing C-style comments from JSON file
+
 import pygame
 import pprint as pp
 from collections import namedtuple
@@ -501,7 +503,7 @@ if __name__ == "__main__":
     try:
         with open('pyrpg/utils/dlg_example.json', 'r') as dlg_file:
             json_dlg_data = dlg_file.read()
-            dlg_data = json.loads(json_dlg_data)
+            dlg_data = json.loads(re.sub("//.*", "", json_dlg_data, flags=re.MULTILINE))
     except FileNotFoundError:
         print(f"Dialog file '{file}' not found.")
         raise

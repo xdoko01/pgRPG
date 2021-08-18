@@ -16,15 +16,19 @@ from  pyrpg.functions import translate # for translation of entity alias to enti
 ### Module globals
 ########################################################
 
-# Available components - if component is not defined here, it will not be 
-# assigned to the entity
+# Available components - if component is not defined here (Flags typically), it will not be
+# able to add it to the entity from definition. Such components (Flags) are for the internal
+# use by the system.
 ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'Collidable', 'Camera', 'Brain', 'CanTalk', 'Pickable', 'HasInventory',\
-    'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'State', 'Wearable',\
+    'Teleport', 'Teleportable', 'Motion', 'RenderableModel', 'HasScore', 'ScorableOnDamage',\
+    'ScorableOnDestroy', 'Wearable',\
     'CanWear', \
-    'Weapon','AmmoPack', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary',\
+    'Weapon', 'AmmoPack', 'HasWeapon', 'Damageable', 'Damaging', 'Temporary',\
     'Factory', 'LinearMotion', 'DeleteOnCollision',\
-    'IsDead']
+    'IsDead',\
+    'NewControllable', 'NewMovable', 'NewCollidable', 'NewFlagHasCollided',\
+    'NewFlagIsAboutToPickEntity', 'NewFlagWasPickedBy', 'NewFlagHasPicked']
 
 ########################################################
 ### Module functions
@@ -106,7 +110,6 @@ from .delete_on_collision import *
 from .factory import *
 from .has_inventory import *
 from .has_weapon import *
-from .is_dead import *
 from .labeled import *
 from .linear_motion import *
 from .motion import *
@@ -119,10 +122,32 @@ from .teleportable import *
 from .temporary import *
 from .weapon import *
 from .wearable import *
+from .has_score import *
+from .scorable_on_damage import *
+from .scorable_on_destroy import *
+from .is_destroyed import *
 
 from .flag_create_from_factory import *
 from .flag_factory_depleted import *
 from .flag_ammo_pack_armed import *
+from .flag_add_score import *
+from .flag_add_damage import *
+from .flag_no_health import *
+
+# Movement system
+from .new_controllable import *
+from .new_movable import *
+from .new_flag_do_move import *
+
+# Collision system
+from .new_collidable import *
+from .new_flag_has_collided import *
+
+# PickUp system
+from .new_flag_is_about_to_pick_entity import *
+from .new_flag_was_picked_by import *
+from .new_flag_has_picked import *
+
 
 
 # Not used
@@ -146,7 +171,6 @@ __all__ = [
     'Factory',
     'HasInventory',
     'HasWeapon',
-    'IsDead',
     'Labeled',
     'LinearMotion',
     'Motion',
@@ -159,13 +183,34 @@ __all__ = [
     'Temporary',
     'Weapon',
     'Wearable',
+    'HasScore',
+    'ScorableOnDestroy',
+    'ScorableOnDamage',
+    'IsDestroyed',
 
+    # Flags are temorary components add/removed during one game cycle
     'FlagCreateFromFactory',
     'FlagFactoryDepleted',
-    'FlagAmmoPackArmed'
+    'FlagAmmoPackArmed',
+    'FlagAddScore',
+    'FlagAddDamage',
+    'FlagNoHealth',
+
+    # Components used for the new solution
+    'NewControllable',
+    'NewMovable',
+    'NewFlagDoMove',
+
+    'NewCollidable',
+    'NewFlagHasCollided',
+
+    'NewFlagIsAboutToPickEntity',
+    'NewFlagWasPickedBy',
+    'NewFlagHasPicked'
 
     # Not used
     #'State',
     #'Container',
+
 
     ]

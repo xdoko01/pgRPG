@@ -5,6 +5,9 @@
 	"objective" : "Test weapon related features",
 	"init_phase" : "phase01",
 
+	"processors" : [
+	],
+
 	"phases" : {
 		"phase01" :{
 			"name" : "Pickup Weapons and Ammo Packs",
@@ -99,7 +102,8 @@
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "pack_of_iron_arrows", "name" : "Pack of Iron Arrows"}},
 						{"type" : "Debug", "params" : {}},
-						{"type" : "Position", "params" : {"x" : 1200, "y" : 200, "map" : "test_arena_sand"}}
+						{"type" : "Position", "params" : {"x" : 1200, "y" : 200, "map" : "test_arena_sand"}},
+						{"type" : "ScorableOnDamage", "params" : {"score" : -50}}
 					]
 				},
 
@@ -109,7 +113,9 @@
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "pack_of_fireball_spell", "name" : "Pack of Fireball Spell"}},
 						{"type" : "Debug", "params" : {}},
-						{"type" : "Position", "params" : {"x" : 1400, "y" : 200, "map" : "test_arena_sand"}}
+						{"type" : "Position", "params" : {"x" : 1400, "y" : 200, "map" : "test_arena_sand"}},
+						{"type" : "ScorableOnDamage", "params" : {"score" : -100}}
+
 					]
 				},
 
@@ -145,7 +151,8 @@
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 800, "screen_height" : 800}},
 						{"type" : "Debug", "params" : {}},
 
-						{"type" : "HasWeapon", "params" : {}}
+						{"type" : "HasWeapon", "params" : {}},
+						{"type" : "HasScore", "params" : {}}
 					]
 				},
 
@@ -155,9 +162,12 @@
 					"components" : [
 						{"type" : "Labeled", "params" : {"id" : "npc0101", "name" : "Test NPC"}},
 						{"type" : "Position", "params" : {"x" : 250, "y" : 450, "dir": "right", "map" : "test_arena_sand"}},
-						{"type" : "Damageable", "params" : {"health" : 5}},
+						{"type" : "Damageable", "params" : {"health" : 100}},
 
-						{"type" : "Debug", "params" : {}}
+						{"type" : "Debug", "params" : {}},
+						{"type" : "ScorableOnDamage", "params" : {"score" : 10}},
+						{"type" : "ScorableOnDestroy", "params" : {"score" : 1000}}
+
 
 					]
 				}

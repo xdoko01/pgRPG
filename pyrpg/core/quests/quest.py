@@ -7,6 +7,7 @@ import pyrpg.core.commands as commands
 import pyrpg.core.engine as engine # to call _create_entity() fnc (probably in the future also to call _create_map)
 
 import json # For loading quest from json
+import re # For removing C-style comments before processing JSON
 
 ########################################################
 ### Module functions
@@ -19,7 +20,7 @@ def load_quest(quest_id, event_queue):
 	try:		
 		with open(QUEST_PATH / str(quest_id +'.json'), 'r') as quest_file:
 			json_quest_data = quest_file.read()
-			quest_data = json.loads(json_quest_data)
+			quest_data = json.loads(re.sub("//.*", "", json_quest_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
 	except FileNotFoundError:
 		print(f'File {QUEST_PATH / str(quest_id + ".json")} not found.')
 		raise
@@ -53,6 +54,10 @@ class Quest:
 		self.description = self.quest_data.get("description")
 		self.objective = self.quest_data.get("objective")
 		self.phase_id = self.quest_data.get("init_phase")
+
+		# Load processors
+		self.processors = self.quest_data.get("processors", [])
+		for p in self.processors: engine._create_processor(p)
 
 		# Phase data init
 		self.phase_name = self.phase_objective = None

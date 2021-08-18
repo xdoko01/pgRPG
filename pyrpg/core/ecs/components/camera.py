@@ -36,7 +36,7 @@ class Camera(Component):
         False
     '''
 
-    __slots__ = ['always_center', 'map_screen_rect', 'offset_x', 'offset_y', 'screen_pos_x', 'screen_pos_y' \
+    __slots__ = ['always_center', 'map_screen_rect', 'offset_x', 'offset_y', 'screen_pos_x', 'screen_pos_y',\
                 'screen_width', 'screen_height', 'screen_width_half', 'screen_height_half', 'screen']
 
     def __init__(self, *args, **kwargs):

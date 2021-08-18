@@ -2,6 +2,6 @@
 	"id" : "character_model",
 	"templates" : ["model"],
 	"components" : [
-		{"type" : "Collidable", "params" : {"x" : 16, "y" : 32}}
+		{"type" : "Collidable", "params" : {"x" : 16, "y" : 30}}
 	]
 }

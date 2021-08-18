@@ -16,6 +16,11 @@
     Examples:
 '''
 
+# Initiate logging
+import logging
+import logging.config
+logger = logging.getLogger(__name__)
+
 # Initiates pygame window
 # Initiates pygame clock
 import pyrpg.core.engine
@@ -30,7 +35,7 @@ from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
 # It is needed to import pygame in order to have access to key events in the main game loop
 import pygame
 
-from pyrpg.core.config.config import DISPLAY, DEBUG
+from pyrpg.core.config.config import DISPLAY, DEBUG, LOGGING
 
 # Definition of game states
 GAME_STATE = ['MAIN_MENU', 'GAME']
@@ -42,6 +47,12 @@ global show_cons_on_sys_msg
 
 def init(state='MAIN_MENU', cons_enabled=True):
 
+    ##################
+    # Init logging
+    ##################
+
+    logging.config.dictConfig(LOGGING)
+    logger.info('Logging configured ...')
 
     ##################
     # Init the console
@@ -51,7 +62,8 @@ def init(state='MAIN_MENU', cons_enabled=True):
 
     show_cons_on_sys_msg = cons_enabled
 
-    console = pyrpg.core.config.console.game_console
+    from pyrpg.core.config.console import game_console as console
+    # console = pyrpg.core.config.console.game_console
 
     # Enable console for startup messages
     console.toggle(enable=show_cons_on_sys_msg)
@@ -74,12 +86,52 @@ def init(state='MAIN_MENU', cons_enabled=True):
     global _game_state
     _game_state = state
 
-    # Load the definitions contained in the init quest
-    pyrpg.core.engine.new_game('init')
+    # Load the definitions contained in the init quest - old processors
+    #pyrpg.core.engine.new_game('init')
+    #pyrpg.core.engine.new_game('test04_weapons')
+    #pyrpg.core.engine.new_game('otik_lvl1')
 
     # Load the example test quest
     # TODO - in the future this will be triggered from the menu
-    pyrpg.core.engine.new_game('test04_weapons')
+
+    ##################
+    ### Command Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/02_commands/new_test_commands_01')
+    #pyrpg.core.engine.new_game('tests/02_commands/new_test_commands_02')
+
+
+    ##################
+    ### Movement Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_01')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_02')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_03') # Support for diagonal moves
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_04')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_05')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_06')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_07')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_08')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_09')
+    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_10')
+
+    ##################
+    ### Animation Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/03_animations/new_test_animations_01')
+
+    ##################
+    ### Collision Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_01')
+    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_02')
+    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_03')
+    #pyrpg.core.engine.new_game('tests/04_collisions/map_collision_test_01')
+
+    ##################
+    ### Pickup Tests
+    ##################
+    pyrpg.core.engine.new_game('tests/05_pickup/new_test_pickup_01')
 
     ##################
     # Hide the console
@@ -170,7 +222,6 @@ def update_console(text):
     if show_cons_on_sys_msg:
         console.show(pyrpg.core.engine.window, disable_anim=True)
         pygame.display.flip()
-
 
 def main_menu(key_events, key_pressed, dt):
     print('In MAIN MENU')

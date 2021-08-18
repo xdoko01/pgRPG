@@ -5,6 +5,11 @@
 	"objective" : "Quest Objective",
 	"init_phase" : "Phase ID of the First Phase of the Quest",
 
+	// List of processors in the correct order and with parameters
+	"processors" : [
+		["ExampleProcessor", {"example_parameter" : true}]
+	],
+
 	"phases" : {
 		"phase01" :{
 			"name" : "Phase Name",

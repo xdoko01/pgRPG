@@ -50,3 +50,9 @@ game_console = utils.Console(
             window.get_width(),
             cfg.CONSOLE
         )
+
+def write(text):
+    ''' Mandatory function used (not only) by the logger handler to write 
+    directly onto the game console.
+    '''
+    game_console.write(text)

@@ -5,6 +5,77 @@
 	"objective" : "",
 	"init_phase" : "init01",
 
+	"processors" : [
+		//////////////////////////////
+		// New set of processors
+		//////////////////////////////
+		//["NewGenerateCommandFromInputProcessor", {}],
+		//["NewGenerateCommandFromBrainProcessor", {}],
+		//["NewPerformCommandProcessor", {}],
+
+		//["NewPerformMovementProcessor", {}],
+
+		
+		//////////////////////////////
+		// Original set of processors
+		//////////////////////////////
+
+		["InputProcessor", {}],
+		["BrainProcessor", {}],
+		["CommandProcessor", {}],
+		["LinearMovementProcessor", {}],
+		["MovementProcessor", {}],
+		["PrepareProjectileProcessor", {}],
+		["CreateEntityOnPositionProcessor", {}],
+
+		["CollisionMapProcessor", {}],
+		["CollisionEntityGeneratorProcessor", {}],
+		["CollisionDamageProcessor", {}],
+		
+		//["GenerateScoreDamageProcessor", {}],
+		//["GenerateScoreDestroyProcessor", {}],
+		["CollisionTeleportProcessor", {}],
+		["CollisionWeaponProcessor", {}],
+		["CollisionAmmoPackProcessor", {}],
+		["CollisionWearableProcessor", {}],
+		["CollisionItemProcessor", {}],
+		["CollisionEntityProcessor", {}],
+		["CollisionDeletionProcessor", {}],
+
+		["CalculateDamageProcessor", {}],
+
+		//["CalculateScoreProcessor", {}],
+		
+		["HandleDestroyedEntitiesProcessor", {}],
+		
+		["UpdateCameraOffsetProcessor", {}],
+		["RenderableModelAnimationActionProcessor", {}],
+		["RenderableModelAnimationUpdateProcessor", {}],
+		["RenderBackgroundProcessor", {}],
+		["RenderCameraBackgroundProcessor", {}],
+		["RenderMapProcessor", {}],
+		["RenderWorldProcessor", {}],
+		["RenderModelWorldProcessor", {}],
+		["RenderTalkProcessor2", {}],
+		["RenderDebugProcessor", {}],
+		["GameMessagesProcessor", {}],
+
+		//["QuestEventsExProcessor", {"process" : ["PHASE_START", "QUEST_START"]}], // Test comment
+		["DisarmDepletedAmmoPackProcessor", {}],
+		["RemoveDepletedAmmoPackProcessor", {}],
+		["ClearTemporaryEntityProcessor", {}],
+		//["RemoveFlagAddScoreProcessor", {}],
+		["RemoveFlagAddDamageProcessor", {}],
+		["RemoveFlagNoHealthProcessor", {}]
+
+		//////////////////////////////
+		// New set of processors
+		//////////////////////////////
+
+		//["NewRemoveFlagDoMoveProcessor", {}]
+
+	],
+
 	"phases" : {
 		"init01" : {
 			"name" : "Init common dialogs",

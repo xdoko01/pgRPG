@@ -6,6 +6,8 @@ module tests.
 '''
 
 from .component import Component
+from pyrpg.core.config.config import TILE_RES # in order to specify the position in tiles coordinates
+
 
 # TODO - is self.direction necessary? is not enough dir_name?
 class Position(Component):
@@ -26,6 +28,7 @@ class Position(Component):
 
     Examples of JSON definition:
         {"type" : "Position", "params" : {"x" : 0, "y" : 0, "map" : "test_map"}}
+        {"type" : "Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_map"}}
 
     Tests:
         >>> c = Position(**{"x" : 0, "y" : 0, "map" : "test_map"})
@@ -47,6 +50,12 @@ class Position(Component):
             :param y: Y-axis position in pixels on the map (mandatory).
             :type y: int
 
+            :param tile_x: X-axis position in tiles on the map (optional).
+            :type tile_x: int
+
+            :param tile_y: Y-axis position in tiles on the map (optional).
+            :type tile_y: int
+
             :param map: Name of the map where entity is present (mandatory).
             :type map: str
 
@@ -60,8 +69,8 @@ class Position(Component):
 
         # Coordinates in the world
         try:
-            self.x = kwargs.get('x')
-            self.y = kwargs.get('y')
+            self.x = kwargs.get('x', kwargs.get('tile_x', 0) * TILE_RES + TILE_RES // 2) # either position in pixels or tiles must be specified
+            self.y = kwargs.get('y', kwargs.get('tile_y', 0) * TILE_RES + TILE_RES // 2) # either position in pixels or tiles must be specified
             self.map = kwargs.get('map')
             self.dir_name = kwargs.get('dir', 'down')
         except KeyError:

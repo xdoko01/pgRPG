@@ -1,0 +1,103 @@
+{
+	"id" : "new_test01_movement",
+	"name" : "Movement Test 01",
+	"description" : "Test NewControllable, NewMoveable components and NewMove command",
+	"objective" : "POC of the improved movement system",
+	"init_phase" : "phase01",
+
+	"processors" : [
+		// For commands
+		["NewGenerateCommandFromInputProcessor", {}],
+		["NewPerformCommandProcessor", {"debug" : true}],
+
+		// For movement
+		["NewPerformMovementProcessor", {}],
+		
+		// For displaying
+		["UpdateCameraOffsetProcessor", {}],
+		["RenderableModelAnimationActionProcessor", {}],
+		["RenderableModelAnimationUpdateProcessor", {}],
+		["RenderBackgroundProcessor", {}],
+		["RenderCameraBackgroundProcessor", {}],
+		["RenderMapProcessor", {}],
+		["RenderWorldProcessor", {}],
+		["RenderModelWorldProcessor", {}],
+		["RenderDebugProcessor", {}],
+
+		// For processing input and movements
+		["NewRemoveFlagDoMoveProcessor", {}]
+	],
+
+	"phases" : {
+		"phase01" :{
+			"name" : "Movement Test 01", "objective" : "","maps" : ["test_arena_sand"],
+			
+			"cleanup" : {"maps" : [],"entities" : []}, "dialogs" : [],
+
+			"entities" : [
+				{
+					"id" : "player01",
+					"templates" : ["darkmale"],
+					"components" : [
+
+						/////////////////////////////////////////////////////////
+						// TEST 1 - Movement command based on movement directions
+						// - diagonal not allowed
+						// - single command / single direction upon keypress
+						/////////////////////////////////////////////////////////
+						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+							"control_cmds" : {
+								"left" : [["new_move_noadd", {"moves" : ["left"]}]],
+								"right": [["new_move_noadd", {"moves" : ["right"]}]],
+								"up" : [["new_move_noadd", {"moves" : ["up"]}]],
+								"down" : [["new_move_noadd", {"moves" : ["down"]}]],
+								"attack" : [["none", {}]]}
+							}
+						},
+
+						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
+						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				}
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" : [
+				],
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

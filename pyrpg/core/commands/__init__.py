@@ -30,6 +30,16 @@ from .add_to_inventory import *
 from .set_quest_phase import *
 from .add_msg import *
 
+from .new_move_add import *
+from .new_move_noadd import *
+from .new_move_vect_noadd import *
+from .new_move_auto import *
+from .new_move_to import *
+
+
+from .new_modify_brain import *
+
+
 __all__ = [
     'cmd_loop',
     'cmd_wait',
@@ -52,7 +62,15 @@ __all__ = [
     'cmd_remove_from_inventory',
     'cmd_add_to_inventory',
     'cmd_set_quest_phase',
-    'cmd_add_msg'
+    'cmd_add_msg',
+
+    'cmd_new_move_add',
+    'cmd_new_move_noadd',
+    'cmd_new_move_vect_noadd',
+    'cmd_new_move_auto',
+    'cmd_new_move_to',
+
+    'cmd_new_modify_brain'
 ]
 
 CMD_DICT = {
@@ -76,7 +94,16 @@ CMD_DICT = {
     'remove_from_inventory' : cmd_remove_from_inventory,
     'add_to_inventory' : cmd_add_to_inventory,
     'set_quest_phase' : cmd_set_quest_phase,
-    'add_msg' : cmd_add_msg
+    'add_msg' : cmd_add_msg,
+
+    'new_move_noadd' : cmd_new_move_noadd,
+    'new_move_add' : cmd_new_move_add,
+    'new_move_vect_noadd' : cmd_new_move_vect_noadd,
+    'new_move_auto' : cmd_new_move_auto,
+    'new_move_to' : cmd_new_move_to,
+
+    'new_modify_brain' : cmd_new_modify_brain
+
 }
 
 def get_cmd_fnc(cmd_str):

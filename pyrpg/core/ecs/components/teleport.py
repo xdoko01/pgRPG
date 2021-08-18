@@ -6,6 +6,8 @@ module tests.
 '''
 
 from .component import Component
+from pyrpg.core.config.config import TILE_RES # in order to specify the position in tiles coordinates
+
 
 class Teleport(Component):
     ''' Entity is a teleport - i.e. on collision it changes position of
@@ -16,6 +18,8 @@ class Teleport(Component):
 
     Examples of JSON definition:
         {"type" : "Teleport", "params" : {"dest_x" : 0, "dest_y" : 0, "dest_map" : "test_map"}}
+        {"type" : "Teleport", "params" : {"tile_dest_x" : 0, "tile_dest_y" : 0, "dest_map" : "test_map"}}
+
 
     Tests:
         >>> c = Teleport(**{"dest_x" : 0, "dest_y" : 0, "dest_map" : "test_map"})
@@ -33,6 +37,12 @@ class Teleport(Component):
             :param dest_y: Y-axis position in pixels on the target map (mandatory).
             :type dest_y: int
 
+            :param tile_dest_x: X-axis position in tiles on the target map (optional).
+            :type tile_dest_x: int
+
+            :param tile_dest_y: Y-axis position in tiles on the target map (optional).
+            :type tile_dest_y: int
+
             :param dest_map: Name of the target map where entity is teleported (mandatory).
             :type dest_map: str
 
@@ -47,8 +57,8 @@ class Teleport(Component):
         # Teleport destination - mandatory
         try:
             self.dest_map = kwargs.get('dest_map')
-            self.dest_x = kwargs.get('dest_x')
-            self.dest_y = kwargs.get('dest_y')
+            self.dest_x = kwargs.get('dest_x', kwargs.get('tile_dest_x', 0) * TILE_RES + (TILE_RES // 2)) # optionally get position based on tile coordinates
+            self.dest_y = kwargs.get('dest_y', kwargs.get('tile_dest_y', 0) * TILE_RES + (TILE_RES // 2)) # optionally get position based on tile coordinates
             self.key = kwargs.get('key', None)
         except KeyError:
             # Notify component factory that initiation has failed

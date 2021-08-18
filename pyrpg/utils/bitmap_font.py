@@ -45,6 +45,7 @@ __all__ = ['BitmapFont']
 
 import pygame # For picture manipulation
 import json # For reading the JSON font definition
+import re # For removing C-style comments before processing JSON
 
 ########################################################
 ### Module functions
@@ -107,7 +108,7 @@ class BitmapFont():
         try:
             with open(path, 'r') as font_file:
                 json_font_data = font_file.read()
-                font_data = json.loads(json_font_data)
+                font_data = json.loads(re.sub("//.*", "", json_font_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
         except FileNotFoundError:
             print(f"Bitmap font definition file '{path}' was not found.")
             raise ValueError

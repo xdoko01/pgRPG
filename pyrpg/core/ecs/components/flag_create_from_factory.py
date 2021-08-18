@@ -37,7 +37,7 @@ class FlagCreateFromFactory(Component):
         20
     '''
 
-    __slots__ = ['position', 'parent', 'register', 'id_suffix', 'adjust_col']
+    __slots__ = ['position', 'parent', 'register', 'score', 'id_suffix', 'adjust_col']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new FlagCreateFromFactory component.
@@ -52,6 +52,9 @@ class FlagCreateFromFactory(Component):
             :param register: Should the entity be globally registered with engine
             :type register: bool
 
+            :param score: Should the entity have link to the parent score component
+            :type score: bool
+
             :param id_suffix: Text that is added to Factory prescription entity ID during generation.
             :type id_suffix: str
 
@@ -63,6 +66,7 @@ class FlagCreateFromFactory(Component):
         self.position = kwargs.get('position', None)
         self.parent = kwargs.get('parent', None)
         self.register = kwargs.get('register', False)
+        self.score = kwargs.get('score', False)
         self.id_suffix = kwargs.get('id_suffix', '')
         self.adjust_col = kwargs.get('adjust_col', False)
 
@@ -72,6 +76,7 @@ class FlagCreateFromFactory(Component):
             assert isinstance(self.adjust_col, bool), f'Parameter "adjust_col" must be a boolean.'
             assert isinstance(self.parent, int) or self.parent is None, f'Parameter "parent" must be integer representing parent entity.'
             assert isinstance(self.register, bool), f'Parameter "register" must be a boolean.'
+            assert isinstance(self.score, bool), f'Parameter "score" must be a boolean.'
             assert isinstance(self.id_suffix, str), f'Parameter "id_suffix" must be a string.'
         except AssertionError:
             # Notify component factory that initiation has failed

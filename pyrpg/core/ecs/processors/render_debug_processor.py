@@ -43,6 +43,21 @@ class RenderDebugProcessor(esper.Processor):
 				# Here all the debug information are gathered
 				debug_text = ''
 
+				# Mark new collision area
+				if debug.get('show_collision', False):
+					try:
+						coll_debug = self.world.component_for_entity(debug_entity, components.NewCollidable)
+						pygame.draw.rect(
+							cam_cam.screen,
+							pygame.Color('blue'),
+							pygame.Rect(
+								cam_cam.apply((pos_comp.x + coll_debug.dx - coll_debug.x, pos_comp.y + coll_debug.dy - coll_debug.y)), 
+								(2 * coll_debug.x, 2 * coll_debug.y)
+								),
+							1)
+					except KeyError:
+						pass
+
 				# Mark collision area
 				if debug.get('show_collision', False):
 					try:

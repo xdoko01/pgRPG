@@ -1,3 +1,13 @@
+# How to batch regenerate Tiled JSON files 
+
+####
+
+  1. Open _template.json in Tiled SW
+  2. Change definition of actions/timing/directions/animations
+  3. Run _recreate_json.bat in respective folder
+  4. Open all created json files in the Tiled SW (you can open all at once by selecting them all in the batch)
+  5. Check and save + close all of files by pressing Ctrl + S and Ctrl + F4. This will make the json nicely formated
+
 # What needs to be done to prepare json model from TileSet in Tiled.
 
 ####

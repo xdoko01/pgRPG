@@ -8,7 +8,7 @@ class Event:
 
 	EVENT_TYPES = ['COLLISION', 'TELEPORTATION', 'ITEM_PICKUP',\
 		 'WEARABLE_WEARED', 'WEAPON_ARMED', 'AMMO_PACK_ARMED', 'AMMO_PACK_DISARMED',\
-		 'DAMAGE', 'KILL',\
+		 'DAMAGE', 'KILL', 'SCORE',\
 		 'QUEST_START', 'PHASE_START']
 
 
@@ -30,7 +30,7 @@ class Event:
 		'''
 
 		# Get the event msg format - from config files - it is ok not to fill any parameter
-		event_msg_format = MSG_EVENT_FORMAT.get(self.event_type, ['',[]])
+		event_msg_format = MSG_EVENT_FORMAT.get(self.event_type, ['', []])
 		
 		# Decode the message
 		return event_msg_format[0].format(*[engine.entity_to_alias.get(getattr(self, var_name)) for var_name in event_msg_format[1]])

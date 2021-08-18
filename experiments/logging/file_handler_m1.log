@@ -1,0 +1,60 @@
+08-01 16:51:53   module1  module1.py   5      <module>                       INFO     This is info log from the module 1.
+08-01 16:51:53   module1  module1.py   7      <module>                       WARNING  This is warning log from the module 1.
+08-01 16:51:53   module1  module1.py   8      <module>                       CRITICAL This is critical log from the module 1.
+08-01 16:51:53   module1  module1.py   11     test                           INFO     This is info log from the module 1 -> test fnc.
+08-01 16:51:53   module1  module1.py   13     test                           WARNING  This is warning log from the module 1 -> test fnc.
+08-01 16:51:53   module1  module1.py   14     test                           CRITICAL This is critical log from the module 1 -> test fnc.
+08-01 16:52:59   module1  module1.py   5      <module>                       INFO     This is info log from the module 1.
+08-01 16:52:59   module1  module1.py   7      <module>                       WARNING  This is warning log from the module 1.
+08-01 16:52:59   module1  module1.py   8      <module>                       CRITICAL This is critical log from the module 1.
+08-01 16:52:59   module1  module1.py   11     test                           INFO     This is info log from the module 1 -> test fnc.
+08-01 16:52:59   module1  module1.py   13     test                           WARNING  This is warning log from the module 1 -> test fnc.
+08-01 16:52:59   module1  module1.py   14     test                           CRITICAL This is critical log from the module 1 -> test fnc.
+08-01 16:52:59   module2  module2.py   5      <module>                       INFO     This is info log from the module 2.
+08-01 16:52:59   module2  module2.py   7      <module>                       WARNING  This is warning log from the module 2.
+08-01 16:52:59   module2  module2.py   8      <module>                       CRITICAL This is critical log from the module 2.
+08-01 16:52:59   module2  module2.py   11     test                           INFO     This is info log from the module 2 -> test fnc.
+08-01 16:52:59   module2  module2.py   13     test                           WARNING  This is warning log from the module 2 -> test fnc.
+08-01 16:52:59   module2  module2.py   14     test                           CRITICAL This is critical log from the module 2 -> test fnc.
+08-01 16:58:27   module1  module1.py   5      <module>                       INFO     This is info log from the module 1.
+08-01 16:58:27   module1  module1.py   7      <module>                       WARNING  This is warning log from the module 1.
+08-01 16:58:27   module1  module1.py   8      <module>                       CRITICAL This is critical log from the module 1.
+08-01 16:58:27   module1  module1.py   11     test                           INFO     This is info log from the module 1 -> test fnc.
+08-01 16:58:27   module1  module1.py   13     test                           WARNING  This is warning log from the module 1 -> test fnc.
+08-01 16:58:27   module1  module1.py   14     test                           CRITICAL This is critical log from the module 1 -> test fnc.
+08-01 16:58:27   module2  module2.py   5      <module>                       INFO     This is info log from the module 2.
+08-01 16:58:27   module2  module2.py   7      <module>                       WARNING  This is warning log from the module 2.
+08-01 16:58:27   module2  module2.py   8      <module>                       CRITICAL This is critical log from the module 2.
+08-01 16:58:27   module2  module2.py   11     test                           INFO     This is info log from the module 2 -> test fnc.
+08-01 16:58:27   module2  module2.py   13     test                           WARNING  This is warning log from the module 2 -> test fnc.
+08-01 16:58:27   module2  module2.py   14     test                           CRITICAL This is critical log from the module 2 -> test fnc.
+08-01 16:59:03   module1  module1.py   5      <module>                       INFO     This is info log from the module 1.
+08-01 16:59:03   module1  module1.py   7      <module>                       WARNING  This is warning log from the module 1.
+08-01 16:59:03   module1  module1.py   8      <module>                       CRITICAL This is critical log from the module 1.
+08-01 16:59:03   module1  module1.py   11     test                           INFO     This is info log from the module 1 -> test fnc.
+08-01 16:59:03   module1  module1.py   13     test                           WARNING  This is warning log from the module 1 -> test fnc.
+08-01 16:59:03   module1  module1.py   14     test                           CRITICAL This is critical log from the module 1 -> test fnc.
+08-01 16:59:03   module2  module2.py   5      <module>                       INFO     This is info log from the module 2.
+08-01 16:59:03   module2  module2.py   7      <module>                       WARNING  This is warning log from the module 2.
+08-01 16:59:03   module2  module2.py   8      <module>                       CRITICAL This is critical log from the module 2.
+08-01 16:59:03   module2  module2.py   11     test                           INFO     This is info log from the module 2 -> test fnc.
+08-01 16:59:03   module2  module2.py   13     test                           WARNING  This is warning log from the module 2 -> test fnc.
+08-01 16:59:03   module2  module2.py   14     test                           CRITICAL This is critical log from the module 2 -> test fnc.
+08-01 16:59:34   module1  module1.py   5      <module>                       INFO     This is info log from the module 1.
+08-01 16:59:34   module1  module1.py   7      <module>                       WARNING  This is warning log from the module 1.
+08-01 16:59:34   module1  module1.py   8      <module>                       CRITICAL This is critical log from the module 1.
+08-01 16:59:34   module1  module1.py   11     test                           INFO     This is info log from the module 1 -> test fnc.
+08-01 16:59:34   module1  module1.py   13     test                           WARNING  This is warning log from the module 1 -> test fnc.
+08-01 16:59:34   module1  module1.py   14     test                           CRITICAL This is critical log from the module 1 -> test fnc.
+08-01 16:59:34   module2  module2.py   5      <module>                       INFO     This is info log from the module 2.
+08-01 16:59:34   module2  module2.py   7      <module>                       WARNING  This is warning log from the module 2.
+08-01 16:59:34   module2  module2.py   8      <module>                       CRITICAL This is critical log from the module 2.
+08-01 16:59:34   module2  module2.py   11     test                           INFO     This is info log from the module 2 -> test fnc.
+08-01 16:59:34   module2  module2.py   13     test                           WARNING  This is warning log from the module 2 -> test fnc.
+08-01 16:59:34   module2  module2.py   14     test                           CRITICAL This is critical log from the module 2 -> test fnc.
+08-01 16:59:34   test_pkg.module3 module3.py   5      <module>                       INFO     This is info log from the module 3.
+08-01 16:59:34   test_pkg.module3 module3.py   7      <module>                       WARNING  This is warning log from the module 3.
+08-01 16:59:34   test_pkg.module3 module3.py   8      <module>                       CRITICAL This is critical log from the module 3.
+08-01 16:59:34   test_pkg.module3 module3.py   11     test                           INFO     This is info log from the module 3 -> test fnc.
+08-01 16:59:34   test_pkg.module3 module3.py   13     test                           WARNING  This is warning log from the module 3 -> test fnc.
+08-01 16:59:34   test_pkg.module3 module3.py   14     test                           CRITICAL This is critical log from the module 3 -> test fnc.

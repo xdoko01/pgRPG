@@ -20,6 +20,9 @@ class PrepareProjectileProcessor(esper.Processor):
                 # Collidable is optional component - entities who are not collidable can generate projectiles
                 collidable = self.world.try_component(ent, (components.Collidable))
 
+                # If entity has HasScore component then projectile should have it as well
+                score = self.world.has_component(ent, (components.HasScore))
+
                 # calculate position for the new projectile
                 (ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)
                 (pos_x, pos_y, pos_map) = (int(position.x + (position.direction[0] * (ent_col_x))), int(position.y + (position.direction[1] * (ent_col_y))), position.map)
@@ -30,6 +33,7 @@ class PrepareProjectileProcessor(esper.Processor):
                                             position={'x' : pos_x, 'y' : pos_y, 'dir' : position.dir_name, 'map' : pos_map},
                                             adjust_col=True,
                                             parent=ent,
+                                            score=score,
                                             register=False,
                                             id_suffix='projectile')
                                         )
@@ -81,7 +85,7 @@ class CreateEntityOnPositionProcessor(esper.Processor):
                         new_entity_position.y += int(new_entity_position.direction[1] * (new_entity_collidable.y + 1))
 
                     except KeyError:
-                        return None
+                        pass
 
             # Remove the component flag_create_from_factory as entity was successfully generated
             self.world.remove_component(ent, components.FlagCreateFromFactory)
@@ -89,10 +93,21 @@ class CreateEntityOnPositionProcessor(esper.Processor):
             # Count new entity to the total number of entities created by the Factory
             factory.current_units += 1
 
-            # If there are no more entities to produce, just remove the flag FlagCreateFromFactory and end
+            # If there are no more entities to produce mark the generator that it is depleted
             if factory.max_units is not None and (factory.max_units <= factory.current_units):
                 self.world.add_component(ent, components.FlagFactoryDepleted())
                 print(f'Cannot generate further entities - factory depleted')
+
+            # Add the score component if the parent had it
+            if flag_create_from_factory.score:
+                self.world.add_component(new_entity, components.HasScore(delegate=flag_create_from_factory.parent))
+
+            # If the new entity contains Damageble component add parent to it
+            try:
+                new_entity_damaging = self.world.component_for_entity(new_entity, components.Damaging)
+                new_entity_damaging.parent = flag_create_from_factory.parent
+            except KeyError:
+                pass
 
             # Print information about successful generation
             print(f'Entity {new_entity} created. No of generated entities: {factory.current_units}. No of remaining units {factory.max_units - factory.current_units}')
