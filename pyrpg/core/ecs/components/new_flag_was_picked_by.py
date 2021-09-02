@@ -15,19 +15,19 @@ class NewFlagWasPickedBy(Component):
 
     '''
 
-    __slots__ = ['entity']
+    __slots__ = ['picker']
 
-    def __init__(self, entity=None):
+    def __init__(self, picker=None):
         ''' Initiate value for the new NewFlagWasPickedBy component.
 
         Parameters:
-            :param entity: Entity ID that has picked given entity
-            :type entity: int
+            :param picker: Entity ID that has picked given entity
+            :type picker: int
 
         '''
         super().__init__()
 
-        self.entity = entity
+        self.picker = picker
 
 
 if __name__ == '__main__':

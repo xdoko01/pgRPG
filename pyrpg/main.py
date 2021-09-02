@@ -131,7 +131,20 @@ def init(state='MAIN_MENU', cons_enabled=True):
     ##################
     ### Pickup Tests
     ##################
-    pyrpg.core.engine.new_game('tests/05_pickup/new_test_pickup_01')
+    #pyrpg.core.engine.new_game('tests/05_pickup/new_test_pickup_01')
+
+    ##################
+    ### Teleportation Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/06_teleportation/new_test_teleportation_01')
+    #pyrpg.core.engine.new_game('tests/06_teleportation/new_test_teleportation_02')
+
+    ##################
+    ### Arm Weapon Tests
+    ##################
+    pyrpg.core.engine.new_game('tests/07_arm_weapon/new_test_arm_weapon_01')
+
+
 
     ##################
     # Hide the console

@@ -1,4 +1,4 @@
-__all__ = ['NewRemoveFlagIsAboutToPickEntityProcessor']
+__all__ = ['NewRemoveFlagWasArmedAsWeaponByProcessor']
 
 import logging
 import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
@@ -8,28 +8,27 @@ import pyrpg.core.ecs.components as components # for definition of components
 logger = logging.getLogger(__name__)
 
 
-class NewRemoveFlagIsAboutToPickEntityProcessor(esper.Processor):
-    ''' Removes the flag that the item has been considered for picking
-    at the end of the cycle.
+class NewRemoveFlagWasArmedAsWeaponByProcessor(esper.Processor):
+    ''' Removes the flag that the entity was armed as a weapon.
 
     Involved components:
-        -   NewFlagIsAboutToPickEntity
+        -   NewFlagWasArmedAsWeaponBy
 
     Related processors:
-        -   NewGeneratePickupProcessor
-        -   NewPerformPickupProcessor
-        -   NewRemoveFlagWasPickedByProcessor
-        -   NewRemoveFlagHasPickedProcessor
+        -   NewGenerateArmWeaponProcessor
+        -   NewPerformArmWeaponProcessor
+        -   NewRemoveFlagIsAboutToArmWeaponProcessor
+        -   NewRemoveFlagHasArmedWeaponProcessor
 
     What if this processor is disabled?
-        -   unexpected behavior during picking of the item
+        -   unexpected behavior during arming of a weapon
 
     Where the processor should be planned?
-        -   after NewPerformPickupProcessor
+        -   after NewPerformArmWeaponProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['NewPerformPickupProcessor']
+    PREREQ = ['NewPerformArmWeaponProcessor']
 
 
     def __init__(self):
@@ -38,15 +37,14 @@ class NewRemoveFlagIsAboutToPickEntityProcessor(esper.Processor):
         super().__init__()
 
     def process(self, *args, **kwargs):
-        ''' Removes the flag that the item has been considered for picking
-        at the end of the cycle.
+        ''' Removes the flag that the entity was armed as a weapon.
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagIsAboutToPickEntity):
+        for ent, (_) in self.world.get_components(components.NewFlagWasArmedAsWeaponBy):
 
-            self.world.remove_component(ent, components.NewFlagIsAboutToPickEntity)
-            logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagIsAboutToPickEntity" was removed.')
+            self.world.remove_component(ent, components.NewFlagWasArmedAsWeaponBy)
+            logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagWasArmedAsWeaponBy" was removed.')
 
 
     def pre_save(self):

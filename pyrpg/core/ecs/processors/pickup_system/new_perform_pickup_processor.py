@@ -68,7 +68,7 @@ class NewPerformPickupProcessor(esper.Processor):
                 pass
             
             # Assign NewFlagWasPickedBy component to the picked entity
-            self.world.add_component(flag_is_about_to_pick_entity.entity_for_pickup, components.NewFlagWasPickedBy(entity=ent_picker))
+            self.world.add_component(flag_is_about_to_pick_entity.entity_for_pickup, components.NewFlagWasPickedBy(picker=ent_picker))
             logger.debug(f'({self.cycle}) - Entity {ent_picker} has picked entity {flag_is_about_to_pick_entity.entity_for_pickup}.')
 
             # Assign NewFlagHasPicked component to the picker entity

@@ -1,4 +1,4 @@
-__all__ = ['NewRemoveFlagIsAboutToPickEntityProcessor']
+__all__ = ['NewGenerateArmWeaponProcessor']
 
 import logging
 import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
@@ -8,24 +8,26 @@ import pyrpg.core.ecs.components as components # for definition of components
 logger = logging.getLogger(__name__)
 
 
-class NewRemoveFlagIsAboutToPickEntityProcessor(esper.Processor):
-    ''' Removes the flag that the item has been considered for picking
-    at the end of the cycle.
+class NewGenerateArmWeaponProcessor(esper.Processor):
+    ''' Detects entities that act as weapon + have been picked and assigns
+    the NewFlagIsAboutToArmWeapon to all their colliders (potentional fighters).
 
     Involved components:
-        -   NewFlagIsAboutToPickEntity
+        -   Weapon
+        -   NewFlagWasPickedBy
+        -   NewFlagIsAboutToArmWeapon
 
     Related processors:
-        -   NewGeneratePickupProcessor
-        -   NewPerformPickupProcessor
-        -   NewRemoveFlagWasPickedByProcessor
-        -   NewRemoveFlagHasPickedProcessor
+        -   NewPerformArmWeaponProcessor
+        -   NewRemoveFlagIsAboutToArmWeaponProcessor
 
     What if this processor is disabled?
-        -   unexpected behavior during picking of the item
+        -   weapons are not being armed
 
     Where the processor should be planned?
         -   after NewPerformPickupProcessor
+        -   before NewPerformArmWeaponProcessor
+        -   before NewRemoveFlagIsAboutToArmWeaponProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
@@ -37,16 +39,18 @@ class NewRemoveFlagIsAboutToPickEntityProcessor(esper.Processor):
         '''
         super().__init__()
 
+
     def process(self, *args, **kwargs):
-        ''' Removes the flag that the item has been considered for picking
-        at the end of the cycle.
+        '''  Detects entities that are weapons + have been picked  and assigns
+        the NewFlagIsAboutToArmWeapon to their pickers
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagIsAboutToPickEntity):
+        # Get all entities that have Weapon and NewFlagWasPickedBy - those are candidates for arming
+        for ent_weapon, (weapon, flag_was_picked_by) in self.world.get_components(components.Weapon, components.NewFlagWasPickedBy):
 
-            self.world.remove_component(ent, components.NewFlagIsAboutToPickEntity)
-            logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagIsAboutToPickEntity" was removed.')
+            self.world.add_component(flag_was_picked_by.picker, components.NewFlagIsAboutToArmWeapon(weapon=ent_weapon, type=weapon.type))
+            logger.debug(f'({self.cycle}) - Entity {flag_was_picked_by.picker} is trying to arm as weapon entity {ent_weapon}.')
 
 
     def pre_save(self):

@@ -28,7 +28,10 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'Factory', 'LinearMotion', 'DeleteOnCollision',\
     'IsDead',\
     'NewControllable', 'NewMovable', 'NewCollidable', 'NewFlagHasCollided',\
-    'NewFlagIsAboutToPickEntity', 'NewFlagWasPickedBy', 'NewFlagHasPicked']
+    'NewFlagIsAboutToPickEntity', 'NewFlagWasPickedBy', 'NewFlagHasPicked',\
+    'NewFlagIsAboutToBeTeleportedBy', 'NewTeleportable',\
+    'NewFlagIsAboutToArmWeapon', 'NewFlagHasArmedWeapon', 'NewFlagWasArmedAsWeaponBy'
+    ]
 
 ########################################################
 ### Module functions
@@ -148,7 +151,16 @@ from .new_flag_is_about_to_pick_entity import *
 from .new_flag_was_picked_by import *
 from .new_flag_has_picked import *
 
+# Teleport system
+from .new_flag_is_about_to_be_teleported_by import *
+from .new_flag_was_teleported_by import *
+from .new_flag_has_teleported import *
+from .new_teleportable import *
 
+# Arm Weapon system
+from .new_flag_is_about_to_arm_weapon import *
+from .new_flag_was_armed_as_weapon_by import *
+from .new_flag_has_armed_weapon import *
 
 # Not used
 #from .container import *
@@ -206,11 +218,20 @@ __all__ = [
 
     'NewFlagIsAboutToPickEntity',
     'NewFlagWasPickedBy',
-    'NewFlagHasPicked'
+    'NewFlagHasPicked',
+
+    'NewFlagIsAboutToBeTeleportedBy',
+    'NewFlagWasTeleportedBy',
+    'NewFlagHasTeleported',
+    'NewTeleportable',
+
+    'NewFlagIsAboutToArmWeapon',
+    'NewFlagWasArmedAsWeaponBy',
+    'NewFlagHasArmedWeapon'
+
 
     # Not used
     #'State',
     #'Container',
-
 
     ]

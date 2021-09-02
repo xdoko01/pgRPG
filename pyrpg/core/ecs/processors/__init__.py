@@ -67,6 +67,16 @@ from .collision_system import *
 ###
 from .pickup_system import *
 
+###
+# New TELEPORT SYSTEM
+###
+from .teleport_system import *
+
+###
+# New ARM WEAPON SYSTEM
+###
+from .arm_weapon_system import *
+
 
 # Not used
 #from .render_map_processor_full_scan import *
@@ -173,6 +183,24 @@ __all__ = [
     'NewRemoveFlagWasPickedByProcessor',
     'NewRemoveFlagHasPickedProcessor',
 
+    ###
+    # New TELEPORT SYSTEM
+    ###
+    'NewGenerateTeleportProcessor',
+    'NewPerformTeleportProcessor',
+    'NewRemoveFlagIsAboutToBeTeleportedByProcessor',
+    'NewRemoveFlagWasTeleportedByProcessor',
+    'NewRemoveFlagHasTeleportedProcessor',
+
+    ###
+    # New ARM WEAPON SYSTEM
+    ###
+    'NewGenerateArmWeaponProcessor',
+    'NewPerformArmWeaponProcessor',
+    'NewRemoveFlagIsAboutToArmWeaponProcessor',
+    'NewRemoveFlagWasArmedAsWeaponByProcessor',
+    'NewRemoveFlagHasArmedWeaponProcessor',
+
     # Not used
 
     #'RenderMapProcessorFullScan',
@@ -272,7 +300,26 @@ PROC_DICT = {
     'NewPerformPickupProcessor' : NewPerformPickupProcessor,
     'NewRemoveFlagIsAboutToPickEntityProcessor' : NewRemoveFlagIsAboutToPickEntityProcessor,
     'NewRemoveFlagWasPickedByProcessor' : NewRemoveFlagWasPickedByProcessor,
-    'NewRemoveFlagHasPickedProcessor' : NewRemoveFlagHasPickedProcessor
+    'NewRemoveFlagHasPickedProcessor' : NewRemoveFlagHasPickedProcessor,
+
+    ###
+    # New TELEPORT SYSTEM
+    ###
+    'NewGenerateTeleportationProcessor': NewGenerateTeleportationProcessor,
+    'NewPerformTeleportationProcessor' : NewPerformTeleportationProcessor,
+    'NewRemoveFlagIsAboutToBeTeleportedByProcessor' : NewRemoveFlagIsAboutToBeTeleportedByProcessor,
+    'NewRemoveFlagWasTeleportedByProcessor' : NewRemoveFlagWasTeleportedByProcessor,
+    'NewRemoveFlagHasTeleportedProcessor' : NewRemoveFlagHasTeleportedProcessor,
+
+    ###
+    # New ARM WEAPON SYSTEM
+    ###
+    'NewGenerateArmWeaponProcessor' : NewGenerateArmWeaponProcessor,
+    'NewPerformArmWeaponProcessor' : NewPerformArmWeaponProcessor,
+    'NewRemoveFlagIsAboutToArmWeaponProcessor' : NewRemoveFlagIsAboutToArmWeaponProcessor,
+    'NewRemoveFlagWasArmedAsWeaponByProcessor' : NewRemoveFlagWasArmedAsWeaponByProcessor,
+    'NewRemoveFlagHasArmedWeaponProcessor' : NewRemoveFlagHasArmedWeaponProcessor
+
 }
 
 def get_processor(proc_str):
