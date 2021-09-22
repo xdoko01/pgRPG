@@ -1,0 +1,143 @@
+{
+	"id" : "new_test_weapon_animations",
+	"name" : "Movement and Weapon Animation Test",
+	"description" : "Test new animation processors and new render processors for movement and attack actions",
+	"objective" : "POC of the new animation and render system",
+	"init_phase" : "phase01",
+
+	"processors" : [
+		// For commands
+		["NewGenerateCommandFromInputProcessor", {}],
+		["NewPerformCommandProcessor", {}],
+
+		// For movement
+		["NewPerformMovementProcessor", {}],
+
+		// For animation
+		["NewPerformMovementAnimationProcessor", {}],
+		["NewPerformActionAnimationProcessor", {}],
+		["NewPerformActionIdleAnimationProcessor", {}],
+		["NewPerformIdleAnimationProcessor", {}],
+		["NewPerformFrameUpdateProcessor", {}],
+
+		// For displaying
+		["UpdateCameraOffsetProcessor", {}],
+		["RenderBackgroundProcessor", {}],
+		["RenderCameraBackgroundProcessor", {}],
+		["RenderMapProcessor", {}],
+		//["RenderWorldProcessor", {}],
+		//["RenderModelWorldProcessor", {}], // removed
+		
+			// New Processors - added
+			["NewGenerateRenderDataFromParentProcessor", {}],
+			["NewPerformRenderModelProcessor", {}],
+			["NewPerformRenderArmedWeaponProcessor", {}],
+			["NewPerformRenderArmedAmmoProcessor", {}],
+
+
+		["RenderDebugProcessor", {}],
+
+		// For processing input and movements and attacks
+		["NewRemoveFlagDoMoveProcessor", {}],
+		["NewRemoveFlagDoAttackProcessor", {}],
+		["NewRemoveFlagIsAnimationActionFrameProcessor", {}]
+
+	],
+
+	"phases" : {
+		"phase01" :{
+			"name" : "Movement and Weapon Animation Test", "objective" : "","maps" : ["test_arena_sand"],
+			
+			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+
+			"entities" : [
+				
+				{
+					"id" : "wooden_arrows_pack",
+					"templates" : [],
+					"components" : [
+						{"type" : "AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+						{"type" : "RenderableModel", "params" : {"model" : "wooden_arrows_pack.json"}}
+					]
+				},
+
+				{
+					"id" : "wooden_bow",
+					"templates" : [],
+					"components" : [
+						{"type" : "Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+						{"type" : "RenderableModel", "params" : {"model" : "bow.json"}}
+					]
+				},
+
+				{
+					"id" : "player01",
+					"templates" : ["darkmale"],
+					"components" : [
+
+						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+							"control_cmds" : {
+								"left" : [["new_move_add", {"moves" : ["left"]}]],
+								"right": [["new_move_add", {"moves" : ["right"]}]],
+								"up" : [["new_move_add", {"moves" : ["up"]}]],
+								"down" : [["new_move_add", {"moves" : ["down"]}]],
+								// New attack command added
+								"attack" : [["new_attack", {}]]}
+							}
+						},
+
+						// In order to animate attack, some weapom must be in use
+						{"type" : "NewHasWeapon", "params" : {
+							"weapons" : {
+								"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
+							}
+						}},
+
+						{"type" : "NewWeaponInUse", "params" :  {"type" : "bow"}},
+
+						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "NewMovable", "params" :  {"velocity" : 200}},
+						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				}
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" : [
+				],
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

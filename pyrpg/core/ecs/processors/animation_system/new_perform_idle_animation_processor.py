@@ -45,8 +45,8 @@ class NewPerformIdleAnimationProcessor(esper.Processor):
         # Iterate all cameras
         for _, (camera) in self.world.get_component(components.Camera):
 
-            # Search for entities that contain Position + RenderableModel and at the same time do not have NewFlagDoMove component
-            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(components.Position, components.RenderableModel, exclude=components.NewFlagDoMove)):
+            # Search for entities that contain Position + RenderableModel and at the same time do not have NewFlagDoMove and NewFlagDoAttack component
+            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(components.Position, components.RenderableModel), exclude=(components.NewFlagDoMove, components.NewFlagDoAttack, components.NewWeaponInUse))):
 
                 # Update to proper animation
                 renderable_model.set_action('idle')

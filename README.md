@@ -383,8 +383,185 @@
 
 ## To Do
 
+### Component classes can be data classes
+  - either built-id @dataclass or pydantic(has verification of data functionality)
+  - https://youtu.be/vRVVyl9uaZc
+
+### Better loading of processors and components using plugin pattern and importlib
+  - very nicely described in youtube video https://youtu.be/iCE1bDoit9Q
+  - no longer adding imports when new component and/or processor is added - instead importlib can be used
 
 ## NEW SYSTEMS - START ###################################################
+
+BETTER
+
+remove unnecessary pickup and Position should be removed now, not needed.
+
+ - NewRenderDataFromParent(animation + position) - all part of Render system, nothing else needed
+
+ -----
+
+RenderPosition - position used for rendering the animations
+Position - position on the map
+
+All components with RenderableModel should have `RenderPosition(x, y, dir_name)`.
+All components with RenderableModel and without Position component should have RenderPosition
+
+ -> if entity has Position, it is used for Rendering -> `NewPerformRenderModelProcessor` - draws only real entities with position
+ -> `NewRenderArmedWeaponProcessor` - draws WeaponIsUsedBy + RenderPosition
+ -> before rendering add RenderPosition ->
+   -> WeaponInUse + Position + HasWeapon + FlagDoMove -> on active weapon add `RenderPosition(x, y, dir_name)`
+
+
+
+PositionSyncSystem
+------------------
+
+NewGeneratePositionSyncProcessor
+ - CanWear + Position + FlagDoMove-> for each wearable entity ID assign FlagSyncPosition(x,y,map, dir, dir_name)
+ - WeaponInUse + Position + HasWeapon + FlagDoMove -> on active weapon add FlagSyncPosition(x,y,map, dir, dir_name)
+ - AmmoInUse + Position + HasWeapon + FlagDoMove -> on active ammo add FlagSyncPosition(x,y,map, dir, dir_name)
+
+NewPerformPositionSyncProcessor
+ - FlagSyncPosition(x,y,map, dir, dir_name) + Position -> adjust position
+
+NewRemoveFlagSyncPositionProcessor
+ - FlagSyncPosition
+
+RenderActionSyncSystem
+----------------------
+
+
+
+########################
+### how to synchronize Render actions on Weapon from Fighter - Render System - NewGenerateSyncRenderActionProcessor, NewPerformSyncRenderActionProcessor, NewRemoveFlagSyncRenderActionProcessor
+
+# Copy Render action info
+
+## For Wearables - Iterate all entities with CanWear + RenderModel - assign render info to all clothes
+CanWear + RenderModel -> iterate can_wear and get entitiy IDs -> for each assign FlagSyncRenderAction(render_model.action, render_model.last_frame)
+
+## For Weapon - Iterate all entities with WeaponInUse + RenderModel - assign fighters render info to his active weapon
+figher.WeaponInUse + fighter.RenderModel + fighter.HasWeapon -> weapon_in_use.type='bow' -> has_weapon.get('bow') -> bow_entity.add_component(FlagSyncRenderAction(render_model.action, render_model.last_frame)
+
+## For Ammo - Iterate all entities with AmmoInUse + RenderModel - assign fighters render info to his active ammo
+figher.AmmoInUse + fighter.RenderModel + fighter.HasWeapon -> ammo_in_use.type='bow' -> has_weapon.get('bow') -> bow_entity.add_component(FlagSyncRenderAction(render_model.action, render_model.last_frame)
+
+# Make some processor that will synchronize the weapon RenderableModel with parent RenderableModel
+
+## For Wearables - RenderableModel, FlagSyncRenderAction(action, last_frame) -> renderable_model.action =flag_sync_render_action.action, ...
+
+## For Weapon - RenderableModel, FlagSyncRenderAction(action, last_frame) -> renderable_model.action =flag_sync_render_action.action, ...
+
+## For Ammo - RenderableModel, FlagSyncRenderAction(action, last_frame) -> -> renderable_model.action =flag_sync_render_action.action, ...
+
+##########################
+
+### 1. TODO - Adjust Pickup System - keep Position, add IsPickedBy() - *DONE*
+  - current `NewPerformPickupProcessor`
+    - keep `Position` - *DONE*
+    - create new `IsPickedBy` - *DONE*
+
+### 2. TODO - Add Position System - to prepare NewIsPositionParentFor - *DONE*
+  - new position system ???, new processor `NewGenerateParentPositionProcessor` - *DONE*
+    - `HasInventory` + `FlagHasPicked` -> add `NewIsPositionParentFor(set)`
+
+### 3. TODO - Adjust Collision System - to ignore IsPickedBy for collisions - *DONE*
+
+### 4. TODO - Enhance Render System - do not display entities that have IsPickedBy() - *DONE*
+
+### 5. TODO - Enhance Position System - to prepare NewIsPositionChildOf for armed weapons - *DONE*
+  `NewFlagWasArmedAsWeaponBy` -> `NewIsPositionChildOf`
+  - new processor to the position system `NewGenerateChildPositionProcessor`
+
+### 6. TODO - Enhance Position System 
+  - create new processor - `NewGenerateChildPositionUpdateProcessor`
+    `FlagDoMove` + `IsPositionParentFor([2,3,4])` + `Position` -> assign `FlagAdjustChildPosition(new position)` for [2,3,4]
+
+  - create new processor - `NewPerformChildPositionUpdateProcessor`
+    `FlagAdjustPositionFromMaster(new position)` + `Position` + `UpdatePositionFromMaster()` -> change the position
+
+  - create new processor `NewRemoveFlagAdjustChildPositionProcessor`
+
+### 7. TODO - NewGenerateChildPositionUpdateProcessor - would be better if IsPositionParentFor contains only couple of entities that really need to be updated 
+
+### 8. TODO - adjust init of components to create also other necessary components
+
+### 8. TODO - update documentation of all systems
+
+### 9. TODO - retest pickup
+
+### 10. TODO - implement  renderer for weapon processor
+
+
+### 2. TODO - Generate projectile
+
+*Pickup system*
+ - weapon in inventory
+
+*Arm Weapon system*
+ - Weapon(type) - > type translates to action and idle_action using Weapons static dictionary
+ - FlagHasArmedWeapon(weapon entity)
+ - `WeaponInUse(type)` - no longer a flag but permanent component on the fighter
+
+*Arm Ammo system*
+  - `AmmoInUse(entity)`?????
+
+*Attack system*
+ - command Attack -> new flag add `NewFlagDoAttack` *DONE*
+  **GENERATE THE PROJECTILE AT GIVEN FRAME**
+  - fighter.RenderableModel.is_action_frame must be True - new flag that can be verified and checked in Animation system
+  - must have valid weapon (WeaponInUse) and valid ammo (AmmoInUse) -> Arm Weapon system and Arm Ammo system must ensure validity of those flags
+  - generate some kind of flag based on animation phase `FlagCreateFromFactory` on ammoPack
+
+*AnimationSystem*
+ **TODO** animation system returns `FlagIsAnimationActionFrame` flag
+ - `NewPerformFrameUpdateProcessor` -> set the `FlagIsAnimationActionFrame` flag
+ - `NewPerformActionAnimationProcessor` -> set the proper action to RenderableModel
+  - `NewFlagDoAttack` + `WeaponInUse` -> use action
+  - no `NewFlagDoAttack` + `WeaponInUse` -> use idle_action
+
+
+## arm ammo how to effectivelly add ammo to existing entity of ammo
+ 1. has weapon check generator based on key in AmmoPack
+
+ 1. has_weapon.get_component factory
+everything that is in inventory - `NewIsInInventory(path in categories)`
+
+NewIsInInventory + AmmoPack 
+  all ammo packs AmmoPack
+    that belong to the weapon AmmoPackBow
+  - NewHasInventory[ammo1]
+    - categories[ammo][bow][wooden_arrow] : [ammo1]
+  - pickup ammo2
+  - NewHasInventory[ammo1, ammo2]
+    - categories[ammo][bow][wooden_arrow] : [ammo1, ammo2]
+  - component ArmedAs("bow")
+  - all that are AmmoPack, Armed,
+
+### technical debt - NewFlagHasPicked ... in case entity picks more other entities in one cycle only the last one will be recorded - store field there
+ - but if pickup is one at the time, it can work ok
+
+### can pickup 2 entities at the same time? Ideally one entity in one cycle and the other in second cycle - to avoid problems in other processors like arm ammo system
+  - scenario when entity picks 2 ammo packs in one cycle and both have picked flag on them and the processor is only covering one pick for flag Is about to arm ammo
+
+### pickup and HasInventory - some items might be picked up not as separate entities but might be counted together
+  - how to achieve that nicely?
+
+  - pickup ammo into inventory  ... some pickup processor
+  - categorize the pickedup entity ... What processor should do that? FlagWasPickedBy + AmmoPack(weapon, category) -> picker and inventory
+    - seems that `NewPerformArmAmmoProcessor` has all information to do that
+    - either there is already some entity or there is None
+      - if there is none add our new entity
+      - if there is existing
+        - get the remaining ammo on the entity factory
+          - remember the remainder in cathegories and update it?
+          - get it from factory?
+        - add it to the new factory
+        - get rid of the old one
+  - sum all the packs together and leave the current one
+  - remove the obsolete pack from inventory and from categorization and destroy it 
+  - arm the new pack
 
 ### Mouse controlls
   - FlagDoMove will contain the destination and all the necessary information to travel there. The flag will be not deleted at the end of the cycle but only at the time when entity

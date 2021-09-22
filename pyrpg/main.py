@@ -119,6 +119,7 @@ def init(state='MAIN_MENU', cons_enabled=True):
     ### Animation Tests
     ##################
     #pyrpg.core.engine.new_game('tests/03_animations/new_test_animations_01')
+    pyrpg.core.engine.new_game('tests/03_animations/new_test_weapon_animations')
 
     ##################
     ### Collision Tests
@@ -142,7 +143,12 @@ def init(state='MAIN_MENU', cons_enabled=True):
     ##################
     ### Arm Weapon Tests
     ##################
-    pyrpg.core.engine.new_game('tests/07_arm_weapon/new_test_arm_weapon_01')
+    #pyrpg.core.engine.new_game('tests/07_arm_weapon/new_test_arm_weapon_01')
+
+    ##################
+    ### Arm Ammo Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/08_arm_ammo/new_test_arm_ammo_01')
 
 
 

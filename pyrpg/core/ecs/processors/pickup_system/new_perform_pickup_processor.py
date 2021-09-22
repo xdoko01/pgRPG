@@ -53,10 +53,10 @@ class NewPerformPickupProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have Inventory and NewFlagIsAboutToPickEntity - those are candidates for successful pickers
-        for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(components.HasInventory, components.NewFlagIsAboutToPickEntity):
+        for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(components.NewHasInventory, components.NewFlagIsAboutToPickEntity):
 
-            # Add the entity into the HasInventory inventory list
-            has_inventory.inventory.append(flag_is_about_to_pick_entity.entity_for_pickup)
+            # Add the entity into the NewHasInventory inventory set
+            has_inventory.inventory.add(flag_is_about_to_pick_entity.entity_for_pickup)
 
             # Remove Position component from the item so that it is not displayable on the map - item is picked
             self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, components.Position) 
@@ -66,7 +66,7 @@ class NewPerformPickupProcessor(esper.Processor):
                 self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, components.Camera) 
             except KeyError:
                 pass
-            
+
             # Assign NewFlagWasPickedBy component to the picked entity
             self.world.add_component(flag_is_about_to_pick_entity.entity_for_pickup, components.NewFlagWasPickedBy(picker=ent_picker))
             logger.debug(f'({self.cycle}) - Entity {ent_picker} has picked entity {flag_is_about_to_pick_entity.entity_for_pickup}.')

@@ -342,7 +342,7 @@ class World:
 
         example:
 
-        _get_components_ex(include=(c.Pos, c.Move, c.Render), exclude=(c.Ai, c.Attack))
+        _get_components_exs(include=(c.Pos, c.Move, c.Render), exclude=(c.Ai, c.Attack))
 
         """
         entity_db = self._entities

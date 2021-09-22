@@ -77,6 +77,25 @@ from .teleport_system import *
 ###
 from .arm_weapon_system import *
 
+###
+# New ARM AMMO SYSTEM
+###
+from .arm_ammo_system import *
+
+###
+# New ATTACK SYSTEM
+###
+from .attack_system import *
+
+###
+# New POSITION SYSTEM
+###
+#from .position_system import *
+
+###
+# New RENDER SYSTEM
+###
+from .render_system import *
 
 # Not used
 #from .render_map_processor_full_scan import *
@@ -163,7 +182,10 @@ __all__ = [
     ###
     'NewPerformIdleAnimationProcessor',
     'NewPerformMovementAnimationProcessor',
-    'NewPerformFrameUpdateProcessor'
+    'NewPerformActionAnimationProcessor',
+    'NewPerformActionIdleAnimationProcessor',
+    'NewPerformFrameUpdateProcessor',
+    'NewRemoveFlagIsAnimationActionFrameProcessor',
 
     ###
     # New COLLISION SYSTEM
@@ -200,6 +222,34 @@ __all__ = [
     'NewRemoveFlagIsAboutToArmWeaponProcessor',
     'NewRemoveFlagWasArmedAsWeaponByProcessor',
     'NewRemoveFlagHasArmedWeaponProcessor',
+
+    ###
+    # New ARM AMMO SYSTEM
+    ###
+    'NewGenerateArmAmmoProcessor',
+    'NewPerformArmAmmoProcessor',
+    'NewRemoveFlagIsAboutToArmAmmoProcessor',
+    'NewRemoveFlagWasArmedAsAmmoByProcessor',
+    'NewRemoveFlagHasArmedAmmoProcessor',
+
+    ###
+    # New ATTACK SYSTEM
+    ###
+    'NewRemoveFlagDoAttackProcessor',
+
+    ###
+    # New POSITION SYSTEM
+    ###
+    #'NewGenerateParentPositionProcessor',
+
+    ###
+    # New RENDER SYSTEM
+    ###
+    'NewGenerateRenderDataFromParentProcessor',
+    'NewPerformRenderModelProcessor',
+    'NewPerformRenderArmedWeaponProcessor',
+    'NewPerformRenderArmedAmmoProcessor',
+    'NewPerformBlitCameraProcessor',
 
     # Not used
 
@@ -282,7 +332,10 @@ PROC_DICT = {
     ###
     'NewPerformIdleAnimationProcessor' : NewPerformIdleAnimationProcessor,
     'NewPerformMovementAnimationProcessor' : NewPerformMovementAnimationProcessor,
+    'NewPerformActionAnimationProcessor' : NewPerformActionAnimationProcessor,
+    'NewPerformActionIdleAnimationProcessor' : NewPerformActionIdleAnimationProcessor,
     'NewPerformFrameUpdateProcessor' : NewPerformFrameUpdateProcessor,
+    'NewRemoveFlagIsAnimationActionFrameProcessor' : NewRemoveFlagIsAnimationActionFrameProcessor,
 
     ###
     # New COLLISION SYSTEM
@@ -318,8 +371,36 @@ PROC_DICT = {
     'NewPerformArmWeaponProcessor' : NewPerformArmWeaponProcessor,
     'NewRemoveFlagIsAboutToArmWeaponProcessor' : NewRemoveFlagIsAboutToArmWeaponProcessor,
     'NewRemoveFlagWasArmedAsWeaponByProcessor' : NewRemoveFlagWasArmedAsWeaponByProcessor,
-    'NewRemoveFlagHasArmedWeaponProcessor' : NewRemoveFlagHasArmedWeaponProcessor
+    'NewRemoveFlagHasArmedWeaponProcessor' : NewRemoveFlagHasArmedWeaponProcessor,
 
+    ###
+    # New ARM AMMO SYSTEM
+    ###
+    'NewGenerateArmAmmoProcessor' : NewGenerateArmAmmoProcessor,
+    'NewPerformArmAmmoProcessor' : NewPerformArmAmmoProcessor,
+    'NewRemoveFlagIsAboutToArmAmmoProcessor' : NewRemoveFlagIsAboutToArmAmmoProcessor,
+    'NewRemoveFlagWasArmedAsAmmoByProcessor' : NewRemoveFlagWasArmedAsAmmoByProcessor,
+    'NewRemoveFlagHasArmedAmmoProcessor' : NewRemoveFlagHasArmedAmmoProcessor,
+
+    ###
+    # New ATTACK SYSTEM
+    ###
+    'NewRemoveFlagDoAttackProcessor' : NewRemoveFlagDoAttackProcessor,
+
+    ###
+    # New POSITION SYSTEM
+    ###
+    #'NewGenerateParentPositionProcessor' : NewGenerateParentPositionProcessor
+
+    ###
+    # New RENDER SYSTEM
+    ###
+
+    'NewGenerateRenderDataFromParentProcessor' : NewGenerateRenderDataFromParentProcessor,
+    'NewPerformRenderModelProcessor' : NewPerformRenderModelProcessor,
+    'NewPerformRenderArmedWeaponProcessor' : NewPerformRenderArmedWeaponProcessor,
+    'NewPerformRenderArmedAmmoProcessor' : NewPerformRenderArmedAmmoProcessor,
+    'NewPerformBlitCameraProcessor' : NewPerformBlitCameraProcessor
 }
 
 def get_processor(proc_str):

@@ -1,4 +1,4 @@
-__all__ = ['NewGeneratePickupProcessor']
+__all__ = ['NewGeneratePositionSyncProcessor']
 
 import logging
 import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
@@ -8,30 +8,28 @@ import pyrpg.core.ecs.components as components # for definition of components
 logger = logging.getLogger(__name__)
 
 
-class NewGeneratePickupProcessor(esper.Processor):
-    ''' Detects entities that are pickable + have collided and assignes
-    the NewFlagIsAboutToPickEntity to their pickers.
+class NewGeneratePositionSyncProcessor(esper.Processor):
+    ''' Detects entities that need to have position aligned with the 
+    parent position in order to display animations correctly.
 
     Involved components:
-        -   Pickable
-        -   NewFlagHasCollided
-        -   NewFlagIsAboutToPickEntity
+        -   Position
+        -   NewFlagSyncPosition
+        -   NewFlagDoMove
 
     Related processors:
-        -   NewPerformPickupProcessor
-        -   NewRemoveFlagIsAboutToPickEntityProcessor
+        -   NewPerformPositionSyncProcessor
+        -   NewRemoveFlagSyncPositionProcessor
 
     What if this processor is disabled?
-        -   entities are not being picked up
+        -   wrong animated weapons and wearables
 
     Where the processor should be planned?
-        -   after NewGenerateEntityCollisionsProcessor
-        -   before NewPerformPickupProcessor
-        -   before NewRemoveFlagIsAboutToPickEntityProcessor
+        -   before rendering
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['NewGenerateEntityCollisionsProcessor']
+    PREREQ = ['']
 
 
     def __init__(self):
@@ -41,16 +39,18 @@ class NewGeneratePickupProcessor(esper.Processor):
 
 
     def process(self, *args, **kwargs):
-        '''  Detects entities that are pickable + have collided and assigns
-        the NewFlagIsAboutToPickEntity to their pickers
+        '''  Detects entities that need to follow master entity position.
         '''
         self.cycle += 1
 
 
-        # Get all entities that have Pickable and NewFlagHasCollided - those are candidates for pickup
-        for ent_pickable, (pickable, flag_has_collided) in self.world.get_components(components.Pickable, components.NewFlagHasCollided):
+ - WeaponInUse + Position + HasWeapon + FlagDoMove -> on active weapon add FlagSyncPosition(x,y,map, dir, dir_name)
 
-            # Assign the NewFlagIsAboutToPickEntity to ALL entities that collided with pickable entity ent
+        # Get all entities that have Pickable and NewFlagHasCollided - those are candidates for pickup
+        for ent_parent, (position, weapon_in_use, flag_do_move) in self.world.get_components(components.Position, components.NewWeaponInUse, components.NewFlagDoMove):
+
+            # Assign the NewFlagSyncPosition to actively used weapon so that the animation is aligned (all is done because of rendering)
+            TBContinued
             for ent_picker, _, _, _ in flag_has_collided.collisions:
 
                 self.world.add_component(ent_picker, components.NewFlagIsAboutToPickEntity(entity_for_pickup=ent_pickable))

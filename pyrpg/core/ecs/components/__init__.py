@@ -28,9 +28,13 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'Factory', 'LinearMotion', 'DeleteOnCollision',\
     'IsDead',\
     'NewControllable', 'NewMovable', 'NewCollidable', 'NewFlagHasCollided',\
-    'NewFlagIsAboutToPickEntity', 'NewFlagWasPickedBy', 'NewFlagHasPicked',\
+    'NewHasInventory', 'NewFlagIsAboutToPickEntity', 'NewFlagWasPickedBy', 'NewFlagHasPicked',\
     'NewFlagIsAboutToBeTeleportedBy', 'NewTeleportable',\
-    'NewFlagIsAboutToArmWeapon', 'NewFlagHasArmedWeapon', 'NewFlagWasArmedAsWeaponBy'
+    'NewFlagIsAboutToArmWeapon', 'NewFlagHasArmedWeapon', 'NewFlagWasArmedAsWeaponBy', 'NewWeaponInUse', 'NewHasWeapon',\
+    'NewFlagIsAboutToArmAmmo', 'NewFlagHasArmedAmmo', 'NewFlagWasArmedAsAmmoBy',\
+    'NewFlagIsAnimationActionFrame',\
+    'NewFlagDoAttack',\
+    'NewRenderDataFromParent'
     ]
 
 ########################################################
@@ -147,6 +151,7 @@ from .new_collidable import *
 from .new_flag_has_collided import *
 
 # PickUp system
+from .new_has_inventory import *
 from .new_flag_is_about_to_pick_entity import *
 from .new_flag_was_picked_by import *
 from .new_flag_has_picked import *
@@ -161,6 +166,22 @@ from .new_teleportable import *
 from .new_flag_is_about_to_arm_weapon import *
 from .new_flag_was_armed_as_weapon_by import *
 from .new_flag_has_armed_weapon import *
+from .new_weapon_in_use import *
+from .new_has_weapon import *
+
+# Arm Ammo system
+from .new_flag_is_about_to_arm_ammo import *
+from .new_flag_was_armed_as_ammo_by import *
+from .new_flag_has_armed_ammo import *
+
+# Animation system
+from .new_flag_is_animation_action_frame import *
+
+# Attack system
+from .new_flag_do_attack import *
+
+# Render System
+from .new_render_data_from_parent import *
 
 # Not used
 #from .container import *
@@ -216,9 +237,11 @@ __all__ = [
     'NewCollidable',
     'NewFlagHasCollided',
 
+    'NewHasInventory',
     'NewFlagIsAboutToPickEntity',
     'NewFlagWasPickedBy',
     'NewFlagHasPicked',
+    'NewIsPickedBy',
 
     'NewFlagIsAboutToBeTeleportedBy',
     'NewFlagWasTeleportedBy',
@@ -227,9 +250,20 @@ __all__ = [
 
     'NewFlagIsAboutToArmWeapon',
     'NewFlagWasArmedAsWeaponBy',
-    'NewFlagHasArmedWeapon'
+    'NewFlagHasArmedWeapon',
+    'NewWeaponInUse',
+    'NewHasWeapon',
 
+    'NewFlagIsAboutToArmAmmo',
+    'NewFlagWasArmedAsAmmoBy',
+    'NewFlagHasArmedAmmo',
 
+    'NewFlagIsAnimationActionFrame',
+
+    'NewFlagDoAttack',
+
+    'NewRenderDataFromParent'
+    
     # Not used
     #'State',
     #'Container',

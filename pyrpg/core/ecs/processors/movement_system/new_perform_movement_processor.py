@@ -59,7 +59,8 @@ class NewPerformMovementProcessor(esper.Processor):
         # Get the time of processing of the frame from the game main loop in seconds
         dt = kwargs.get('dt') / 1000
 
-        for _, (position, movable, flag_do_move) in self.world.get_components(components.Position, components.NewMovable, components.NewFlagDoMove):
+        # Do not move in case that attack action is in progress - attack has priority over movement
+        for _, (position, movable, flag_do_move) in self.world.get_components_ex(components.Position, components.NewMovable, components.NewFlagDoMove, exclude=components.NewFlagDoAttack):
 
             # Calculate the final move vector only in case no vector is provided and hence needs to be calculated from the moves
             if flag_do_move.vector is None: flag_do_move.calc_vector()

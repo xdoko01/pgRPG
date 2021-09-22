@@ -57,14 +57,14 @@ class NewGenerateEntityCollisionsProcessor(esper.Processor):
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(components.Camera):
 
-            # Get all entities that have Position, NewCollidable and are on some camera
-            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewCollidable)):
+            # Get all entities that have Position, NewCollidable + are on some camera + are not picked (exclude)
+            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(components.Position, components.NewCollidable, exclude=components.NewIsPickedBy)):
 
                 # Store the collisions
                 collisions = set()
 
                 # Get all the entities again
-                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewCollidable)):
+                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(components.Position, components.NewCollidable, exclude=components.NewIsPickedBy)):
 
                     # Heuristic no.1 - Skip if testing itself
                     if ent_moved == ent_other: continue

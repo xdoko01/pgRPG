@@ -640,7 +640,7 @@ def _create_processor(proc_str):
         try:
             prereq_proc_class, _ = processors.get_processor(prereq)
         except ValueError:
-            raise ValueError(f'Error in creation of processor "{prereq}"')
+            raise ValueError(f'Error in creation of prerequisity processor "{prereq}" for processor {proc_class}')
 
         # Verify that the prerequisite processor has been already instantiated
         if not world.get_processor(prereq_proc_class):

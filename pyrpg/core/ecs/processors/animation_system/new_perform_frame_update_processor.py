@@ -31,7 +31,7 @@ class NewPerformFrameUpdateProcessor(esper.Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['NewPerformIdleAnimationProcessor', 'NewPerformMovementAnimationProcessor']
+    PREREQ = ['NewPerformIdleAnimationProcessor', 'NewPerformMovementAnimationProcessor', 'NewPerformActionAnimationProcessor']
 
     def __init__(self):
         ''' Init the processor.
@@ -52,14 +52,21 @@ class NewPerformFrameUpdateProcessor(esper.Processor):
             # Get all entities with Position, RenderableModel and FlagDoMove
             for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 
-                if ent not in already_updated:
+                # If already updated skip
+                if ent in already_updated:
+                    continue
 
-                    # Update to the next proper animation frame
-                    renderable_model.update_frame(position.dir_name)
-                    logger.debug(f'({self.cycle}) - Entity {ent} animation frame updated to {renderable_model.last_frame}.')
+                # Update to the next proper animation frame
+                renderable_model.update_frame(position.dir_name)
+                logger.debug(f'({self.cycle}) - Entity {ent} animation frame updated to {renderable_model.last_frame}.')
 
-                    # Remember that entity was updated - not to update it again on other camera
-                    already_updated.add(ent)
+                # Set Flag in case that the new frame is action frame (and hence some projectile might be generated)
+                if renderable_model.is_action_frame:
+                    self.world.add_component(ent, components.NewFlagIsAnimationActionFrame())
+                    logger.debug(f'({self.cycle}) - Entity {ent} animation frame {renderable_model.last_frame} is action frame.')
+
+                # Remember that entity was updated - not to update it again on other camera
+                already_updated.add(ent)
 
 
     def pre_save(self):

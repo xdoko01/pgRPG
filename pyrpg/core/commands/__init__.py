@@ -35,6 +35,7 @@ from .new_move_noadd import *
 from .new_move_vect_noadd import *
 from .new_move_auto import *
 from .new_move_to import *
+from .new_attack import *
 
 
 from .new_modify_brain import *
@@ -69,6 +70,7 @@ __all__ = [
     'cmd_new_move_vect_noadd',
     'cmd_new_move_auto',
     'cmd_new_move_to',
+    'cmd_new_attack',
 
     'cmd_new_modify_brain'
 ]
@@ -101,6 +103,7 @@ CMD_DICT = {
     'new_move_vect_noadd' : cmd_new_move_vect_noadd,
     'new_move_auto' : cmd_new_move_auto,
     'new_move_to' : cmd_new_move_to,
+    'new_attack' : cmd_new_attack,
 
     'new_modify_brain' : cmd_new_modify_brain
 

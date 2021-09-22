@@ -125,6 +125,14 @@ class RenderDebugProcessor(esper.Processor):
 					except KeyError:
 						pass
 
+				# Show new inventory info
+				if debug.get('show_inventory', False):
+					try:
+						inventory_debug = self.world.component_for_entity(debug_entity, components.NewHasInventory)
+						debug_text += f'Inventory: {pformat(inventory_debug.inventory)}\n'
+					except KeyError:
+						pass
+
 				# Show wearables info
 				if debug.get('show_wearables', False):
 					try:
