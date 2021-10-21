@@ -95,6 +95,12 @@ def init(state='MAIN_MENU', cons_enabled=True):
     # TODO - in the future this will be triggered from the menu
 
     ##################
+    ### Render Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/00_render/new_test_render_01')
+    #pyrpg.core.engine.new_game('tests/00_render/new_test_render_02')
+
+    ##################
     ### Command Tests
     ##################
     #pyrpg.core.engine.new_game('tests/02_commands/new_test_commands_01')

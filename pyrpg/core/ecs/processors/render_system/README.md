@@ -20,6 +20,9 @@ At the end, there is `NewPerformBlitCameraProcessor` that ensures that content o
 # Order of the processors
 Preferable order of procesors to ensure that all the layers are properly rendered is following:
 
+`NewPerformClearWindowProcessor` - clear game window pane
+`NewPerformClearCameraProcessor` - clear pane of all cameras
+`NewPerformScrollCameraProcessor` - move the camera offset to enable smooth scrolling
 `NewPerformRenderMapProcessor` - draw map
 `NewPerformRenderModelProcessor` - draw entities with position
 `NewGenerateRenderDataFromParentProcessor` - prepare data for entites without position that need to be displayed

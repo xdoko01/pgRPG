@@ -34,7 +34,8 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'NewFlagIsAboutToArmAmmo', 'NewFlagHasArmedAmmo', 'NewFlagWasArmedAsAmmoBy',\
     'NewFlagIsAnimationActionFrame',\
     'NewFlagDoAttack',\
-    'NewRenderDataFromParent'
+    'NewRenderDataFromParent',\
+    'NewDebug'
     ]
 
 ########################################################
@@ -182,6 +183,7 @@ from .new_flag_do_attack import *
 
 # Render System
 from .new_render_data_from_parent import *
+from .new_debug import *
 
 # Not used
 #from .container import *
@@ -262,8 +264,9 @@ __all__ = [
 
     'NewFlagDoAttack',
 
-    'NewRenderDataFromParent'
-    
+    'NewRenderDataFromParent',
+    'NewDebug'
+
     # Not used
     #'State',
     #'Container',

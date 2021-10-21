@@ -245,10 +245,18 @@ __all__ = [
     ###
     # New RENDER SYSTEM
     ###
+    'NewPerformClearWindowProcessor',
+    'NewPerformClearCameraProcessor',
+
+    'NewPerformScrollCameraProcessor',
+
+    'NewPerformRenderMapProcessor',
     'NewGenerateRenderDataFromParentProcessor',
     'NewPerformRenderModelProcessor',
     'NewPerformRenderArmedWeaponProcessor',
     'NewPerformRenderArmedAmmoProcessor',
+    'NewPerformRenderDebugInfoProcessor',
+
     'NewPerformBlitCameraProcessor',
 
     # Not used
@@ -395,11 +403,18 @@ PROC_DICT = {
     ###
     # New RENDER SYSTEM
     ###
+    'NewPerformClearWindowProcessor' : NewPerformClearWindowProcessor,
+    'NewPerformClearCameraProcessor' : NewPerformClearCameraProcessor,
 
+    'NewPerformScrollCameraProcessor' : NewPerformScrollCameraProcessor,
+
+    'NewPerformRenderMapProcessor' : NewPerformRenderMapProcessor,
     'NewGenerateRenderDataFromParentProcessor' : NewGenerateRenderDataFromParentProcessor,
     'NewPerformRenderModelProcessor' : NewPerformRenderModelProcessor,
     'NewPerformRenderArmedWeaponProcessor' : NewPerformRenderArmedWeaponProcessor,
     'NewPerformRenderArmedAmmoProcessor' : NewPerformRenderArmedAmmoProcessor,
+    'NewPerformRenderDebugInfoProcessor' : NewPerformRenderDebugInfoProcessor,
+
     'NewPerformBlitCameraProcessor' : NewPerformBlitCameraProcessor
 }
 

@@ -21,21 +21,32 @@
 		["NewPerformFrameUpdateProcessor", {}],
 
 		// For displaying
-		["UpdateCameraOffsetProcessor", {}],
-		["RenderBackgroundProcessor", {}],
-		["RenderCameraBackgroundProcessor", {}],
-		["RenderMapProcessor", {}],
-		//["RenderWorldProcessor", {}],
-		//["RenderModelWorldProcessor", {}], // removed
-		
+			//["UpdateCameraOffsetProcessor", {}],
+			//["RenderBackgroundProcessor", {}],
+			//["RenderCameraBackgroundProcessor", {}],
+			//["RenderMapProcessor", {}],
+			//["RenderWorldProcessor", {}],
+			//["RenderModelWorldProcessor", {}], // removed
+
 			// New Processors - added
+
+			["NewPerformClearWindowProcessor", {}],
+			["NewPerformClearCameraProcessor", {}],
+
+			["NewPerformScrollCameraProcessor", {}],
+
+			["NewPerformRenderMapProcessor", {}],
 			["NewGenerateRenderDataFromParentProcessor", {}],
 			["NewPerformRenderModelProcessor", {}],
 			["NewPerformRenderArmedWeaponProcessor", {}],
 			["NewPerformRenderArmedAmmoProcessor", {}],
 
+			//["RenderDebugProcessor", {}],
 
-		["RenderDebugProcessor", {}],
+			["NewPerformRenderDebugInfoProcessor", {}],
+
+			["NewPerformBlitCameraProcessor", {}], // display all cameras on the game window
+
 
 		// For processing input and movements and attacks
 		["NewRemoveFlagDoMoveProcessor", {}],
@@ -74,6 +85,9 @@
 					"id" : "player01",
 					"templates" : ["darkmale"],
 					"components" : [
+
+						{"type" : "NewDebug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
 						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
