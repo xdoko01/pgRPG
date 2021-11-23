@@ -25,7 +25,7 @@ class NewCollidable(Component):
         20
     '''
 
-    __slots__ = ['x', 'y', 'dx', 'dy', 'ignore_position_fix']
+    __slots__ = ['x', 'y', 'dx', 'dy', 'ignore_position_fix', 'ignore_collision_with']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the NewCollidable component.
@@ -47,6 +47,9 @@ class NewCollidable(Component):
               need to be collidable in order to cause damage but at the same time can be stepped on by the player.
             :type ignore_position_fix: boolean
 
+            :param ignore_collision_with: Do not register collision with specified entity.
+            :type ignore_collision_with: int (entity name or id)
+
             :raise: ValueError - in case of incorrect collision borders
         '''
 
@@ -62,6 +65,9 @@ class NewCollidable(Component):
 
         # Ignore fixing of position uppon collision with the entity - default False
         self.ignore_position_fix = kwargs.get('ignore_position_fix', False)
+
+        # Ignore totally collision with given entity
+        self.ignore_collision_with = kwargs.get('ignore_collision_with', None)
 
         try:
             assert isinstance(self.x, int) and self.x >= 0, f'Collision x-axis must be passed as a positive int.'

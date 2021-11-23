@@ -57,7 +57,8 @@ class Quest:
 
 		# Load processors
 		self.processors = self.quest_data.get("processors", [])
-		for p in self.processors: engine._create_processor(p)
+		engine.load_processors(self.processors)
+		#for p in self.processors: engine._create_processor(p)
 
 		# Phase data init
 		self.phase_name = self.phase_objective = None

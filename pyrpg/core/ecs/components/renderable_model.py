@@ -104,17 +104,20 @@ class RenderableModel(Component):
         '''
         # Get the currect time and measure the delay from last_time
         current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - self.last_time
+        frame_duration = self.model.get_frame_duration(self.action, direction, self.last_frame)
 
-        # if delay is greater move to the next frame and reset timer
-        if current_time - self.last_time > self.model.get_frame_duration(self.action, direction, self.last_frame):
+        # if delay is greater move to the next frame and reset timer (only in case duration of frame is > 0)
+        if frame_duration and elapsed_time > frame_duration:
             self.last_time = current_time
             self.last_frame = self.model.get_next_frame(self.action, direction, self.last_frame)
             self.is_action_frame = self.model.is_action_frame(self.action, direction, self.last_frame)
-            #print(f'Frame set to {self.last_frame} for model {self.model.name}')
+            #print(f'elapsed time: {current_time - self.last_time}, frame duration: {self.model.get_frame_duration(self.action, direction, self.last_frame)}, to {self.last_frame}, {self.action}, {direction} action frame set to {self.is_action_frame}, for model {self.model.name}')
         else: 
             # Set the flag to False, I want to have it True only once when the animation changes. Otherwise
             # I will have multiple actions triggered.
             self.is_action_frame = False
+
 
     def pre_save(self):
         ''' Prepare component for saving - remove all references to

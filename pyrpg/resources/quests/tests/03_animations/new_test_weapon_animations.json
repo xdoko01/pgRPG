@@ -41,8 +41,6 @@
 			["NewPerformRenderArmedWeaponProcessor", {}],
 			["NewPerformRenderArmedAmmoProcessor", {}],
 
-			//["RenderDebugProcessor", {}],
-
 			["NewPerformRenderDebugInfoProcessor", {}],
 
 			["NewPerformBlitCameraProcessor", {}], // display all cameras on the game window

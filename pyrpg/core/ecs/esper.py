@@ -26,7 +26,7 @@ class Processor:
     `for ent, (rend, vel) in self.world.get_components(Renderable, Velocity):`
     """
     world = None
-    cycle = None # Added by ODO to note the phase of processor for debug reasons
+    cycle = None # Added by xdoko01 to note the cycle of processor for debug reasons
 
     def process(self, *args, **kwargs):
         raise NotImplementedError

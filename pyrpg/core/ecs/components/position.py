@@ -36,6 +36,15 @@ class Position(Component):
         0
         >>> c.map
         'test_map'
+        >>> p = Position(x=10, y=20, dir_name='right', map='test_map')
+        >>> p.x
+        10
+        >>> p.y
+        20
+        >>> p.dir_name
+        'right'
+        >>> p.map
+        'test_map'
     '''
 
     __slots__ = ['x', 'y', 'map', 'direction', 'dir_name']
@@ -72,7 +81,7 @@ class Position(Component):
             self.x = kwargs.get('x', kwargs.get('tile_x', 0) * TILE_RES + TILE_RES // 2) # either position in pixels or tiles must be specified
             self.y = kwargs.get('y', kwargs.get('tile_y', 0) * TILE_RES + TILE_RES // 2) # either position in pixels or tiles must be specified
             self.map = kwargs.get('map')
-            self.dir_name = kwargs.get('dir', 'down')
+            self.dir_name = kwargs.get('dir_name', 'down')
         except KeyError:
             # Notify component factory that initiation has failed
             print(f'Mandatory parameters are missing.')

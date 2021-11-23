@@ -16,4 +16,4 @@
 
 import pyrpg.main
 
-pyrpg.main.init(state='GAME', cons_enabled=True)
+pyrpg.main.init(state='GAME', cons_enabled=True, timed=True)

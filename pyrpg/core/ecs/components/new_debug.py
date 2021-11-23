@@ -41,6 +41,10 @@ class NewDebug(Component):
 
         self.collision = kwargs.get('collision', {'color' : [0, 0, 255], 'width' : 1})
         self.movement = kwargs.get('movement', {'color' : [255, 0, 0], 'width' : 1})
+        
+        # Dictionary of information that we want to display about the entity.
+        # It is filled by debug processor and also displayed there.
+        self.info = {}
 
         try:
             assert isinstance(self.collision, dict), f'Collision must be passed as a dictionary'

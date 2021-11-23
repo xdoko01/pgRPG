@@ -45,7 +45,7 @@ global _prev_game_state # Introduced to remember from which game status I come t
 global console
 global show_cons_on_sys_msg
 
-def init(state='MAIN_MENU', cons_enabled=True):
+def init(state='MAIN_MENU', cons_enabled=True, timed=False):
 
     ##################
     # Init logging
@@ -77,7 +77,7 @@ def init(state='MAIN_MENU', cons_enabled=True):
     ##################
 
     # Init world and put the messages to the console
-    pyrpg.core.engine.init_world()
+    pyrpg.core.engine.init_world(timed)
 
     #####################################
     # Start game in the given GAME STATE
@@ -87,9 +87,10 @@ def init(state='MAIN_MENU', cons_enabled=True):
     _game_state = state
 
     # Load the definitions contained in the init quest - old processors
-    #pyrpg.core.engine.new_game('init')
-    #pyrpg.core.engine.new_game('test04_weapons')
-    #pyrpg.core.engine.new_game('otik_lvl1')
+    pyrpg.core.engine.new_game('original/init')
+    #pyrpg.core.engine.new_game('original/test04_weapons')
+    #pyrpg.core.engine.new_game('original/otik_lvl1')
+    #pyrpg.core.engine.new_game('original/test_quest')
 
     # Load the example test quest
     # TODO - in the future this will be triggered from the menu
@@ -125,7 +126,7 @@ def init(state='MAIN_MENU', cons_enabled=True):
     ### Animation Tests
     ##################
     #pyrpg.core.engine.new_game('tests/03_animations/new_test_animations_01')
-    pyrpg.core.engine.new_game('tests/03_animations/new_test_weapon_animations')
+    #pyrpg.core.engine.new_game('tests/03_animations/new_test_weapon_animations')
 
     ##################
     ### Collision Tests
@@ -133,6 +134,7 @@ def init(state='MAIN_MENU', cons_enabled=True):
     #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_01')
     #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_02')
     #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_03')
+    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_04')
     #pyrpg.core.engine.new_game('tests/04_collisions/map_collision_test_01')
 
     ##################
@@ -156,6 +158,11 @@ def init(state='MAIN_MENU', cons_enabled=True):
     ##################
     #pyrpg.core.engine.new_game('tests/08_arm_ammo/new_test_arm_ammo_01')
 
+    ##################
+    ### Projectile Tests
+    ##################
+    #pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_generation')
+    #pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_collision')
 
 
     ##################

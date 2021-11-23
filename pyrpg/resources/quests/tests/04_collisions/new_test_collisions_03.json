@@ -203,7 +203,7 @@
 					"components" : [
 						{"type" : "Debug", "params" : {}},
 						{"type" : "RenderableModel", "params" : {"model" : "darkmale.json"}},
-
+						
 						{"type" : "Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8, "ignore_position_fix" : true}}
 					]

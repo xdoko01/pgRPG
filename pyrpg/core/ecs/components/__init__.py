@@ -35,7 +35,8 @@ ALL_COMPONENTS = ['Debug', 'Labeled', 'Controllable', 'Renderable', 'Position',\
     'NewFlagIsAnimationActionFrame',\
     'NewFlagDoAttack',\
     'NewRenderDataFromParent',\
-    'NewDebug'
+    'NewDebug',\
+    'NewFlagCreateFromFactory', 'NewFactory'
     ]
 
 ########################################################
@@ -181,6 +182,10 @@ from .new_flag_is_animation_action_frame import *
 # Attack system
 from .new_flag_do_attack import *
 
+# Factory system
+from .new_flag_create_from_factory import *
+from .new_factory import *
+
 # Render System
 from .new_render_data_from_parent import *
 from .new_debug import *
@@ -265,7 +270,10 @@ __all__ = [
     'NewFlagDoAttack',
 
     'NewRenderDataFromParent',
-    'NewDebug'
+    'NewDebug',
+
+    'NewFlagCreateFromFactory',
+    'NewFactory'
 
     # Not used
     #'State',

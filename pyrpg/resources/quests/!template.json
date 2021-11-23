@@ -7,7 +7,7 @@
 
 	// List of processors in the correct order and with parameters
 	"processors" : [
-		["ExampleProcessor", {"example_parameter" : true}]
+		["example.path.to.processor.module", "ExampleProcessorClassName", {"example_parameter" : true}]
 	],
 
 	"phases" : {

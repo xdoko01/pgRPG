@@ -383,6 +383,9 @@
 
 ## To Do
 
+
+### Add debug processor - you will put any condition there and if the condition is fulfilled then the game will stop and you will be able to check the state
+
 ### Component classes can be data classes
   - either built-id @dataclass or pydantic(has verification of data functionality)
   - https://youtu.be/vRVVyl9uaZc
@@ -390,6 +393,27 @@
 ### Better loading of processors and components using plugin pattern and importlib
   - very nicely described in youtube video https://youtu.be/iCE1bDoit9Q
   - no longer adding imports when new component and/or processor is added - instead importlib can be used
+    
+    *Currently*
+    - `quest.__init__` -> read the list of processors into quest.processors
+    - `quest.__init__` -> for all processors `engine._create_processor(proc str)`
+
+    *Newly*
+    - `quest.__init__` -> read the list of processors
+    - `quest.__init__` -> calls `engine.load_processors(list_of_processors)`
+    - `engine.load_processors`
+      - `for all processors`
+        - get the processor class
+        - `processor = importib.import_module(processor_class_module_path)`
+        - get the call parameters
+        - add to the world
+
+    - read the list of processors from json
+    - loader.load_processors(list_of_processors)
+      - processor = importib.import_module(processor_name)
+      - processor.initialize()
+         - factory.register(proc name, proc class)
+
 
 ## NEW SYSTEMS - START ###################################################
 

@@ -1,0 +1,64 @@
+__all__ = ['NewRecordCommandToFileProcessor']
+
+import logging
+import json
+import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+
+# Logger init
+logger = logging.getLogger(__name__)
+
+
+class NewRecordCommandToFileProcessor(esper.Processor):
+    ''' Dumps the command queue and saves it into the defined file.
+    '''
+
+    PREREQ = [
+        ('new.command_system.new_generate_command_from_input_processor', 'NewGenerateCommandFromInputProcessor')
+        ]
+
+    def __init__(self, get_commands_fnc, file):
+        super().__init__()
+
+        # Reference to command queue
+        self.get_commands_fnc = get_commands_fnc
+
+        # File handler
+        self.fh = open(file, 'w')
+
+        # Counter of process cycles - initiate to 0 first cycle will be 1
+        self.cycle_counter = 0
+
+    def process(self, *args, **kwargs):
+        ''' Store the whole queue to the file - every cycle on every line
+        '''
+        self.cycle += 1
+
+        # Increase cycle counter
+        self.cycle_counter += 1
+
+        # If there is something in the command queue, prepare dict and write it
+        if self.get_commands_fnc():
+            new_rec = { 'cycle' : self.cycle_counter, 'commands' : self.get_commands_fnc()}
+            json.dump(new_rec, self.fh)
+            self.fh.write('\n') # one cycle per row
+            logger.debug(f'({self.cycle}) - Command queue stored.')
+
+    def pre_save(self):
+        ''' Prepare processor for serialization by disabling links to 
+        non-serializable components
+        '''
+        pass
+
+    def post_load(self):
+        ''' Reconfigure the processor after de-serialization by attaching
+        the removed references again.
+        '''
+        pass
+
+    def finalize(self, *args, **kwargs):
+        ''' Method called when closing the game. Put all necessary statements 
+        such as closing of files/resources here, if necessary.
+        '''
+
+        # Close the file
+        self.fh.close()

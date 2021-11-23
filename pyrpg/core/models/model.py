@@ -258,7 +258,7 @@ class Model(object):
                                 new_dir : {
                                     'tiles' : tiles,
                                     'repeat' : repeat,
-                                    'action_frame' : len(tiles) - 1 if not action_frame else action_frame
+                                    'action_frame' : -1 if not action_frame else action_frame
                                 }
                             })
 
@@ -272,7 +272,7 @@ class Model(object):
                                 direction : {
                                     'tiles' : tiles,
                                     'repeat' : repeat,
-                                    'action_frame' : len(tiles) - 1 if not action_frame else action_frame
+                                    'action_frame' : -1 if not action_frame else action_frame
                                 }
                             })
                     else:
@@ -282,7 +282,7 @@ class Model(object):
                                     direction : {
                                         'tiles' : tiles,
                                         'repeat' : repeat,
-                                        'action_frame' : len(tiles) - 1 if not action_frame else action_frame
+                                        'action_frame' : -1 if not action_frame else action_frame
                                     }
                                 }
                             })
@@ -348,7 +348,8 @@ class Model(object):
 
     def get_action_frame(self, action, direction):
         try:
-            return self.frames.get(action).get(direction).get('action_frame')
+            # If action frame is not defined for given action and direction, return -1
+            return self.frames.get(action).get(direction).get('action_frame', -1)
         except (KeyError, AttributeError):
             return -1
     

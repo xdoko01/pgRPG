@@ -12,8 +12,10 @@
 
 import json
 import pickle # for savegame/loadgame
-import re # for removind comments from json files
+import re # for removing of comments from json files
+import importlib
 import logging
+from typing import ClassVar
 
 # Create logger
 logger = logging.getLogger(__name__)
@@ -42,6 +44,8 @@ clock = pygame.time.Clock()
 ########################################################
 ### Module Import Init - Import game packages and modules
 ########################################################
+
+from pyrpg.functions import get_class_object # for dynamic creation of components and processors from json definition
 
 import pyrpg.core.config.fonts # Initiate fonts for the game
 
@@ -147,13 +151,13 @@ def init_console_fnc(cns_fnc):
 
     cons_update_fnc = cns_fnc if cns_fnc is not None else (lambda x: None)
 
-def init_world():
+def init_world(timed=False):
     ''' Prepare ECS instances for the game
     '''
 
     global world
 
-    world = esper.World(timed=False)
+    world = esper.World(timed=timed)
     #create_processors(world)
     cons_update_fnc('engine->init_world. World initiation finished.')
     logger.info(f'Init is done.')
@@ -614,6 +618,75 @@ PROC_PARAMS = {
     'get_events_fnc' : get_game_events
 }
 
+def _check_processor(proc_class: esper.Processor) -> str:
+    '''Checks if the class representing the processors contains all necessary
+    parts in order to successfully work in the game.
+
+    Checks are following:
+        - Existence of prerequisited classes in the game world
+    '''
+
+    # Check that the dependencies of the processor on other processors are kept - are already in the world
+    try:
+        prereqs = proc_class.PREREQ
+    except AttributeError:
+        prereqs = []    # no prerequisities if class attr PREREQ does not exist
+
+    for prereq in prereqs:
+
+        # Unpack the prerequisity processor information
+        prereq_module, prereq_class = prereq
+
+        # Get the prerequisity processor class
+        try:
+            check_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + prereq_module, prereq_class)
+        except ValueError:
+            raise ValueError(f'Prerequisite class "{prereq_module}.{prereq_class}" cannot be loaded from definition of processor "{proc_class.__name__}".')
+
+        # Verify that the prerequisite processor class has been already instantiated
+        if not world.get_processor(check_class):
+            raise ValueError(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
+
+
+def _load_processor(proc_module : str, proc_class : str, cust_proc_class_attrs : dict) -> esper.Processor:
+    '''Imports the processor class and registers it into the world'''
+
+    # Get the definition of the processor class
+    try:
+        new_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + proc_module, proc_class)
+    except ValueError:
+        raise ValueError(f'Error during loading of processor class "{proc_class}"')
+
+    # Check that prerequisities are fulfilled - all required processors are already initiated in the game world
+    try:
+       _check_processor(new_class)
+    except ValueError:
+        raise ValueError(f'Error during checking of prerequisities of processor "{new_class.__name__}"')
+
+    # Get all attributes of the processor class
+    proc_attrs = new_class.__init__.__code__.co_varnames[1:]
+
+    # Substitute the attributes with reference to specifice engine functions
+    proc_attrs = { arg : PROC_PARAMS.get(arg) for arg in proc_attrs if PROC_PARAMS.get(arg) is not None}
+
+    # Overwrite the attributes with custom attributes from the json definition of the quest
+    proc_attrs = {**proc_attrs, **cust_proc_class_attrs}
+
+    # Initiate and return the processor class
+    return new_class(**proc_attrs)
+
+
+def load_processors(processors: list) -> None:
+    '''Imports and registers to the world processors specified by the quest definition.'''
+
+    for processor in processors:
+        module_name, class_name, params = processor
+        new_proc = _load_processor(module_name, class_name, params)
+        world.add_processor(new_proc)
+        cons_update_fnc(f'Processor {class_name} initiated.')
+
+
+# Soon to be obsolete
 def _create_processor(proc_str):
     '''
     Example:
@@ -631,6 +704,7 @@ def _create_processor(proc_str):
     # Check that the dependencies of the processor on other processors are kept - are already in the world
     try:
         prereqs = proc_class.PREREQ
+    
     except AttributeError:
         prereqs = []    # no prerequisities if class attr PREREQ does not exist
 
