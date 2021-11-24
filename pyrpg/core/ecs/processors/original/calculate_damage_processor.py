@@ -9,6 +9,10 @@ class CalculateDamageProcessor(esper.Processor):
         super().__init__()
         self.damage_event_queue = damage_event_queue
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Get all entities that have can take damage and were damaged

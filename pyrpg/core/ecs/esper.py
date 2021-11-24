@@ -28,6 +28,10 @@ class Processor:
     world = None
     cycle = None # Added by xdoko01 to note the cycle of processor for debug reasons
 
+    def initialize(self, register):
+        """Register the processor at the esper World"""
+        raise NotImplementedError
+
     def process(self, *args, **kwargs):
         raise NotImplementedError
 

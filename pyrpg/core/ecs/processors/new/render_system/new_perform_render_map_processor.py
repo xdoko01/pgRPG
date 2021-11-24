@@ -48,6 +48,10 @@ class NewPerformRenderMapProcessor(esper.Processor):
 
         self.maps = maps
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Process entities having Position and Camera components. Basically,
         blit the relevant part of the map on camera screen surface.

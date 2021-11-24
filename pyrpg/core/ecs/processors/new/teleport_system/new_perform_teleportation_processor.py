@@ -48,6 +48,10 @@ class NewPerformTeleportationProcessor(esper.Processor):
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         '''  Detects entities that are about to be teleported and performs
         the actual teleportation, if the picker is capable.

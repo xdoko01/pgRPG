@@ -36,6 +36,9 @@ class NewGenerateRenderDataFromParentProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that need to be rendered but do not have their own Position 

@@ -42,6 +42,10 @@ class NewPerformFrameUpdateProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Get all components with renderable model and update their animation by one frame.
         '''

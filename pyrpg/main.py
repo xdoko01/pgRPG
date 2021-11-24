@@ -87,7 +87,7 @@ def init(state='MAIN_MENU', cons_enabled=True, timed=False):
     _game_state = state
 
     # Load the definitions contained in the init quest - old processors
-    pyrpg.core.engine.new_game('original/init')
+    #pyrpg.core.engine.new_game('original/init')
     #pyrpg.core.engine.new_game('original/test04_weapons')
     #pyrpg.core.engine.new_game('original/otik_lvl1')
     #pyrpg.core.engine.new_game('original/test_quest')
@@ -162,7 +162,7 @@ def init(state='MAIN_MENU', cons_enabled=True, timed=False):
     ### Projectile Tests
     ##################
     #pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_generation')
-    #pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_collision')
+    pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_collision')
 
 
     ##################

@@ -9,6 +9,10 @@ class PrepareProjectileProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Get entities capable of producing projectiles - HasWeapon, on the last attack frame RenderableModel
@@ -49,6 +53,10 @@ class CreateEntityOnPositionProcessor(esper.Processor):
         super().__init__()
 
         self.create_entity_fnc = create_entity_fnc
+
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
 
@@ -126,6 +134,10 @@ class GenerateProjectileProcessor(esper.Processor):
         super().__init__()
 
         self.create_entity_fnc = create_entity_fnc
+
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         ''' TODO - is there any variable from the global world that we want to use here?

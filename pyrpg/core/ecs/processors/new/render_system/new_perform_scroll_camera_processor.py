@@ -48,6 +48,10 @@ class NewPerformScrollCameraProcessor(esper.Processor):
 
         self.maps = maps
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Process entities having Camera and Position components. Check
         the following video for more details about camera implementation

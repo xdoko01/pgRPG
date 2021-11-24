@@ -647,7 +647,6 @@ def _check_processor(proc_class: esper.Processor) -> str:
         if not world.get_processor(check_class):
             raise ValueError(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
 
-
 def _load_processor(proc_module : str, proc_class : str, cust_proc_class_attrs : dict) -> esper.Processor:
     '''Imports the processor class and registers it into the world'''
 
@@ -675,63 +674,21 @@ def _load_processor(proc_module : str, proc_class : str, cust_proc_class_attrs :
     # Initiate and return the processor class
     return new_class(**proc_attrs)
 
-
 def load_processors(processors: list) -> None:
     '''Imports and registers to the world processors specified by the quest definition.'''
 
     for processor in processors:
         module_name, class_name, params = processor
+
+        # Create instance of the processor
         new_proc = _load_processor(module_name, class_name, params)
-        world.add_processor(new_proc)
+
+        # Registers processor at esper ECS World
+        new_proc.initialize(register=world.add_processor)
+
+        # Log the initiation of the processor
+        logger.info(f'Processor {class_name} initiated.')
         cons_update_fnc(f'Processor {class_name} initiated.')
-
-
-# Soon to be obsolete
-def _create_processor(proc_str):
-    '''
-    Example:
-        _create_processor(['ExampleProcessor', {'example_arg' : arg})
-
-        - adds the processor to the world
-    '''
-
-    # Get processor class and arguments
-    try:
-        proc_class, proc_args = processors.get_processor(proc_str[0])
-    except ValueError:
-        raise ValueError(f'Error in creation of processor "{proc_str}"')
-
-    # Check that the dependencies of the processor on other processors are kept - are already in the world
-    try:
-        prereqs = proc_class.PREREQ
-    
-    except AttributeError:
-        prereqs = []    # no prerequisities if class attr PREREQ does not exist
-
-    for prereq in prereqs:
-
-        # Get class and arguments of the prerequisited processor
-        try:
-            prereq_proc_class, _ = processors.get_processor(prereq)
-        except ValueError:
-            raise ValueError(f'Error in creation of prerequisity processor "{prereq}" for processor {proc_class}')
-
-        # Verify that the prerequisite processor has been already instantiated
-        if not world.get_processor(prereq_proc_class):
-             print(f'WARNING: Processor "{proc_class}" is missing prereq. processor {prereq}. Game might work incorrectly!')
-
-    # Create and register new processor in the game world
-
-    # First, try to prepare params from PROC_PARAMS dictionary
-    new_proc_params = { arg : PROC_PARAMS.get(arg) for arg in proc_args if PROC_PARAMS.get(arg) is not None}
-    # Second, add params that are passed from the quest definition, to override and add to PROC_PARAMS
-    new_proc_params = {**new_proc_params, **proc_str[1]}
-    new_proc = proc_class(**new_proc_params)
-    
-    # Add processor to the world
-    world.add_processor(new_proc)
-    cons_update_fnc(f'{proc_str[0]} ({new_proc_params}) initiated.')
-    print(f'Processor "{proc_class}" was created')
 
 ########################################################
 ### Module Functions - Save and load game

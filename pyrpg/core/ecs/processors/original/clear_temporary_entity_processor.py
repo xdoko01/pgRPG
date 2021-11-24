@@ -16,6 +16,10 @@ class ClearTemporaryEntityProcessor(esper.Processor):
 
         self.remove_entity_fnc = remove_entity_fnc
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Get all temporary components

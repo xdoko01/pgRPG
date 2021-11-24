@@ -13,6 +13,10 @@ class RemoveDepletedAmmoPackProcessor(esper.Processor):
 
         self.remove_entity_fnc = remove_entity_fnc
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         for ent, (ammo_pack, factory, flag_factory_depleted) in self.world.get_components(components.AmmoPack, components.Factory, components.FlagFactoryDepleted):

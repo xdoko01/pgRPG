@@ -7,6 +7,10 @@ class GenerateScoreDestroyProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Get all entities that have collided and are damagable and are capable of points generation upon damage

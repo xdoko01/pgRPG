@@ -49,6 +49,9 @@ class NewGenerateEntityCollisionsProcessor(esper.Processor):
 
         self.add_event_fnc = add_event_fnc
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         ''' Detect all collisions between visible entities and record them into 

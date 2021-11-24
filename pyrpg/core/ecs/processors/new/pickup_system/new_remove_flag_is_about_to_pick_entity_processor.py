@@ -39,6 +39,10 @@ class NewRemoveFlagIsAboutToPickEntityProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Removes the flag that the item has been considered for picking
         at the end of the cycle.

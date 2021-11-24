@@ -12,6 +12,9 @@ class GameEventsProcessor(esper.Processor):
 
         self.game_event_handler = game_event_handler
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         ''' Call external function that processes all events

@@ -9,6 +9,10 @@ class CalculateScoreProcessor(esper.Processor):
         super().__init__()
         self.score_event_queue = score_event_queue
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Get all entities that have Score comp and there is some score to be added

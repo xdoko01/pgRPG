@@ -12,6 +12,9 @@ class NewRemoveFlagDoMoveProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         self.cycle += 1

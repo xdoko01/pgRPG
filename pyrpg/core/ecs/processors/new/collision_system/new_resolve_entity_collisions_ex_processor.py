@@ -43,6 +43,10 @@ class NewResolveEntityCollisionsExProcessor(esper.Processor):
 
         self.add_command_fnc = add_command_fnc
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Moves entities to omit the collision.
         '''

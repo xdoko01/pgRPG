@@ -38,6 +38,10 @@ class NewRemoveFlagHasArmedWeaponProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Removes the flag that the item was picked.
         '''

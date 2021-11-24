@@ -41,6 +41,10 @@ class NewPerformMovementAnimationProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Get all components with renderable model that have moved and update their action and frame
         '''

@@ -44,6 +44,10 @@ class NewResolveMapCollisionsProcessor(esper.Processor):
 
         self.maps = maps
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' On collision, return the entity on its original position.
         '''

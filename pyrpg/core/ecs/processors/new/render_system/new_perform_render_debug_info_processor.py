@@ -48,6 +48,10 @@ class NewPerformRenderDebugInfoProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Draw all sorts of debug information on the screen. The category of information
         is specified in the NewDebug component.

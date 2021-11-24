@@ -13,6 +13,10 @@ class CollisionDeletionProcessor(esper.Processor):
 
         self.remove_entity_fnc = remove_entity_fnc
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         for ent, (delete_on_collision, collision) in self.world.get_components(components.DeleteOnCollision, components.Collidable):

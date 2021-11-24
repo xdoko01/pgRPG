@@ -8,6 +8,10 @@ class CollisionDamageProcessor(esper.Processor):
     def __init__(self):
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Iterate all entities that are generating damage and can be collided

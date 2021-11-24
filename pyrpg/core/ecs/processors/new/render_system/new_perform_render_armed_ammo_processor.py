@@ -49,6 +49,9 @@ class NewPerformRenderArmedAmmoProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         ''' Blit RenderableModel onto the screen.

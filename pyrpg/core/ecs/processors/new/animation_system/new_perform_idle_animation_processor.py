@@ -39,6 +39,10 @@ class NewPerformIdleAnimationProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Get all entities with renderable model that has not perform any action and update their action to idle.
         '''

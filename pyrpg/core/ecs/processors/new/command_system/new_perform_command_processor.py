@@ -23,6 +23,10 @@ class NewPerformCommandProcessor(esper.Processor):
         self.game_commands_handler = game_commands_handler
         self.debug = debug
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Call external function that processes all commands
         '''

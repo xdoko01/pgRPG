@@ -11,6 +11,10 @@ class HandleDestroyedEntitiesProcessor(esper.Processor):
         self.destroy_event_queue = destroy_event_queue
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         # Select all entities that have been destroyed in this cycle

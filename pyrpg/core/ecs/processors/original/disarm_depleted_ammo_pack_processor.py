@@ -17,6 +17,10 @@ class DisarmDepletedAmmoPackProcessor(esper.Processor):
 
         self.ammo_pack_event_queue = ammo_pack_event_queue
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
 
         for ent, (ammo_pack, factory, flag_factory_depleted, flag_ammo_pack_armed) in self.world.get_components(components.AmmoPack, components.Factory, components.FlagFactoryDepleted, components.FlagAmmoPackArmed):

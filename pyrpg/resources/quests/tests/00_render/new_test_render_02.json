@@ -7,25 +7,21 @@
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewPerformCommandProcessor", {}],
+		["new.command_system.new_generate_command_from_input_processor", "NewGenerateCommandFromInputProcessor", {}],
+		["new.command_system.new_perform_command_processor", "NewPerformCommandProcessor", {}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["new.movement_system.new_perform_movement_processor", "NewPerformMovementProcessor", {}],
 
 		// For displaying
-		["NewPerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
-		["NewPerformClearCameraProcessor", {"clear_color" : [100, 0, 0]}], // clear all camera surfaces
-		
-		["NewPerformScrollCameraProcessor", {}], // scroll the camera
-
-		["NewPerformRenderMapProcessor", {}], // display map
-
-		["NewPerformBlitCameraProcessor", {}], // display all cameras on the game window
+		["new.render_system.new_perform_clear_window_processor", "NewPerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
+		["new.render_system.new_perform_clear_camera_processor", "NewPerformClearCameraProcessor", {"clear_color" : [100, 0, 0]}], // clear all camera surfaces
+		["new.render_system.new_perform_scroll_camera_processor", "NewPerformScrollCameraProcessor", {}], // scroll the camera
+		["new.render_system.new_perform_render_map_processor", "NewPerformRenderMapProcessor", {}], // display map
+		["new.render_system.new_perform_blit_camera_processor", "NewPerformBlitCameraProcessor", {}], // display all cameras on the game window
 
 		// For movement
-		["NewRemoveFlagDoMoveProcessor", {}]
-
+		["new.movement_system.new_remove_flag_do_move_porcessor", "NewRemoveFlagDoMoveProcessor", {}]
 	],
 
 	"phases" : {

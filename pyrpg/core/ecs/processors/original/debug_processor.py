@@ -36,6 +36,10 @@ class DebugProcessor(esper.Processor):
         self.caption = kwargs.get('caption', '')
         self.list_of_entities = kwargs.get('entities', [])
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Print all the information about entities and components
         '''

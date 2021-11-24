@@ -32,12 +32,14 @@ class NewRemoveFlagHasTeleportedProcessor(esper.Processor):
         ('new.teleport_system.new_perform_teleportation_processor', 'NewPerformTeleportationProcessor')
     ]
 
-
-
     def __init__(self):
         ''' Init the processor.
         '''
         super().__init__()
+
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         ''' Removes the flag that the item was picked.

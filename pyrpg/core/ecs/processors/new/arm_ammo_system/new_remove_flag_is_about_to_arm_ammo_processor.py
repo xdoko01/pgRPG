@@ -39,6 +39,10 @@ class NewRemoveFlagIsAboutToArmAmmoProcessor(esper.Processor):
         '''
         super().__init__()
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
     def process(self, *args, **kwargs):
         ''' Removes the flag that the item has been considered for arming
         an ammo at the end of the cycle.
