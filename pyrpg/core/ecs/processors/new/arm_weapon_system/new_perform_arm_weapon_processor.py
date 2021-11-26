@@ -1,20 +1,30 @@
 __all__ = ['NewPerformArmWeaponProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_has_weapon import NewHasWeapon
+from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_arm_weapon import NewFlagIsAboutToArmWeapon
+from pyrpg.core.ecs.components.new.new_flag_has_armed_weapon import NewFlagHasArmedWeapon
+from pyrpg.core.ecs.components.new.new_flag_was_armed_as_weapon_by import NewFlagWasArmedAsWeaponBy
+
+# For creation of events
+from pyrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformArmWeaponProcessor(esper.Processor):
+class NewPerformArmWeaponProcessor(Processor):
     ''' Detects entities that are about to arm weapon and performs
     the actual arming, if the fighter is capable.
 
     Involved components:
-        -   HasWeapon
+        -   NewHasWeapon
+        -   NewWeaponInUse
         -   NewFlagIsAboutToArmWeapon
         -   NewFlagHasArmedWeapon
         -   NewFlagWasArmedAsWeaponBy
@@ -37,9 +47,8 @@ class NewPerformArmWeaponProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.arm_weapon_system.new_generate_arm_weapon_processor', 'NewGenerateArmWeaponProcessor')
-        ]
-
+        'new.arm_weapon_system.new_generate_arm_weapon_processor:NewGenerateArmWeaponProcessor'
+    ]
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -60,7 +69,7 @@ class NewPerformArmWeaponProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have NewHasWeapon and NewFlagIsAboutToArmWeapon - those are candidates for successful arming
-        for ent_fighter, (has_weapon, flag_is_about_to_arm_weapon) in self.world.get_components(components.NewHasWeapon, components.NewFlagIsAboutToArmWeapon):
+        for ent_fighter, (has_weapon, flag_is_about_to_arm_weapon) in self.world.get_components(NewHasWeapon, NewFlagIsAboutToArmWeapon):
 
             # Check that there is place for the weapon to be armed
             # If there is a place, put the reference to HasWeapon slot
@@ -73,21 +82,20 @@ class NewPerformArmWeaponProcessor(esper.Processor):
                 raise ValueError
 
             # Report that arming a weapon occured - generate event
-            arm_weapon_event = event.Event('WEAPON_ARMED', flag_is_about_to_arm_weapon.weapon, ent_fighter, params={'weapon' : flag_is_about_to_arm_weapon.weapon, 'fighter' : ent_fighter})
+            arm_weapon_event = Event('WEAPON_ARMED', flag_is_about_to_arm_weapon.weapon, ent_fighter, params={'weapon' : flag_is_about_to_arm_weapon.weapon, 'fighter' : ent_fighter})
             self.add_event_fnc(arm_weapon_event)
 
             # Assign NewFlagWasArmedAsWeaponBy component to the weapon entity
-            self.world.add_component(flag_is_about_to_arm_weapon.weapon, components.NewFlagWasArmedAsWeaponBy(fighter=ent_fighter))
+            self.world.add_component(flag_is_about_to_arm_weapon.weapon, NewFlagWasArmedAsWeaponBy(fighter=ent_fighter))
             logger.debug(f'({self.cycle}) - Weapon {flag_is_about_to_arm_weapon.weapon} ({flag_is_about_to_arm_weapon.type}) was armed by entity {ent_fighter}.')
 
             # Assign NewFlagHasArmedWeapon component to the fighter entity
-            self.world.add_component(ent_fighter, components.NewFlagHasArmedWeapon(weapon=flag_is_about_to_arm_weapon.weapon))
+            self.world.add_component(ent_fighter, NewFlagHasArmedWeapon(weapon=flag_is_about_to_arm_weapon.weapon))
             logger.debug(f'({self.cycle}) - Entity {ent_fighter} has armed weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
 
             # Assign NewWeaponInUse component to the fighter entity ['type', 'action', 'idle_action']
-            self.world.add_component(ent_fighter, components.NewWeaponInUse(type=flag_is_about_to_arm_weapon.type))
+            self.world.add_component(ent_fighter, NewWeaponInUse(type=flag_is_about_to_arm_weapon.type))
             logger.debug(f'({self.cycle}) - Entity {ent_fighter} is now using weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

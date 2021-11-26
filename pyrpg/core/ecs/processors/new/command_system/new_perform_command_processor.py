@@ -1,21 +1,22 @@
 __all__ = ['NewPerformCommandProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformCommandProcessor(esper.Processor):
+class NewPerformCommandProcessor(Processor):
     ''' Calls comand queue handler with additional parameters about
     input events (keys, events).
     '''
 
     PREREQ = [
-        ('new.command_system.new_generate_command_from_input_processor', 'NewGenerateCommandFromInputProcessor'), 
-        ('new.command_system.new_generate_command_from_brain_processor', 'NewGenerateCommandFromBrainProcessor')
-        ]
+        'new.command_system.new_generate_command_from_input_processor:NewGenerateCommandFromInputProcessor',
+        'new.command_system.new_generate_command_from_brain_processor:NewGenerateCommandFromBrainProcessor'
+    ]
 
     def __init__(self, game_commands_handler, debug=False):
         super().__init__()

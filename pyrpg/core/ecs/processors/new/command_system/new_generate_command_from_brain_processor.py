@@ -1,15 +1,18 @@
 __all__ = ['NewGenerateCommandFromBrainProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 import pygame	# for pygame.time.get_ticks()
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.brain import Brain
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGenerateCommandFromBrainProcessor(esper.Processor):
+class NewGenerateCommandFromBrainProcessor(Processor):
     ''' Put command that is in the component Brain
     and that is about to be processed into the command queue.
 
@@ -30,8 +33,8 @@ class NewGenerateCommandFromBrainProcessor(esper.Processor):
     '''
 
     PREREQ = [
-        ('new.command_system.new_generate_command_from_input_processor', 'NewGenerateCommandFromInputProcessor')
-        ]
+        'new.command_system.new_generate_command_from_input_processor:NewGenerateCommandFromInputProcessor'
+    ]
 
     def __init__(self, add_command_fnc):
         ''' Init the processor.
@@ -54,7 +57,7 @@ class NewGenerateCommandFromBrainProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (brain) in self.world.get_component(components.Brain):
+        for ent, (brain) in self.world.get_component(Brain):
             
             # Only continue processing if the brain is enabled
             if brain.enabled:

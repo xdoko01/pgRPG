@@ -1,20 +1,30 @@
 __all__ = ['NewPerformTeleportationProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_teleportable import NewTeleportable
+from pyrpg.core.ecs.components.new.new_flag_was_teleported_by import NewFlagWasTeleportedBy
+from pyrpg.core.ecs.components.new.new_flag_has_teleported import NewFlagHasTeleported
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_be_teleported_by import NewFlagIsAboutToBeTeleportedBy
+
+# For creation of events
+from pyrpg.core.events.event import Event 
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformTeleportationProcessor(esper.Processor):
+class NewPerformTeleportationProcessor(Processor):
     ''' Detects entities that are about to be teleported and performs
     the actual teleportation if the teleportee is capable.
 
     Involved components:
-        -   Teleportee
+        -   Position
+        -   NewTepeportable
         -   NewFlagWasTeleportedBy
         -   NewFlagHasTeleported
         -   NewFlagIsAboutToBeTeleportedBy
@@ -36,9 +46,8 @@ class NewPerformTeleportationProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.teleport_system.new_generate_teleportation_processor', 'NewGenerateTeleportationProcessor')
-        ]
-
+        'new.teleport_system.new_generate_teleportation_processor:NewGenerateTeleportationProcessor'
+    ]
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -59,7 +68,7 @@ class NewPerformTeleportationProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have Teleportable and NewFlagIsAboutToBeTeleportedBy - those are candidates for successful teleportation
-        for ent_teleportee, (position, teleportable, flag_is_about_to_be_teleported_by) in self.world.get_components(components.Position, components.NewTeleportable, components.NewFlagIsAboutToBeTeleportedBy):
+        for ent_teleportee, (position, teleportable, flag_is_about_to_be_teleported_by) in self.world.get_components(Position, NewTeleportable, NewFlagIsAboutToBeTeleportedBy):
 
             # Check that key required for the teleport matches the key in Teleportable component
             # If the key required by the teleport is not found then do not proceed with teleportation
@@ -71,17 +80,16 @@ class NewPerformTeleportationProcessor(esper.Processor):
             position.map = flag_is_about_to_be_teleported_by.dest_map
 
             # Report that teleportation occured - generate event
-            teleport_event = event.Event('TELEPORTATION', flag_is_about_to_be_teleported_by.teleport, ent_teleportee, params={'teleport' : flag_is_about_to_be_teleported_by.teleport, 'teleportee' : ent_teleportee})
+            teleport_event = Event('TELEPORTATION', flag_is_about_to_be_teleported_by.teleport, ent_teleportee, params={'teleport' : flag_is_about_to_be_teleported_by.teleport, 'teleportee' : ent_teleportee})
             self.add_event_fnc(teleport_event)
 
             # Assign NewFlagWasTeleportedBy component to the teleportee
-            self.world.add_component(ent_teleportee, components.NewFlagWasTeleportedBy(teleport=flag_is_about_to_be_teleported_by.teleport))
+            self.world.add_component(ent_teleportee, NewFlagWasTeleportedBy(teleport=flag_is_about_to_be_teleported_by.teleport))
             logger.debug(f'({self.cycle}) - Entity {ent_teleportee} was teleported by entity {flag_is_about_to_be_teleported_by.teleport}.')
 
             # Assign NewFlagHasTeleported component to the teleport entity
-            self.world.add_component(flag_is_about_to_be_teleported_by.teleport, components.NewFlagHasTeleported(teleportee=ent_teleportee))
+            self.world.add_component(flag_is_about_to_be_teleported_by.teleport, NewFlagHasTeleported(teleportee=ent_teleportee))
             logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_be_teleported_by.teleport} has teleported entity {ent_teleportee}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

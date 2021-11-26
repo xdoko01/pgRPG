@@ -1,21 +1,29 @@
 __all__ = ['NewGenerateEntityCollisionsFullProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
 
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_collidable import NewCollidable
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
+
+# for creation of events
+from pyrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)
 
 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
 
-class NewGenerateEntityCollisionsFullProcessor(esper.Processor):
+class NewGenerateEntityCollisionsFullProcessor(Processor):
     ''' Detects collisions amongst ALL (not only those objects visible on camera)
     and stores them into the component NewFlagHasCollided.
 
     Involved components:
+        -   Position
         -   NewCollidable
         -   NewFlagHasCollided
 
@@ -33,9 +41,8 @@ class NewGenerateEntityCollisionsFullProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.movement_system.new_perform_movement_processor', 'NewPerformMovementProcessor')
-        ]
-
+        'new.movement_system.new_perform_movement_processor:NewPerformMovementProcessor'
+    ]
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -55,13 +62,13 @@ class NewGenerateEntityCollisionsFullProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have Position + NewCollidable regardless if visible or not
-        for ent_moved, (pos_moved, coll_moved) in self.world.get_components(components.Position, components.NewCollidable):
+        for ent_moved, (pos_moved, coll_moved) in self.world.get_components(Position, NewCollidable):
 
             # Store the collisions
             collisions = set()
 
             # Get all the entities again
-            for ent_other, (pos_other, coll_other) in self.world.get_components(components.Position, components.NewCollidable):
+            for ent_other, (pos_other, coll_other) in self.world.get_components(Position, NewCollidable):
 
                 # Heuristic no.1 - Skip if testing itself
                 if ent_moved == ent_other: continue
@@ -99,14 +106,13 @@ class NewGenerateEntityCollisionsFullProcessor(esper.Processor):
                     collisions.add((ent_other, pos_other, correction_vect, coll_other.ignore_position_fix))
 
                     # Report that entity collision occured - generate event
-                    self.add_event_fnc(event.Event('COLLISION', ent_moved, ent_other, params={'entity1' : ent_moved, 'entity2' : ent_other}))
+                    self.add_event_fnc(Event('COLLISION', ent_moved, ent_other, params={'entity1' : ent_moved, 'entity2' : ent_other}))
                     logger.debug(f'({self.cycle}) - Collision event between {ent_moved} and {ent_other} has been queued.')
 
             # Create new NewFlagHasCollided component
             if collisions: 
-                self.world.add_component(ent_moved, components.NewFlagHasCollided(collisions=collisions))
+                self.world.add_component(ent_moved, NewFlagHasCollided(collisions=collisions))
                 logger.debug(f'({self.cycle}) - Entity {ent_moved} has collided with {collisions}')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

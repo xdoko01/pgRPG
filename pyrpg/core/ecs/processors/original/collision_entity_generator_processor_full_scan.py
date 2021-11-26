@@ -1,9 +1,13 @@
 __all__ = ['CollisionEntityGeneratorProcessorFullScan']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CollisionEntityGeneratorProcessorFullScan(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.position import Position
+
+class CollisionEntityGeneratorProcessorFullScan(Processor):
     ''' 
     -	COLLISION SYSTEM
             Checks for collisions and resolves them
@@ -21,9 +25,9 @@ class CollisionEntityGeneratorProcessorFullScan(esper.Processor):
     def process(self, *args, **kwargs):
             
         # Get all entities that have Motion and Collidable (only those can activelly hit something) - i.e. that could have moved and iterate those
-        for ent_moved, (coll_moved, pos_moved) in self.world.get_components(components.Collidable, components.Position):
+        for ent_moved, (coll_moved, pos_moved) in self.world.get_components(Collidable, Position):
             # Compare that all collision + position entities - DUMMY WAY
-            for ent_other, (coll_other, pos_other) in self.world.get_components(components.Collidable, components.Position):
+            for ent_other, (coll_other, pos_other) in self.world.get_components(Collidable, Position):
                 
                 # Heuristic no.-1 - Test only those that have Motion component
                 #if not self.world.has_component(ent_moved, Motion): continue

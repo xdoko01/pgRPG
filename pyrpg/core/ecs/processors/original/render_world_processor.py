@@ -1,10 +1,15 @@
 __all__ = ['RenderWorldProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.renderable import Renderable
+from pyrpg.core.ecs.components.original.can_talk import CanTalk
 
-class RenderWorldProcessor(esper.Processor):
+class RenderWorldProcessor(Processor):
     ''' Draws the entities in the world. Entity is represented just by
     the picture stored in Renderable component.
 
@@ -65,14 +70,14 @@ class RenderWorldProcessor(esper.Processor):
         '''
         
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Blit all the Entities that have Renderable and Position components
-            for _ , (renderable, position) in self.world.get_components(components.Renderable, components.Position):
+            for _ , (renderable, position) in self.world.get_components(Renderable, Position):
                 camera.screen.blit(renderable.image, camera.apply(renderable.topleft((position.x, position.y))))
 
             # Blit all Texts that are entities saying (CanSpeak + Position component)
-            for _, (can_talk, renderable, position) in self.world.get_components(components.CanTalk, components.Renderable, components.Position):
+            for _, (can_talk, renderable, position) in self.world.get_components(CanTalk, Renderable, Position):
 
                 # If there is something to say
                 if can_talk.text:

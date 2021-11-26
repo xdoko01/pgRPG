@@ -1,11 +1,14 @@
 __all__ = ['ClearTemporaryEntityProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 import pygame	# for pygame.time.get_ticks()
 
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class ClearTemporaryEntityProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.temporary import Temporary
+
+class ClearTemporaryEntityProcessor(Processor):
     ''' Delete for example projectiles
     '''
     __slots__ = ['remove_entity_fnc']
@@ -23,7 +26,7 @@ class ClearTemporaryEntityProcessor(esper.Processor):
     def process(self, *args, **kwargs):
 
         # Get all temporary components
-        for ent, temporary in self.world.get_component(components.Temporary):
+        for ent, temporary in self.world.get_component(Temporary):
 
             # Compare if the entity lived long enough
             if pygame.time.get_ticks() - temporary.creation_time > temporary.ttl:

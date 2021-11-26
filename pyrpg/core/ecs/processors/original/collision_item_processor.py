@@ -1,11 +1,19 @@
 __all__ = ['CollisionItemProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
+# Used components
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.pickable import Pickable
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.has_inventory import HasInventory
 
-class CollisionItemProcessor(esper.Processor):
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class CollisionItemProcessor(Processor):
     def __init__(self, item_pickup_event_queue):
         super().__init__()
         self.item_pickup_event_queue = item_pickup_event_queue
@@ -15,29 +23,29 @@ class CollisionItemProcessor(esper.Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        for ent, (item, collision) in self.world.get_components(components.Pickable, components.Collidable):
+        for ent, (item, collision) in self.world.get_components(Pickable, Collidable):
 
             # Process everything that collided with item
             for col_event_entity in collision.collision_events.copy():
                     
                     # If entity can collect items (has inventory)
-                    if self.world.has_component(col_event_entity, components.HasInventory):
+                    if self.world.has_component(col_event_entity, HasInventory):
                         
                         # Get the HasItem component of the entity
-                        col_event_entity_inventory = self.world.component_for_entity(col_event_entity, components.HasInventory) 
+                        col_event_entity_inventory = self.world.component_for_entity(col_event_entity, HasInventory) 
                         
                         # Get the Collidable component of the entity - in order to remove the collision
-                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, Collidable)
 
                         # Add the Item entity into the HasInventory,inventory list
                         col_event_entity_inventory.inventory.append(ent)
 
                         # Remove Position component from the item so that it is not displayable on the map - item is picked
-                        self.world.remove_component(ent, components.Position) 
+                        self.world.remove_component(ent, Position) 
 
                         # Remove Camera component from the item so that the screen disappears - item is picked
                         try:
-                            self.world.remove_component(ent, components.Camera) 
+                            self.world.remove_component(ent, Camera) 
                         except KeyError:
                             pass
 
@@ -48,5 +56,5 @@ class CollisionItemProcessor(esper.Processor):
                         col_event_entity_coll.collision_events.remove(ent)
 
                         # Report that item was picked up - generate event
-                        teleport_event = event.Event('ITEM_PICKUP', ent, col_event_entity, params={'item' : ent, 'picker' : col_event_entity})
+                        teleport_event = Event('ITEM_PICKUP', ent, col_event_entity, params={'item' : ent, 'picker' : col_event_entity})
                         self.item_pickup_event_queue.append(teleport_event)

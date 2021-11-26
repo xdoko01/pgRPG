@@ -1,10 +1,13 @@
 __all__ = ['UpdateCameraOffsetProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
 
-class UpdateCameraOffsetProcessor(esper.Processor):
+class UpdateCameraOffsetProcessor(Processor):
     '''Updates Camera offset based on position (Position) of the entity. Updated
     camera offset is necessary later for RenderProcessor component to correctly display
     the screen.
@@ -57,7 +60,7 @@ class UpdateCameraOffsetProcessor(esper.Processor):
         https://youtu.be/3zV2ewk-IGU.
         '''
 
-        for _, (position, camera) in self.world.get_components(components.Position, components.Camera):
+        for _, (position, camera) in self.world.get_components(Position, Camera):
 
             # Updates camera offset based on position of the Position (component that the camera follows).
 

@@ -1,12 +1,16 @@
 __all__ = ['NewResolveEntityCollisionsProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
 
 # Logger init
 logger = logging.getLogger(__name__)
-
 
 # Simple static resolution - cannot move into collidable object
 # PROS - simple and reliable
@@ -20,12 +24,12 @@ logger = logging.getLogger(__name__)
 #  - moving entity (FlagHasMoved) hits static entity ()
 # how to implement area that is causing damage such as Lava - CollisionDamageableProcessor + this processor must be skipped
 
-class NewResolveEntityCollisionsProcessor(esper.Processor):
+class NewResolveEntityCollisionsProcessor(Processor):
     ''' Process collisions stored in component NewFlagHasCollided and do not
     allow to overlap.
 
     Involved components:
-        -   NewCollidable
+        -   Position
         -   NewFlagHasCollided
 
     Related processors:
@@ -43,9 +47,8 @@ class NewResolveEntityCollisionsProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.collision_system.new_generate_entity_collisions_processor', 'NewGenerateEntityCollisionsProcessor')
-        ]
-
+        'new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -62,7 +65,7 @@ class NewResolveEntityCollisionsProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have collided with something
-        for ent, (position, flag_has_collided) in self.world.get_components(components.Position, components.NewFlagHasCollided):
+        for ent, (position, flag_has_collided) in self.world.get_components(Position, NewFlagHasCollided):
 
             logger.debug(f'({self.cycle}) - Entity {ent} - original position: [{position.x}, {position.y}]')
 
@@ -71,7 +74,6 @@ class NewResolveEntityCollisionsProcessor(esper.Processor):
             position.map = position.lastmap
 
             logger.debug(f'({self.cycle}) - Entity {ent} - new position: [{position.x}, {position.y}]')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to

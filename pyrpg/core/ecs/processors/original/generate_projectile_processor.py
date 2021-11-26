@@ -1,10 +1,24 @@
 __all__ = ['GenerateProjectileProcessor', 'PrepareProjectileProcessor', 'CreateEntityOnPositionProcessor']
 
 import pygame
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 
-class PrepareProjectileProcessor(esper.Processor):
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.has_score import HasScore
+from pyrpg.core.ecs.components.original.flag_create_from_factory import FlagCreateFromFactory
+from pyrpg.core.ecs.components.original.factory import Factory
+from pyrpg.core.ecs.components.original.flag_factory_depleted import FlagFactoryDepleted
+from pyrpg.core.ecs.components.original.damaging import Damaging
+from pyrpg.core.ecs.components.original.weapon import Weapon
+from pyrpg.core.ecs.components.original.container import Container
+
+class PrepareProjectileProcessor(Processor):
 
     def __init__(self):
         super().__init__()
@@ -16,16 +30,16 @@ class PrepareProjectileProcessor(esper.Processor):
     def process(self, *args, **kwargs):
 
         # Get entities capable of producing projectiles - HasWeapon, on the last attack frame RenderableModel
-        for ent, (has_weapon, renderable_model, position) in self.world.get_components(components.HasWeapon, components.RenderableModel, components.Position):
+        for ent, (has_weapon, renderable_model, position) in self.world.get_components(HasWeapon, RenderableModel, Position):
             
             # Check if Model is in the action status and last frame of the action is happening and there is some weapon actually in use
             if has_weapon.get_weapon_in_use() and has_weapon.get_generator_in_use() and renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action and renderable_model.is_action_frame:
 
                 # Collidable is optional component - entities who are not collidable can generate projectiles
-                collidable = self.world.try_component(ent, (components.Collidable))
+                collidable = self.world.try_component(ent, (Collidable))
 
                 # If entity has HasScore component then projectile should have it as well
-                score = self.world.has_component(ent, (components.HasScore))
+                score = self.world.has_component(ent, (HasScore))
 
                 # calculate position for the new projectile
                 (ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)
@@ -33,7 +47,7 @@ class PrepareProjectileProcessor(esper.Processor):
 
                 # Create component FlagCreateFromFactory and add it to Generator entity
                 self.world.add_component(has_weapon.get_generator_in_use(),
-                                        components.FlagCreateFromFactory(
+                                        FlagCreateFromFactory(
                                             position={'x' : pos_x, 'y' : pos_y, 'dir' : position.dir_name, 'map' : pos_map},
                                             adjust_col=True,
                                             parent=ent,
@@ -45,7 +59,7 @@ class PrepareProjectileProcessor(esper.Processor):
                 print(f'Component FlagCreateFromFactory created.')
 
 
-class CreateEntityOnPositionProcessor(esper.Processor):
+class CreateEntityOnPositionProcessor(Processor):
 
     __slots__ = ['create_entity_fnc']
 
@@ -60,7 +74,7 @@ class CreateEntityOnPositionProcessor(esper.Processor):
 
     def process(self, *args, **kwargs):
 
-        for ent, (factory, flag_create_from_factory) in self.world.get_components(components.Factory, components.FlagCreateFromFactory):
+        for ent, (factory, flag_create_from_factory) in self.world.get_components(Factory, FlagCreateFromFactory):
 
             # Prepare ID for the new entity
             id_str = f'ORIG_ID:{factory.prescription.get("id", "")}:SUFF_ID:{flag_create_from_factory.id_suffix}:PARENT_ENT:{flag_create_from_factory.parent}:FACT_ENT:{ent}:TS:{pygame.time.get_ticks()}'
@@ -78,7 +92,7 @@ class CreateEntityOnPositionProcessor(esper.Processor):
             # If position is passed in FlagCreateFromFactory, add the Position component to the new entity
             if flag_create_from_factory.position:
 
-                self.world.add_component(new_entity, components.Position(**flag_create_from_factory.position))
+                self.world.add_component(new_entity, Position(**flag_create_from_factory.position))
 
                 # If adjustment of the position needs to take into account collition zone of the newly generated entity
                 if flag_create_from_factory.adjust_col:
@@ -86,8 +100,8 @@ class CreateEntityOnPositionProcessor(esper.Processor):
                     # Try to adjust the position component of the new entity further. Might happen that new entity does
                     # not have collision component
                     try:
-                        new_entity_collidable = self.world.component_for_entity(new_entity, components.Collidable)
-                        new_entity_position = self.world.component_for_entity(new_entity, components.Position)
+                        new_entity_collidable = self.world.component_for_entity(new_entity, Collidable)
+                        new_entity_position = self.world.component_for_entity(new_entity, Position)
 
                         new_entity_position.x += int(new_entity_position.direction[0] * (new_entity_collidable.x + 1))
                         new_entity_position.y += int(new_entity_position.direction[1] * (new_entity_collidable.y + 1))
@@ -96,23 +110,23 @@ class CreateEntityOnPositionProcessor(esper.Processor):
                         pass
 
             # Remove the component flag_create_from_factory as entity was successfully generated
-            self.world.remove_component(ent, components.FlagCreateFromFactory)
+            self.world.remove_component(ent, FlagCreateFromFactory)
 
             # Count new entity to the total number of entities created by the Factory
             factory.current_units += 1
 
             # If there are no more entities to produce mark the generator that it is depleted
             if factory.max_units is not None and (factory.max_units <= factory.current_units):
-                self.world.add_component(ent, components.FlagFactoryDepleted())
+                self.world.add_component(ent, FlagFactoryDepleted())
                 print(f'Cannot generate further entities - factory depleted')
 
             # Add the score component if the parent had it
             if flag_create_from_factory.score:
-                self.world.add_component(new_entity, components.HasScore(delegate=flag_create_from_factory.parent))
+                self.world.add_component(new_entity, HasScore(delegate=flag_create_from_factory.parent))
 
             # If the new entity contains Damageble component add parent to it
             try:
-                new_entity_damaging = self.world.component_for_entity(new_entity, components.Damaging)
+                new_entity_damaging = self.world.component_for_entity(new_entity, Damaging)
                 new_entity_damaging.parent = flag_create_from_factory.parent
             except KeyError:
                 pass
@@ -121,7 +135,7 @@ class CreateEntityOnPositionProcessor(esper.Processor):
             print(f'Entity {new_entity} created. No of generated entities: {factory.current_units}. No of remaining units {factory.max_units - factory.current_units}')
 
 
-class GenerateProjectileProcessor(esper.Processor):
+class GenerateProjectileProcessor(Processor):
     ''' Generate projectiles
         
         - planned before all collision processors
@@ -144,14 +158,14 @@ class GenerateProjectileProcessor(esper.Processor):
         '''
 
         # Get entities capable of producing projectiles - HasWeapon, on the last attack frame RenderableModel
-        for ent, (has_weapon, renderable_model, position) in self.world.get_components(components.HasWeapon, components.RenderableModel, components.Position):
+        for ent, (has_weapon, renderable_model, position) in self.world.get_components(HasWeapon, RenderableModel, Position):
             
             # Check if Model is in the action status and last frame of the action is happening
             #if renderable_model.action == has_weapon.get_weapon_action_anim() and renderable_model.is_action_frame:
-            if renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action and renderable_model.is_action_frame:
+            if renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon).action and renderable_model.is_action_frame:
 
                 # Collidable is optional component - entities who are not collidable can generate projectiles
-                collidable = self.world.try_component(ent, (components.Collidable))
+                collidable = self.world.try_component(ent, (Collidable))
 
                 # Create an projectile - collision component is passed in order that the new projectile will not collide with generator entity
                 #has_weapon.create_projectile(ent, position, collidable)
@@ -159,8 +173,8 @@ class GenerateProjectileProcessor(esper.Processor):
                 # If no weapon ot generator do not create projectile
                 try:
                     # Get weapon component from the weapon
-                    weapon = self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon)
-                    factory = self.world.component_for_entity(has_weapon.get_generator_in_use(), components.Factory)
+                    weapon = self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon)
+                    factory = self.world.component_for_entity(has_weapon.get_generator_in_use(), Factory)
                 except KeyError:
                     return None
 
@@ -185,11 +199,11 @@ class GenerateProjectileProcessor(esper.Processor):
                     # calculate position for the new projectile
                     (ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)
                     (pos_x, pos_y, pos_map) = (int(position.x + (position.direction[0] * (ent_col_x + 30))), int(position.y + (position.direction[1] * (ent_col_y + 30))), position.map)
-                    self.world.add_component(new_entity, components.Position(x=pos_x, y=pos_y, dir=position.dir_name, map=pos_map))
+                    self.world.add_component(new_entity, Position(x=pos_x, y=pos_y, dir=position.dir_name, map=pos_map))
 
                     # Add container component
                     #self.world.add_component(new_entity, components.Container(contained_in=has_weapon))
-                    self.world.add_component(new_entity, components.Container(contained_in=factory))
+                    self.world.add_component(new_entity, Container(contained_in=factory))
 
                     factory.list_of_entities.add(new_entity)
                     print(f'Projectile {new_entity} created. List of projectiles {factory.list_of_entities}')

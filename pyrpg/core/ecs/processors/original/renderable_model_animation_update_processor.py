@@ -1,11 +1,16 @@
 __all__ = ['RenderableModelAnimationUpdateProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
 
 from .functions import filter_only_visible
 
-class RenderableModelAnimationUpdateProcessor(esper.Processor):
+class RenderableModelAnimationUpdateProcessor(Processor):
     ''' Shift the animation
         - only once on every displayed entity
     '''
@@ -22,10 +27,10 @@ class RenderableModelAnimationUpdateProcessor(esper.Processor):
         already_updated = set()
 
         # Iterate all camaeras
-        for cam, (camera) in self.world.get_component(components.Camera):
+        for cam, (camera) in self.world.get_component(Camera):
             
             # Get RenderableModels with Positions
-            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
     
                 # Call the update_frame function
                 if ent not in already_updated:

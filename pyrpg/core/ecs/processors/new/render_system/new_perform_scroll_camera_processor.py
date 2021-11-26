@@ -1,14 +1,18 @@
 __all__ = ['NewPerformScrollCameraProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.position import Position
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformScrollCameraProcessor(esper.Processor):
+class NewPerformScrollCameraProcessor(Processor):
     '''Updates Camera offset based on position (Position) of the entity. Updated
     camera offset is necessary later in render system to correctly display
     the screen.
@@ -58,7 +62,7 @@ class NewPerformScrollCameraProcessor(esper.Processor):
         https://youtu.be/3zV2ewk-IGU.
         '''
 
-        for _, (position, camera) in self.world.get_components(components.Position, components.Camera):
+        for _, (position, camera) in self.world.get_components(Position, Camera):
 
             # Updates camera offset based on position of the Position (component that the camera follows).
 

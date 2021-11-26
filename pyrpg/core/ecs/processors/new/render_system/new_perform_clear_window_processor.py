@@ -1,12 +1,14 @@
 __all__ = ['NewPerformClearWindowProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformClearWindowProcessor(esper.Processor):
+class NewPerformClearWindowProcessor(Processor):
     ''' For clearing of the game window at the beginning of every
     drawing cycle.
 

@@ -1,20 +1,30 @@
 __all__ = ['NewGenerateRenderDataFromParentProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.new.new_has_weapon import NewHasWeapon
+from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.new_render_data_from_parent import NewRenderDataFromParent
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGenerateRenderDataFromParentProcessor(esper.Processor):
+class NewGenerateRenderDataFromParentProcessor(Processor):
     ''' Adds/updates NewRenderPosition component on entities that 
     need to be rendered and do not have their own position component
     (because they are picked or used otherwise).
 
     Involved components:
         -   Position
+        -   RenderableModel
+        -   NewHasWeapon
+        -   NewWeaponInUse
         -   NewRenderDataFromParent
 
     Related processors:
@@ -29,7 +39,6 @@ class NewGenerateRenderDataFromParentProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
-
 
     def __init__(self):
         ''' Init the processor.
@@ -47,20 +56,19 @@ class NewGenerateRenderDataFromParentProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that are parents of WeaponInUse
-        for ent_parent, (position, renderable_model, has_weapon, weapon_in_use) in self.world.get_components(components.Position, components.RenderableModel, components.NewHasWeapon, components.NewWeaponInUse):
+        for ent_parent, (position, renderable_model, has_weapon, weapon_in_use) in self.world.get_components(Position, RenderableModel, NewHasWeapon, NewWeaponInUse):
 
             # Prepare render data for Weapon that is armed
             ent_weapon_in_use = has_weapon.weapons[weapon_in_use.type]["weapon"]
 
-            self.world.add_component(ent_weapon_in_use, components.NewRenderDataFromParent(x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
+            self.world.add_component(ent_weapon_in_use, NewRenderDataFromParent(x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
             logger.debug(f'({self.cycle}) - Entity {ent_weapon_in_use} gained render data from {ent_parent}.')
 
             # Prepare render data for Ammo that is on Weapon that is armed
             ent_ammo_in_use = has_weapon.weapons[weapon_in_use.type]["generator"]
 
-            self.world.add_component(ent_ammo_in_use, components.NewRenderDataFromParent(x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
+            self.world.add_component(ent_ammo_in_use, NewRenderDataFromParent(x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
             logger.debug(f'({self.cycle}) - Entity {ent_ammo_in_use} gained render data from {ent_parent}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

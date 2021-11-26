@@ -1,3 +1,4 @@
+"""
 from  pyrpg.functions import translate # for translation of entity alias to entity id
 
 #####################################################################
@@ -280,3 +281,4 @@ __all__ = [
     #'Container',
 
     ]
+"""

@@ -1,9 +1,12 @@
 __all__ = ['RenderBackgroundProcessor', 'RenderCameraBackgroundProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components	
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class RenderCameraBackgroundProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+
+class RenderCameraBackgroundProcessor(Processor):
     def __init__(self, clear_color=(0, 0, 0), debug=False):
 
         super().__init__()
@@ -17,7 +20,7 @@ class RenderCameraBackgroundProcessor(esper.Processor):
     def process(self, *args, **kwargs):
         
         # Clear the game camera window surfaces
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
             camera.screen.fill(self.clear_color)
     
     def pre_save(self):
@@ -33,7 +36,7 @@ class RenderCameraBackgroundProcessor(esper.Processor):
         pass
 
 
-class RenderBackgroundProcessor(esper.Processor):
+class RenderBackgroundProcessor(Processor):
     def __init__(self, window, clear_color=(0, 0, 0), debug=False):
 
         super().__init__()

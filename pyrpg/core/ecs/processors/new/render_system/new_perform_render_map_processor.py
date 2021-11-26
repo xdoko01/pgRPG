@@ -1,15 +1,20 @@
 __all__ = ['NewPerformRenderMapProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.camera import Camera
 
 from pyrpg.core.config.config import TILE_RES
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformRenderMapProcessor(esper.Processor):
+class NewPerformRenderMapProcessor(Processor):
     ''' For rendering maps on camera screen surfaces.
 
     Input parameters:
@@ -61,7 +66,7 @@ class NewPerformRenderMapProcessor(esper.Processor):
         # Find the entity with Camera and use its position
         # position - position and map of the object that is in camera's focus
         # camera - camera component itself
-        for _, (position, camera) in self.world.get_components(components.Position, components.Camera):
+        for _, (position, camera) in self.world.get_components(Position, Camera):
 
             # Get map that is on the object in camera's focus
             map = self.maps.get(position.map)
@@ -71,7 +76,6 @@ class NewPerformRenderMapProcessor(esper.Processor):
 
                 for x, y, tile in map.get_tile_images_by_rect(layer, camera.map_screen_rect):
                     camera.screen.blit(tile, camera.apply((x * TILE_RES, y * TILE_RES)))
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

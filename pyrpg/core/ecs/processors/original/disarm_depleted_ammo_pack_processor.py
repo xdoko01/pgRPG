@@ -1,10 +1,19 @@
 __all__ = ['DisarmDepletedAmmoPackProcessor']
 
-import pyrpg.core.ecs.esper as esper    # for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class DisarmDepletedAmmoPackProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.ammo_pack import AmmoPack
+from pyrpg.core.ecs.components.original.factory import Factory
+from pyrpg.core.ecs.components.original.flag_factory_depleted import FlagFactoryDepleted
+from pyrpg.core.ecs.components.original.flag_ammo_pack_armed import FlagAmmoPackArmed
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
+
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class DisarmDepletedAmmoPackProcessor(Processor):
     ''' Aim of this processor is to remove reference on AmmoPack entity
     from the HasWeapon component. Just deleting the AmmoPack entity using
     RemoveDepletedAmmoPack processor is not enough, because that would still
@@ -23,10 +32,10 @@ class DisarmDepletedAmmoPackProcessor(esper.Processor):
 
     def process(self, *args, **kwargs):
 
-        for ent, (ammo_pack, factory, flag_factory_depleted, flag_ammo_pack_armed) in self.world.get_components(components.AmmoPack, components.Factory, components.FlagFactoryDepleted, components.FlagAmmoPackArmed):
+        for ent, (ammo_pack, factory, flag_factory_depleted, flag_ammo_pack_armed) in self.world.get_components(AmmoPack, Factory, FlagFactoryDepleted, FlagAmmoPackArmed):
             
             # Get HasWeapon component from armed entity stored in FlagAmmoPackArmed component
-            has_weapon = self.world.component_for_entity(flag_ammo_pack_armed.armed_entity, components.HasWeapon)
+            has_weapon = self.world.component_for_entity(flag_ammo_pack_armed.armed_entity, HasWeapon)
 
             # Remove it from generator position - set to none
             has_weapon.weapons.get(ammo_pack.weapon).update({'generator' : None})
@@ -35,7 +44,7 @@ class DisarmDepletedAmmoPackProcessor(esper.Processor):
             self.ammo_pack_event_queue.append(disarmed_event)
 
             # Remove the FlagAmmoPackArmed component
-            self.world.remove_component(ent, components.FlagAmmoPackArmed)
+            self.world.remove_component(ent, FlagAmmoPackArmed)
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

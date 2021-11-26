@@ -1,12 +1,18 @@
 __all__ = ['MovementProcessor', 'LinearMovementProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 import pygame	# for pygame.time.get_ticks()
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.linear_motion import LinearMotion
+from pyrpg.core.ecs.components.original.motion import Motion
 
 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
 
-class LinearMovementProcessor(esper.Processor):
+class LinearMovementProcessor(Processor):
     '''
     '''
 
@@ -29,7 +35,7 @@ class LinearMovementProcessor(esper.Processor):
         '''
         '''
 
-        for _, (position, linear_motion, motion) in self.world.get_components(components.Position, components.LinearMotion, components.Motion):
+        for _, (position, linear_motion, motion) in self.world.get_components(Position, LinearMotion, Motion):
 
             # Just set dx, dy on the Motion component based on position direction and speed
             if position.direction == (1,0): (motion.dx, motion.dy) = (linear_motion.speed, 0)
@@ -37,7 +43,7 @@ class LinearMovementProcessor(esper.Processor):
             if position.direction == (0,1): (motion.dx, motion.dy) = (0, linear_motion.speed)
             if position.direction == (0,-1): (motion.dx, motion.dy) = (0, -linear_motion.speed)
 
-class MovementProcessor(esper.Processor):
+class MovementProcessor(Processor):
     ''' Updates Position component (position of an entity on the map) based on Motion
     component (movement).
 
@@ -93,7 +99,7 @@ class MovementProcessor(esper.Processor):
         # Get the time of processing of the frame from the game main loop in seconds
         dt = kwargs.get('dt') / 1000
 
-        for _, (position, motion) in self.world.get_components(components.Position, components.Motion):
+        for _, (position, motion) in self.world.get_components(Position, Motion):
 
             # Motion can be disabled/enabled from script or brain by command
             if motion.enabled:

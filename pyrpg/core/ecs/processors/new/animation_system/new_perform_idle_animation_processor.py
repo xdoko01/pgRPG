@@ -1,17 +1,25 @@
 __all__ = ['NewPerformIdleAnimationProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.new.new_flag_do_attack import NewFlagDoAttack
+from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.new_flag_do_move import NewFlagDoMove
+
+# Support functions
 from ..functions import filter_only_visible
-
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformIdleAnimationProcessor(esper.Processor):
+class NewPerformIdleAnimationProcessor(Processor):
     ''' Sets movement animation for all RenderableModel entities. This is later overwritten by other 
     Animation processors.
 
@@ -31,8 +39,8 @@ class NewPerformIdleAnimationProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.command_system.new_perform_command_processor', 'NewPerformCommandProcessor')
-        ]
+        'new.command_system.new_perform_command_processor:NewPerformCommandProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -49,10 +57,10 @@ class NewPerformIdleAnimationProcessor(esper.Processor):
         self.cycle += 1
 
         # Iterate all cameras
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Search for entities that contain Position + RenderableModel and at the same time do not have NewFlagDoMove and NewFlagDoAttack component
-            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(components.Position, components.RenderableModel), exclude=(components.NewFlagDoMove, components.NewFlagDoAttack, components.NewWeaponInUse))):
+            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(Position, RenderableModel), exclude=(NewFlagDoMove, NewFlagDoAttack, NewWeaponInUse))):
 
                 # Update to proper animation
                 renderable_model.set_action('idle')

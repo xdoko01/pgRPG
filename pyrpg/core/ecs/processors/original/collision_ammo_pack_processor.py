@@ -1,11 +1,22 @@
 __all__ = ['CollisionAmmoPackProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
+# Used components
+from pyrpg.core.ecs.components.original.ammo_pack import AmmoPack
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.factory import Factory
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
+from pyrpg.core.ecs.components.original.flag_ammo_pack_armed import FlagAmmoPackArmed
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.flag_factory_depleted import FlagFactoryDepleted
 
-class CollisionAmmoPackProcessor(esper.Processor):
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class CollisionAmmoPackProcessor(Processor):
     def __init__(self, ammo_pack_event_queue):
         super().__init__()
         self.ammo_pack_event_queue = ammo_pack_event_queue
@@ -15,19 +26,19 @@ class CollisionAmmoPackProcessor(esper.Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        for ent, (ammo_pack, collision, factory) in self.world.get_components(components.AmmoPack, components.Collidable, components.Factory):
+        for ent, (ammo_pack, collision, factory) in self.world.get_components(AmmoPack, Collidable, Factory):
 
             # Process everything that collided with AmmoPack entity
             for col_event_entity in collision.collision_events.copy():
                     
                     # If entity (that have collided with AmmoPack) can wear weapons items (HasWeapon)
-                    if self.world.has_component(col_event_entity, components.HasWeapon):
+                    if self.world.has_component(col_event_entity, HasWeapon):
                         
                         # Get the HasWeapon component of the entity that picked up AmmoPack
-                        col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, components.HasWeapon)
+                        col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, HasWeapon)
                         
                         # Get the Collidable component of the entity that picked up AmmoPack - in order to remove the collision
-                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, Collidable)
 
                         # Get the generator armed currently on the weapon type
                         current_generator_entity = col_event_entity_has_weapon.weapons.get(ammo_pack.weapon).get('generator')
@@ -38,14 +49,14 @@ class CollisionAmmoPackProcessor(esper.Processor):
                             col_event_entity_has_weapon.weapons[ammo_pack.weapon]['generator'] = ent
 
                             # Add FlagAmmoPackArmed component refering to entity with HasWeapon component
-                            self.world.add_component(ent, components.FlagAmmoPackArmed(armed_entity=col_event_entity))
+                            self.world.add_component(ent, FlagAmmoPackArmed(armed_entity=col_event_entity))
 
                             # Remove Position component from the AmmoPack so that it is not displayable on the map - ammo_pack is picked
-                            self.world.remove_component(ent, components.Position) 
+                            self.world.remove_component(ent, Position) 
 
                             try:
                                 # Remove Camera component from the AmmoPack so that the screen disappears - AmmoPack is picked
-                                self.world.remove_component(ent, components.Camera)
+                                self.world.remove_component(ent, Camera)
                             except KeyError:
                                 pass
 
@@ -57,13 +68,13 @@ class CollisionAmmoPackProcessor(esper.Processor):
                             col_event_entity_coll.collision_events.remove(ent)
 
                             # Report that AmmoPack was picked - generate event
-                            weapon_event = event.Event('AMMO_PACK_ARMED', ent, col_event_entity, params={'ammo_pack' : ent, 'picker' : col_event_entity})
+                            weapon_event = Event('AMMO_PACK_ARMED', ent, col_event_entity, params={'ammo_pack' : ent, 'picker' : col_event_entity})
                             self.ammo_pack_event_queue.append(weapon_event)
 
                         # If same AmmoPack is picked up as already armed on the weapon, add projectiles
-                        elif self.world.component_for_entity(current_generator_entity, components.AmmoPack).type == ammo_pack.type:
+                        elif self.world.component_for_entity(current_generator_entity, AmmoPack).type == ammo_pack.type:
                             
-                            factory_original_generator = self.world.component_for_entity(current_generator_entity, components.Factory)
+                            factory_original_generator = self.world.component_for_entity(current_generator_entity, Factory)
                             if factory_original_generator.max_units and factory.max_units:
                                 factory_original_generator.max_units += (factory.max_units - factory.current_units)
                                 print(f'New Max Units value {factory_original_generator.max_units}')
@@ -72,7 +83,7 @@ class CollisionAmmoPackProcessor(esper.Processor):
                             
 
                             # Mark the AmmoPack as depleted and hence for removal
-                            self.world.add_component(ent, components.FlagFactoryDepleted())
+                            self.world.add_component(ent, FlagFactoryDepleted())
 
                             # Remove the col_event_entity from HasWeapon entity
                             collision.collision_events.remove(col_event_entity)
@@ -81,6 +92,6 @@ class CollisionAmmoPackProcessor(esper.Processor):
                             col_event_entity_coll.collision_events.remove(ent)
 
                             # Report that AmmoPack was picked - generate event
-                            weapon_event = event.Event('AMMO_PACK_ARMED', ent, col_event_entity, params={'ammo_pack' : ent, 'picker' : col_event_entity})
+                            weapon_event = Event('AMMO_PACK_ARMED', ent, col_event_entity, params={'ammo_pack' : ent, 'picker' : col_event_entity})
                             self.ammo_pack_event_queue.append(weapon_event)
 

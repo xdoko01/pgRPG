@@ -1,20 +1,32 @@
 __all__ = ['NewPerformPickupProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.new_has_inventory import NewHasInventory
+from pyrpg.core.ecs.components.new.new_flag_was_picked_by import NewFlagWasPickedBy
+from pyrpg.core.ecs.components.new.new_flag_has_picked import NewFlagHasPicked
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_pick_entity import NewFlagIsAboutToPickEntity
+
+# For creation of events
+from pyrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformPickupProcessor(esper.Processor):
+class NewPerformPickupProcessor(Processor):
     ''' Detects entities that are about to be picked and performs
     the actual pickup if the picker is capable.
 
     Involved components:
-        -   Inventory
+        -   Position
+        -   Camera
+        -   NewHasInventory
         -   NewFlagWasPickedBy
         -   NewFlagHasPicked
         -   NewFlagIsAboutToPickEntity
@@ -36,9 +48,8 @@ class NewPerformPickupProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.pickup_system.new_generate_pickup_processor', 'NewGeneratePickupProcessor')
-        ]
-
+        'new.pickup_system.new_generate_pickup_processor:NewGeneratePickupProcessor'
+    ]
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -59,32 +70,31 @@ class NewPerformPickupProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have Inventory and NewFlagIsAboutToPickEntity - those are candidates for successful pickers
-        for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(components.NewHasInventory, components.NewFlagIsAboutToPickEntity):
+        for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(NewHasInventory, NewFlagIsAboutToPickEntity):
 
             # Add the entity into the NewHasInventory inventory set
             has_inventory.inventory.add(flag_is_about_to_pick_entity.entity_for_pickup)
 
             # Remove Position component from the item so that it is not displayable on the map - item is picked
-            self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, components.Position) 
+            self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, Position) 
 
             # Remove Camera component from the item so that the screen disappears - item is picked
             try:
-                self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, components.Camera) 
+                self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, Camera) 
             except KeyError:
                 pass
 
             # Assign NewFlagWasPickedBy component to the picked entity
-            self.world.add_component(flag_is_about_to_pick_entity.entity_for_pickup, components.NewFlagWasPickedBy(picker=ent_picker))
+            self.world.add_component(flag_is_about_to_pick_entity.entity_for_pickup, NewFlagWasPickedBy(picker=ent_picker))
             logger.debug(f'({self.cycle}) - Entity {ent_picker} has picked entity {flag_is_about_to_pick_entity.entity_for_pickup}.')
 
             # Assign NewFlagHasPicked component to the picker entity
-            self.world.add_component(ent_picker, components.NewFlagHasPicked(entity=flag_is_about_to_pick_entity.entity_for_pickup))
+            self.world.add_component(ent_picker, NewFlagHasPicked(entity=flag_is_about_to_pick_entity.entity_for_pickup))
             logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_pick_entity.entity_for_pickup} was picked by entity {ent_picker}.')
 
             # Report that item was picked up - generate event
-            pickup_event = event.Event('ITEM_PICKUP', flag_is_about_to_pick_entity.entity_for_pickup, ent_picker, params={'item' : flag_is_about_to_pick_entity.entity_for_pickup, 'picker' : ent_picker})
+            pickup_event = Event('ITEM_PICKUP', flag_is_about_to_pick_entity.entity_for_pickup, ent_picker, params={'item' : flag_is_about_to_pick_entity.entity_for_pickup, 'picker' : ent_picker})
             self.add_event_fnc(pickup_event)
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

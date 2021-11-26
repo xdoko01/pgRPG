@@ -2,7 +2,7 @@
 '''
 
 import pyrpg.core.engine as engine # To reference the world 
-import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.position import Position # To work with components in commands (remove search add ...)
 from .new_move_add import cmd_new_move_add
 import math # for calculation of square root move_to
 
@@ -23,7 +23,7 @@ def cmd_new_move_to(*args, **kwargs):
     ty = kwargs.get("y", None)
 
     # Get the coordinate of the entity and the target 
-    position = engine.world.component_for_entity(entity, components.Position)
+    position = engine.world.component_for_entity(entity, Position)
 
     sign = lambda x: 1 if x>0 else (-1 if x<0 else 0)
 

@@ -1,9 +1,13 @@
 __all__ = ['CollisionCorrectorProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CollisionCorrectorProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.position import Position
+
+class CollisionCorrectorProcessor(Processor):
     def __init__(self):
         super().__init__()
 
@@ -12,7 +16,7 @@ class CollisionCorrectorProcessor(esper.Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        for ent, (collision, position) in self.world.get_components(components.Collidable, components.Position):
+        for ent, (collision, position) in self.world.get_components(Collidable, Position):
             
             # If some collision occured, the collision_event set is not empty
             if collision.collision_events:

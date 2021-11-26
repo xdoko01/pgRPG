@@ -1,14 +1,17 @@
 __all__ = ['NewRemoveFlagWasArmedAsWeaponByProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_was_armed_as_weapon_by import NewFlagWasArmedAsWeaponBy
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRemoveFlagWasArmedAsWeaponByProcessor(esper.Processor):
+class NewRemoveFlagWasArmedAsWeaponByProcessor(Processor):
     ''' Removes the flag that the entity was armed as a weapon.
 
     Involved components:
@@ -29,9 +32,8 @@ class NewRemoveFlagWasArmedAsWeaponByProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.arm_weapon_system.new_perform_arm_weapon_processor', 'NewPerformArmWeaponProcessor')
-        ]
-
+        'new.arm_weapon_system.new_perform_arm_weapon_processor:NewPerformArmWeaponProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -47,11 +49,10 @@ class NewRemoveFlagWasArmedAsWeaponByProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagWasArmedAsWeaponBy):
+        for ent, (_) in self.world.get_components(NewFlagWasArmedAsWeaponBy):
 
-            self.world.remove_component(ent, components.NewFlagWasArmedAsWeaponBy)
+            self.world.remove_component(ent, NewFlagWasArmedAsWeaponBy)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagWasArmedAsWeaponBy" was removed.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

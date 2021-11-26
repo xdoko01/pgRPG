@@ -2,6 +2,6 @@
 	"id" : "darkmale",
 	"templates" : ["character_model"],
 	"components" : [
-		{"type" : "RenderableModel", "params" : {"model" : "darkmale.json"}}		
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "darkmale.json"}}		
 	]
 }

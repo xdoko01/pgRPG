@@ -1,9 +1,13 @@
 __all__ = ['CollisionDeletionProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CollisionDeletionProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.delete_on_collision import DeleteOnCollision
+from pyrpg.core.ecs.components.original.collidable import Collidable
+
+class CollisionDeletionProcessor(Processor):
 
     __slots__ = ['remove_entity_fnc']
 
@@ -19,7 +23,7 @@ class CollisionDeletionProcessor(esper.Processor):
 
     def process(self, *args, **kwargs):
 
-        for ent, (delete_on_collision, collision) in self.world.get_components(components.DeleteOnCollision, components.Collidable):
+        for ent, (delete_on_collision, collision) in self.world.get_components(DeleteOnCollision, Collidable):
 
             # If entity has collided in this loop cycle
             if collision.has_collided:

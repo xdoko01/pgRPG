@@ -1,9 +1,12 @@
 __all__ = ['RemoveFlagAddScoreProcessor']
 
-import pyrpg.core.ecs.esper as esper    # for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class RemoveFlagAddScoreProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.flag_add_score import FlagAddScore
+
+class RemoveFlagAddScoreProcessor(Processor):
 
 
     def __init__(self):
@@ -16,9 +19,9 @@ class RemoveFlagAddScoreProcessor(esper.Processor):
 
     def process(self, *args, **kwargs):
 
-        for ent, (_) in self.world.get_components(components.FlagAddScore):
+        for ent, (_) in self.world.get_components(FlagAddScore):
 
-            self.world.remove_component(ent, components.FlagAddScore)
+            self.world.remove_component(ent, FlagAddScore)
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to

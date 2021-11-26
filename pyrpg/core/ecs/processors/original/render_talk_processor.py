@@ -1,9 +1,15 @@
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.original.can_talk import CanTalk
 
 from .functions import filter_only_visible # for filtering only entities with position on the cameras
 
-class RenderTalkProcessor2(esper.Processor):
+class RenderTalkProcessor2(Processor):
     ''' Draws the text bubbles for the entites usning Bitmap font
 
     It draws only those bubbles that are displayable on the screen
@@ -60,10 +66,10 @@ class RenderTalkProcessor2(esper.Processor):
         '''
 
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Blit all Texts that are entities saying (CanTalk + Position component)
-            for _, (position, can_talk) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk)):
+            for _, (position, can_talk) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, CanTalk)):
 
                 # If there is something to say
                 if can_talk.text:
@@ -102,7 +108,7 @@ class RenderTalkProcessor2(esper.Processor):
         self.window = window
 
 
-class RenderTalkProcessor(esper.Processor):
+class RenderTalkProcessor(Processor):
     ''' Draws the text bubbles for the entites
 
     It draws only those bubbles that are displayable on the screen
@@ -158,14 +164,14 @@ class RenderTalkProcessor(esper.Processor):
         implementation of scrolling https://youtu.be/3zV2ewk-IGU.
         '''
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             #####
             # Blit text bubbles
             #####
 
             # Blit all Texts that are entities saying (CanTalk + Position component)
-            for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
+            for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, CanTalk, RenderableModel)):
 
                 # If there is something to say
                 if can_talk.text:

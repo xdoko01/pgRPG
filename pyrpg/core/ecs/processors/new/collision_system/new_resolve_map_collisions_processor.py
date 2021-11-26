@@ -1,15 +1,20 @@
 __all__ = ['NewResolveMapCollisionsProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_collidable import NewCollidable
 
 from pyrpg.core.config.config import TILE_RES
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewResolveMapCollisionsProcessor(esper.Processor):
+class NewResolveMapCollisionsProcessor(Processor):
     ''' Resolve collisions with the map so that entities are
     not crossing the collision tiles.
 
@@ -28,9 +33,8 @@ class NewResolveMapCollisionsProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.collision_system.new_resolve_entity_collision_processor', 'NewResolveEntityCollisionsProcessor')
-        ]
-
+        'new.collision_system.new_resolve_entity_collision_processor:NewResolveEntityCollisionsProcessor'
+    ]
 
     def __init__(self, maps):
         ''' Init the processor.
@@ -54,7 +58,7 @@ class NewResolveMapCollisionsProcessor(esper.Processor):
         self.cycle += 1
 
         # Do collision against the map 
-        for ent_moved, (coll_moved, pos_moved) in self.world.get_components(components.NewCollidable, components.Position):
+        for ent_moved, (coll_moved, pos_moved) in self.world.get_components(NewCollidable, Position):
             
             # Get the map using the global dict of maps
             collision_map = self.maps.get(pos_moved.map)

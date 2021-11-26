@@ -1,14 +1,17 @@
 __all__ = ['NewRemoveFlagIsAboutToBeTeleportedByProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_be_teleported_by import NewFlagIsAboutToBeTeleportedBy
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRemoveFlagIsAboutToBeTeleportedByProcessor(esper.Processor):
+class NewRemoveFlagIsAboutToBeTeleportedByProcessor(Processor):
     ''' Removes the flag that the item has been considered for teleportation
     at the end of the cycle.
 
@@ -30,9 +33,8 @@ class NewRemoveFlagIsAboutToBeTeleportedByProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.teleport_system.new_perform_teleportation_processor', 'NewPerformTeleportationProcessor')
+        'new.teleport_system.new_perform_teleportation_processor:NewPerformTeleportationProcessor'
     ]
-
 
     def __init__(self):
         ''' Init the processor.
@@ -49,11 +51,10 @@ class NewRemoveFlagIsAboutToBeTeleportedByProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagIsAboutToBeTeleportedBy):
+        for ent, (_) in self.world.get_components(NewFlagIsAboutToBeTeleportedBy):
 
-            self.world.remove_component(ent, components.NewFlagIsAboutToBeTeleportedBy)
+            self.world.remove_component(ent, NewFlagIsAboutToBeTeleportedBy)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagIsAboutToBeTeleportedBy" was removed.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

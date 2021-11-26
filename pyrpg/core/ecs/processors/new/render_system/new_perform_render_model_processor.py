@@ -1,15 +1,21 @@
 __all__ = ['NewPerformRenderModelProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformRenderModelProcessor(esper.Processor):
+class NewPerformRenderModelProcessor(Processor):
     ''' Draws the entities in the world.
 
     It draws only those entities that are displayable on the screen
@@ -56,13 +62,11 @@ class NewPerformRenderModelProcessor(esper.Processor):
         self.cycle += 1
 
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Blit all the Entities that have Renderable and Position components + only visible entities + are not picked up
-            for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
-
+            for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
                 camera.screen.blit(renderable.get_current_frame(position.dir_name), camera.apply(renderable.topleft((position.x, position.y))))
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

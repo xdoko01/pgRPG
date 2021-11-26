@@ -1,16 +1,23 @@
 __all__ = ['NewPerformMovementProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 import pygame	# for pygame.time.get_ticks()
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_movable import NewMovable
+from pyrpg.core.ecs.components.new.new_flag_do_move import NewFlagDoMove
+from pyrpg.core.ecs.components.new.new_flag_do_attack import NewFlagDoAttack
 
 # Logger init
 logger = logging.getLogger(__name__)
 
 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
 
-class NewPerformMovementProcessor(esper.Processor):
+class NewPerformMovementProcessor(Processor):
     ''' Updates Position component (position of an entity on the map) based on NewMovable
     component (movement).
 
@@ -19,19 +26,21 @@ class NewPerformMovementProcessor(esper.Processor):
         -   stand_delay_ms
 
     Involved components:
-        -	Position
-        -	NewMovable
+        -   Position
+        -   NewMovable
+        -   NewFlagDoMove
+        -   NewFlagDoAttack
 
     Related processors:
         -   NewPerformCommandProcessor - move commands generate movement
 
     What if this processor is disabled?
-        -	movements on the map will not work
+        -   movements on the map will not work
 
     Where the processor should be planned?
-        -	before CollisionXXXProcessors - collisions are processed based on final movements
-        -	before RenderXXXProcessor - camera must be updated before graphics is drawn
-        -	after CommandProcessor - commands generate changes in positions
+        -   before CollisionXXXProcessors - collisions are processed based on final movements
+        -   before RenderXXXProcessor - camera must be updated before graphics is drawn
+        -   after CommandProcessor - commands generate changes in positions
     '''
 
     __slots__ = ['debug']
@@ -64,7 +73,7 @@ class NewPerformMovementProcessor(esper.Processor):
         dt = kwargs.get('dt') / 1000
 
         # Do not move in case that attack action is in progress - attack has priority over movement
-        for _, (position, movable, flag_do_move) in self.world.get_components_ex(components.Position, components.NewMovable, components.NewFlagDoMove, exclude=components.NewFlagDoAttack):
+        for _, (position, movable, flag_do_move) in self.world.get_components_ex(Position, NewMovable, NewFlagDoMove, exclude=NewFlagDoAttack):
 
             # Calculate the final move vector only in case no vector is provided and hence needs to be calculated from the moves
             if flag_do_move.vector is None: flag_do_move.calc_vector()

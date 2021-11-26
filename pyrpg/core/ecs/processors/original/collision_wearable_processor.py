@@ -1,11 +1,19 @@
 __all__ = ['CollisionWearableProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
+# Used components
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.wearable import Wearable
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.can_wear import CanWear
 
-class CollisionWearableProcessor(esper.Processor):
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class CollisionWearableProcessor(Processor):
     def __init__(self, wearable_event_queue):
         super().__init__()
         self.wearable_event_queue = wearable_event_queue
@@ -15,19 +23,19 @@ class CollisionWearableProcessor(esper.Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        for ent, (item, collision) in self.world.get_components(components.Wearable, components.Collidable):
+        for ent, (item, collision) in self.world.get_components(Wearable, Collidable):
 
             # Process everything that collided with wearable entity
             for col_event_entity in collision.collision_events.copy():
                     
                     # If entity (that have collided with wearable) can wear items (CanWear)
-                    if self.world.has_component(col_event_entity, components.CanWear):
+                    if self.world.has_component(col_event_entity, CanWear):
                         
                         # Get the CanWear component of the entity that picked up Wearable
-                        col_event_entity_can_wear = self.world.component_for_entity(col_event_entity, components.CanWear) 
+                        col_event_entity_can_wear = self.world.component_for_entity(col_event_entity, CanWear) 
                         
                         # Get the Collidable component of the entity that picked up Wearable - in order to remove the collision
-                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, Collidable)
 
                         # Add wearable to the CanWear wearables - only in case that the slot for Wearable is available
                         if not col_event_entity_can_wear.wearables.get(item.bodypart, None):
@@ -35,9 +43,9 @@ class CollisionWearableProcessor(esper.Processor):
 
                             try:
                                 # Remove Position component from the wearable so that it is not displayable on the map - wearable is picked
-                                self.world.remove_component(ent, components.Position) 
+                                self.world.remove_component(ent, Position) 
                                 # Remove Camera component from the wearable so that the screen disappears - wearable is picked
-                                self.world.remove_component(ent, components.Camera) 
+                                self.world.remove_component(ent, Camera) 
                             except KeyError:
                                 pass
 
@@ -48,5 +56,5 @@ class CollisionWearableProcessor(esper.Processor):
                             col_event_entity_coll.collision_events.remove(ent)
 
                             # Report that item was weared - generate event
-                            wear_event = event.Event('WEARABLE_WEARED', ent, col_event_entity, params={'wearable' : ent, 'picker' : col_event_entity})
+                            wear_event = Event('WEARABLE_WEARED', ent, col_event_entity, params={'wearable' : ent, 'picker' : col_event_entity})
                             self.wearable_event_queue.append(wear_event)

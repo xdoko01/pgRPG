@@ -2,9 +2,17 @@ __all__ = ['NewGenerateEntityCollisionsProcessor']
 
 import logging
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_collidable import NewCollidable
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
+
+# For creation of events
+from pyrpg.core.events.event import Event
 
 from collections import namedtuple # for representation of vectors
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
@@ -16,11 +24,13 @@ sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
 
 Vect = namedtuple('Vect', ['x', 'y'])
 
-class NewGenerateEntityCollisionsProcessor(esper.Processor):
+class NewGenerateEntityCollisionsProcessor(Processor):
     ''' Detects collisions amongst objects visible on camera and stores them
     into the component NewFlagHasCollided.
 
     Involved components:
+        -   Camera
+        -   Position
         -   NewCollidable
         -   NewFlagHasCollided
 
@@ -38,9 +48,8 @@ class NewGenerateEntityCollisionsProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.movement_system.new_perform_movement_processor', 'NewPerformMovementProcessor')
-        ]
-
+        'new.movement_system.new_perform_movement_processor:NewPerformMovementProcessor'
+    ]
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -60,16 +69,16 @@ class NewGenerateEntityCollisionsProcessor(esper.Processor):
         self.cycle += 1
 
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities that have Position, NewCollidable + are on some camera
-            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewCollidable)):
+            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewCollidable)):
 
                 # Store the collisions
                 collisions = set()
 
                 # Get all the entities again
-                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(components.Position, components.NewCollidable)):
+                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewCollidable)):
 
                     # If entity is to ignore
                     if coll_moved.ignore_collision_with == ent_other: continue
@@ -122,14 +131,13 @@ class NewGenerateEntityCollisionsProcessor(esper.Processor):
                         logger.debug(f'({self.cycle}) - Correction_vect = {correction_vect}')
 
                         # Report that entity collision occured - generate event
-                        self.add_event_fnc(event.Event('COLLISION', ent_moved, ent_other, params={'entity1' : ent_moved, 'entity2' : ent_other}))
+                        self.add_event_fnc(Event('COLLISION', ent_moved, ent_other, params={'entity1' : ent_moved, 'entity2' : ent_other}))
                         logger.debug(f'({self.cycle}) - Collision event between {ent_moved} and {ent_other} has been queued.')
 
                 # Create new NewFlagHasCollided component for ent_moved
                 if collisions: 
-                    self.world.add_component(ent_moved, components.NewFlagHasCollided(collisions=collisions))
+                    self.world.add_component(ent_moved, NewFlagHasCollided(collisions=collisions))
                     logger.debug(f'({self.cycle}) - Entity {ent_moved} has collided with {collisions}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -271,7 +271,9 @@ class Quest:
 		# Create entities in the world
 		try:
 			for entity in self.entities:
-				engine._create_entity(entity)
+				#engine._create_entity(entity)
+				engine.create_entity(entity)
+
 		except ValueError:
 			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
 			raise ValueError

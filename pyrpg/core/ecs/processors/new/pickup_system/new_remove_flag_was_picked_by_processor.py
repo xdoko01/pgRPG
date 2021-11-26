@@ -1,14 +1,17 @@
 __all__ = ['NewRemoveFlagWasPickedByProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_was_picked_by import NewFlagWasPickedBy
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRemoveFlagWasPickedByProcessor(esper.Processor):
+class NewRemoveFlagWasPickedByProcessor(Processor):
     ''' Removes the flag that the item was picked.
 
     Involved components:
@@ -29,9 +32,8 @@ class NewRemoveFlagWasPickedByProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.pickup_system.new_perform_pickup_processor', 'NewPerformPickupProcessor')
-        ]
-
+        'new.pickup_system.new_perform_pickup_processor:NewPerformPickupProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -47,11 +49,10 @@ class NewRemoveFlagWasPickedByProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagWasPickedBy):
+        for ent, (_) in self.world.get_components(NewFlagWasPickedBy):
 
-            self.world.remove_component(ent, components.NewFlagWasPickedBy)
+            self.world.remove_component(ent, NewFlagWasPickedBy)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagWasPickedBy" was removed.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

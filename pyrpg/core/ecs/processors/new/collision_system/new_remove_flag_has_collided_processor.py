@@ -1,13 +1,17 @@
 __all__ = ['NewRemoveFlagHasCollidedProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper    # for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewRemoveFlagHasCollidedProcessor(esper.Processor):
+class NewRemoveFlagHasCollidedProcessor(Processor):
     ''' Removes NewFlagHasCollided flag after the cycle.
 
     Involved components:
@@ -26,8 +30,8 @@ class NewRemoveFlagHasCollidedProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.collision_system.new_generate_entity_collisions_processor','NewGenerateEntityCollisionsProcessor')
-        ]
+        'new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -43,9 +47,9 @@ class NewRemoveFlagHasCollidedProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagHasCollided):
+        for ent, (_) in self.world.get_components(NewFlagHasCollided):
 
-            self.world.remove_component(ent, components.NewFlagHasCollided)
+            self.world.remove_component(ent, NewFlagHasCollided)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagHasCollided" was removed.')
 
     def pre_save(self):

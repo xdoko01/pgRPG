@@ -1,13 +1,17 @@
 __all__ = ['NewRemoveFlagDoMoveProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper    # for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_do_move import NewFlagDoMove
 
 # Logger init
 logger =  logging.getLogger(__name__)
 
-class NewRemoveFlagDoMoveProcessor(esper.Processor):
+class NewRemoveFlagDoMoveProcessor(Processor):
 
     def __init__(self):
         super().__init__()
@@ -19,9 +23,9 @@ class NewRemoveFlagDoMoveProcessor(esper.Processor):
     def process(self, *args, **kwargs):
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagDoMove):
+        for ent, (_) in self.world.get_components(NewFlagDoMove):
 
-            self.world.remove_component(ent, components.NewFlagDoMove)
+            self.world.remove_component(ent, NewFlagDoMove)
             logger.debug(f'({self.cycle}) - Entity {ent} - Flag {_} removed.')
 
     def pre_save(self):

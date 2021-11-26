@@ -2,13 +2,14 @@ __all__ = ['NewGenerateCommandFromFileProcessor']
 
 import logging
 import json
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGenerateCommandFromFileProcessor(esper.Processor):
+class NewGenerateCommandFromFileProcessor(Processor):
     ''' Performs commands stored in the file.
 
     Involved components:
@@ -113,7 +114,6 @@ class NewGenerateCommandFromFileProcessor(esper.Processor):
 
             # Increase cycle counter always if there is something in the file
             self.cycle_counter += 1
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

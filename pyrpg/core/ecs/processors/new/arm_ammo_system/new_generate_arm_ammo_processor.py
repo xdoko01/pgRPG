@@ -1,14 +1,20 @@
 __all__ = ['NewGenerateArmAmmoProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.ammo_pack import AmmoPack
+from pyrpg.core.ecs.components.new.new_factory import NewFactory
+from pyrpg.core.ecs.components.new.new_flag_was_picked_by import NewFlagWasPickedBy
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_arm_ammo import NewFlagIsAboutToArmAmmo
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGenerateArmAmmoProcessor(esper.Processor):
+class NewGenerateArmAmmoProcessor(Processor):
     ''' Detects entities that act as ammo + have been picked and assigns
     the NewFlagIsAboutToArmAmmo to all their colliders (potentional fighters).
 
@@ -32,9 +38,8 @@ class NewGenerateArmAmmoProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.pickup_system.new_perform_pickup_processor', 'NewPerformPickupProcessor')
-        ]
-
+        'new.pickup_system.new_perform_pickup_processor:NewPerformPickupProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -53,12 +58,12 @@ class NewGenerateArmAmmoProcessor(esper.Processor):
 
         # Get all entities that have AmmoPack, Factory and NewFlagWasPickedBy - those are candidates for arming the ammo
         # AmmoPack is nothing without the Factory component, AmmoPack component only marks that the factory can be armed to some weapon
-        for ent_ammo, (ammo, factory, flag_was_picked_by) in self.world.get_components(components.AmmoPack, components.Factory, components.NewFlagWasPickedBy):
+        for ent_ammo, (ammo, factory, flag_was_picked_by) in self.world.get_components(AmmoPack, NewFactory, NewFlagWasPickedBy):
 
             # Get the information from the Factory about number of projectiles that are available in the AmmoPack 
             #   max_units ... max units that can be generated, 
             #   current_units ... how many already has been generated
-            self.world.add_component(flag_was_picked_by.picker, components.NewFlagIsAboutToArmAmmo(
+            self.world.add_component(flag_was_picked_by.picker, NewFlagIsAboutToArmAmmo(
                 ammo=ent_ammo,
                 weapon=ammo.weapon,
                 type=ammo.type,
@@ -66,7 +71,6 @@ class NewGenerateArmAmmoProcessor(esper.Processor):
                 used_units=factory.current_units))
 
             logger.debug(f'({self.cycle}) - Entity {flag_was_picked_by.picker} is trying to arm as ammo entity {ent_ammo}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -1,14 +1,17 @@
 __all__ = ['NewRemoveFlagIsAnimationActionFrameProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_is_animation_action_frame import NewFlagIsAnimationActionFrame
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRemoveFlagIsAnimationActionFrameProcessor(esper.Processor):
+class NewRemoveFlagIsAnimationActionFrameProcessor(Processor):
     ''' Removes the flag that fighter has fired a projectile.
 
     Involved components:
@@ -26,9 +29,8 @@ class NewRemoveFlagIsAnimationActionFrameProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.animation_system.new_perform_frame_update_processor', 'NewPerformFrameUpdateProcessor')
-        ]
-
+        'new.animation_system.new_perform_frame_update_processor:NewPerformFrameUpdateProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -44,11 +46,10 @@ class NewRemoveFlagIsAnimationActionFrameProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagIsAnimationActionFrame):
+        for ent, (_) in self.world.get_components(NewFlagIsAnimationActionFrame):
 
-            self.world.remove_component(ent, components.NewFlagIsAnimationActionFrame)
+            self.world.remove_component(ent, NewFlagIsAnimationActionFrame)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagIsAnimationActionFrame" was removed.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

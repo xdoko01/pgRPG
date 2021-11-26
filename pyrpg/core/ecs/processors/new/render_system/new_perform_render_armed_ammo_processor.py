@@ -1,15 +1,23 @@
 __all__ = ['NewPerformRenderArmedAmmoProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 
-from ..functions import filter_only_visible # for filtering only entities with position on the cameras
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.ammo_pack import AmmoPack
+from pyrpg.core.ecs.components.new.new_render_data_from_parent import NewRenderDataFromParent
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+
+# For filtering only entities with position on the cameras
+from ..functions import filter_only_visible
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformRenderArmedAmmoProcessor(esper.Processor):
+class NewPerformRenderArmedAmmoProcessor(Processor):
     ''' Draws the armed ammo in the world.
 
     It draws only armed ammos that are displayable on the screen
@@ -21,6 +29,7 @@ class NewPerformRenderArmedAmmoProcessor(esper.Processor):
         -   NewRenderDataFromParent
         -   Camera
         -   RenderableModel
+        -   AmmoPack
 
     Related processors:
         -   UpdateCameraOffsetProcessor - adjust camera position to enable scrolling effect
@@ -59,13 +68,11 @@ class NewPerformRenderArmedAmmoProcessor(esper.Processor):
         self.cycle += 1
 
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Blit all the Entities that have NewRenderDataFromParent + RenderableModel + Ammo
-            for ent_ammo, (render_data, renderable, ammo_pack) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.NewRenderDataFromParent, components.RenderableModel, components.AmmoPack)):
-
+            for ent_ammo, (render_data, renderable, ammo_pack) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(NewRenderDataFromParent, RenderableModel, AmmoPack)):
                 camera.screen.blit(renderable.get_current_frame(render_data.dir_name, render_data.action, render_data.last_frame), camera.apply(renderable.topleft((render_data.x, render_data.y))))
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

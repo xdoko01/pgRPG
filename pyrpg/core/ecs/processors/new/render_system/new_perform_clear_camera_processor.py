@@ -1,13 +1,17 @@
 __all__ = ['NewPerformClearCameraProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.camera import Camera
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformClearCameraProcessor(esper.Processor):
+class NewPerformClearCameraProcessor(Processor):
     ''' For clearing of the cameras at the beginning of every
     drawing cycle.
 
@@ -54,7 +58,7 @@ class NewPerformClearCameraProcessor(esper.Processor):
         self.cycle += 1
 
         # Clear the game camera window surfaces
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
             camera.screen.fill(self.clear_color)
 
     def pre_save(self):

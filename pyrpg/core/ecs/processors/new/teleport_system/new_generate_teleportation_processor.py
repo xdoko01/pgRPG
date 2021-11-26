@@ -1,14 +1,19 @@
 __all__ = ['NewGenerateTeleportationProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.teleport import Teleport
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_be_teleported_by import NewFlagIsAboutToBeTeleportedBy
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGenerateTeleportationProcessor(esper.Processor):
+class NewGenerateTeleportationProcessor(Processor):
     ''' Detects entities that act as teleport + have collided and assignes
     the NewFlagIsAboutToBeTeleportedBy to all their colliders.
 
@@ -32,9 +37,8 @@ class NewGenerateTeleportationProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.collision_system.new_generate_entity_collisions_processor', 'NewGenerateEntityCollisionsProcessor')
-        ]
-
+        'new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -51,16 +55,13 @@ class NewGenerateTeleportationProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-
         # Get all entities that have Pickable and NewFlagHasCollided - those are candidates for pickup
-        for ent_teleport, (teleport, flag_has_collided) in self.world.get_components(components.Teleport, components.NewFlagHasCollided):
+        for ent_teleport, (teleport, flag_has_collided) in self.world.get_components(Teleport, NewFlagHasCollided):
 
             # Assign the NewFlagIsAboutToBeTeleportedBy to ALL entities that collided with teleport entity ent_teleport
             for ent_teleportee, _, _, _ in flag_has_collided.collisions:
-
-                self.world.add_component(ent_teleportee, components.NewFlagIsAboutToBeTeleportedBy(teleport=ent_teleport, dest_x=teleport.dest_x, dest_y=teleport.dest_y, dest_map=teleport.dest_map, key=teleport.key))
+                self.world.add_component(ent_teleportee, NewFlagIsAboutToBeTeleportedBy(teleport=ent_teleport, dest_x=teleport.dest_x, dest_y=teleport.dest_y, dest_map=teleport.dest_map, key=teleport.key))
                 logger.debug(f'({self.cycle}) - Entity {ent_teleport} is trying to teleport entity {ent_teleportee}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

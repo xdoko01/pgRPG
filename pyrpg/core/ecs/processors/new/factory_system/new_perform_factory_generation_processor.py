@@ -1,19 +1,26 @@
 __all__ = ['NewPerformFactoryGenerationProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_create_from_factory import NewFlagCreateFromFactory
+from pyrpg.core.ecs.components.new.new_factory import NewFactory
+from pyrpg.core.ecs.components.new.position import Position
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformFactoryGenerationProcessor(esper.Processor):
+class NewPerformFactoryGenerationProcessor(Processor):
     ''' Detects Factory entities that should generate entities
     (have the necessary data) and creates these entities.
 
     Involved components:
         -   NewFlagCreateFromFactory
         -   Factory
+        -   Position
 
     Related processors:
         -   NewGenerateProjectileFactoryDataProcessor - processor that generates NewFlagCreateFromFactory
@@ -27,8 +34,8 @@ class NewPerformFactoryGenerationProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.attack_system.new_generate_projectile_factory_data_processor', 'NewGenerateProjectileFactoryDataProcessor')
-        ]
+        'new.attack_system.new_generate_projectile_factory_data_processor:NewGenerateProjectileFactoryDataProcessor'
+    ]
 
     __slots__ = ['create_entity_fnc']
 
@@ -49,8 +56,7 @@ class NewPerformFactoryGenerationProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-
-        for ent, (factory, flag_create_from_factory) in self.world.get_components(components.NewFactory, components.NewFlagCreateFromFactory):
+        for ent, (factory, flag_create_from_factory) in self.world.get_components(NewFactory, NewFlagCreateFromFactory):
 
             # Prepare new entity from factory
             new_entity = self.create_entity_fnc(
@@ -66,7 +72,7 @@ class NewPerformFactoryGenerationProcessor(esper.Processor):
             # Adjust the position component
             self.world.add_component(
                 new_entity,
-                components.Position(
+                Position(
                     x=flag_create_from_factory.position[0],
                     y=flag_create_from_factory.position[1],
                     dir_name=flag_create_from_factory.position[2],

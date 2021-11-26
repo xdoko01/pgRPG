@@ -1,11 +1,14 @@
 __all__ = ['InputProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.controllable import Controllable
+
 import pyrpg.core.config.config as config # for MOVE_SPEED
 
-
-class InputProcessor(esper.Processor):
+class InputProcessor(Processor):
     ''' Based on user input generates commands to controll the entity.
     
     Input parameters:
@@ -50,7 +53,7 @@ class InputProcessor(esper.Processor):
         keys = kwargs.get('keys', [])
 
         # Get all entities that are controllable - not necesserilly moveable as the input can be for static entity theoretically
-        for ent, (inp) in self.world.get_component(components.Controllable):
+        for ent, (inp) in self.world.get_component(Controllable):
 
             # For each entity check if control keys were pressed and move them accordingly
             # only process if keys are enabled.

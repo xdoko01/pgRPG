@@ -1,14 +1,14 @@
 __all__ = ['NewListComponentsProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewListComponentsProcessor(esper.Processor):
+class NewListComponentsProcessor(Processor):
     ''' Help to debug the values of components in different stages of the 
     game cycle.
     '''

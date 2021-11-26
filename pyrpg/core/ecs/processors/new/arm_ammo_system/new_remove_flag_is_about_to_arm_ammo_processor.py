@@ -1,14 +1,17 @@
 __all__ = ['NewRemoveFlagIsAboutToArmAmmoProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_arm_ammo import NewFlagIsAboutToArmAmmo
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRemoveFlagIsAboutToArmAmmoProcessor(esper.Processor):
+class NewRemoveFlagIsAboutToArmAmmoProcessor(Processor):
     ''' Removes the flag that the entity has been considered for picking
     up of an ammo at the end of the cycle.
 
@@ -30,9 +33,8 @@ class NewRemoveFlagIsAboutToArmAmmoProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.arm_ammo_system.new_perform_arm_ammo_processor', 'NewPerformArmAmmoProcessor')
-        ]
-
+        'new.arm_ammo_system.new_perform_arm_ammo_processor:NewPerformArmAmmoProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -49,11 +51,10 @@ class NewRemoveFlagIsAboutToArmAmmoProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagIsAboutToArmAmmo):
+        for ent, (_) in self.world.get_components(NewFlagIsAboutToArmAmmo):
 
-            self.world.remove_component(ent, components.NewFlagIsAboutToArmAmmo)
+            self.world.remove_component(ent, NewFlagIsAboutToArmAmmo)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagIsAboutToArmAmmo" was removed.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

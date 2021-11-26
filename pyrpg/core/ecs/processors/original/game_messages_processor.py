@@ -1,8 +1,9 @@
 __all__ = ['GameMessagesProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class GameMessagesProcessor(esper.Processor):
+class GameMessagesProcessor(Processor):
 
     def __init__(self, game_messages_handler):
         super().__init__()

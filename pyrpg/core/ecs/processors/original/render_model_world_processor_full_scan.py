@@ -1,9 +1,18 @@
 __all__ = ['RenderModelWorldProcessorFullScan']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class RenderModelWorldProcessorFullScan(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.original.state import State
+from pyrpg.core.ecs.components.original.can_talk import CanTalk
+from pyrpg.core.ecs.components.original.renderable import Renderable
+
+
+class RenderModelWorldProcessorFullScan(Processor):
     ''' Draws the entities in the world. Unlike RenderWorldProcessor
     this one supports animated models. 
     
@@ -61,14 +70,14 @@ class RenderModelWorldProcessorFullScan(esper.Processor):
         '''
         
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Blit all the Entities that have Renderable and Position components - all, i.e. not only visible components
-            for _, (position, renderable, state) in self.world.get_components(components.Position, components.RenderableModel, components.State):
+            for _, (position, renderable, state) in self.world.get_components(Position, RenderableModel, State):
                 camera.screen.blit(renderable.get_frame(state.state, position.dir_name), camera.apply(renderable.topleft((position.x, position.y))))
 
             # Blit all Texts that are entities saying (CanSpeak + Position component)
-            for _, (can_talk, renderable, position) in self.world.get_components(components.CanTalk, components.Renderable, components.Position):
+            for _, (can_talk, renderable, position) in self.world.get_components(CanTalk, Renderable, Position):
 
                 # If there is something to say
                 if can_talk.text:

@@ -1,21 +1,27 @@
 __all__ = ['NewResolveEntityCollisionsExProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_movable import NewMovable
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewResolveEntityCollisionsExProcessor(esper.Processor):
+class NewResolveEntityCollisionsExProcessor(Processor):
     ''' Process collisions stored in component NewFlagHasCollided and do not
     allow to overlap.
     Unlike NewResolveCollisionsProcessor this one is activly trying to move 
     entities away from collisions using collision vector calculated during collision.
 
     Involved components:
-        -   NewCollidable
+        -   Position
+        -   NewMovable
         -   NewFlagHasCollided
 
     Related processors:
@@ -33,8 +39,8 @@ class NewResolveEntityCollisionsExProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.collision_system.new_generate_entity_collisions_processor', 'NewGenerateEntityCollisionsProcessor')
-        ]
+        'new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor'
+    ]
 
     def __init__(self, add_command_fnc):
         ''' Init the processor.
@@ -53,7 +59,7 @@ class NewResolveEntityCollisionsExProcessor(esper.Processor):
         self.cycle +=1
 
         # Get all entities that have collided with something and are moveable and are not to be ignored for collision resolution position fix
-        for ent, (position, flag_has_collided, _) in self.world.get_components(components.Position, components.NewFlagHasCollided, components.NewMovable):
+        for ent, (position, flag_has_collided, _) in self.world.get_components(Position, NewFlagHasCollided, NewMovable):
 
             for _, _, coll_fix_vector, ignore_position_fix in flag_has_collided.collisions:
 

@@ -1,14 +1,14 @@
 __all__ = ['NewDebugProcessorPerformanceProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewDebugProcessorPerformanceProcessor(esper.Processor):
+class NewDebugProcessorPerformanceProcessor(Processor):
     ''' Log the running time of the processors
     '''
 
@@ -28,9 +28,7 @@ class NewDebugProcessorPerformanceProcessor(esper.Processor):
         ''' Get all components comp_name and list their values
         '''
         self.cycle += 1
-
         logger.debug(f'({self.cycle}) - {self.world.process_times} ')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -1,9 +1,13 @@
 __all__ = ['RenderMapProcessorFullScan']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class RenderMapProcessorFullScan(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.camera import Camera
+
+class RenderMapProcessorFullScan(Processor):
     ''' For rendering maps on camera surfaces. 
     
     For ALL maps ALL TILES are blitted - even those that are out of visible area.
@@ -31,7 +35,7 @@ class RenderMapProcessorFullScan(esper.Processor):
         # Find the entity with Camera and use its position
         # cam_pos - position and map of the object that is in camera's focus
         # cam_cam - camera component itself
-        for _ , (cam_pos, cam_cam) in self.world.get_components(components.Position, components.Camera):
+        for _ , (cam_pos, cam_cam) in self.world.get_components(Position, Camera):
 
             # Clear the camera surface
             cam_cam.screen.fill((0,0,0))

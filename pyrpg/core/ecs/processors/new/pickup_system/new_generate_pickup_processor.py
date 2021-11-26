@@ -1,14 +1,19 @@
 __all__ = ['NewGeneratePickupProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.pickable import Pickable
+from pyrpg.core.ecs.components.new.new_flag_has_collided import NewFlagHasCollided
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_pick_entity import NewFlagIsAboutToPickEntity
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGeneratePickupProcessor(esper.Processor):
+class NewGeneratePickupProcessor(Processor):
     ''' Detects entities that are pickable + have collided and assignes
     the NewFlagIsAboutToPickEntity to their pickers.
 
@@ -32,9 +37,8 @@ class NewGeneratePickupProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.collision_system.new_generate_entity_collisions_processor', 'NewGenerateEntityCollisionsProcessor')
-        ]
-
+        'new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -51,16 +55,14 @@ class NewGeneratePickupProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-
         # Get all entities that have Pickable and NewFlagHasCollided - those are candidates for pickup
-        for ent_pickable, (pickable, flag_has_collided) in self.world.get_components(components.Pickable, components.NewFlagHasCollided):
+        for ent_pickable, (pickable, flag_has_collided) in self.world.get_components(Pickable, NewFlagHasCollided):
 
             # Assign the NewFlagIsAboutToPickEntity to ALL entities that collided with pickable entity ent
             for ent_picker, _, _, _ in flag_has_collided.collisions:
 
-                self.world.add_component(ent_picker, components.NewFlagIsAboutToPickEntity(entity_for_pickup=ent_pickable))
+                self.world.add_component(ent_picker, NewFlagIsAboutToPickEntity(entity_for_pickup=ent_pickable))
                 logger.debug(f'({self.cycle}) - Entity {ent_picker} is trying to pick entity {ent_pickable}.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

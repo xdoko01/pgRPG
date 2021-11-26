@@ -1,9 +1,19 @@
 __all__ = ['NewPerformRenderDebugInfoProcessor']
 
 import logging
-import pygame	# for pygame.time, pygame.font and pygame.Color
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+import pygame   # for pygame.time, pygame.font and pygame.Color
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.new_debug import NewDebug
+from pyrpg.core.ecs.components.new.new_has_inventory import NewHasInventory
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.new.new_movable import NewMovable
+from pyrpg.core.ecs.components.new.new_collidable import NewCollidable
 
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
@@ -13,11 +23,10 @@ from pyrpg.core.config.frames import GAME_DEBUG_FRAME # for the debug frame
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 
-
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewPerformRenderDebugInfoProcessor(esper.Processor):
+class NewPerformRenderDebugInfoProcessor(Processor):
     ''' Draws the debug information onto the game cameras.
 
     Input parameters:
@@ -26,6 +35,10 @@ class NewPerformRenderDebugInfoProcessor(esper.Processor):
         -   Position
         -   Camera
         -   NewDebug
+        -   RenderableModel
+        -   NewHasInventory
+        -   NewMovable
+        -   NewCollidable
 
     Related processors:
         -   whole render system
@@ -59,20 +72,20 @@ class NewPerformRenderDebugInfoProcessor(esper.Processor):
         self.cycle += 1
 
         # Show debug information on all cameras
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Get position and model status info
-            for _, (position, debug, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewDebug, components.RenderableModel)):
+            for _, (position, debug, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewDebug, RenderableModel)):
                 debug.info.update({'position' : (int(position.x), int(position.y), position.dir_name)})
                 debug.info.update({'action' : renderable.action})
 
             # Get inventory info
-            for _, (position, debug, inventory) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewDebug, components.NewHasInventory)):
+            for _, (position, debug, inventory) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewDebug, NewHasInventory)):
                 debug.info.update({'inventory' : inventory.inventory})
 
             # Show COLLISION information
             # Show debug information to all entities with Position and NewDebug and NewCollidable component
-            for _, (position, debug, collidable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewDebug, components.NewCollidable)):
+            for _, (position, debug, collidable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewDebug, NewCollidable)):
 
                 pygame.draw.rect(
                     camera.screen,
@@ -86,7 +99,7 @@ class NewPerformRenderDebugInfoProcessor(esper.Processor):
 
             # Show MOVEMENT information
             # Show debug information to all entities with Position, NewDebug and NewMoveable components
-            for _, (position, debug, moveable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewDebug, components.NewMovable)):
+            for _, (position, debug, moveable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewDebug, NewMovable)):
 
                 pygame.draw.lines(
                     camera.screen,
@@ -99,7 +112,7 @@ class NewPerformRenderDebugInfoProcessor(esper.Processor):
 
             # Experiment with mouse hoover
             # Show debug information to all entities with Position, NewDebug and NewMoveable components
-            for _, (position, debug) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.NewDebug)):
+            for _, (position, debug) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewDebug)):
 
                 # Mouse coordinates within the displayable game window
                 x, y = pygame.mouse.get_pos()
@@ -128,7 +141,6 @@ class NewPerformRenderDebugInfoProcessor(esper.Processor):
                             ),
                         2
                     )
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

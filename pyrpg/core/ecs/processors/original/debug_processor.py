@@ -1,14 +1,14 @@
 __all__ = ['DebugProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class DebugProcessor(esper.Processor):
+class DebugProcessor(Processor):
     ''' Prints all the information about entities and components
 
     Involved components:

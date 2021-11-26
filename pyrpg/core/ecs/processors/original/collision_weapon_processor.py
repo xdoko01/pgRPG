@@ -1,11 +1,19 @@
 __all__ = ['CollisionWeaponProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
+# Used components
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.weapon import Weapon
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
 
-class CollisionWeaponProcessor(esper.Processor):
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class CollisionWeaponProcessor(Processor):
     def __init__(self, weapon_event_queue):
         super().__init__()
         self.weapon_event_queue = weapon_event_queue
@@ -15,19 +23,19 @@ class CollisionWeaponProcessor(esper.Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        for ent, (weapon, collision) in self.world.get_components(components.Weapon, components.Collidable):
+        for ent, (weapon, collision) in self.world.get_components(Weapon, Collidable):
 
             # Process everything that collided with weapon entity
             for col_event_entity in collision.collision_events.copy():
                     
                     # If entity (that have collided with weapon) can wear weapons items (HasWeapon)
-                    if self.world.has_component(col_event_entity, components.HasWeapon):
+                    if self.world.has_component(col_event_entity, HasWeapon):
                         
                         # Get the HasWeapon component of the entity that picked up Weapon
-                        col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, components.HasWeapon)
+                        col_event_entity_has_weapon = self.world.component_for_entity(col_event_entity, HasWeapon)
                         
                         # Get the Collidable component of the entity that picked up Weapon - in order to remove the collision
-                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, Collidable)
 
                         # Add weapon to the HasWeapon - only in case that the slot for Weapon is available
                         # For that purpose weapon must have some type
@@ -43,9 +51,9 @@ class CollisionWeaponProcessor(esper.Processor):
 
                             try:
                                 # Remove Position component from the weapon so that it is not displayable on the map - weapon is picked
-                                self.world.remove_component(ent, components.Position) 
+                                self.world.remove_component(ent, Position) 
                                 # Remove Camera component from the weapon so that the screen disappears - weapon is picked
-                                self.world.remove_component(ent, components.Camera) 
+                                self.world.remove_component(ent, Camera) 
                             except KeyError:
                                 pass
 
@@ -57,5 +65,5 @@ class CollisionWeaponProcessor(esper.Processor):
                             col_event_entity_coll.collision_events.remove(ent)
 
                             # Report that item was weared - generate event
-                            weapon_event = event.Event('WEAPON_ARMED', ent, col_event_entity, params={'weapon' : ent, 'picker' : col_event_entity})
+                            weapon_event = Event('WEAPON_ARMED', ent, col_event_entity, params={'weapon' : ent, 'picker' : col_event_entity})
                             self.weapon_event_queue.append(weapon_event)

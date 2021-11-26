@@ -1,10 +1,19 @@
 __all__ = ['CollisionTeleportProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CollisionTeleportProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.teleport import Teleport
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.teleportable import Teleportable
+from pyrpg.core.ecs.components.original.has_inventory import HasInventory
+
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class CollisionTeleportProcessor(Processor):
     def __init__(self, teleport_event_queue):
         super().__init__()
 
@@ -15,19 +24,19 @@ class CollisionTeleportProcessor(esper.Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        for ent, (teleport, collision) in self.world.get_components(components.Teleport, components.Collidable):
+        for ent, (teleport, collision) in self.world.get_components(Teleport, Collidable):
 
             # Process everything that collided with teleport
             for col_event_entity in collision.collision_events.copy():
                     
                     # If entity is Teleportable and has position
-                    if self.world.has_components(col_event_entity, components.Teleportable, components.Position, components.Collidable):
+                    if self.world.has_components(col_event_entity, Teleportable, Position, Collidable):
                         
                         # Get the Position, Collidable and HasInventory component of the teleportee entity
-                        col_event_entity_pos = self.world.component_for_entity(col_event_entity, components.Position) 
-                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, components.Collidable)
+                        col_event_entity_pos = self.world.component_for_entity(col_event_entity, Position) 
+                        col_event_entity_coll = self.world.component_for_entity(col_event_entity, Collidable)
                         try:
-                            col_event_entity_inventory = self.world.component_for_entity(col_event_entity, components.HasInventory)
+                            col_event_entity_inventory = self.world.component_for_entity(col_event_entity, HasInventory)
                             
                             # Does the teleportee have the key in the inventory?
                             # Either no key is required by the teleport or key is in teleportees inventory
@@ -43,7 +52,7 @@ class CollisionTeleportProcessor(esper.Processor):
                             col_event_entity_pos.map = teleport.dest_map 
 
                             # Report that teleportation occured - generate event
-                            teleport_event = event.Event('TELEPORTATION', ent, col_event_entity, params={'teleport' : ent, 'teleportee' : col_event_entity})
+                            teleport_event = Event('TELEPORTATION', ent, col_event_entity, params={'teleport' : ent, 'teleportee' : col_event_entity})
                             self.teleport_event_queue.append(teleport_event)
 
                         # Remove the col_event_entity from Teleport

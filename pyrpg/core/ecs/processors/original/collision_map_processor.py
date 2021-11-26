@@ -1,9 +1,13 @@
 __all__ = ['CollisionMapProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CollisionMapProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.position import Position
+
+class CollisionMapProcessor(Processor):
     ''' Checks for collisions with the titles on the map.
     '''
 
@@ -21,7 +25,7 @@ class CollisionMapProcessor(esper.Processor):
     def process(self, *args, **kwargs):
 
         # Do collision against the map 
-        for ent_moved, (coll_moved, pos_moved) in self.world.get_components(components.Collidable, components.Position):
+        for ent_moved, (coll_moved, pos_moved) in self.world.get_components(Collidable, Position):
             
             # Get collision map using the global dict of maps
             #collision_map = self.maps.get(pos_moved.map).collision_map

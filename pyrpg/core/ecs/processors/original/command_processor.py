@@ -1,8 +1,9 @@
 __all__ = ['CommandProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CommandProcessor(esper.Processor):
+class CommandProcessor(Processor):
 
     def __init__(self, game_commands_handler, debug=False):
         super().__init__()

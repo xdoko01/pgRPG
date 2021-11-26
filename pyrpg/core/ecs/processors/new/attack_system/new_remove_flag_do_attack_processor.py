@@ -1,14 +1,17 @@
 __all__ = ['NewRemoveFlagDoAttackProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_flag_do_attack import NewFlagDoAttack
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRemoveFlagDoAttackProcessor(esper.Processor):
+class NewRemoveFlagDoAttackProcessor(Processor):
     ''' Removes the flag that fighter has attacked.
 
     Involved components:
@@ -26,9 +29,8 @@ class NewRemoveFlagDoAttackProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.command_system.new_perform_command_processor', 'NewPerformCommandProcessor')
-        ]
-
+        'new.command_system.new_perform_command_processor:NewPerformCommandProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -44,11 +46,10 @@ class NewRemoveFlagDoAttackProcessor(esper.Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(components.NewFlagDoAttack):
+        for ent, (_) in self.world.get_components(NewFlagDoAttack):
 
-            self.world.remove_component(ent, components.NewFlagDoAttack)
+            self.world.remove_component(ent, NewFlagDoAttack)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "NewFlagDoAttack" was removed.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

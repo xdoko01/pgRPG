@@ -1,17 +1,23 @@
 __all__ = ['NewPerformFrameUpdateProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.new.new_flag_is_animation_action_frame import NewFlagIsAnimationActionFrame
+
+# Support functions
 from ..functions import filter_only_visible
-
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformFrameUpdateProcessor(esper.Processor):
+class NewPerformFrameUpdateProcessor(Processor):
     ''' Shifts animation to the next frame on all visible entities.
 
     Involved components:
@@ -32,10 +38,10 @@ class NewPerformFrameUpdateProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.animation_system.new_perform_idle_animation_processor', 'NewPerformIdleAnimationProcessor'), 
-        ('new.animation_system.new_perform_movement_animation_processor', 'NewPerformMovementAnimationProcessor'), 
-        ('new.animation_system.new_perform_action_animation_processor', 'NewPerformActionAnimationProcessor')
-        ]
+        'new.animation_system.new_perform_idle_animation_processor:NewPerformIdleAnimationProcessor', 
+        'new.animation_system.new_perform_movement_animation_processor:NewPerformMovementAnimationProcessor', 
+        'new.animation_system.new_perform_action_animation_processor:NewPerformActionAnimationProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -55,10 +61,10 @@ class NewPerformFrameUpdateProcessor(esper.Processor):
         already_updated = set()
 
         # Iterate all cameras
-        for cam, (camera) in self.world.get_component(components.Camera):
+        for cam, (camera) in self.world.get_component(Camera):
 
             # Get all entities with Position, RenderableModel and FlagDoMove
-            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
 
                 # If already updated skip
                 if ent in already_updated:
@@ -70,7 +76,7 @@ class NewPerformFrameUpdateProcessor(esper.Processor):
 
                 # Set Flag in case that the new frame is action frame (and hence some projectile might be generated)
                 if renderable_model.is_action_frame:
-                    self.world.add_component(ent, components.NewFlagIsAnimationActionFrame())
+                    self.world.add_component(ent, NewFlagIsAnimationActionFrame())
                     logger.debug(f'({self.cycle}) - Entity {ent} animation frame {renderable_model.last_frame} is action frame.')
 
                 # Remember that entity was updated - not to update it again on other camera

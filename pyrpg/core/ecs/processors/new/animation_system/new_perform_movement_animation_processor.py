@@ -1,17 +1,25 @@
 __all__ = ['NewPerformMovementAnimationProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
 
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.new.new_flag_do_attack import NewFlagDoAttack
+from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.new_flag_do_move import NewFlagDoMove
+
+# Support functions
 from ..functions import filter_only_visible
-
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformMovementAnimationProcessor(esper.Processor):
+class NewPerformMovementAnimationProcessor(Processor):
     ''' Sets movement animation for RenderableModel entities that have moved and are displayed.
 
     Involved components:
@@ -33,8 +41,8 @@ class NewPerformMovementAnimationProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.command_system.new_perform_command_processor', 'NewPerformCommandProcessor')
-        ]
+        'new.command_system.new_perform_command_processor:NewPerformCommandProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -51,15 +59,14 @@ class NewPerformMovementAnimationProcessor(esper.Processor):
         self.cycle += 1
 
         # Iterate all cameras
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities with Position, RenderableModel and FlagDoMove
-            for ent, (_, renderable_model, _) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(components.Position, components.RenderableModel, components.NewFlagDoMove, exclude=components.NewFlagDoAttack)):
+            for ent, (_, renderable_model, _) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(Position, RenderableModel, NewFlagDoMove, exclude=NewFlagDoAttack)):
 
                 # Update to proper animation
                 renderable_model.set_action('walk')
                 logger.debug(f'({self.cycle}) - Entity {ent} action animation updated to "walk" action.')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -1,7 +1,14 @@
 __all__ = ['RenderModelWorldProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.original.can_wear import CanWear
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
 
 from .functions import filter_only_visible # for filtering only entities with position on the cameras
 
@@ -62,14 +69,14 @@ class RenderModelWorldProcessor(esper.Processor):
         implementation of scrolling https://youtu.be/3zV2ewk-IGU.
         '''
         # For all camera screens in the game window
-        for _, (camera) in self.world.get_component(components.Camera):
+        for _, (camera) in self.world.get_component(Camera):
 
             #####
             # Blit body
             #####
 
             # Blit all the Entities that have Renderable and Position components - only visible entities
-            for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+            for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
                 #camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
                 camera.screen.blit(renderable.get_current_frame(position.dir_name), camera.apply(renderable.topleft((position.x, position.y))))
 
@@ -78,17 +85,17 @@ class RenderModelWorldProcessor(esper.Processor):
                 #####
 
                 # Blit all wearables for the above Entity - if possible
-                if self.world.has_component(ent, components.CanWear):
+                if self.world.has_component(ent, CanWear):
 
                     # Get the CanWear component of the entity that picked up Wearable
-                    can_wear = self.world.component_for_entity(ent, components.CanWear)
+                    can_wear = self.world.component_for_entity(ent, CanWear)
 
                     # Iterate the wearables dictionary and blit them
                     for w_part, w_entity in can_wear.wearables.items():
 
                         # Get the wearable entity - RenderableModel
                         if w_entity: 
-                            w_renderable = self.world.component_for_entity(w_entity, components.RenderableModel)
+                            w_renderable = self.world.component_for_entity(w_entity, RenderableModel)
 
                             # Blit it on the screen the wearable - using state / position and frame id from the character's RenderableModel
                             #camera.screen.blit(w_renderable.get_frame(position.dir_name, renderable.action, renderable.last_frame), camera.apply(w_renderable.topleft((position.x, position.y))))
@@ -99,17 +106,17 @@ class RenderModelWorldProcessor(esper.Processor):
                 #####
 
                 # Blit all weapons for the above Entity - if possible
-                if self.world.has_component(ent, components.HasWeapon):
+                if self.world.has_component(ent, HasWeapon):
 
                     # Get the HasWeapon component of the entity that picked up Weapon
-                    has_weapon = self.world.component_for_entity(ent, components.HasWeapon)
+                    has_weapon = self.world.component_for_entity(ent, HasWeapon)
 
                     # Get the weapon entity - RenderableModel
                     if has_weapon.get_weapon_in_use():
 
                         # Skip if weapon does not have any model to be rendered
                         try:
-                            w_renderable = self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.RenderableModel)
+                            w_renderable = self.world.component_for_entity(has_weapon.get_weapon_in_use(), RenderableModel)
                             #print(f'has_weapon.get_weapon_in_use() - {has_weapon.get_weapon_in_use()}, renderable.action {renderable.action}')
 
                             # Blit it on the screen the weapon - using state / position and frame id from the character's RenderableModel
@@ -120,7 +127,7 @@ class RenderModelWorldProcessor(esper.Processor):
 
                         # Skip if generator does not have any model to be rendered
                         try:
-                            gen_renderable = self.world.component_for_entity(has_weapon.get_generator_in_use(), components.RenderableModel)
+                            gen_renderable = self.world.component_for_entity(has_weapon.get_generator_in_use(), RenderableModel)
                             #print(f'has_weapon.get_weapon_in_use() - {has_weapon.get_weapon_in_use()}, renderable.action {renderable.action}')
 
                             # Blit it on the screen the weapon - using state / position and frame id from the character's RenderableModel

@@ -1,11 +1,21 @@
 __all__ = ['RenderableModelAnimationActionProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.original.motion import Motion
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
+from pyrpg.core.ecs.components.original.weapon import Weapon
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.is_destroyed import IsDestroyed
+
 
 from .functions import filter_only_visible
 
-class RenderableModelAnimationActionProcessor2(esper.Processor):
+class RenderableModelAnimationActionProcessor2(Processor):
     ''' Change the action of renderable model in order to display
     correct action animation.
 
@@ -30,33 +40,33 @@ class RenderableModelAnimationActionProcessor2(esper.Processor):
         
         changed_ent = set()
         
-        for ent, (renderable_model, motion) in self.world.get_components(components.RenderableModel, components.Motion):
+        for ent, (renderable_model, motion) in self.world.get_components(RenderableModel, Motion):
             if motion.has_moved:
                 renderable_model.set_action('walk')
                 changed_ent.add(ent)
         
-        for ent, (renderable_model, has_weapon) in self.world.get_components(components.RenderableModel, components.HasWeapon):
+        for ent, (renderable_model, has_weapon) in self.world.get_components(RenderableModel, HasWeapon):
             if has_weapon.has_attacked and has_weapon.weapon and ent not in changed_ent:
                 #renderable_model.set_action(has_weapon.get_weapon_action_anim())
-                renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action)
+                renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon).action)
 
                 has_weapon.has_attacked = False
                 changed_ent.add(ent)
 
             elif has_weapon.weapon and ent not in changed_ent:
                 #renderable_model.set_action(has_weapon.get_weapon_idle_anim())
-                renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).idle)
+                renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon).idle)
 
                 changed_ent.add(ent)
 
-        for ent, renderable_model in self.world.get_component(components.RenderableModel):	
+        for ent, renderable_model in self.world.get_component(RenderableModel):	
             if ent not in changed_ent:
                 renderable_model.set_action('idle')
 
 
 
 
-class RenderableModelAnimationActionProcessor(esper.Processor):
+class RenderableModelAnimationActionProcessor(Processor):
     ''' Change the action of renderable model in order to display
     correct action animation.
 
@@ -83,17 +93,17 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
         already_updated = set()
 
         # Iterate all camaeras
-        for cam, (camera) in self.world.get_component(components.Camera):
+        for cam, (camera) in self.world.get_component(Camera):
 
             # Get all states
-            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
 
                 if ent not in already_updated:
 
                     # try to get motion, has_weapon - returns None if not present
-                    motion = self.world.try_component(ent, components.Motion)
-                    has_weapon = self.world.try_component(ent, components.HasWeapon)
-                    is_dead = self.world.try_component(ent, components.IsDestroyed)
+                    motion = self.world.try_component(ent, Motion)
+                    has_weapon = self.world.try_component(ent, HasWeapon)
+                    is_dead = self.world.try_component(ent, IsDestroyed)
 
                     if is_dead:
                         renderable_model.set_action('expire')
@@ -111,7 +121,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 
                         # If entity has weapon and the weapon has attacked, set action to proper value
                         # renderable_model.set_action(has_weapon.get_weapon_action_anim())
-                        renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action)
+                        renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon).action)
 
                         # Reset the attack - in case attack key is released animation of attack is no longer displayed
                         has_weapon.has_attacked = False
@@ -120,7 +130,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 
                         # If entity has weapon but is not attacking, display idle weapon animation
                         #renderable_model.set_action(has_weapon.get_weapon_idle_anim())
-                        renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).idle)
+                        renderable_model.set_action(self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon).idle)
 
                     else:
                         # Has no weapon, is not moving,

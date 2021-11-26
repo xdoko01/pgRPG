@@ -1,14 +1,17 @@
 __all__ = ['NewGenerateCommandFromInputProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_controllable import NewControllable
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewGenerateCommandFromInputProcessor(esper.Processor):
+class NewGenerateCommandFromInputProcessor(Processor):
     ''' Based on user input generates commands to controll the entity.
 
     Input parameters:
@@ -92,7 +95,7 @@ class NewGenerateCommandFromInputProcessor(esper.Processor):
         keys = kwargs.get('keys', [])
         
         # Get all entities that are controllable - not necesserilly moveable as the input can be for static entity theoretically
-        for ent, (inp) in self.world.get_component(components.NewControllable):
+        for ent, (inp) in self.world.get_component(NewControllable):
 
             for cmd_str in ['up', 'down', 'left', 'right', 'attack']:
                 
@@ -100,7 +103,6 @@ class NewGenerateCommandFromInputProcessor(esper.Processor):
                 if keys[inp.control_keys.get(cmd_str)]:
                     # Add all associated commands to the command queue
                     _add_cmds_to_queue(inp.control_cmds.get(cmd_str), ent, self.add_command_fnc)
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

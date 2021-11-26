@@ -1,15 +1,24 @@
 __all__ = ['NewPerformArmAmmoProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.new_has_weapon import NewHasWeapon
+from pyrpg.core.ecs.components.new.new_has_inventory import NewHasInventory
+from pyrpg.core.ecs.components.new.new_flag_was_armed_as_ammo_by import NewFlagWasArmedAsAmmoBy
+from pyrpg.core.ecs.components.new.new_flag_is_about_to_arm_ammo import NewFlagIsAboutToArmAmmo
+from pyrpg.core.ecs.components.new.new_flag_has_armed_ammo import NewFlagHasArmedAmmo
+
+# For creation of events
+from pyrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewPerformArmAmmoProcessor(esper.Processor):
+class NewPerformArmAmmoProcessor(Processor):
     ''' Detects entities that are about to arm ammo and performs
     the actual arming, if the fighter is capable.
 
@@ -37,9 +46,8 @@ class NewPerformArmAmmoProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.arm_ammo_system.new_generate_arm_ammo_processor', 'NewGenerateArmAmmoProcessor')
-        ]
-
+        'new.arm_ammo_system.new_generate_arm_ammo_processor:NewGenerateArmAmmoProcessor'
+    ]
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -60,7 +68,7 @@ class NewPerformArmAmmoProcessor(esper.Processor):
         self.cycle += 1
 
         # Get all entities that have HasWeapon and NewRemoveFlagIsAboutToArmWeaponProcessor - those are candidates for successful arming
-        for ent_fighter, (has_weapon, has_inventory, flag_is_about_to_arm_ammo) in self.world.get_components(components.HasWeapon, components.NewHasInventory, components.NewFlagIsAboutToArmAmmo):
+        for ent_fighter, (has_weapon, has_inventory, flag_is_about_to_arm_ammo) in self.world.get_components(NewHasWeapon, NewHasInventory, NewFlagIsAboutToArmAmmo):
 
             try:
                 # Always arm the ammo
@@ -70,17 +78,16 @@ class NewPerformArmAmmoProcessor(esper.Processor):
                 raise ValueError
 
             # Report that arming a weapon occured - generate event
-            arm_ammo_event = event.Event('AMMO_PACK_ARMED', flag_is_about_to_arm_ammo.ammo, ent_fighter, params={'ammo_pack' : flag_is_about_to_arm_ammo.ammo, 'picker' : ent_fighter})
+            arm_ammo_event = Event('AMMO_PACK_ARMED', flag_is_about_to_arm_ammo.ammo, ent_fighter, params={'ammo_pack' : flag_is_about_to_arm_ammo.ammo, 'picker' : ent_fighter})
             self.add_event_fnc(arm_ammo_event)
 
             # Assign NewFlagWasArmedAsAmmoBy component to the ammo entity
-            self.world.add_component(flag_is_about_to_arm_ammo.ammo, components.NewFlagWasArmedAsAmmoBy(fighter=ent_fighter))
+            self.world.add_component(flag_is_about_to_arm_ammo.ammo, NewFlagWasArmedAsAmmoBy(fighter=ent_fighter))
             logger.debug(f'({self.cycle}) - Ammo {flag_is_about_to_arm_ammo.ammo} ({flag_is_about_to_arm_ammo.weapon}, {flag_is_about_to_arm_ammo.type}) was armed by entity {ent_fighter}.')
 
             # Assign NewFlagHasArmedAmmo component to the fighter entity
-            self.world.add_component(ent_fighter, components.NewFlagHasArmedAmmo(ammo=flag_is_about_to_arm_ammo.ammo))
+            self.world.add_component(ent_fighter, NewFlagHasArmedAmmo(ammo=flag_is_about_to_arm_ammo.ammo))
             logger.debug(f'({self.cycle}) - Entity {ent_fighter} has armed ammo {flag_is_about_to_arm_ammo.ammo} of type "{flag_is_about_to_arm_ammo.weapon} - {flag_is_about_to_arm_ammo.type}".')
-
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

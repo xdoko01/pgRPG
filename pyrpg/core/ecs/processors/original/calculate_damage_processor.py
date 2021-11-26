@@ -1,10 +1,17 @@
 __all__ = ['CalculateDamageProcessor']
 
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
-import pyrpg.core.events.event as event # for creation of events
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class CalculateDamageProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.damageable import Damageable
+from pyrpg.core.ecs.components.original.flag_add_damage import FlagAddDamage
+from pyrpg.core.ecs.components.original.flag_no_health import FlagNoHealth
+
+# For creation of events
+from pyrpg.core.events.event import Event
+
+class CalculateDamageProcessor(Processor):
     def __init__(self, damage_event_queue):
         super().__init__()
         self.damage_event_queue = damage_event_queue
@@ -16,7 +23,7 @@ class CalculateDamageProcessor(esper.Processor):
     def process(self, *args, **kwargs):
 
         # Get all entities that have can take damage and were damaged
-        for ent, (damageble, flag_add_damage) in self.world.get_components(components.Damageable, components.FlagAddDamage):
+        for ent, (damageble, flag_add_damage) in self.world.get_components(Damageable, FlagAddDamage):
 
             # Add damage to the entity,health cannot drop below 0
             damageble.health = max(0, damageble.health - flag_add_damage.damage)
@@ -30,4 +37,4 @@ class CalculateDamageProcessor(esper.Processor):
             # Add FlagNoHealth if entity has no health
             if damageble.health == 0:
 
-                self.world.add_component(ent, components.FlagNoHealth(src_entity=flag_add_damage.src_entity))
+                self.world.add_component(ent, FlagNoHealth(src_entity=flag_add_damage.src_entity))

@@ -2,19 +2,20 @@ __all__ = ['NewRecordCommandToFileProcessor']
 
 import logging
 import json
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-
-class NewRecordCommandToFileProcessor(esper.Processor):
+class NewRecordCommandToFileProcessor(Processor):
     ''' Dumps the command queue and saves it into the defined file.
     '''
 
     PREREQ = [
-        ('new.command_system.new_generate_command_from_input_processor', 'NewGenerateCommandFromInputProcessor')
-        ]
+        'new.command_system.new_generate_command_from_input_processor', 'NewGenerateCommandFromInputProcessor'
+    ]
 
     def __init__(self, get_commands_fnc, file):
         super().__init__()
@@ -63,6 +64,5 @@ class NewRecordCommandToFileProcessor(esper.Processor):
         ''' Method called when closing the game. Put all necessary statements 
         such as closing of files/resources here, if necessary.
         '''
-
         # Close the file
         self.fh.close()

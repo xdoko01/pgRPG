@@ -1,8 +1,22 @@
 __all__ = ['RenderDebugProcessor']
 
 import pygame	# for pygame.time, pygame.font and pygame.Color
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.original.position import Position
+from pyrpg.core.ecs.components.original.debug import Debug
+from pyrpg.core.ecs.components.original.camera import Camera
+from pyrpg.core.ecs.components.original.collidable import Collidable
+from pyrpg.core.ecs.components.original.labeled import Labeled
+from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
+from pyrpg.core.ecs.components.original.damageable import Damageable
+from pyrpg.core.ecs.components.original.can_wear import CanWear
+from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
+from pyrpg.core.ecs.components.original.has_inventory import HasInventory
+from pyrpg.core.ecs.components.original.brain import Brain
 
 from pyrpg.core.config.fonts import GAME_DEBUG_FONT # for the debug font
 
@@ -10,8 +24,7 @@ from .functions import filter_only_visible # for filtering only entities with po
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 
-
-class RenderDebugProcessor(esper.Processor):
+class RenderDebugProcessor(Processor):
     ''' Information displayed only on visible entities
     using the filter_only_visible function.
 
@@ -38,34 +51,19 @@ class RenderDebugProcessor(esper.Processor):
         debug = kwargs.get('debug', {})
 
         # Show debug information on all cameras
-        for _, (cam_cam) in self.world.get_component(components.Camera):
+        for _, (cam_cam) in self.world.get_component(Camera):
 
             # Show debug information to all entities with Position and Debug component
             #for debug_entity, (pos_comp, deb_comp, coll_debug) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.Collidable)):
-            for debug_entity, (pos_comp, deb_comp) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug)):
+            for debug_entity, (pos_comp, deb_comp) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(Position, Debug)):
 
                 # Here all the debug information are gathered
                 debug_text = ''
 
-                # Mark new collision area
-                if debug.get('show_collision', False):
-                    try:
-                        coll_debug = self.world.component_for_entity(debug_entity, components.NewCollidable)
-                        pygame.draw.rect(
-                            cam_cam.screen,
-                            pygame.Color('blue'),
-                            pygame.Rect(
-                                cam_cam.apply((pos_comp.x + coll_debug.dx - coll_debug.x, pos_comp.y + coll_debug.dy - coll_debug.y)), 
-                                (2 * coll_debug.x, 2 * coll_debug.y)
-                                ),
-                            1)
-                    except KeyError:
-                        pass
-
                 # Mark collision area
                 if debug.get('show_collision', False):
                     try:
-                        coll_debug = self.world.component_for_entity(debug_entity, components.Collidable)
+                        coll_debug = self.world.component_for_entity(debug_entity, Collidable)
                         pygame.draw.rect(
                             cam_cam.screen,
                             pygame.Color('blue'),
@@ -92,7 +90,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show entity labels
                 if debug.get('show_labels', False):
                     try:
-                        label_debug = self.world.component_for_entity(debug_entity, components.Labeled)
+                        label_debug = self.world.component_for_entity(debug_entity, Labeled)
                         debug_text += f'{debug_entity}, {label_debug.id}, {label_debug.name}\n'
                     except KeyError:
                         pass
@@ -100,7 +98,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show position info
                 if debug.get('show_position', False):
                     try:
-                        pos_debug = self.world.component_for_entity(debug_entity, components.Position)
+                        pos_debug = self.world.component_for_entity(debug_entity, Position)
                         debug_text += f'Pos:({int(pos_debug.x)}, {int(pos_debug.y)})\nDir: {pos_comp.dir_name}\n'
                     except KeyError:
                         pass
@@ -108,7 +106,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show model status info
                 if debug.get('show_state', False):
                     try:
-                        state_debug = self.world.component_for_entity(debug_entity, components.RenderableModel)
+                        state_debug = self.world.component_for_entity(debug_entity, RenderableModel)
                         debug_text += f'State: {state_debug.action}\n'
                     except KeyError:
                         pass
@@ -116,7 +114,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show health info
                 if debug.get('show_health', False):
                     try:
-                        damageable_debug = self.world.component_for_entity(debug_entity, components.Damageable)
+                        damageable_debug = self.world.component_for_entity(debug_entity, Damageable)
                         debug_text += f'Health: {damageable_debug.health}\n'
                     except KeyError:
                         pass
@@ -124,15 +122,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show inventory info
                 if debug.get('show_inventory', False):
                     try:
-                        inventory_debug = self.world.component_for_entity(debug_entity, components.HasInventory)
-                        debug_text += f'Inventory: {pformat(inventory_debug.inventory)}\n'
-                    except KeyError:
-                        pass
-
-                # Show new inventory info
-                if debug.get('show_inventory', False):
-                    try:
-                        inventory_debug = self.world.component_for_entity(debug_entity, components.NewHasInventory)
+                        inventory_debug = self.world.component_for_entity(debug_entity, HasInventory)
                         debug_text += f'Inventory: {pformat(inventory_debug.inventory)}\n'
                     except KeyError:
                         pass
@@ -140,7 +130,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show wearables info
                 if debug.get('show_wearables', False):
                     try:
-                        wearables_debug = self.world.component_for_entity(debug_entity, components.CanWear)
+                        wearables_debug = self.world.component_for_entity(debug_entity, CanWear)
                         debug_text += f'Wearables:\n{pformat(wearables_debug.wearables, width=50)}\n'
                     except KeyError:
                         pass
@@ -148,7 +138,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show weapons info
                 if debug.get('show_weapons', False):
                     try:
-                        weapons_debug = self.world.component_for_entity(debug_entity, components.HasWeapon)
+                        weapons_debug = self.world.component_for_entity(debug_entity, HasWeapon)
                         debug_text += f'Weapon in use: {weapons_debug.get_weapon_in_use()}\nAll weapons:\n{pformat(weapons_debug.weapons, width=50)}\n'
                     except KeyError:
                         pass
@@ -167,7 +157,7 @@ class RenderDebugProcessor(esper.Processor):
                 # Show brain processing
                 if debug.get('show_brain', False):
                     try:
-                        brain_debug = self.world.component_for_entity(debug_entity, components.Brain)
+                        brain_debug = self.world.component_for_entity(debug_entity, Brain)
                         for cmd_idx, cmd_txt in enumerate(brain_debug.commands):
                             color = pygame.Color('red') if cmd_idx == brain_debug.current_cmd_idx else pygame.Color('white')
                             cmd_surf = GAME_DEBUG_FONT.render(f'{cmd_idx} -> {cmd_txt}', color=color)

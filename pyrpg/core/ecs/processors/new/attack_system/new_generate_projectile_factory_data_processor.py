@@ -1,13 +1,21 @@
 __all__ = ['NewGenerateProjectileFactoryDataProcessor']
 
 import logging
-import pyrpg.core.ecs.esper as esper	# for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components # for definition of components
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.new_flag_is_animation_action_frame import NewFlagIsAnimationActionFrame
+from pyrpg.core.ecs.components.new.new_has_weapon import NewHasWeapon
+from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.new_flag_create_from_factory import NewFlagCreateFromFactory
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class NewGenerateProjectileFactoryDataProcessor(esper.Processor):
+class NewGenerateProjectileFactoryDataProcessor(Processor):
     ''' Detects attacking entities that are about to generate
     a weapon attack (projectile) and prepare information necessary
     for successful generation of new entity from the weapon generator
@@ -18,6 +26,7 @@ class NewGenerateProjectileFactoryDataProcessor(esper.Processor):
         -   NewFlagIsAnimationActionFrame - indicating that in this cycle projectile needs to be created
         -   NewHasWeapon - for getting the Factory(AmmoPack) from which the projectile will be generated
         -   NewWeaponInUse - to determine which weapon to search for in NewHasWeapon component
+        -   NewFlagCreateFromFactory
 
     Related processors:
         -   NewPerformFrameUpdateProcessor - processor that generates NewFlagIsAnimationActionFrame
@@ -31,8 +40,8 @@ class NewGenerateProjectileFactoryDataProcessor(esper.Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        ('new.animation_system.new_perform_frame_update_processor', 'NewPerformFrameUpdateProcessor')
-        ]
+        'new.animation_system.new_perform_frame_update_processor:NewPerformFrameUpdateProcessor'
+    ]
 
     def __init__(self):
         ''' Init the processor.
@@ -51,7 +60,7 @@ class NewGenerateProjectileFactoryDataProcessor(esper.Processor):
         self.cycle += 1
 
         # Get entities that in this cycle have all what it needs to generate projectile
-        for _, (position, is_action_frame, has_weapon, weapon_in_use) in self.world.get_components(components.Position, components.NewFlagIsAnimationActionFrame, components.NewHasWeapon, components.NewWeaponInUse):
+        for _, (position, is_action_frame, has_weapon, weapon_in_use) in self.world.get_components(Position, NewFlagIsAnimationActionFrame, NewHasWeapon, NewWeaponInUse):
 
             # calculate position for the new projectile
             ##(ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)
@@ -59,7 +68,7 @@ class NewGenerateProjectileFactoryDataProcessor(esper.Processor):
 
             # Create component NewFlagCreateFromFactory and add it to Generator entity
             self.world.add_component(has_weapon.weapons[weapon_in_use.type]["generator"],
-                                    components.NewFlagCreateFromFactory(
+                                    NewFlagCreateFromFactory(
                                         position=(int(position.x), int(position.y), position.dir_name, position.map),
                                         id_suffix='projectile'
                                         )

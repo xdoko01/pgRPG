@@ -13,9 +13,7 @@
 import json
 import pickle # for savegame/loadgame
 import re # for removing of comments from json files
-import importlib
 import logging
-from typing import ClassVar
 
 # Create logger
 logger = logging.getLogger(__name__)
@@ -46,16 +44,16 @@ clock = pygame.time.Clock()
 ########################################################
 
 from pyrpg.functions import get_class_object # for dynamic creation of components and processors from json definition
-
-import pyrpg.core.config.fonts # Initiate fonts for the game
+from pyrpg.functions import translate # for creation of the component
 
 import pyrpg.core.config.keys as keys
 
 from pyrpg.core.config.paths import Path, ENTITY_PATH, DIALOG_PATH, SAVE_PATH, IMAGE_PATH, FONT_PATH
 
 import pyrpg.core.ecs.esper as esper
-import pyrpg.core.ecs.components as components
-import pyrpg.core.ecs.processors as processors
+#import pyrpg.core.ecs.components as components # this is soon to be obsolete
+
+from pyrpg.core.ecs.components.component import Component # generic component super-class
 
 import pyrpg.core.commands as commands
 
@@ -417,6 +415,132 @@ def create_dialog(dlg_data):
     # Store the dialog
     dialogs.update({new_dlg_id : new_dlg_obj})
 
+def _create_component(alias_dict: dict, comp_path: str, comp_params: dict) -> Component:
+    ''' Returns new instance of component created.
+
+    Parameters:
+
+        :param alias_dict: Reference to dictionary holding information about translation from entity alias name to entity id.
+        :type alias_dict: dict
+
+        :param comp_path: Path to the component class in format of path.to.module:ComponentClass
+        :type comp_path: str
+
+        :param comp_params: Parameters for initiation of component instance.
+        :type comp_params: dict
+
+        :return: Returns reference to the new component instance.
+        :raises: ValueException, if component instance cannot be created
+    '''
+
+    # Get the definition of the component class
+    try:
+        # Spit the module path and the class name
+        # For example: comp_path = 'new.movement:Movable' results to
+        # comp_module = 'new.movement'
+        # comp_class = 'Movable'
+        comp_module, comp_class = comp_path.split(':')
+        new_class = get_class_object(None, 'pyrpg.core.ecs.components.' + comp_module, comp_class)
+
+    except ValueError:
+        raise ValueError(f'Error during loading of component class "{comp_class}"')
+
+    # Try to create instance of the component
+    try:
+        # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
+        # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
+        # integer from alias_dict values.
+
+        # New dictionary containing aliases substituted with integer entity IDs
+        comp_params_substituted = translate(alias_dict, comp_params)
+
+        # Return the instance of the component
+        return new_class(**comp_params_substituted)
+
+    except ValueError:
+        print(f'Incorrect parameters while creating component "{comp_class}"')
+        raise ValueError
+
+def create_entity(json_ent_obj: dict, entity_id: int=None, register: bool=True, child_ref: int=None) -> None:
+    ''' Create entity from json definition. See Quest for definitions
+
+        Parameters:
+            :param json_ent_obj: Description of entity in JSON format (python dict).
+            :type json_ent_obj: dict
+
+            :param entity_id: Parameter overrides entity id that is present in json_ent_obj definition.
+            :type entity_id: str
+
+            :param register: Should the entity be globally registered with engine.
+            :type register: bool
+
+            :param child_ref: Used for recursive creation of entity from templates.
+            :type child_ref: world.entity Object
+
+            :raise: ValueError - in case of problem with component creation
+    '''
+    global world
+    global alias_to_entity
+    global entity_to_alias
+
+    # Prepare new_entity obj
+    new_entity_obj = None
+
+    # Decode entity id - use the one from fcion call with priority or the on fron entity description
+    new_entity_id = entity_id if entity_id else json_ent_obj.get("id")
+
+    # Create new entity obj for the root entity
+    if not child_ref:
+        new_entity_obj = world.create_entity()
+        print(f'\n*Creating new entity "{new_entity_id}", id: {new_entity_obj}')
+
+    # Read the components from the templates - order matters! latter has priority and overwrites
+    # the previous components
+    for template in json_ent_obj.get("templates", []):
+
+        # Read the entity.json
+        try:
+            with open(ENTITY_PATH / Path(template + '.json'), 'r') as entity_file:
+                json_entity_data = entity_file.read()
+                template_entity_data = json.loads(re.sub("//.*","", json_entity_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
+        except FileNotFoundError:
+            print(f"Entity file {ENTITY_PATH / Path(template + '.json')} not found.")
+            raise
+
+        print(f'**Creating components from template {template + ".json"}')
+        create_entity(template_entity_data, child_ref=new_entity_obj if not child_ref else child_ref)
+        print(f'**Creating components from template {template + ".json"} done.')
+
+    # Initiate every component
+    for component in json_ent_obj.get("components"):
+
+        # Get component type
+        comp_type = component.get("type")
+
+        # Get component params
+        comp_params = component.get("params", {})
+
+        # Create component
+        try:
+            new_comp = _create_component(alias_to_entity, comp_type, comp_params)
+
+            # Add new component to the world
+            world.add_component(new_entity_obj if not child_ref else child_ref, new_comp)
+
+            print(f'***{new_comp} for entity {new_entity_obj if not child_ref else child_ref} created.')
+
+        except ValueError:
+            print(f'Error in creation of component {comp_type} with parameters {comp_params}')
+            raise ValueError
+
+    # Add entity to the entity map - for the root entity
+    if not child_ref and register:
+        alias_to_entity.update({new_entity_id : new_entity_obj})
+        entity_to_alias.update({new_entity_obj: new_entity_id})
+
+    return new_entity_obj
+
+# Soon to be obsolete
 def _create_entity(json_ent_obj, entity_id=None, register=True, child_ref=None):
     ''' Create entity from json definition. See Quest for definitions
 
@@ -590,7 +714,7 @@ def delete_dialog(dialog_name):
 
 # List of processor parameters that are maped to core.engine functions
 PROC_PARAMS = {
-    'create_entity_fnc' : _create_entity,
+    'create_entity_fnc' : create_entity, #_create_entity,
     'remove_entity_fnc' : delete_entity_id,
     'ammo_pack_event_queue' : event_queue,
     'window' : window,
@@ -635,7 +759,7 @@ def _check_processor(proc_class: esper.Processor) -> str:
     for prereq in prereqs:
 
         # Unpack the prerequisity processor information
-        prereq_module, prereq_class = prereq
+        prereq_module, prereq_class = prereq.split(':')
 
         # Get the prerequisity processor class
         try:

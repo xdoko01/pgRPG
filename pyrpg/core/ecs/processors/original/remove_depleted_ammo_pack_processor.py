@@ -1,9 +1,14 @@
 __all__ = ['RemoveDepletedAmmoPackProcessor']
 
-import pyrpg.core.ecs.esper as esper    # for esper.Processor - parent class of all processors
-import pyrpg.core.ecs.components as components
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
 
-class RemoveDepletedAmmoPackProcessor(esper.Processor):
+# Used components
+from pyrpg.core.ecs.components.original.ammo_pack import AmmoPack
+from pyrpg.core.ecs.components.original.factory import Factory
+from pyrpg.core.ecs.components.original.flag_factory_depleted import FlagFactoryDepleted
+
+class RemoveDepletedAmmoPackProcessor(Processor):
 
     __slots__ = ['remove_entity_fnc']
 
@@ -19,7 +24,7 @@ class RemoveDepletedAmmoPackProcessor(esper.Processor):
 
     def process(self, *args, **kwargs):
 
-        for ent, (ammo_pack, factory, flag_factory_depleted) in self.world.get_components(components.AmmoPack, components.Factory, components.FlagFactoryDepleted):
+        for ent, (ammo_pack, factory, flag_factory_depleted) in self.world.get_components(AmmoPack, Factory, FlagFactoryDepleted):
 
             # Remove and unregister entity from global dicts
             self.remove_entity_fnc(ent)
