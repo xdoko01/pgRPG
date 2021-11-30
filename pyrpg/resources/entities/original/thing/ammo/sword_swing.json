@@ -1,0 +1,9 @@
+{
+	"id" : "sword_swing",
+	"templates" : ["original/thing/ammo"],
+	"components" : [
+		{"type" : "original.temporary:Temporary", "params" : {"ttl" : 100}},
+		{"type" : "original.collidable:Collidable", "params" : {"x" : 16, "y" : 16}},
+		{"type" : "original.damaging:Damaging", "params" : {"damage" : 10}}
+	]
+}

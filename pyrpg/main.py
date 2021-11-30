@@ -88,6 +88,8 @@ def init(state='MAIN_MENU', cons_enabled=True, timed=False):
 
     # Load the definitions contained in the init quest - old processors
     #pyrpg.core.engine.new_game('original/init')
+    #pyrpg.core.engine.new_game('original/collision_test')
+    #pyrpg.core.engine.new_game('original/debug_shoot_problem')
     #pyrpg.core.engine.new_game('original/test04_weapons')
     #pyrpg.core.engine.new_game('original/otik_lvl1')
     #pyrpg.core.engine.new_game('original/test_quest')

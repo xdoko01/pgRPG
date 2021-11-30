@@ -317,9 +317,9 @@ class World:
         {
             <class 'pyrpg.core.ecs.components.collidable.Collidable'>: {1}, 
             <class 'pyrpg.core.ecs.components.renderable_model.RenderableModel'>: {1}, 
-            <class 'pyrpg.core.ecs.components.new_controllable.NewControllable'>: {1}, 
+            <class 'pyrpg.core.ecs.components.controllable.Controllable'>: {1}, 
             <class 'pyrpg.core.ecs.components.position.Position'>: {1}, 
-            <class 'pyrpg.core.ecs.components.new_movable.NewMovable'>: {1}, 
+            <class 'pyrpg.core.ecs.components.movable.Movable'>: {1}, 
             <class 'pyrpg.core.ecs.components.camera.Camera'>: {1}
         }
 

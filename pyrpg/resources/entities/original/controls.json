@@ -1,0 +1,6 @@
+{
+	"id" : "controls",
+	"components" : [
+		{"type" : "original.controllable:Controllable", "params" : {}}
+	]
+}

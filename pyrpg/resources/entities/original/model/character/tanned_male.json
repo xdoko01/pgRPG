@@ -1,0 +1,7 @@
+{
+	"id" : "tanned_male",
+	"templates" : ["original/model/character"],
+	"components" : [
+		{"type" : "original.renderable_model:RenderableModel", "params" : {"model" : "tannedmale.json"}}
+	]
+}

@@ -56,65 +56,65 @@
 
 				{
 					"id" : "wooden_bow",
-					"templates" : ["bow", "wooden_bow_model"],
+					"templates" : ["original/thing/weapon/bow", "original/model/weapon/wooden_bow"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "wooden_bow", "name" : "Wooden Bow"}},
-						{"type" : "Debug", "params" : {}},
-						{"type" : "Position", "params" : {"x" : 200, "y" : 350, "map" : "test_map"}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "wooden_bow", "name" : "Wooden Bow"}},
+						{"type" : "original.debug:Debug", "params" : {}},
+						{"type" : "original.position:Position", "params" : {"x" : 200, "y" : 350, "map" : "test_map"}}
 					]
 				},
 
 				{
 					"id" : "pack_of_arrows",
-					"templates" : ["wooden_arrows_pack", "wooden_arrows_pack_model"],
+					"templates" : ["original/thing/ammo_pack/wooden_arrows_pack", "original/model/ammo_pack/wooden_arrows_pack"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "pack_of_arrows", "name" : "Pack of Arrows"}},
-						{"type" : "Debug", "params" : {}},
-						{"type" : "Position", "params" : {"x" : 200, "y" : 700, "map" : "test_map"}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "pack_of_arrows", "name" : "Pack of Arrows"}},
+						{"type" : "original.debug:Debug", "params" : {}},
+						{"type" : "original.position:Position", "params" : {"x" : 200, "y" : 700, "map" : "test_map"}}
 					]
 				},
 
 				{
 					"id" : "short_sword",
-					"templates" : ["sword", "short_sword_model",  "sword_swings_pack"],
+					"templates" : ["original/thing/weapon/sword", "original/model/weapon/short_sword", "original/thing/ammo_pack/sword_swings_pack"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "short_sword", "name" : "Short Sword"}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "short_sword", "name" : "Short Sword"}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 
 				{
 					"id" : "striped_pants",
-					"templates" : ["pants", "striped_pants_model"],
+					"templates" : ["original/thing/wearable/pants", "original/model/wearable/striped_pants"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "striped_pants", "name" : "Striped pants"}},
-						{"type" : "Position", "params" : {"x" : 200, "y" : 300, "map" : "test_map"}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "striped_pants", "name" : "Striped pants"}},
+						{"type" : "original.position:Position", "params" : {"x" : 200, "y" : 300, "map" : "test_map"}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 
 				{
 					"id" : "golden_helmet",
-					"templates" : ["helmet", "golden_helmet_model"],
+					"templates" : ["original/thing/wearable/helmet", "original/model/wearable/golden_helmet"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "golden_helmet", "name" : "Golden Helmet"}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "golden_helmet", "name" : "Golden Helmet"}},
+						{"type" : "original.debug:Debug", "params" : {}}
 
 					]
 				},
 				{
 					"id" : "player01",
-					"templates" : ["player", "darkmale", "key_controls"],
+					"templates" : ["original/thing/being/human/player", "original/model/character/dark_male", "original/controls"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
-						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
+						{"type" : "original.position:Position", "params" : {"x" : 200, "y" : 200, "map" : "test_map"}},
 
-						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
-						{"type" : "Debug", "params" : {}},
+						{"type" : "original.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
+						{"type" : "original.debug:Debug", "params" : {}},
 
-						{"type" : "CanWear", "params" : {"head" : "golden_helmet"}},
+						{"type" : "original.can_wear:CanWear", "params" : {"head" : "golden_helmet"}},
 
-						{"type" : "HasWeapon", "params" : {
+						{"type" : "original.has_weapon:HasWeapon", "params" : {
 							"weapons" : {
 								"sword" : {"weapon" : "short_sword", "generator" : "short_sword"},
 								"bow" : {"weapon" : "wooden_bow", "generator" : "pack_of_arrows"}
@@ -128,30 +128,30 @@
 				{
 					"id" : "item01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "item01", "name" : "Static Item"}},
-						{"type" : "Position", "params" : {"x" : 300, "y" : 300, "map" : "test_map"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Renderable", "params" : {"image" : "item.png"}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 410, "screen_width" : 400, "screen_height" :400}},
-						{"type" : "Pickable", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "item01", "name" : "Static Item"}},
+						{"type" : "original.position:Position", "params" : {"x" : 300, "y" : 300, "map" : "test_map"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.renderable:Renderable", "params" : {"image" : "item.png"}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.camera:Camera", "params" : {"screen_pos_x" : 0, "screen_pos_y" : 410, "screen_width" : 400, "screen_height" :400}},
+						{"type" : "original.pickable:Pickable", "params" : {}}
 					]
 				},
 				{
 					"id" : "camera01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
-						{"type" : "Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Controllable", "params" :  {
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
+						{"type" : "original.position:Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.controllable:Controllable", "params" :  {
 							"control_keys" : {"up" : 119, "down" : 115, "left" : 97, "right" : 100}, 
 							"control_cmds" : {"up": "none", "down": "move", "left": "move", "right": "move", "attack" : "none"}
 							}
 						},
-						{"type" : "Camera", "params" : {"always_center": true, "screen_pos_x" : 410, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
-						{"type" : "CanTalk", "params" : {}},
-						{"type" : "Debug", "params" : {}},
-						{"type" : "Brain", "params" : {"commands" : [
+						{"type" : "original.camera:Camera", "params" : {"always_center": true, "screen_pos_x" : 410, "screen_pos_y" : 0, "screen_width" : 400, "screen_height" : 400}},
+						{"type" : "original.can_talk:CanTalk", "params" : {}},
+						{"type" : "original.debug:Debug", "params" : {}},
+						{"type" : "original.brain:Brain", "params" : {"commands" : [
 							[null, 	"move", {"dx" : -120}],
 							[0, 	"loop", {"iterations" : 1}],
 							[null, 	"move", {"dy" : -120}],
@@ -169,43 +169,43 @@
 				{
 					"id" : "script_engine",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "script_engine", "name" : "Global Script Engine"}},
-						{"type" : "Brain", "params" : {"commands" : []}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "script_engine", "name" : "Global Script Engine"}},
+						{"type" : "original.brain:Brain", "params" : {"commands" : []}}
 					]
 				},
 				{
 					"id" : "tele01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
-						{"type" : "Position", "params" : {"x" : 400, "y" : 400, "map" : "test_map"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Renderable", "params" : {"image" : "teleport.png"}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Camera", "params" : {"screen_pos_x" : 410, "screen_pos_y" : 410, "screen_width" : 400, "screen_height" : 400}},
-						{"type" : "Teleport", "params" : {"dest_map" : "test_map", "dest_x" : 200, "dest_y" : 1000, "key" : "item01"}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
+						{"type" : "original.position:Position", "params" : {"x" : 400, "y" : 400, "map" : "test_map"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.renderable:Renderable", "params" : {"image" : "teleport.png"}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.camera:Camera", "params" : {"screen_pos_x" : 410, "screen_pos_y" : 410, "screen_width" : 400, "screen_height" : 400}},
+						{"type" : "original.teleport:Teleport", "params" : {"dest_map" : "test_map", "dest_x" : 200, "dest_y" : 1000, "key" : "item01"}}
 					]
 				},
 				{
 					"id" : "key01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "key01", "name" : "Key to the cellar"}},
-						{"type" : "Collidable", "params" : {"x" : 20, "y" : 20}},
-						{"type" : "Renderable", "params" : {"image" : "key.png"}},
-						{"type" : "Pickable", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "key01", "name" : "Key to the cellar"}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 20, "y" : 20}},
+						{"type" : "original.renderable:Renderable", "params" : {"image" : "key.png"}},
+						{"type" : "original.pickable:Pickable", "params" : {}}
 					]
 				},
 				{
 					"id" : "npc01",
-					"templates" : ["human", "darkmale"],
+					"templates" : ["original/thing/being/human", "original/model/character/dark_male"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
-						{"type" : "Position", "params" : {"x" : 800, "y" : 200, "map" : "test_map"}},
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "npc01", "name" : "Merchant"}},
+						{"type" : "original.position:Position", "params" : {"x" : 800, "y" : 200, "map" : "test_map"}},
 
-						{"type" : "HasInventory", "params" : {"inventory" : ["key01"]}},
+						{"type" : "original.has_inventory:HasInventory", "params" : {"inventory" : ["key01"]}},
 
-						{"type" : "Debug", "params" : {}},
+						{"type" : "original.debug:Debug", "params" : {}},
 
-						{"type" : "Brain", "params" : {"commands" : [
+						{"type" : "original.brain:Brain", "params" : {"commands" : [
 							[0, 	"move_to", {"x" : 600, "y" : 200}],
 							[1, 	"show_dialog", {"time" : 3000, "text" : "... who will\nhelp me ...?", "can_skip" : false}],
 							[2, 	"move_to", {"x" : 1000, "y" : 200}],
@@ -216,13 +216,13 @@
 				},
 				{
 					"id" : "npc02",
-					"templates" : ["human", "darkmale"],
+					"templates" : ["original/thing/being/human", "original/model/character/dark_male"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
-						{"type" : "Position", "params" : {"x" : 400, "y" : 1100, "map" : "test_map"}},
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "npc02", "name" : "Test NPC 02"}},
+						{"type" : "original.position:Position", "params" : {"x" : 400, "y" : 1100, "map" : "test_map"}},
 
-						{"type" : "Debug", "params" : {}},
-						{"type" : "Brain", "params" : {"commands" : [
+						{"type" : "original.debug:Debug", "params" : {}},
+						{"type" : "original.brain:Brain", "params" : {"commands" : [
 							[0, 	"move_to", {"x" : 100, "y" : 1100}],
 							[1, 	"move_to", {"x" : 400, "y" : 1000}],
 							[0, 	"goto", {}]

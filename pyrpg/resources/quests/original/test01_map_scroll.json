@@ -20,22 +20,22 @@
 				{
 					"id" : "camera01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
-						{"type" : "Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Controllable", "params" :  {
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "camera", "name" : "Dynamic Camera"}},
+						{"type" : "original.position:Position", "params" : {"x" : 400, "y" : 300, "map" : "test_map"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.controllable:Controllable", "params" :  {
 							"control_keys" : {"up" : 119, "down" : 115, "left" : 97, "right" : 100}, 
 							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move", "attack" : "none"}
 							}
 						},
-						{"type" : "Camera", "params" : {
+						{"type" : "original.camera:Camera", "params" : {
 							"always_center": true, 
 							"screen_pos_x" : 0, 
 							"screen_pos_y" : 0, 
 							"screen_width" : 850, 
 							"screen_height" : 850}
 						},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				}
 			],

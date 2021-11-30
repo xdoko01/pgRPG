@@ -56,79 +56,79 @@
 
 				{
 					"id" : "player01",
-					"templates" : ["player", "darkmale", "key_controls"],
+					"templates" : ["original/thing/being/human/player", "original/model/character/dark_male", "original/controls"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
-						{"type" : "Position", "params" : {"tile_x" : 22, "tile_y" : 21, "map" : "oticek_hra_level_1"}},
-						{"type" : "Damageable", "params" : {"health" : 100}},
-						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 22, "tile_y" : 21, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.damageable:Damageable", "params" : {"health" : 100}},
+						{"type" : "original.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 				{
 					"id" : "lava01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "lava01", "name" : "Lava Area 01"}},
-						{"type" : "Position", "params" : {"tile_x" : 25, "tile_y" : 20, "map" : "oticek_hra_level_1"}},
-						{"type" : "Damaging", "params" : {"damage" : 100}},
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "lava01", "name" : "Lava Area 01"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 25, "tile_y" : 20, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.damaging:Damaging", "params" : {"damage" : 100}},
 						//{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 				{
 					"id" : "tele01",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
-						{"type" : "Position", "params" : {"tile_x" : 38, "tile_y" : 21, "map" : "oticek_hra_level_1"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 42, "tile_dest_y" : 20}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "tele01", "name" : "Static Teleport"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 38, "tile_y" : 21, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.teleport:Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 42, "tile_dest_y" : 20}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 				{
 					"id" : "tele02",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "tele02", "name" : "Static Teleport"}},
-						{"type" : "Position", "params" : {"tile_x" : 43, "tile_y" : 20, "map" : "oticek_hra_level_1"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 44, "tile_dest_y" : 18}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "tele02", "name" : "Static Teleport"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 43, "tile_y" : 20, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.teleport:Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 44, "tile_dest_y" : 18}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 				{
 					"id" : "tele03",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "tele03", "name" : "Static Teleport"}},
-						{"type" : "Position", "params" : {"tile_x" : 43, "tile_y" : 14, "map" : "oticek_hra_level_1"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 40, "tile_dest_y" : 12}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "tele03", "name" : "Static Teleport"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 43, "tile_y" : 14, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.teleport:Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 40, "tile_dest_y" : 12}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 				{
 					"id" : "tele04",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "tele04", "name" : "Static Teleport"}},
-						{"type" : "Position", "params" : {"tile_x" : 42, "tile_y" : 10, "map" : "oticek_hra_level_1"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 40, "tile_dest_y" : 8}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "tele04", "name" : "Static Teleport"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 42, "tile_y" : 10, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.teleport:Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 40, "tile_dest_y" : 8}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				},
 				{
 					"id" : "tele05",
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "tele05", "name" : "Static Teleport"}},
-						{"type" : "Position", "params" : {"tile_x" : 42, "tile_y" : 7, "map" : "oticek_hra_level_1"}},
-						{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-						{"type" : "Collidable", "params" : {"x" : 32, "y" : 32}},
-						{"type" : "Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 44, "tile_dest_y" : 9}},
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "tele05", "name" : "Static Teleport"}},
+						{"type" : "original.position:Position", "params" : {"tile_x" : 42, "tile_y" : 7, "map" : "oticek_hra_level_1"}},
+						{"type" : "original.motion:Motion", "params" : {"dx" : 0, "dy" : 0}},
+						{"type" : "original.collidable:Collidable", "params" : {"x" : 32, "y" : 32}},
+						{"type" : "original.teleport:Teleport", "params" : {"dest_map" : "oticek_hra_level_1", "tile_dest_x" : 44, "tile_dest_y" : 9}},
+						{"type" : "original.debug:Debug", "params" : {}}
 					]
 				}
 

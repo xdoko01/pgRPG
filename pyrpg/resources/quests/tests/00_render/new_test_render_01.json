@@ -9,10 +9,10 @@
 
 		// For displaying
 
-		["new.render_system.new_perform_clear_window_processor", "NewPerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
-		["new.render_system.new_perform_clear_camera_processor", "NewPerformClearCameraProcessor", {}], // clear all camera surfaces
-		["new.render_system.new_perform_render_map_processor", "NewPerformRenderMapProcessor", {}], // display map
-		["new.render_system.new_perform_blit_camera_processor", "NewPerformBlitCameraProcessor", {}] // display all cameras on the game window
+		["new.render_system.new_perform_clear_window_processor", "PerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
+		["new.render_system.perform_clear_camera_processor", "PerformClearCameraProcessor", {}], // clear all camera surfaces
+		["new.render_system.perform_render_map_processor", "PerformRenderMapProcessor", {}], // display map
+		["new.render_system.perform_blit_camera_processor", "PerformBlitCameraProcessor", {}] // display all cameras on the game window
 	],
 
 	"phases" : {

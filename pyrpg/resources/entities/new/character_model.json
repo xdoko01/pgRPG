@@ -1,0 +1,7 @@
+{
+	"id" : "character_model",
+	"templates" : ["new/model"],
+	"components" : [
+		{"type" : "original.collidable:Collidable", "params" : {"x" : 16, "y" : 30}}
+	]
+}

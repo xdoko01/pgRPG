@@ -7,16 +7,16 @@
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewPerformCommandProcessor", {"debug" : true}],
+		["GenerateCommandFromInputProcessor", {}],
+		["PerformCommandProcessor", {"debug" : true}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["PerformMovementProcessor", {}],
 
 		// For animation
-		["NewPerformMovementAnimationProcessor", {}],
-		["NewPerformIdleAnimationProcessor", {}],
-		["NewPerformFrameUpdateProcessor", {}],
+		["PerformMovementAnimationProcessor", {}],
+		["PerformIdleAnimationProcessor", {}],
+		["PerformFrameUpdateProcessor", {}],
 
 		// For displaying
 		["UpdateCameraOffsetProcessor", {}],
@@ -28,7 +28,7 @@
 		["RenderDebugProcessor", {}],
 
 		// For processing input and movements
-		["NewRemoveFlagDoMoveProcessor", {}]
+		["RemoveFlagDoMoveProcessor", {}]
 	],
 
 	"phases" : {
@@ -43,7 +43,7 @@
 					"templates" : ["darkmale"],
 					"components" : [
 
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								"left" : [["new_move_add", {"moves" : ["left"]}]],
 								"right": [["new_move_add", {"moves" : ["right"]}]],
@@ -54,7 +54,7 @@
 						},
 
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 200}},
+						{"type" : "Movable", "params" :  {"velocity" : 200}},
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				}

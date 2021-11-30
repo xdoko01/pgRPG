@@ -18,8 +18,8 @@ def cmd_new_move_vect_noadd(*args, **kwargs):
     # Direction is a vector to process
     vector = kwargs.get("vector", [0, 0])
 
-    # Always create NewFlagDoMove
-    new_component = components.NewFlagDoMove(vector=vector)
+    # Always create FlagDoMove
+    new_component = components.FlagDoMove(vector=vector)
     engine.world.add_component(entity, new_component)
     print(f'{__name__} - new component created {new_component}')
 

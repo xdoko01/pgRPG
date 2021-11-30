@@ -1,0 +1,9 @@
+{
+	"id" : "player",
+	"templates" : ["original/thing/being/human"],
+	"components" : [
+		{"type" : "original.has_inventory:HasInventory", "params" : {}},
+		{"type" : "original.can_wear:CanWear", "params" : {}},
+		{"type" : "original.has_weapon:HasWeapon", "params" : {}}
+	]
+}

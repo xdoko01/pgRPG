@@ -1,7 +1,0 @@
-{
-	"id" : "character_model",
-	"templates" : ["model"],
-	"components" : [
-		{"type" : "collidable:Collidable", "params" : {"x" : 16, "y" : 30}}
-	]
-}

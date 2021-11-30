@@ -19,8 +19,8 @@ def cmd_new_move_noadd(*args, **kwargs):
     moves = kwargs.get("moves", [])
 
 
-    # Always create NewFlagDoMove
-    new_component = components.NewFlagDoMove(moves=moves)
+    # Always create FlagDoMove
+    new_component = components.FlagDoMove(moves=moves)
     engine.world.add_component(entity, new_component)
 
     print(f'{__name__} - new component created {new_component}')

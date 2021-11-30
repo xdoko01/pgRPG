@@ -7,29 +7,29 @@
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewGenerateCommandFromBrainProcessor", {}],
-		["NewPerformCommandProcessor", {}],
+		["GenerateCommandFromInputProcessor", {}],
+		["GenerateCommandFromBrainProcessor", {}],
+		["PerformCommandProcessor", {}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["PerformMovementProcessor", {}],
 
 		// For animation
-		["NewPerformMovementAnimationProcessor", {}],
-		["NewPerformIdleAnimationProcessor", {}],
-		["NewPerformFrameUpdateProcessor", {}],
+		["PerformMovementAnimationProcessor", {}],
+		["PerformIdleAnimationProcessor", {}],
+		["PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["NewGenerateEntityCollisionsProcessor", {}],
-		["NewResolveEntityCollisionsExProcessor", {}],
+		["GenerateEntityCollisionsProcessor", {}],
+		["ResolveEntityCollisionsExProcessor", {}],
 
 		// For pickup
-		["NewGeneratePickupProcessor", {}],
-		["NewPerformPickupProcessor", {}],
+		["GeneratePickupProcessor", {}],
+		["PerformPickupProcessor", {}],
 
 		// For Arming of a Weapon
-		["NewGenerateArmWeaponProcessor", {}],
-		["NewPerformArmWeaponProcessor", {}],
+		["GenerateArmWeaponProcessor", {}],
+		["PerformArmWeaponProcessor", {}],
 
 		// For displaying
 		["UpdateCameraOffsetProcessor", {}],
@@ -44,17 +44,17 @@
 		["GameEventsExProcessor", {"process" : ["QUEST_START", "WEAPON_ARMED"]}],
 
 		// For clearing of processing of movements and collisions and pickups
-		["NewRemoveFlagDoMoveProcessor", {}],
+		["RemoveFlagDoMoveProcessor", {}],
 
-		["NewRemoveFlagHasCollidedProcessor", {}],
+		["RemoveFlagHasCollidedProcessor", {}],
 
-		["NewRemoveFlagIsAboutToPickEntityProcessor", {}],
-		["NewRemoveFlagHasPickedProcessor", {}],
-		["NewRemoveFlagWasPickedByProcessor", {}],
+		["RemoveFlagIsAboutToPickEntityProcessor", {}],
+		["RemoveFlagHasPickedProcessor", {}],
+		["RemoveFlagWasPickedByProcessor", {}],
 
-		["NewRemoveFlagIsAboutToArmWeaponProcessor", {}],
-		["NewRemoveFlagHasArmedWeaponProcessor", {}],
-		["NewRemoveFlagWasArmedAsWeaponByProcessor", {}]
+		["RemoveFlagIsAboutToArmWeaponProcessor", {}],
+		["RemoveFlagHasArmedWeaponProcessor", {}],
+		["RemoveFlagWasArmedAsWeaponByProcessor", {}]
 
 	],
 
@@ -135,7 +135,7 @@
 						{"type" : "Debug", "params" : {}},
 						{"type" : "Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
 						{"type" : "Pickable", "params" : {}},
-						{"type" : "NewCollidable", "params" : {"x" : 10, "y" : 20}},
+						{"type" : "Collidable", "params" : {"x" : 10, "y" : 20}},
 						{"type" : "RenderableModel", "params" : {"model" : "bow.json"}},
 						{"type" : "Position", "params" : {"x" : 250, "y" : 350, "map" : "test_arena_sand"}}
 					]
@@ -148,7 +148,7 @@
 						{"type" : "Debug", "params" : {}},
 						{"type" : "Weapon", "params" : {"type" : "sword", "max_projectiles" : 1}},
 						{"type" : "Pickable", "params" : {}},
-						{"type" : "NewCollidable", "params" : {"x" : 10, "y" : 10}},
+						{"type" : "Collidable", "params" : {"x" : 10, "y" : 10}},
 						{"type" : "RenderableModel", "params" : {"model" : "shortswordmale.json"}},
 						{"type" : "Position", "params" : {"x" : 200, "y" : 350, "map" : "test_arena_sand"}}
 					]
@@ -161,7 +161,7 @@
 						{"type" : "Debug", "params" : {}},
 						{"type" : "RenderableModel", "params" : {"model" : "darkmale.json"}},
 
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								"left" : [["new_move_add", {"moves" : ["left"]}]],
 								"right": [["new_move_add", {"moves" : ["right"]}]],
@@ -178,8 +178,8 @@
 						{"type" : "HasWeapon", "params" : {}},
 
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 200}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+						{"type" : "Movable", "params" :  {"velocity" : 200}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				}

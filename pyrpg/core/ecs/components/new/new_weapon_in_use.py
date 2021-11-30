@@ -13,8 +13,8 @@ class NewWeaponInUse(Component):
     attack.
 
     Used by:
-        - NewPerformArmWeaponProcessor
-        - NewPerformActionAnimationProcessor
+        - PerformArmWeaponProcessor
+        - PerformActionAnimationProcessor
 
     Examples of JSON definition:
         {"type" : "NewWeaponInUse", "params" : {"type" : "bow"}}

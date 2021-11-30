@@ -1,18 +1,18 @@
 {
 	"id" : "new_test08_movement",
 	"name" : "Movement Test 08",
-	"description" : "Test NewControllable, NewMoveable components and NewMove command",
+	"description" : "Test Controllable, NewMoveable components and NewMove command",
 	"objective" : "POC of the improved movement system",
 	"init_phase" : "phase01",
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewGenerateCommandFromBrainProcessor", {}],
-		["NewPerformCommandProcessor", {"debug" : true}],
+		["GenerateCommandFromInputProcessor", {}],
+		["GenerateCommandFromBrainProcessor", {}],
+		["PerformCommandProcessor", {"debug" : true}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["PerformMovementProcessor", {}],
 		
 		// For displaying
 		["UpdateCameraOffsetProcessor", {}],
@@ -26,7 +26,7 @@
 		["RenderDebugProcessor", {}],
 
 		// For processing input and movements
-		["NewRemoveFlagDoMoveProcessor", {}]
+		["RemoveFlagDoMoveProcessor", {}]
 	],
 
 	"phases" : {
@@ -48,7 +48,7 @@
 						/////////////////////////////////////////////////////////
 						{"type" : "Brain", "params" : {"commands" : []}},
 
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								// Do 3 circles upon pressing left
 								"left" : [["new_modify_brain", {"commands" : [
@@ -73,7 +73,7 @@
 
 
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				}

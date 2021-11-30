@@ -512,7 +512,7 @@ def create_entity(json_ent_obj: dict, entity_id: int=None, register: bool=True, 
         print(f'**Creating components from template {template + ".json"} done.')
 
     # Initiate every component
-    for component in json_ent_obj.get("components"):
+    for component in json_ent_obj.get("components", []):
 
         # Get component type
         comp_type = component.get("type")
@@ -802,7 +802,8 @@ def load_processors(processors: list) -> None:
     '''Imports and registers to the world processors specified by the quest definition.'''
 
     for processor in processors:
-        module_name, class_name, params = processor
+        class_path, params = processor
+        module_name, class_name = class_path.split(':')
 
         # Create instance of the processor
         new_proc = _load_processor(module_name, class_name, params)

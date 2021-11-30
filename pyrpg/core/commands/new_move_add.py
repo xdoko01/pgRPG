@@ -3,7 +3,7 @@
 
 import logging
 import pyrpg.core.engine as engine # To reference the world 
-from pyrpg.core.ecs.components.new_flag_do_move import NewFlagDoMove # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
 
 # Init logger
 logger = logging.getLogger(__name__)
@@ -21,11 +21,11 @@ def cmd_new_move_add(*args, **kwargs):
     # Direction is a list of movements to process
     moves = kwargs.get("moves", [])
 
-    # if NewFlagDoMove does not exist, create it.
+    # if FlagDoMove does not exist, create it.
     # if it already exists, recalculate the move_vect on the entity
     try:
-        # Get the NewFlagDoMove component from the entity
-        flag_do_move = engine.world.component_for_entity(entity, NewFlagDoMove)
+        # Get the FlagDoMove component from the entity
+        flag_do_move = engine.world.component_for_entity(entity, FlagDoMove)
 
         logger.debug(f'Entity {entity} - already existing component {flag_do_move}.')
 
@@ -40,8 +40,8 @@ def cmd_new_move_add(*args, **kwargs):
         return 0
 
     except KeyError:
-        # Create new NewFlagDoMove component
-        new_component = NewFlagDoMove(moves=moves)
+        # Create new FlagDoMove component
+        new_component = FlagDoMove(moves=moves)
         engine.world.add_component(entity, new_component)
         logger.debug(f'Entity {entity} - new component created {new_component}.')
 

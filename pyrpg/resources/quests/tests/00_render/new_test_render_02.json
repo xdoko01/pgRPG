@@ -7,21 +7,21 @@
 
 	"processors" : [
 		// For commands
-		["new.command_system.new_generate_command_from_input_processor", "NewGenerateCommandFromInputProcessor", {}],
-		["new.command_system.new_perform_command_processor", "NewPerformCommandProcessor", {}],
+		["new.command_system.generate_command_from_input_processor", "GenerateCommandFromInputProcessor", {}],
+		["new.command_system.perform_command_processor", "PerformCommandProcessor", {}],
 
 		// For movement
-		["new.movement_system.new_perform_movement_processor", "NewPerformMovementProcessor", {}],
+		["new.movement_system.perform_movement_processor", "PerformMovementProcessor", {}],
 
 		// For displaying
-		["new.render_system.new_perform_clear_window_processor", "NewPerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
-		["new.render_system.new_perform_clear_camera_processor", "NewPerformClearCameraProcessor", {"clear_color" : [100, 0, 0]}], // clear all camera surfaces
-		["new.render_system.new_perform_scroll_camera_processor", "NewPerformScrollCameraProcessor", {}], // scroll the camera
-		["new.render_system.new_perform_render_map_processor", "NewPerformRenderMapProcessor", {}], // display map
-		["new.render_system.new_perform_blit_camera_processor", "NewPerformBlitCameraProcessor", {}], // display all cameras on the game window
+		["new.render_system.new_perform_clear_window_processor", "PerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
+		["new.render_system.perform_clear_camera_processor", "PerformClearCameraProcessor", {"clear_color" : [100, 0, 0]}], // clear all camera surfaces
+		["new.render_system.perform_scroll_camera_processor", "PerformScrollCameraProcessor", {}], // scroll the camera
+		["new.render_system.perform_render_map_processor", "PerformRenderMapProcessor", {}], // display map
+		["new.render_system.perform_blit_camera_processor", "PerformBlitCameraProcessor", {}], // display all cameras on the game window
 
 		// For movement
-		["new.movement_system.new_remove_flag_do_move_porcessor", "NewRemoveFlagDoMoveProcessor", {}]
+		["new.movement_system.new_remove_flag_do_move_porcessor", "RemoveFlagDoMoveProcessor", {}]
 	],
 
 	"phases" : {
@@ -40,7 +40,7 @@
 					"components" : [
 
 						// Component to control camera using keyboard
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								"left" : [["new_move_add", {"moves" : ["left"]}]],
 								"right": [["new_move_add", {"moves" : ["right"]}]],
@@ -50,8 +50,8 @@
 							}
 						},
 
-						// Without NewMovable component the Camera won't move
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
+						// Without Movable component the Camera won't move
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 
 						// When moving camera it makes sense to have it always centred

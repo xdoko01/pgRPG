@@ -23,7 +23,7 @@ class GameEventsProcessor(Processor):
         self.game_event_handler()
 
 
-class GameEventsExProcessor(esper.Processor):
+class GameEventsExProcessor(Processor):
     ''' New event processor that alows to ignore some events and also
     to selectively process only some event types.
     '''
@@ -41,6 +41,9 @@ class GameEventsExProcessor(esper.Processor):
         self.to_ignore = kwargs.get('ignore', None)
         self.to_process = kwargs.get('process', None)
 
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
 
     def process(self, *args, **kwargs):
         ''' Call external function that processes events

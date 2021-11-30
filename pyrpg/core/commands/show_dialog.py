@@ -7,7 +7,7 @@
 
 '''
 import pyrpg.core.engine as engine # To reference the world
-import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.original.can_talk import CanTalk
 import pygame
 
 from pyrpg.core.config.fonts import PLAYER_TALK_FONT
@@ -36,7 +36,7 @@ def cmd_show_dialog_dynamic(*args, **kwargs):
     events = kwargs.get("events", [])
 
     # Get can talk component from entity
-    can_talk = engine.world.component_for_entity(entity, components.CanTalk)
+    can_talk = engine.world.component_for_entity(entity, CanTalk)
 
     # If RETURN is pressed and the text can be skipped, finish displaying the dialog
     for event in events:
@@ -95,7 +95,7 @@ def cmd_show_dialog_static(*args, **kwargs):
     events = kwargs.get("events", [])
 
     # Get can talk component from entity
-    can_talk = engine.world.component_for_entity(entity, components.CanTalk)
+    can_talk = engine.world.component_for_entity(entity, CanTalk)
 
     # If RETURN is pressed and the text can be skipped, finish displaying the dialog
     for event in events:

@@ -201,7 +201,7 @@ LOGGING = {
         "pyrpg" : {
             "level" : "INFO", # Passes INFO and upper logs only, i.e. INFO, WARNING, ERROR, CRITICAL
             #"level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["in_game_console"],
+            "handlers" : ["in_game_console", "console"],
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         }
 

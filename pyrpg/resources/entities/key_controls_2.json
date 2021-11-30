@@ -1,7 +1,0 @@
-{
-	"id" : "key_controls_2",
-	"template" : ["key_controls"],
-	"components" : [
-		{"type" : "Controllable", "params" :  {"key_profile" : "key_controls_2"}}
-	]
-}

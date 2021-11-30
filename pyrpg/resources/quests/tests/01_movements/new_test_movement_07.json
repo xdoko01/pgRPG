@@ -1,17 +1,17 @@
 {
 	"id" : "new_test07_movement",
 	"name" : "Movement Test 07",
-	"description" : "Test NewControllable, NewMoveable components and NewMove command",
+	"description" : "Test Controllable, NewMoveable components and NewMove command",
 	"objective" : "POC of the improved movement system",
 	"init_phase" : "phase01",
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewPerformCommandProcessor", {"debug" : true}],
+		["GenerateCommandFromInputProcessor", {}],
+		["PerformCommandProcessor", {"debug" : true}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["PerformMovementProcessor", {}],
 		
 		// For displaying
 		["UpdateCameraOffsetProcessor", {}],
@@ -25,7 +25,7 @@
 		["RenderDebugProcessor", {}],
 
 		// For processing input and movements
-		["NewRemoveFlagDoMoveProcessor", {}]
+		["RemoveFlagDoMoveProcessor", {}]
 	],
 
 	"phases" : {
@@ -45,7 +45,7 @@
 						// - adding of vectors not allowed, multiple keypresses not allowed
 						// - single command / single vector upon keypress
 						/////////////////////////////////////////////////////////
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								"left" : [["new_move_vect_noadd", {"vector" : [-1, 0]}]],
 								"right": [["new_move_vect_noadd", {"vector" : [1, 0]}]],
@@ -56,7 +56,7 @@
 						},
 
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				}

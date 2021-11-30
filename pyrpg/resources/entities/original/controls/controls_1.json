@@ -1,0 +1,7 @@
+{
+	"id" : "controls_1",
+	"template" : ["original/controls"],
+	"components" : [
+		{"type" : "original.controllable:Controllable", "params" :  {"key_profile" : "key_controls_1"}}
+	]
+}

@@ -12,7 +12,7 @@ from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
 
 from .functions import filter_only_visible # for filtering only entities with position on the cameras
 
-class RenderModelWorldProcessor(esper.Processor):
+class RenderModelWorldProcessor(Processor):
     ''' Draws the entities in the world. Unlike RenderWorldProcessor
     this one supports animated models.
 

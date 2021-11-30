@@ -1,4 +1,12 @@
 { "columns":12,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"",
+         "target":"."
+        }
+    },
  "image":"explosion.png",
  "imageheight":64,
  "imagewidth":768,
@@ -57,6 +65,74 @@
                  "name":"action",
                  "type":"string",
                  "value":"idle"
+                }, 
+                {
+                 "name":"repeat",
+                 "type":"bool",
+                 "value":false
+                }]
+        }, 
+        {
+         "animation":[
+                {
+                 "duration":50,
+                 "tileid":0
+                }, 
+                {
+                 "duration":50,
+                 "tileid":1
+                }, 
+                {
+                 "duration":50,
+                 "tileid":2
+                }, 
+                {
+                 "duration":50,
+                 "tileid":3
+                }, 
+                {
+                 "duration":50,
+                 "tileid":4
+                }, 
+                {
+                 "duration":50,
+                 "tileid":5
+                }, 
+                {
+                 "duration":50,
+                 "tileid":6
+                }, 
+                {
+                 "duration":50,
+                 "tileid":7
+                }, 
+                {
+                 "duration":50,
+                 "tileid":8
+                }, 
+                {
+                 "duration":50,
+                 "tileid":9
+                }, 
+                {
+                 "duration":50,
+                 "tileid":10
+                }, 
+                {
+                 "duration":50,
+                 "tileid":11
+                }],
+         "id":1,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"expire"
+                }, 
+                {
+                 "name":"repeat",
+                 "type":"bool",
+                 "value":false
                 }]
         }],
  "tilewidth":64,

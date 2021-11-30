@@ -7,18 +7,18 @@
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewPerformCommandProcessor", {}],
+		["GenerateCommandFromInputProcessor", {}],
+		["PerformCommandProcessor", {}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["PerformMovementProcessor", {}],
 
 		// For animation
-		["NewPerformMovementAnimationProcessor", {}],
-		["NewPerformActionAnimationProcessor", {}],
-		["NewPerformActionIdleAnimationProcessor", {}],
-		["NewPerformIdleAnimationProcessor", {}],
-		["NewPerformFrameUpdateProcessor", {}],
+		["PerformMovementAnimationProcessor", {}],
+		["PerformActionAnimationProcessor", {}],
+		["PerformActionIdleAnimationProcessor", {}],
+		["PerformIdleAnimationProcessor", {}],
+		["PerformFrameUpdateProcessor", {}],
 
 		// For displaying
 			//["UpdateCameraOffsetProcessor", {}],
@@ -30,26 +30,26 @@
 
 			// New Processors - added
 
-			["NewPerformClearWindowProcessor", {}],
-			["NewPerformClearCameraProcessor", {}],
+			["PerformClearWindowProcessor", {}],
+			["PerformClearCameraProcessor", {}],
 
-			["NewPerformScrollCameraProcessor", {}],
+			["PerformScrollCameraProcessor", {}],
 
-			["NewPerformRenderMapProcessor", {}],
-			["NewGenerateRenderDataFromParentProcessor", {}],
-			["NewPerformRenderModelProcessor", {}],
-			["NewPerformRenderArmedWeaponProcessor", {}],
-			["NewPerformRenderArmedAmmoProcessor", {}],
+			["PerformRenderMapProcessor", {}],
+			["GenerateRenderDataFromParentProcessor", {}],
+			["PerformRenderModelProcessor", {}],
+			["PerformRenderArmedWeaponProcessor", {}],
+			["PerformRenderArmedAmmoProcessor", {}],
 
-			["NewPerformRenderDebugInfoProcessor", {}],
+			["PerformRenderDebugInfoProcessor", {}],
 
-			["NewPerformBlitCameraProcessor", {}], // display all cameras on the game window
+			["PerformBlitCameraProcessor", {}], // display all cameras on the game window
 
 
 		// For processing input and movements and attacks
-		["NewRemoveFlagDoMoveProcessor", {}],
-		["NewRemoveFlagDoAttackProcessor", {}],
-		["NewRemoveFlagIsAnimationActionFrameProcessor", {}]
+		["RemoveFlagDoMoveProcessor", {}],
+		["RemoveFlagDoAttackProcessor", {}],
+		["RemoveFlagIsAnimationActionFrameProcessor", {}]
 
 	],
 
@@ -84,10 +84,10 @@
 					"templates" : ["darkmale"],
 					"components" : [
 
-						{"type" : "NewDebug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+						{"type" : "Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								"left" : [["new_move_add", {"moves" : ["left"]}]],
 								"right": [["new_move_add", {"moves" : ["right"]}]],
@@ -99,7 +99,7 @@
 						},
 
 						// In order to animate attack, some weapom must be in use
-						{"type" : "NewHasWeapon", "params" : {
+						{"type" : "HasWeapon", "params" : {
 							"weapons" : {
 								"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
 							}
@@ -108,7 +108,7 @@
 						{"type" : "NewWeaponInUse", "params" :  {"type" : "bow"}},
 
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 200}},
+						{"type" : "Movable", "params" :  {"velocity" : 200}},
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				}

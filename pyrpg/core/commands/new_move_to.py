@@ -2,7 +2,7 @@
 '''
 
 import pyrpg.core.engine as engine # To reference the world 
-from pyrpg.core.ecs.components.position import Position # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 from .new_move_add import cmd_new_move_add
 import math # for calculation of square root move_to
 

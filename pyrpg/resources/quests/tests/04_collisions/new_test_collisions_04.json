@@ -7,21 +7,21 @@
 
 	"processors" : [
 		// For commands
-		["NewGenerateCommandFromInputProcessor", {}],
-		["NewGenerateCommandFromBrainProcessor", {}],
-		["NewPerformCommandProcessor", {}],
+		["GenerateCommandFromInputProcessor", {}],
+		["GenerateCommandFromBrainProcessor", {}],
+		["PerformCommandProcessor", {}],
 
 		// For movement
-		["NewPerformMovementProcessor", {}],
+		["PerformMovementProcessor", {}],
 
 		// For animation
-		["NewPerformMovementAnimationProcessor", {}],
-		["NewPerformIdleAnimationProcessor", {}],
-		["NewPerformFrameUpdateProcessor", {}],
+		["PerformMovementAnimationProcessor", {}],
+		["PerformIdleAnimationProcessor", {}],
+		["PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["NewGenerateEntityCollisionsProcessor", {}],
-		["NewResolveEntityCollisionsExProcessor", {}],
+		["GenerateEntityCollisionsProcessor", {}],
+		["ResolveEntityCollisionsExProcessor", {}],
 
 		// For displaying
 		["UpdateCameraOffsetProcessor", {}],
@@ -36,8 +36,8 @@
 		["GameEventsExProcessor", {"process" : ["QUEST_START"]}],
 
 		// For clearing of processing of movements and collisions
-		["NewRemoveFlagDoMoveProcessor", {}],
-		["NewRemoveFlagHasCollidedProcessor", {}]
+		["RemoveFlagDoMoveProcessor", {}],
+		["RemoveFlagHasCollidedProcessor", {}]
 
 	],
 
@@ -104,7 +104,7 @@
 						{"type" : "Debug", "params" : {}},
 						{"type" : "RenderableModel", "params" : {"model" : "darkmale.json"}},
 
-						{"type" : "NewControllable", "params" :  {"key_profile" : "default",
+						{"type" : "Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								"left" : [["new_move_add", {"moves" : ["left"]}]],
 								"right": [["new_move_add", {"moves" : ["right"]}]],
@@ -115,8 +115,8 @@
 						},
 
 						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 200}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+						{"type" : "Movable", "params" :  {"velocity" : 200}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				},
@@ -135,8 +135,8 @@
 						]}},
 
 						{"type" : "Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -154,8 +154,8 @@
 						]}},
 
 						{"type" : "Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -173,8 +173,8 @@
 						]}},
 
 						{"type" : "Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -193,8 +193,8 @@
 
 
 						{"type" : "Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
+						{"type" : "Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -211,9 +211,9 @@
 							[0, 	"goto", {}]
 						]}},
 						
-						{"type" : "NewMovable", "params" :  {"velocity" : 100}},
+						{"type" : "Movable", "params" :  {"velocity" : 100}},
 						{"type" : "Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-						{"type" : "NewCollidable", "params" :  {"x" : 15,
+						{"type" : "Collidable", "params" :  {"x" : 15,
 																"y" : 27,
 																"dx" : 0,
 																"dy" : 8,

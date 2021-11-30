@@ -1,0 +1,8 @@
+{
+	"id" : "wooden_bow_model",
+	"templates" : ["original/model/weapon"],
+	"components" : [
+		{"type" : "original.collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
+		{"type" : "original.renderable_model:RenderableModel", "params" : {"model" : "bow.json"}}
+	]
+}

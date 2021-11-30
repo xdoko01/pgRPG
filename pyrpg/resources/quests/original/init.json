@@ -1,73 +1,66 @@
 {
 	"id" : "init",
 	"name" : "Init common game objects",
-	"description" : "Init all common game objects such as pause screen dialog",
+	"description" : "Init all common game objects such as processors and pause screen dialog",
 	"objective" : "",
 	"init_phase" : "init01",
 
 	"processors" : [
-		//////////////////////////////
-		// New set of processors
-		//////////////////////////////
-		//["NewGenerateCommandFromInputProcessor", {}],
-		//["NewGenerateCommandFromBrainProcessor", {}],
-		//["NewPerformCommandProcessor", {}],
 
-		//["NewPerformMovementProcessor", {}],
-
-		
 		//////////////////////////////
 		// Original set of processors
 		//////////////////////////////
 
-		["original.input_processor", "InputProcessor", {}],
-		["original.brain_processor", "BrainProcessor", {}],
-		["original.command_processor", "CommandProcessor", {}],
-		["original.movement_processor", "LinearMovementProcessor", {}],
-		["original.movement_processor", "MovementProcessor", {}],
-		["original.generate_projectile_processor", "PrepareProjectileProcessor", {}],
-		["original.generate_projectile_processor", "CreateEntityOnPositionProcessor", {}],
+		["original.input_processor:InputProcessor", {}],
+		["original.brain_processor:BrainProcessor", {}],
+		["original.command_processor:CommandProcessor", {}],
+		["original.movement_processor:LinearMovementProcessor", {}],
+		["original.movement_processor:MovementProcessor", {}],
+		["original.generate_projectile_processor:PrepareProjectileProcessor", {}],
+		["original.generate_projectile_processor:CreateEntityOnPositionProcessor", {}],
 
-		["original.collision_map_processor", "CollisionMapProcessor", {}],
-		["original.collision_entity_generator_processor", "CollisionEntityGeneratorProcessor", {}],
-		["original.collision_damage_processor", "CollisionDamageProcessor", {}],
+		["original.collision_map_processor:CollisionMapProcessor", {}],
+		["original.collision_entity_generator_processor:CollisionEntityGeneratorProcessor", {}],
+		["original.collision_damage_processor:CollisionDamageProcessor", {}],
 		
-		//["original.generate_score_damage_processor", "GenerateScoreDamageProcessor", {}],
-		//["original.generate_score_destroy_processor", "GenerateScoreDestroyProcessor", {}],
-		["original.collision_teleport_processor", "CollisionTeleportProcessor", {}],
-		["original.collision_weapon_processor", "CollisionWeaponProcessor", {}],
-		["original.collision_ammo_pack_processor","CollisionAmmoPackProcessor", {}],
-		["original.collision_wearable_processor","CollisionWearableProcessor", {}],
-		["original.collision_item_processor", "CollisionItemProcessor", {}],
-		["original.collision_entity_processor", "CollisionEntityProcessor", {}],
-		["original.collision_deletion_processor", "CollisionDeletionProcessor", {}],
+		["original.generate_score_damage_processor:GenerateScoreDamageProcessor", {}],
+		["original.generate_score_destroy_processor:GenerateScoreDestroyProcessor", {}],
 
-		["original.calculate_damage_processor", "CalculateDamageProcessor", {}],
+		["original.collision_teleport_processor:CollisionTeleportProcessor", {}],
+		["original.collision_weapon_processor:CollisionWeaponProcessor", {}],
+		["original.collision_ammo_pack_processor:CollisionAmmoPackProcessor", {}],
+		["original.collision_wearable_processor:CollisionWearableProcessor", {}],
+		["original.collision_item_processor:CollisionItemProcessor", {}],
+		["original.collision_entity_processor:CollisionEntityProcessor", {}],
+		["original.collision_deletion_processor:CollisionDeletionProcessor", {}],
 
-		//["original.calculate_score_processor", "CalculateScoreProcessor", {}],
+		["original.calculate_damage_processor:CalculateDamageProcessor", {}],
+
+		["original.calculate_score_processor:CalculateScoreProcessor", {}],
 		
-		["original.handle_destroyed_entities_processor", "HandleDestroyedEntitiesProcessor", {}],
+		["original.handle_destroyed_entities_processor:HandleDestroyedEntitiesProcessor", {}],
 		
-		["original.update_camera_offset_processor", "UpdateCameraOffsetProcessor", {}],
-		["original.renderable_model_animation_action_processor", "RenderableModelAnimationActionProcessor", {}],
-		["original.renderable_model_animation_update_processor", "RenderableModelAnimationUpdateProcessor", {}],
-		["original.render_background_processor", "RenderBackgroundProcessor", {}],
-		["original.render_background_processor", "RenderCameraBackgroundProcessor", {}],
-		["original.render_map_processor", "RenderMapProcessor", {}],
-		["original.render_world_processor", "RenderWorldProcessor", {}],
-		["original.render_model_world_processor", "RenderModelWorldProcessor", {}],
-		["original.render_talk_processor", "RenderTalkProcessor2", {}],
-		["original.render_debug_processor", "RenderDebugProcessor", {}],
-		["original.game_messages_processor", "GameMessagesProcessor", {}],
+		["original.update_camera_offset_processor:UpdateCameraOffsetProcessor", {}],
+		["original.renderable_model_animation_action_processor:RenderableModelAnimationActionProcessor", {}],
+		["original.renderable_model_animation_update_processor:RenderableModelAnimationUpdateProcessor", {}],
+		["original.render_background_processor:RenderBackgroundProcessor", {}],
+		["original.render_background_processor:RenderCameraBackgroundProcessor", {}],
+		["original.render_map_processor:RenderMapProcessor", {}],
+		["original.render_world_processor:RenderWorldProcessor", {}],
+		["original.render_model_world_processor:RenderModelWorldProcessor", {}],
+		["original.render_talk_processor:RenderTalkProcessor2", {}],
+		["original.render_debug_processor:RenderDebugProcessor", {}],
+		["original.game_messages_processor:GameMessagesProcessor", {}],
 
-		//["original.game_events_processor", "QuestEventsExProcessor", {"process" : ["PHASE_START", "QUEST_START"]}], // Test comment
-		["original.disarm_depleted_ammo_pack_processor", "DisarmDepletedAmmoPackProcessor", {}],
-		["original.remove_depleted_ammo_pack_processor", "RemoveDepletedAmmoPackProcessor", {}],
-		["original.clear_temporary_entity_processor", "ClearTemporaryEntityProcessor", {}],
-		//["original.remove_flag_add_score_processor", "RemoveFlagAddScoreProcessor", {}],
-		["original.remove_flag_add_damage_processor", "RemoveFlagAddDamageProcessor", {}],
-		["original.remove_flag_no_health_processor", "RemoveFlagNoHealthProcessor", {}]
-
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["PHASE_START", "QUEST_START"]}],
+		
+		["original.disarm_depleted_ammo_pack_processor:DisarmDepletedAmmoPackProcessor", {}],
+		["original.remove_depleted_ammo_pack_processor:RemoveDepletedAmmoPackProcessor", {}],
+		["original.clear_temporary_entity_processor:ClearTemporaryEntityProcessor", {}],
+		
+		["original.remove_flag_add_score_processor:RemoveFlagAddScoreProcessor", {}],
+		["original.remove_flag_add_damage_processor:RemoveFlagAddDamageProcessor", {}],
+		["original.remove_flag_no_health_processor:RemoveFlagNoHealthProcessor", {}]
 	],
 
 	"phases" : {

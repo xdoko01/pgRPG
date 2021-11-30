@@ -1,0 +1,8 @@
+{
+	"id" : "fireball_spell_pack_model",
+	"templates" : ["original/model/ammo_pack"],
+	"components" : [
+		{"type" : "original.collidable:Collidable", "params" : {"x" : 20, "y" : 20}},
+		{"type" : "original.renderable_model:RenderableModel", "params" : {"model" : "weapon_spellcast_fireball_pack.json"}}
+	]
+}

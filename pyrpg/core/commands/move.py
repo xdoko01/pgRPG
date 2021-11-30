@@ -3,6 +3,8 @@
 
 import pyrpg.core.engine as engine # To reference the world 
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.original.motion import Motion
+
 
 def cmd_move(*args, **kwargs):
     ''' Pass whatever information you think are necessary for the command
@@ -21,7 +23,7 @@ def cmd_move(*args, **kwargs):
     # if Move component does not exist on entity then error is not raised
     try:
         # Get the motion component from the entity
-        motion = engine.world.component_for_entity(entity, components.Motion)
+        motion = engine.world.component_for_entity(entity, Motion)
 
         # Change the motion if parameter passed in the command
         # What if there are several commands in the queue for motion - like move 5x to the left?

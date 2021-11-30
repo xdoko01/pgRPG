@@ -352,23 +352,23 @@
 
   - Currently, `Controllable` component is not generic enough and `InputProcessor` presumes that for up/down/left/right actions there is always `move` command uses (processor uses parameters applicable for `move` command only and no other commands).
   - Newly, the input component is truly universal and accept any command for control keys. Following has been done.
-    - New `NewControllable` component has been prepared
+    - New `Controllable` component has been prepared
       - Newly, `control_cmds` dict defines not only command for given action but also parameters of the command. For example `('move', {'moves' : ['up']})` is a cmd defined as a tuple
       - This also supports multiple commands, for example `[('move', {'moves' : ['up']}), ('move', {'moves' : ['left', 'right']})]`
       - **if some command would require execution through several cycles, `modify_brain` command can be used**. For example `["modify_brain", {"commands" : [[null, "moveto", {"position": "cursor"}]` can take you to the position where the cursor is at the moment of left-click. For those kind of commands `Brain` component is always needed.
-    - New `NewGenerateCommandFromInputProcessor` processor prepared
-      - Processor can process command and its parameters defined in `NewControllable` component (including multiple commands)
+    - New `GenerateCommandFromInputProcessor` processor prepared
+      - Processor can process command and its parameters defined in `Controllable` component (including multiple commands)
     - New `new_move` command family has been introduced
       - Current `move` command is using `Motion` component to remember where to move
-      - Newly, `NewMovable` component stores `velocity` and `accelerate` - no longer the information about vector of movement.
-      - Newly, new `NewFlagDoMove` component is introduced, containing all the information about the vector of movement. For example `NewFlagDoMove(vector=[5, 10])`
-    - New `NewPerformMovementProcessor` exists
-      - takes `Position` + `NewMovable` + `NewFlagDoMove`
+      - Newly, `Movable` component stores `velocity` and `accelerate` - no longer the information about vector of movement.
+      - Newly, new `FlagDoMove` component is introduced, containing all the information about the vector of movement. For example `FlagDoMove(vector=[5, 10])`
+    - New `PerformMovementProcessor` exists
+      - takes `Position` + `Movable` + `FlagDoMove`
       - remembers last position on `Position` component
-      - remembers last move time on new `NewMovable` component
+      - remembers last move time on new `Movable` component
       - updates `Position`
     - New command `new_move_auto` was introduced. This command has no parameters and it moves the entity in the current direction. This command is expected to be usefull for auto-movements of projectiles. This command should be placed in the `Brain` of the projectile and hence substitute the currently existing `LinearMovementProcessor` processor.
-    - component `NewMovable` and processor `NewPerformMovementProcessor` newly supports also acceleration. This again is expected to be useful for accelerated auto_movement of projectile.
+    - component `Movable` and processor `PerformMovementProcessor` newly supports also acceleration. This again is expected to be useful for accelerated auto_movement of projectile.
 
 ### LOGGING implemented
    - Configuration of the logging is happening in pyrpg.main. The configuration itself is part of the `config.py`. 
@@ -421,7 +421,7 @@ BETTER
 
 remove unnecessary pickup and Position should be removed now, not needed.
 
- - NewRenderDataFromParent(animation + position) - all part of Render system, nothing else needed
+ - RenderDataFromParent(animation + position) - all part of Render system, nothing else needed
 
  -----
 
@@ -431,7 +431,7 @@ Position - position on the map
 All components with RenderableModel should have `RenderPosition(x, y, dir_name)`.
 All components with RenderableModel and without Position component should have RenderPosition
 
- -> if entity has Position, it is used for Rendering -> `NewPerformRenderModelProcessor` - draws only real entities with position
+ -> if entity has Position, it is used for Rendering -> `PerformRenderModelProcessor` - draws only real entities with position
  -> `NewRenderArmedWeaponProcessor` - draws WeaponIsUsedBy + RenderPosition
  -> before rendering add RenderPosition ->
    -> WeaponInUse + Position + HasWeapon + FlagDoMove -> on active weapon add `RenderPosition(x, y, dir_name)`
@@ -482,7 +482,7 @@ figher.AmmoInUse + fighter.RenderModel + fighter.HasWeapon -> ammo_in_use.type='
 ##########################
 
 ### 1. TODO - Adjust Pickup System - keep Position, add IsPickedBy() - *DONE*
-  - current `NewPerformPickupProcessor`
+  - current `PerformPickupProcessor`
     - keep `Position` - *DONE*
     - create new `IsPickedBy` - *DONE*
 
@@ -495,7 +495,7 @@ figher.AmmoInUse + fighter.RenderModel + fighter.HasWeapon -> ammo_in_use.type='
 ### 4. TODO - Enhance Render System - do not display entities that have IsPickedBy() - *DONE*
 
 ### 5. TODO - Enhance Position System - to prepare NewIsPositionChildOf for armed weapons - *DONE*
-  `NewFlagWasArmedAsWeaponBy` -> `NewIsPositionChildOf`
+  `FlagWasArmedAsWeaponBy` -> `NewIsPositionChildOf`
   - new processor to the position system `NewGenerateChildPositionProcessor`
 
 ### 6. TODO - Enhance Position System 
@@ -532,7 +532,7 @@ figher.AmmoInUse + fighter.RenderModel + fighter.HasWeapon -> ammo_in_use.type='
   - `AmmoInUse(entity)`?????
 
 *Attack system*
- - command Attack -> new flag add `NewFlagDoAttack` *DONE*
+ - command Attack -> new flag add `FlagDoAttack` *DONE*
   **GENERATE THE PROJECTILE AT GIVEN FRAME**
   - fighter.RenderableModel.is_action_frame must be True - new flag that can be verified and checked in Animation system
   - must have valid weapon (WeaponInUse) and valid ammo (AmmoInUse) -> Arm Weapon system and Arm Ammo system must ensure validity of those flags
@@ -540,10 +540,10 @@ figher.AmmoInUse + fighter.RenderModel + fighter.HasWeapon -> ammo_in_use.type='
 
 *AnimationSystem*
  **TODO** animation system returns `FlagIsAnimationActionFrame` flag
- - `NewPerformFrameUpdateProcessor` -> set the `FlagIsAnimationActionFrame` flag
- - `NewPerformActionAnimationProcessor` -> set the proper action to RenderableModel
-  - `NewFlagDoAttack` + `WeaponInUse` -> use action
-  - no `NewFlagDoAttack` + `WeaponInUse` -> use idle_action
+ - `PerformFrameUpdateProcessor` -> set the `FlagIsAnimationActionFrame` flag
+ - `PerformActionAnimationProcessor` -> set the proper action to RenderableModel
+  - `FlagDoAttack` + `WeaponInUse` -> use action
+  - no `FlagDoAttack` + `WeaponInUse` -> use idle_action
 
 
 ## arm ammo how to effectivelly add ammo to existing entity of ammo
@@ -555,15 +555,15 @@ everything that is in inventory - `NewIsInInventory(path in categories)`
 NewIsInInventory + AmmoPack 
   all ammo packs AmmoPack
     that belong to the weapon AmmoPackBow
-  - NewHasInventory[ammo1]
+  - HasInventory[ammo1]
     - categories[ammo][bow][wooden_arrow] : [ammo1]
   - pickup ammo2
-  - NewHasInventory[ammo1, ammo2]
+  - HasInventory[ammo1, ammo2]
     - categories[ammo][bow][wooden_arrow] : [ammo1, ammo2]
   - component ArmedAs("bow")
   - all that are AmmoPack, Armed,
 
-### technical debt - NewFlagHasPicked ... in case entity picks more other entities in one cycle only the last one will be recorded - store field there
+### technical debt - FlagHasPicked ... in case entity picks more other entities in one cycle only the last one will be recorded - store field there
  - but if pickup is one at the time, it can work ok
 
 ### can pickup 2 entities at the same time? Ideally one entity in one cycle and the other in second cycle - to avoid problems in other processors like arm ammo system
@@ -574,7 +574,7 @@ NewIsInInventory + AmmoPack
 
   - pickup ammo into inventory  ... some pickup processor
   - categorize the pickedup entity ... What processor should do that? FlagWasPickedBy + AmmoPack(weapon, category) -> picker and inventory
-    - seems that `NewPerformArmAmmoProcessor` has all information to do that
+    - seems that `PerformArmAmmoProcessor` has all information to do that
     - either there is already some entity or there is None
       - if there is none add our new entity
       - if there is existing
@@ -599,15 +599,15 @@ NewIsInInventory + AmmoPack
 
 
 ### Redo *COLLISION SYSTEM* to use FlagHasCollided with list of entities
-  - New component `NewCollidable` was created. Component contains correction for the entity centre (specified by `dx` and `dy` arguments) and length and with of the collision zone (specified by `x` and `y` parameter)
-  - New `NewGenerateCollisionsProcessor` that will substitute `CollisionEntityGeneratorProcessor` and generate `NewFlagHasCollided` component
-  - New component `NewFlagHasCollided`
+  - New component `Collidable` was created. Component contains correction for the entity centre (specified by `dx` and `dy` arguments) and length and with of the collision zone (specified by `x` and `y` parameter)
+  - New `NewGenerateCollisionsProcessor` that will substitute `CollisionEntityGeneratorProcessor` and generate `FlagHasCollided` component
+  - New component `FlagHasCollided`
     - contains set of tuples representing the collisions `(entity, reference to Position component)`
     - might as well calculate the correction vector - math involved
     - TODO generate collision event in the new processor
     - TODO `NewRenderDebugProcessor` that would show collisions on the new components. Or use the existing one
   - *Collision with non-movable object* - object will not move after collision - implememted
-  - *Collision with movable object not pickable or nothing similar* - fix of collision can be suppressed by parameter in NewCollidable component
+  - *Collision with movable object not pickable or nothing similar* - fix of collision can be suppressed by parameter in Collidable component
   
   - TODO rename `CollisionDamageProcessor` to `GenerateDamageProcessor`
   - TODO get rid of `Collidable.has_collided` and `Collidable.col_events`. Both will be substituted by list of entities in `FlagHasCollided`
@@ -621,7 +621,7 @@ NewIsInInventory + AmmoPack
   - TODO get rid of old `CollisionEntityGeneratorProcessor` 
   - TODO introduce parameter that will toggle collisions only on Camera screen or in all the game regardless if on screen or not
   - *TODO* so that some particular collisions are ignored - arrow ignors the shooter
-     - new parameter of `NewCollidable` `ignore_collision_wit`h that can be used in `GenerateEntityCollisionsProcessor` to ignore creation of collisions? But this is not ECS approach
+     - new parameter of `Collidable` `ignore_collision_wit`h that can be used in `GenerateEntityCollisionsProcessor` to ignore creation of collisions? But this is not ECS approach
      - ECS approach would be to assign some new flag `IgnoreCollisionWith` and as parameter list of entities. So projectile will have this assigned
      - new processor that would take all with FlagHasCollided + IgnoreCollisionWith and remove the collision before processing ...
 

@@ -33,7 +33,7 @@ class PrepareProjectileProcessor(Processor):
         for ent, (has_weapon, renderable_model, position) in self.world.get_components(HasWeapon, RenderableModel, Position):
             
             # Check if Model is in the action status and last frame of the action is happening and there is some weapon actually in use
-            if has_weapon.get_weapon_in_use() and has_weapon.get_generator_in_use() and renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), components.Weapon).action and renderable_model.is_action_frame:
+            if has_weapon.get_weapon_in_use() and has_weapon.get_generator_in_use() and renderable_model.action == self.world.component_for_entity(has_weapon.get_weapon_in_use(), Weapon).action and renderable_model.is_action_frame:
 
                 # Collidable is optional component - entities who are not collidable can generate projectiles
                 collidable = self.world.try_component(ent, (Collidable))

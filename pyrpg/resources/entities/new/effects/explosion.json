@@ -1,0 +1,7 @@
+{
+	"id" : "explosion_effect",
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "explosion.json"}},
+		{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 500}}
+	]
+}

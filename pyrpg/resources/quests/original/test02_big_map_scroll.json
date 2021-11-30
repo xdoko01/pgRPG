@@ -17,24 +17,24 @@
 				
 				{
 					"id" : "player01",
-					"templates" : ["human", "darkmale"],
+					"templates" : ["original/thing/being/human", "original/model/character/dark_male"],
 					"components" : [
-						{"type" : "Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
-						{"type" : "Position", "params" : {"x" : 200, "y" : 200, "map" : "test_big_map"}},
+						{"type" : "original.labeled:Labeled", "params" : {"id" : "player01", "name" : "First Player"}},
+						{"type" : "original.position:Position", "params" : {"x" : 200, "y" : 200, "map" : "test_big_map"}},
 
-						{"type" : "Controllable", "params" :  {
+						{"type" : "original.controllable:Controllable", "params" :  {
 							"control_cmds" : {"up": "move", "down": "move", "left": "move", "right": "move", "attack": "attack"}
 							}
 						},
 
-						{"type" : "Camera", "params" : {
+						{"type" : "original.camera:Camera", "params" : {
 							"always_center": false, 
 							"screen_pos_x" : 0, 
 							"screen_pos_y" : 0, 
 							"screen_width" : 850, 
 							"screen_height" : 850}
 						},						
-						{"type" : "Debug", "params" : {}}
+						{"type" : "original.debug:Debug", "params" : {}}
 
 					]
 				}
