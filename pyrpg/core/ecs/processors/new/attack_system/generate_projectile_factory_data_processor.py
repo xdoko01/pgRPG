@@ -9,7 +9,7 @@ from pyrpg.core.ecs.esper import Processor
 from pyrpg.core.ecs.components.new.position import Position
 from pyrpg.core.ecs.components.new.flag_is_animation_action_frame import FlagIsAnimationActionFrame
 from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
-from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.flag_create_from_factory import FlagCreateFromFactory
 
 # Logger init
@@ -25,7 +25,7 @@ class GenerateProjectileFactoryDataProcessor(Processor):
         -   Position
         -   FlagIsAnimationActionFrame - indicating that in this cycle projectile needs to be created
         -   HasWeapon - for getting the Factory(AmmoPack) from which the projectile will be generated
-        -   NewWeaponInUse - to determine which weapon to search for in HasWeapon component
+        -   WeaponInUse - to determine which weapon to search for in HasWeapon component
         -   FlagCreateFromFactory
 
     Related processors:
@@ -60,7 +60,7 @@ class GenerateProjectileFactoryDataProcessor(Processor):
         self.cycle += 1
 
         # Get entities that in this cycle have all what it needs to generate projectile
-        for parent, (position, is_action_frame, has_weapon, weapon_in_use) in self.world.get_components(Position, FlagIsAnimationActionFrame, HasWeapon, NewWeaponInUse):
+        for parent, (position, is_action_frame, has_weapon, weapon_in_use) in self.world.get_components(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse):
 
             # calculate position for the new projectile
             ##(ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)

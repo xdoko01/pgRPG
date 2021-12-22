@@ -1,0 +1,6 @@
+{
+	"id" : "weapon_slash_model",
+	"templates" : ["new/model/weapon"],
+	"components" : [
+	]
+}

@@ -1,0 +1,102 @@
+{
+	"id" : "new_test01_commands",
+	"name" : "Command Recording Test",
+	"description" : "Test Controllable, NewMoveable components and NewMove command + recording commands to the file",
+	"objective" : "POC of recording commands into the file",
+	"init_phase" : "phase01",
+
+	"processors" : [
+		// For commands
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.generate_command_from_file_processor:GenerateCommandFromFileProcessor", {"file" : "pyrpg/resources/quests/new/tests/02_commands/new_test_commands_01_record.json", "mode" : "total_control"}],
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		
+		// For displaying
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For processing input and movements
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+	],
+
+	"phases" : {
+		"phase01" :{
+			"name" : "Command Recording Test", "objective" : "","maps" : ["test_arena_sand"],
+			
+			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+
+			"entities" : [
+				{
+					"id" : "player01",
+					"templates" : ["new/model/body/male/human/brown"],
+					"components" : [
+
+						/////////////////////////////////////////////////////////
+						// TEST 3 - Movement command based on movement directions
+						// - diagonal is allowed on multiple keypress processing
+						// - single command / single direction upon keypress
+						/////////////////////////////////////////////////////////
+						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+							"control_cmds" : {
+								"left" : [["new_move_add", {"moves" : ["left"]}]],
+								"right": [["new_move_add", {"moves" : ["right"]}]],
+								"up" : [["new_move_add", {"moves" : ["up"]}]],
+								"down" : [["new_move_add", {"moves" : ["down"]}]],
+								"attack" : [["none", {}]]}
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				}
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" : [
+				],
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

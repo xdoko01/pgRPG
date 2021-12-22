@@ -1,0 +1,6 @@
+{
+	"id" : "wearable_female_model",
+	"templates" : ["new/model/wearable"],
+	"components" : [
+	]
+}

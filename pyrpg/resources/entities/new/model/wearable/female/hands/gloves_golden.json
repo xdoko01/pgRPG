@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_hands_gloves_golden_model",
+	"templates" : ["new/model/wearable/female/hands"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/hands/gloves/golden.json}}
+	]
+}

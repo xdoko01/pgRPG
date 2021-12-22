@@ -1,3 +1,0 @@
-REM Script for generation of Tiled JSON spritesheets
-
-REM python ../../../../../utils/generate_model_json_from_template.py ../../_template.json *.png

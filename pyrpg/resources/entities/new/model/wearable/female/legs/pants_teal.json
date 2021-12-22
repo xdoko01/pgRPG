@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_legs_pants_teal_model",
+	"templates" : ["new/model/wearable/female/legs"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/legs/pants/teal.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_unkempt_white-blonde2_model",
+	"templates" : ["new/model/body/female/hair"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/unkempt/white-blonde2.json}}
+	]
+}

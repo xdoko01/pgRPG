@@ -1,0 +1,246 @@
+{
+	"id" : "new_test_teleportation_02",
+	"name" : "Teleportation with Key Test",
+	"description" : "Test new teleportation processors",
+	"objective" : "POC of the new teleportation system",
+	"init_phase" : "phase01",
+
+	"processors" : [
+		// For commands
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
+		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
+
+		// For teleportation
+		["new.teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
+		["new.teleport_system.perform_teleportation_processor:PerformTeleportationProcessor", {}],
+
+		// For displaying
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// For clearing of processing of movements and collisions and pickups
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+
+		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+
+		["new.teleport_system.remove_flag_is_about_to_be_teleported_by_processor:RemoveFlagIsAboutToBeTeleportedByProcessor", {}],
+		["new.teleport_system.remove_flag_has_teleported_processor:RemoveFlagHasTeleportedProcessor", {}],
+		["new.teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor", {}]
+
+	],
+
+	"phases" : {
+		"phase01" :{
+			"name" : "Teleportation Test", "objective" : "", "maps" : ["test_arena_sand"],
+			
+			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
+
+			"dialogs" : [
+				{
+					"id" : "dlg_quest_start",
+					"templates" : ["basic"],
+
+					"dimensions" : [630, 200],
+
+					"font" : {
+						"path" : "small_font.json",
+						"size" : 24,
+						"color" : "#00FFFF",
+						"align" : "LEFT"
+						},
+				
+					"texts" : [
+						{
+							"text" : "Teleportation test no.2 - Demonstration of teleportation with keys",
+							"position" : [5, 20]
+						}
+					],
+					
+					"frames" : [
+						{
+							"font" : {
+								"path" : "small_font.json",
+								"size" : 16,
+								"color" : "#FFFFFF",
+								"align" : "LEFT"
+								},
+		
+							"texts" : [
+								{
+									"text" : "Teleportable entity can be teleported\nby Teleport entity upon collision.\nTeleportee must have key in order to teleport.\nHence the middle teleport will not work.",
+									"position" : [5, 65]
+								}
+							]
+						},
+						{
+							"texts" : [
+								{
+									"text" : "Press Enter to continue ...",
+									"position" : [5, 165]
+								}
+							]
+						}
+					]
+				}
+			],
+
+			"entities" : [
+				// Entity representing key to the teleport
+				{
+					"id" : "key01",
+					"templates" : [],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}}
+					]
+				},
+
+				{
+					"id" : "key02",
+					"templates" : [],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}}
+					]
+				},
+
+				{
+					"id" : "player01",
+					"templates" : ["new/model/body/male/human/olive"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+							"control_cmds" : {
+								"left" : [["new_move_add", {"moves" : ["left"]}]],
+								"right": [["new_move_add", {"moves" : ["right"]}]],
+								"up" : [["new_move_add", {"moves" : ["up"]}]],
+								"down" : [["new_move_add", {"moves" : ["down"]}]],
+								"attack" : [["none", {}]]}
+							}
+						},
+
+						// New component for facilitating teleportation - Teleportee has the key so it can use teleport that requires this key01
+						{"type" : "new.teleportable:Teleportable", "params" : {"keys" : ["key02"]}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				},
+
+				{
+					"id" : "teleport01",
+					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						// New component for facilitationg teleportation - no key needed in order to teleport
+						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+					]
+				},
+
+				{
+					"id" : "teleport02",
+					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						// New component for facilitationg teleportation - key key01 needed in order to teleport
+						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10, "key" : "key01"}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+					]
+				},
+
+				{
+					"id" : "teleport03",
+					"templates" : ["new/model/ammo_pack/fireball_spell_pack"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						// New component for facilitationg teleportation - key key02 needed in order to teleport
+						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3, "key" : "key02"}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 260, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+					]
+				}
+
+
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" : [
+					{
+						"conditions" : {
+							"params" : {
+								"quest_id" : "new_test_teleportation_02"
+							}
+						},
+						"actions" : [
+							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
+						]
+					}
+				],
+
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

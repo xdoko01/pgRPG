@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_feet_boots_brown_longboots_model",
+	"templates" : ["new/model/wearable/female/feet"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/feet/boots/brown_longboots.json}}
+	]
+}

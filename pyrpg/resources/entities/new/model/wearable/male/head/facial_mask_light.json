@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_head_facial_mask_light_model",
+	"templates" : ["new/model/wearable/male/head"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/head/facial/mask_light.json}}
+	]
+}

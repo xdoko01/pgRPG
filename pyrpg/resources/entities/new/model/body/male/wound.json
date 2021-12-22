@@ -1,0 +1,6 @@
+{
+	"id" : "male_wound_model",
+	"templates" : ["new/model/body/male"],
+	"components" : [
+	]
+}

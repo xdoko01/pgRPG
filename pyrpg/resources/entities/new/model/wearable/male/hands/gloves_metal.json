@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_hands_gloves_metal_model",
+	"templates" : ["new/model/wearable/male/hands"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/hands/gloves/metal.json}}
+	]
+}

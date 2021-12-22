@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_messy1_blue2_model",
+	"templates" : ["new/model/body/female/hair"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/messy1/blue2.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_belt_teal2_cloth_model",
+	"templates" : ["new/model/wearable/female/belt"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/belt/teal2_cloth.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_plain_shadows-tanned2body_model",
+"templates" : ["new/model/body/male/hair"],
+"components" : [
+	{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/plain/shadows-tanned2body.json}}
+	]
+}

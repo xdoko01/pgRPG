@@ -1,0 +1,23 @@
+{
+	"id" : "sword_swings_pack",
+	"templates" : ["original/thing/ammo_pack"],
+	"components" : [
+		{"type" : "original.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "sword_swings_pack"}},
+
+		{
+			"type" : "original.factory:Factory",
+			"params" : {
+				"prescription" : {
+					"templates" : ["original/thing/ammo/sword_swing"],
+					"components" : [
+						{"type" : "original.debug:Debug", "params" : {}}
+					]
+				} 
+			}
+		},
+
+		{"type" : "original.pickable:Pickable", "params" : {}},
+		{"type" : "original.collidable:Collidable", "params" : {"x" : 10, "y" : 15}}
+
+	]
+}

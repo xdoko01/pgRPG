@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_feet_armor_metal_boots_model",
+	"templates" : ["new/model/wearable/male/feet"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/feet/armor/metal_boots.json}}
+	]
+}

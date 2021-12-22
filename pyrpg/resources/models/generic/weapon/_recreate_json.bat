@@ -26,9 +26,4 @@ cd thrust
 call _recreate_json.bat
 cd ..
 
-ECHO Recreating JSON models in 'projectile' folder
-cd projectile
-call _recreate_json.bat
-cd ..
-
 pause

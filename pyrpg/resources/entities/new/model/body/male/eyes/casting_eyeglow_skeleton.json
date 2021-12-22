@@ -1,0 +1,7 @@
+{
+	"id" : "male_eyes_casting_eyeglow_skeleton_model",
+	"templates" : ["new/model/body/male/eyes"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/eyes/casting_eyeglow_skeleton.json"}}
+	]
+}

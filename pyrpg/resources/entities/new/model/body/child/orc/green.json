@@ -1,0 +1,7 @@
+{
+	"id" : "child_orc_green_model",
+	"templates" : ["new/model/body/child/orc"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/body_child_orc_green.json"}}
+	]
+}

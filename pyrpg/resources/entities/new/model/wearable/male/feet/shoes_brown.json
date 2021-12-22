@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_feet_shoes_brown_model",
+	"templates" : ["new/model/wearable/male/feet"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/feet/shoes/brown.json}}
+	]
+}

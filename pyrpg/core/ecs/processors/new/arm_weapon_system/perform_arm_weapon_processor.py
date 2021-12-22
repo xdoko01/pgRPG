@@ -7,7 +7,7 @@ from pyrpg.core.ecs.esper import Processor
 
 # Used components
 from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
-from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
 from pyrpg.core.ecs.components.new.flag_has_armed_weapon import FlagHasArmedWeapon
 from pyrpg.core.ecs.components.new.flag_was_armed_as_weapon_by import FlagWasArmedAsWeaponBy
@@ -24,7 +24,7 @@ class PerformArmWeaponProcessor(Processor):
 
     Involved components:
         -   HasWeapon
-        -   NewWeaponInUse
+        -   WeaponInUse
         -   FlagIsAboutToArmWeapon
         -   FlagHasArmedWeapon
         -   FlagWasArmedAsWeaponBy
@@ -46,9 +46,7 @@ class PerformArmWeaponProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
-        'new.arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor'
-    ]
+    PREREQ = ['new.arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor']
 
     def __init__(self, add_event_fnc):
         ''' Init the processor.
@@ -93,8 +91,8 @@ class PerformArmWeaponProcessor(Processor):
             self.world.add_component(ent_fighter, FlagHasArmedWeapon(weapon=flag_is_about_to_arm_weapon.weapon))
             logger.debug(f'({self.cycle}) - Entity {ent_fighter} has armed weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
 
-            # Assign NewWeaponInUse component to the fighter entity ['type', 'action', 'idle_action']
-            self.world.add_component(ent_fighter, NewWeaponInUse(type=flag_is_about_to_arm_weapon.type))
+            # Assign WeaponInUse component to the fighter entity ['type', 'action', 'idle_action']
+            self.world.add_component(ent_fighter, WeaponInUse(type=flag_is_about_to_arm_weapon.type))
             logger.debug(f'({self.cycle}) - Entity {ent_fighter} is now using weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
 
     def pre_save(self):

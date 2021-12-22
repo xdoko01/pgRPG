@@ -1,0 +1,5 @@
+{
+	"id" : "ammo_pack",
+	"templates" : ["new/thing"],
+	"components" : []
+}

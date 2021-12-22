@@ -1,0 +1,7 @@
+{
+	"id" : "iron_arrows_pack_model",
+	"templates" : ["new/model/ammo_pack"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/ammo_pack/iron_arrows_pack.json"}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_shorthawk_blonde_model",
+"templates" : ["new/model/body/male/hair"],
+"components" : [
+	{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/shorthawk/blonde.json}}
+	]
+}

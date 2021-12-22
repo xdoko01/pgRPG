@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_legs_pants_white_model",
+	"templates" : ["new/model/wearable/male/legs"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/legs/pants/white.json}}
+	]
+}

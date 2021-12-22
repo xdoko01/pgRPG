@@ -383,6 +383,45 @@
 
 ## To Do
 
+### Improve collisions - NPC entities can walk around each other while hitting themselves
+  - Different Entities have different collision behavior
+    `Collidable`
+      - `ignore_position_fix`-> `do_not_generate_position_correction_for_others_except{}`... default `False` a.k.a. {empty set} ... only entities in the set will be corrected
+      - `ignore_collision_with` ... default `[]`
+      - `do_not_generate_position_correction_for_self_except{}` ... default `False` a.k.a. {empty set} ... only entities in the set can push me
+
+      - position correction can be either in straight or walkaround mode
+        - Player should be in `straight` mode, i.e. not walking around enemies when colliding into them
+        - Stone should be in `straight` mode, i.e. pushing the player straight when colliding into him/her
+        - NPCs should be in `walkaround` mode, i.e. trying to avoid collision with obstcles proactivelly
+      - `walkaround_position_fix_mode` ... default `True`
+
+    1. Lava
+      - must produce collisions so that damage can be processed
+      - other entities must be able to walk on lava - correction in position must be ignored for other entities
+      *Result*
+        `Collidable`
+        `DoNotGeneratePositionCorrectionForOthers` a.k.a. `Walkable` a.k.a. not `Pushable`
+    2. Player
+      - when other entities are colliding into Player, he stays steady and is not moving
+      - when Player is colliding into other entities, those entities are moving, player is pushing them
+      *Result*
+        `Collidable`
+        `DoNotGeneratePositionCorrectionForSelf` a.k.a. not `Pushable`
+    4. Arrow
+      - when arrow hits enemy the collision is recorded
+      - when arrow hits Player no collision is recorded
+      *Result*
+        `Collidable`
+        `IgnoreCollisionWithPlayer`
+    3. Stone
+      - when player collides into Stone, it moves
+      - when other entity collides into stone, it stays steady
+      - when player collides into stone, neither player nor stone are trying to walk around each other
+      *Result*
+        `Collidable`
+        `GeneratePositionCorrectionOnlyFor[]` a.k.a. `PushableOnlyBy[]`
+
 
 ### Add debug processor - you will put any condition there and if the condition is fulfilled then the game will stop and you will be able to check the state
 

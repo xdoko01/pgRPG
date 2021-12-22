@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_torso_back_cape_yellow_model",
+	"templates" : ["new/model/wearable/female/torso"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/torso/back/cape_yellow.json}}
+	]
+}

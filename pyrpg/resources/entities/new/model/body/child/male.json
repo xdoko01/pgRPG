@@ -1,0 +1,6 @@
+{
+	"id" : "child_male_model",
+	"templates" : ["new/model/body/child"],
+	"components" : [
+	]
+}

@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_loose_brunette2_model",
+"templates" : ["new/model/body/male/hair"],
+"components" : [
+	{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/loose/brunette2.json}}
+	]
+}

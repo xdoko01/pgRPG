@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_head_tiaras_bronze_model",
+	"templates" : ["new/model/wearable/female/head"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/head/tiaras/bronze.json}}
+	]
+}

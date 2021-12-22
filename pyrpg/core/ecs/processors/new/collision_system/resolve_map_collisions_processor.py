@@ -33,7 +33,6 @@ class ResolveMapCollisionsProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.new_resolve_entity_collision_processor:ResolveEntityCollisionsProcessor'
     ]
 
     def __init__(self, maps):

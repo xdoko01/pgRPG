@@ -14,8 +14,6 @@ class PerformCommandProcessor(Processor):
     '''
 
     PREREQ = [
-        'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor',
-        'new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor'
     ]
 
     def __init__(self, game_commands_handler, debug=False):

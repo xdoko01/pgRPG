@@ -9,7 +9,7 @@ from pyrpg.core.ecs.esper import Processor
 from pyrpg.core.ecs.components.new.position import Position
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
-from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.render_data_from_parent import RenderDataFromParent
 
 # Logger init
@@ -24,7 +24,7 @@ class GenerateRenderDataFromParentProcessor(Processor):
         -   Position
         -   RenderableModel
         -   HasWeapon
-        -   NewWeaponInUse
+        -   WeaponInUse
         -   RenderDataFromParent
 
     Related processors:
@@ -56,7 +56,7 @@ class GenerateRenderDataFromParentProcessor(Processor):
         self.cycle += 1
 
         # Get all entities that are parents of WeaponInUse
-        for ent_parent, (position, renderable_model, has_weapon, weapon_in_use) in self.world.get_components(Position, RenderableModel, HasWeapon, NewWeaponInUse):
+        for ent_parent, (position, renderable_model, has_weapon, weapon_in_use) in self.world.get_components(Position, RenderableModel, HasWeapon, WeaponInUse):
 
             # Prepare render data for Weapon that is armed
             ent_weapon_in_use = has_weapon.weapons[weapon_in_use.type]["weapon"]

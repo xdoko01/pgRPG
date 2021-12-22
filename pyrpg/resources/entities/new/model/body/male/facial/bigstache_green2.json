@@ -1,0 +1,7 @@
+{
+	"id" : "male_facial_bigstache_green2_model",
+	"templates" : ["new/model/body/male/facial"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/facial/bigstache/bigstache_green2.json"}}
+	]
+}

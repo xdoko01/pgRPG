@@ -37,11 +37,7 @@ class PerformFrameUpdateProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
-        'new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor', 
-        'new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor', 
-        'new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor'
-    ]
+    PREREQ = []
 
     def __init__(self):
         ''' Init the processor.

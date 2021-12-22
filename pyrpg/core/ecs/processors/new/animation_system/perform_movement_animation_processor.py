@@ -10,7 +10,7 @@ from pyrpg.core.ecs.components.new.camera import Camera
 from pyrpg.core.ecs.components.new.position import Position
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack
-from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 
 # Support functions
@@ -65,8 +65,8 @@ class PerformMovementAnimationProcessor(Processor):
             for ent, (_, renderable_model, _) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(Position, RenderableModel, FlagDoMove, exclude=FlagDoAttack)):
 
                 # Update to proper animation
-                renderable_model.set_action('walk')
-                logger.debug(f'({self.cycle}) - Entity {ent} action animation updated to "walk" action.')
+                renderable_model.set_action('move')
+                logger.debug(f'({self.cycle}) - Entity {ent} action animation updated to "move" action.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

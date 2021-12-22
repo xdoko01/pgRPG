@@ -1,0 +1,23 @@
+{
+	"id" : "fireball_spell_pack",
+	"templates" : ["original/thing/ammo_pack"],
+
+	"components" : [
+		{"type" : "original.ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball_spell_pack"}},
+
+		{
+			"type" : "original.factory:Factory", 
+			"params" : {
+				"max_units" : null,
+				"prescription" : {
+					"templates" : ["original/thing/ammo/fireball_spell", "original/model/ammo/fireball_spell"],
+					"components" : [
+						{"type" : "original.debug:Debug", "params" : {}}
+					]
+				} 
+			}
+		},
+
+		{"type" : "original.pickable:Pickable", "params" : {}}
+	]
+}

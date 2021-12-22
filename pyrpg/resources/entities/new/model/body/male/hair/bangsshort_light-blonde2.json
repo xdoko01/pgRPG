@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_bangsshort_light-blonde2_model",
+"templates" : ["new/model/body/male/hair"],
+"components" : [
+	{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/bangsshort/light-blonde2.json}}
+	]
+}

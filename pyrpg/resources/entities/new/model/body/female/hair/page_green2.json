@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_page_green2_model",
+	"templates" : ["new/model/body/female/hair"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/page/green2.json}}
+	]
+}

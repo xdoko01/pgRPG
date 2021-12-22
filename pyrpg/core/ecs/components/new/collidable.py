@@ -43,7 +43,7 @@ class Collidable(Component):
             :param dy: Y-axis set offset +- from the y-centre of the entity in pixel coordinates
             :type dy: int
 
-            :param ignore_position_fix: Do not fix position upon hitting this entity - damage zones 
+            :param ignore_position_fix: Do not fix position of others upon hitting this entity - damage zones 
               need to be collidable in order to cause damage but at the same time can be stepped on by the player.
             :type ignore_position_fix: boolean
 

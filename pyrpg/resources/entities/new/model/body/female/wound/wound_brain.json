@@ -1,0 +1,7 @@
+{
+"id" : "female_wound_wound_brain_model",
+"templates" : ["new/model/body/female/wound"],
+"components" : [
+{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/wound/wound_brain.json}}
+]
+}

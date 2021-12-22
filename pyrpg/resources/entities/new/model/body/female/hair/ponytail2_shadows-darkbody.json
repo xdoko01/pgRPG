@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_ponytail2_shadows-darkbody_model",
+	"templates" : ["new/model/body/female/hair"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/ponytail2/shadows-darkbody.json}}
+	]
+}

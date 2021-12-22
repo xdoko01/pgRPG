@@ -82,16 +82,30 @@ class ResolveEntityCollisionsExProcessor(Processor):
                 # use the fact that bool(0) gains False
 
                 # If either X or Y value of correction vector is 0 use the vector as it is
+                '''
                 if not coll_fix_vector.x or not coll_fix_vector.y:
-                    #position.x += coll_fix_vector[0]
-                    #position.y += coll_fix_vector[1]
                     position.x += coll_fix_vector.x
                     position.y += coll_fix_vector.y
                 else:
-                    #position.x += coll_fix_vector[0] if abs(coll_fix_vector[0]) < abs(coll_fix_vector[1]) else 0
-                    #position.y += coll_fix_vector[1] if abs(coll_fix_vector[1]) <= abs(coll_fix_vector[0]) else 0
                     position.x += coll_fix_vector.x if abs(coll_fix_vector.x) < abs(coll_fix_vector.y) else 0
                     position.y += coll_fix_vector.y if abs(coll_fix_vector.y) <= abs(coll_fix_vector.x) else 0
+                '''
+                
+                # Alternativelly, move a little bit in every direction in order for entities not to get stucked
+                sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
+                
+                if not coll_fix_vector.x and coll_fix_vector.y:
+                    position.x += sign(coll_fix_vector.y)
+                    position.y += coll_fix_vector.y
+                elif coll_fix_vector.x and not coll_fix_vector.y:
+                    position.x += coll_fix_vector.x
+                    position.y += sign(coll_fix_vector.x)
+                elif abs(coll_fix_vector.x) < abs(coll_fix_vector.y):
+                    position.x += coll_fix_vector.x
+                    position.y += sign(coll_fix_vector.y)
+                else:
+                    position.x += sign(coll_fix_vector.x)
+                    position.y += coll_fix_vector.y
 
                 logger.debug(f'({self.cycle}) - Entity {ent} - New possition: [{position.x}, {position.y}]')
 

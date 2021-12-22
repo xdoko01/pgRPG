@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_bunches_light-blonde_model",
+	"templates" : ["new/model/body/female/hair"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/bunches/light-blonde.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+"id" : "female_ears_elvenears_darkelf2_model",
+"templates" : ["new/model/body/female/ears"],
+"components" : [
+{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/ears/elvenears_darkelf2.json}}
+]
+}

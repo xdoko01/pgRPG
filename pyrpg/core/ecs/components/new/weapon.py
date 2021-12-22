@@ -25,9 +25,9 @@ class Weapon(Component):
 
     WEAPONS = {
         'bow' : { 'action' : 'shoot', 'idle' : 'idle_shoot' },
-        'spear' : { 'action' : 'stab', 'idle' : 'idle_stab' },
-        'sword' : { 'action' : 'swing', 'idle' : 'idle_swing' },
-        'spell' : { 'action' : 'cast', 'idle' : 'idle_cast' }
+        'spear' : { 'action' : 'thrust', 'idle' : 'idle_thrust' },
+        'sword' : { 'action' : 'slash', 'idle' : 'idle_slash' },
+        'spell' : { 'action' : 'spellcast', 'idle' : 'idle_spellcast' }
     }
 
     __slots__ = ['action', 'idle', 'type', 'max_projectiles']

@@ -2,13 +2,13 @@
 
 ## Input dependency
  - *MOVEMENT SYSTEM* - generating `FlagDoMove` component necessary for identification of move animation
- - *ARM WEAPON SYSTEM* - generating `NewWeaponInUse` component necessary for identification of action and action_idle animation
+ - *ARM WEAPON SYSTEM* - generating `WeaponInUse` component necessary for identification of action and action_idle animation
 
 ## Output dependency
  - *ATTACK SYSTEM* - processing of `FlagIsAnimationActionFrame` component in order to generate new projectile
 
 ## Description
-Animation System is using `RenderableModel` and `Position` components to identify the entities that should be animated. It uses additional components `FlagDoMove`, `FlagDoAttack`, `NewWeaponInUse` to select the correct animation.
+Animation System is using `RenderableModel` and `Position` components to identify the entities that should be animated. It uses additional components `FlagDoMove`, `FlagDoAttack`, `WeaponInUse` to select the correct animation.
 
 1. The first set of processors `NewMovementAnimationProcessor`, `NewActionAnimationProcessor`, `NewActionIdleAnimationProcessor` and `NewIdleAnimationProcessor` are seting the `RenderableComponent` to the correct animation.
 

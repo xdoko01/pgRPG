@@ -1,0 +1,7 @@
+{
+	"id" : "child_male_brown_model",
+	"templates" : ["new/model/body/child/male"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/child/body_child_male_brown.json"}}
+	]
+}

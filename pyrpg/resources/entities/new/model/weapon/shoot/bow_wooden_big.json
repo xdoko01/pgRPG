@@ -1,0 +1,7 @@
+{
+	"id" : "weapon_shoot_bow_wooden_big_model",
+	"templates" : ["new/model/weapon/shoot"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/shoot/weapon_shoot_bow_wooden_big.json"}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_shorthawk_gray2_model",
+	"templates" : ["new/model/body/female/hair"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/shorthawk/gray2.json}}
+	]
+}

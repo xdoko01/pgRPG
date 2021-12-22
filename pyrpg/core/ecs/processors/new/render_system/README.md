@@ -2,7 +2,7 @@
 
 ## Input dependency
  - *ANIMATION SYSTEM* - animation system is updating the animation on the `RenderModel` in order to display the correct frame using the *RENDER SYSTEM*
- - *ARM WEAPON SYSTEM* - generating `NewWeaponInUse` component necessary for identification of active weapon that should be animated. The component `HasWeapon` in order to assin the `GenerateRenderDataFromParentProcessor` to the weapon entity and generator entity.
+ - *ARM WEAPON SYSTEM* - generating `WeaponInUse` component necessary for identification of active weapon that should be animated. The component `HasWeapon` in order to assin the `GenerateRenderDataFromParentProcessor` to the weapon entity and generator entity.
 
 ## Output dependency
 

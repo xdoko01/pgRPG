@@ -36,9 +36,7 @@ class GenerateArmWeaponProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
-        'new.pickup_system.perform_pickup_processor', 'PerformPickupProcessor'
-    ]
+    PREREQ = ['new.pickup_system.perform_pickup_processor:PerformPickupProcessor']
 
     def __init__(self):
         ''' Init the processor.

@@ -1,0 +1,9 @@
+{
+	"id" : "human",
+	"templates" : ["original/thing/being"],
+	"components" : [
+		{"type" : "original.teleportable:Teleportable", "params" : {}},
+		{"type" : "original.brain:Brain", "params" : {"commands" : []}},
+		{"type" : "original.can_talk:CanTalk", "params" : {}}
+	]
+}

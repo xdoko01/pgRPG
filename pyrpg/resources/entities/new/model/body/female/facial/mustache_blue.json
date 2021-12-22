@@ -1,0 +1,7 @@
+{
+	"id" : "female_facial_mustache_blue_model",
+	"templates" : ["new/model/body/female/facial"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/mustache/blue.json}}
+	]
+}

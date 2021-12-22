@@ -1,0 +1,7 @@
+{
+	"id" : "female_nose_bignose_tanned2_model",
+	"templates" : ["new/model/body/female/nose"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/nose/bignose_tanned2.json}}
+	]
+}

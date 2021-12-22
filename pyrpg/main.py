@@ -100,71 +100,71 @@ def init(state='MAIN_MENU', cons_enabled=True, timed=False):
     ##################
     ### Render Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/00_render/new_test_render_01')
-    #pyrpg.core.engine.new_game('tests/00_render/new_test_render_02')
+    #pyrpg.core.engine.new_game('new/tests/00_render/new_test_render_01')
+    #pyrpg.core.engine.new_game('new/tests/00_render/new_test_render_02')
 
     ##################
     ### Command Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/02_commands/new_test_commands_01')
-    #pyrpg.core.engine.new_game('tests/02_commands/new_test_commands_02')
+    #pyrpg.core.engine.new_game('new/tests/02_commands/new_test_commands_01')
+    #pyrpg.core.engine.new_game('new/tests/02_commands/new_test_commands_02')
 
 
     ##################
     ### Movement Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_01')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_02')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_03') # Support for diagonal moves
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_04')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_05')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_06')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_07')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_08')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_09')
-    #pyrpg.core.engine.new_game('tests/01_movements/new_test_movement_10')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_01')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_02')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_03') # Support for diagonal moves
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_04')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_05')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_06')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_07')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_08')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_09')
+    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_10')
 
     ##################
     ### Animation Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/03_animations/new_test_animations_01')
-    #pyrpg.core.engine.new_game('tests/03_animations/new_test_weapon_animations')
+    #pyrpg.core.engine.new_game('new/tests/03_animations/new_test_animations_01')
+    #pyrpg.core.engine.new_game('new/tests/03_animations/new_test_weapon_animations')
 
     ##################
     ### Collision Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_01')
-    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_02')
-    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_03')
-    #pyrpg.core.engine.new_game('tests/04_collisions/new_test_collisions_04')
-    #pyrpg.core.engine.new_game('tests/04_collisions/map_collision_test_01')
+    #pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_01')
+    pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_02')
+    #pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_03')
+    #pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_04')
+    #pyrpg.core.engine.new_game('new/tests/04_collisions/map_collision_test_01')
 
     ##################
     ### Pickup Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/05_pickup/new_test_pickup_01')
+    #pyrpg.core.engine.new_game('new/tests/05_pickup/new_test_pickup_01')
 
     ##################
     ### Teleportation Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/06_teleportation/new_test_teleportation_01')
-    #pyrpg.core.engine.new_game('tests/06_teleportation/new_test_teleportation_02')
+    #pyrpg.core.engine.new_game('new/tests/06_teleportation/new_test_teleportation_01')
+    #pyrpg.core.engine.new_game('new/tests/06_teleportation/new_test_teleportation_02')
 
     ##################
     ### Arm Weapon Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/07_arm_weapon/new_test_arm_weapon_01')
+    #pyrpg.core.engine.new_game('new/tests/07_arm_weapon/new_test_arm_weapon_01')
 
     ##################
     ### Arm Ammo Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/08_arm_ammo/new_test_arm_ammo_01')
+    #pyrpg.core.engine.new_game('new/tests/08_arm_ammo/new_test_arm_ammo_01')
 
     ##################
     ### Projectile Tests
     ##################
-    #pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_generation')
-    pyrpg.core.engine.new_game('tests/09_projectiles/new_test_projectile_collision')
+    #pyrpg.core.engine.new_game('new/tests/09_projectiles/new_test_projectile_generation')
+    #pyrpg.core.engine.new_game('new/tests/09_projectiles/new_test_projectile_collision')
 
 
     ##################

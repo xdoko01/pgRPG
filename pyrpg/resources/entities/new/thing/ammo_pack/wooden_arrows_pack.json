@@ -1,0 +1,23 @@
+{
+	"id" : "wooden_arrows_pack",
+	"templates" : ["original/thing/ammo_pack"],
+
+	"components" : [
+		{"type" : "original.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+
+		{
+			"type" : "original.factory:Factory", 
+			"params" : {
+				"max_units" : 5,
+				"prescription" : {
+					"templates" : ["original/thing/ammo/wooden_arrow", "original/model/ammo/wooden_arrow"],
+					"components" : [
+						{"type" : "original.debug:Debug", "params" : {}}
+					]
+				} 
+			}
+		},
+
+		{"type" : "original.pickable:Pickable", "params" : {}}
+	]
+}

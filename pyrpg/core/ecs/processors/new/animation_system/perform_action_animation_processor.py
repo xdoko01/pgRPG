@@ -10,7 +10,7 @@ from pyrpg.core.ecs.components.new.camera import Camera
 from pyrpg.core.ecs.components.new.position import Position
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack
-from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 
 # Support functions
 from ..functions import filter_only_visible
@@ -66,7 +66,7 @@ class PerformActionAnimationProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities that are in the process of attacking
-            for ent, (_, renderable_model, _, weapon_in_use) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel, FlagDoAttack, NewWeaponInUse)):
+            for ent, (_, renderable_model, _, weapon_in_use) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel, FlagDoAttack, WeaponInUse)):
 
                 # Update to proper animation
                 renderable_model.set_action(weapon_in_use.action)

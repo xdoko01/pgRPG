@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_torso_plate_arms_model",
+	"templates" : ["new/model/wearable/female/torso"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/torso/plate/arms.json}}
+	]
+}

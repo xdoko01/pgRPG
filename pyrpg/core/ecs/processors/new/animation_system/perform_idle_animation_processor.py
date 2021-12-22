@@ -10,7 +10,7 @@ from pyrpg.core.ecs.components.new.camera import Camera
 from pyrpg.core.ecs.components.new.position import Position
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack
-from pyrpg.core.ecs.components.new.new_weapon_in_use import NewWeaponInUse
+from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 
@@ -61,7 +61,7 @@ class PerformIdleAnimationProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Search for entities that contain Position + RenderableModel and at the same time do not have FlagDoMove and FlagDoAttack component
-            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(Position, RenderableModel), exclude=(FlagDoMove, FlagDoAttack, NewWeaponInUse, IsDestroyed))):
+            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(Position, RenderableModel), exclude=(FlagDoMove, FlagDoAttack, WeaponInUse, IsDestroyed))):
 
                 # Update to proper animation
                 renderable_model.set_action('idle')

@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_torso_leather_chest_model",
+	"templates" : ["new/model/wearable/female/torso"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/torso/leather/chest.json}}
+	]
+}

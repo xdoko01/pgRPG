@@ -1,0 +1,7 @@
+{
+	"id" : "female_facial_beard_brunette2_model",
+	"templates" : ["new/model/body/female/facial"],
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/beard/brunette2.json}}
+	]
+}
