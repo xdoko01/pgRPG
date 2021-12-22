@@ -7,6 +7,7 @@ from pyrpg.core.ecs.esper import Processor
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
 
@@ -59,7 +60,7 @@ class ResolveEntityCollisionsExProcessor(Processor):
         self.cycle +=1
 
         # Get all entities that have collided with something and are moveable and are not to be ignored for collision resolution position fix
-        for ent, (position, flag_has_collided, _) in self.world.get_components(Position, FlagHasCollided, Movable):
+        for ent, (position, flag_has_collided, collidable, _) in self.world.get_components(Position, FlagHasCollided, Collidable, Movable):
 
             for _, _, coll_fix_vector, ignore_position_fix in flag_has_collided.collisions:
 
@@ -95,16 +96,16 @@ class ResolveEntityCollisionsExProcessor(Processor):
                 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
                 
                 if not coll_fix_vector.x and coll_fix_vector.y:
-                    position.x += sign(coll_fix_vector.y)
+                    position.x += sign(coll_fix_vector.y) * collidable.walkaround_position_fix_mode
                     position.y += coll_fix_vector.y
                 elif coll_fix_vector.x and not coll_fix_vector.y:
                     position.x += coll_fix_vector.x
-                    position.y += sign(coll_fix_vector.x)
+                    position.y += sign(coll_fix_vector.x) * collidable.walkaround_position_fix_mode
                 elif abs(coll_fix_vector.x) < abs(coll_fix_vector.y):
                     position.x += coll_fix_vector.x
-                    position.y += sign(coll_fix_vector.y)
+                    position.y += sign(coll_fix_vector.y) * collidable.walkaround_position_fix_mode
                 else:
-                    position.x += sign(coll_fix_vector.x)
+                    position.x += sign(coll_fix_vector.x) * collidable.walkaround_position_fix_mode
                     position.y += coll_fix_vector.y
 
                 logger.debug(f'({self.cycle}) - Entity {ent} - New possition: [{position.x}, {position.y}]')

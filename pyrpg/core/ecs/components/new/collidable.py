@@ -25,7 +25,7 @@ class Collidable(Component):
         20
     '''
 
-    __slots__ = ['x', 'y', 'dx', 'dy', 'ignore_position_fix', 'ignore_collision_with']
+    __slots__ = ['x', 'y', 'dx', 'dy', 'ignore_position_fix', 'ignore_collision_with', 'walkaround_position_fix_mode']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Collidable component.
@@ -50,6 +50,9 @@ class Collidable(Component):
             :param ignore_collision_with: Do not register collision with specified entities.
             :type ignore_collision_with: list (entity names or ids)
 
+            :param walkaround_position_fix_mode: Should the entity try to walk around the colliding entity or not.
+            :type walkaround_position_fix_mode: boolean
+
             :raise: ValueError - in case of incorrect collision borders
         '''
 
@@ -68,6 +71,9 @@ class Collidable(Component):
 
         # Ignore totally collision with given entity
         self.ignore_collision_with = set(kwargs.get('ignore_collision_with', []))
+
+        # Walkaround the colliding obstacle
+        self.walkaround_position_fix_mode = kwargs.get('walkaround_position_fix_mode', True)
 
         try:
             assert isinstance(self.x, int) and self.x >= 0, f'Collision x-axis must be passed as a positive int.'
