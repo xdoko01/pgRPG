@@ -96,17 +96,17 @@ class ResolveEntityCollisionsExProcessor(Processor):
                 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
                 
                 if not coll_fix_vector.x and coll_fix_vector.y:
-                    position.x += sign(coll_fix_vector.y) * collidable.walkaround_position_fix_mode
-                    position.y += coll_fix_vector.y
+                    position.x += sign(coll_fix_vector.y) * collidable.position_fix_walkaround_mode * collidable.position_fix_for_self
+                    position.y += coll_fix_vector.y * collidable.position_fix_for_self
                 elif coll_fix_vector.x and not coll_fix_vector.y:
-                    position.x += coll_fix_vector.x
-                    position.y += sign(coll_fix_vector.x) * collidable.walkaround_position_fix_mode
+                    position.x += coll_fix_vector.x * collidable.position_fix_for_self
+                    position.y += sign(coll_fix_vector.x) * collidable.position_fix_walkaround_mode * collidable.position_fix_for_self
                 elif abs(coll_fix_vector.x) < abs(coll_fix_vector.y):
-                    position.x += coll_fix_vector.x
-                    position.y += sign(coll_fix_vector.y) * collidable.walkaround_position_fix_mode
+                    position.x += coll_fix_vector.x * collidable.position_fix_for_self
+                    position.y += sign(coll_fix_vector.y) * collidable.position_fix_walkaround_mode * collidable.position_fix_for_self
                 else:
-                    position.x += sign(coll_fix_vector.x) * collidable.walkaround_position_fix_mode
-                    position.y += coll_fix_vector.y
+                    position.x += sign(coll_fix_vector.x) * collidable.position_fix_walkaround_mode * collidable.position_fix_for_self
+                    position.y += coll_fix_vector.y * collidable.position_fix_for_self
 
                 logger.debug(f'({self.cycle}) - Entity {ent} - New possition: [{position.x}, {position.y}]')
 

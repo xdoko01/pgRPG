@@ -388,7 +388,7 @@
     `Collidable`
       - `ignore_position_fix`-> `do_not_generate_position_correction_for_others_except{}`... default `False` a.k.a. {empty set} ... only entities in the set will be corrected
       - `ignore_collision_with` ... default `[]`
-      - `do_not_generate_position_correction_for_self_except{}` ... default `False` a.k.a. {empty set} ... only entities in the set can push me
+      - `no_position_fix_for_self` ... default `False` a.k.a. {empty set} ... only entities in the set can push me
 
       - position correction can be either in straight or walkaround mode
         - Player should be in `straight` mode, i.e. not walking around enemies when colliding into them

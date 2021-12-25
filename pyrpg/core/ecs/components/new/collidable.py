@@ -25,7 +25,7 @@ class Collidable(Component):
         20
     '''
 
-    __slots__ = ['x', 'y', 'dx', 'dy', 'ignore_position_fix', 'ignore_collision_with', 'walkaround_position_fix_mode']
+    __slots__ = ['x', 'y', 'dx', 'dy', 'ignore_position_fix', 'ignore_collision_with', 'position_fix_walkaround_mode', 'position_fix_for_self']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Collidable component.
@@ -50,8 +50,11 @@ class Collidable(Component):
             :param ignore_collision_with: Do not register collision with specified entities.
             :type ignore_collision_with: list (entity names or ids)
 
-            :param walkaround_position_fix_mode: Should the entity try to walk around the colliding entity or not.
-            :type walkaround_position_fix_mode: boolean
+            :param position_fix_walkaround_mode: Should the entity try to walk around the colliding entity or not.
+            :type position_fix_walkaround_mode: boolean (default True)
+
+            :param position_fix_for_self: Should the entity adjust its position upon colliding into other entity.
+            :type position_fix_for_self: boolean (default True)
 
             :raise: ValueError - in case of incorrect collision borders
         '''
@@ -73,7 +76,10 @@ class Collidable(Component):
         self.ignore_collision_with = set(kwargs.get('ignore_collision_with', []))
 
         # Walkaround the colliding obstacle
-        self.walkaround_position_fix_mode = kwargs.get('walkaround_position_fix_mode', True)
+        self.position_fix_walkaround_mode = kwargs.get('position_fix_walkaround_mode', True)
+
+        # Do not fix entity position when colliding into other entity
+        self.position_fix_for_self = kwargs.get('position_fix_for_self', True)
 
         try:
             assert isinstance(self.x, int) and self.x >= 0, f'Collision x-axis must be passed as a positive int.'
@@ -81,6 +87,8 @@ class Collidable(Component):
             assert isinstance(self.dx, int), f'Offset centre x-axis must be passed as an int.'
             assert isinstance(self.dy, int), f'Offset centre y-axis must be passed as an int.'
             assert isinstance(self.ignore_position_fix, bool), f'Parameter "ignore_position_fix" must be a boolean.'
+            assert isinstance(self.position_fix_walkaround_mode, bool), f'Parameter "position_fix_walkaround_mode" must be a boolean.'
+            assert isinstance(self.position_fix_for_self, bool), f'Parameter "position_fix_for_self" must be a boolean.'
 
         except AssertionError:
             # Notify component factory that initiation has failed
@@ -90,4 +98,3 @@ class Collidable(Component):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-
