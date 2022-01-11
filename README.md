@@ -383,6 +383,8 @@
 
 ## To Do
 
+### COnsole as static class to get rid of global vars in main.py
+
 ### Improve collisions - NPC entities can walk around each other while hitting themselves
   - Different Entities have different collision behavior
     `Collidable`

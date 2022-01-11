@@ -12,12 +12,19 @@ background.fill(pygame.Color('#000000'))
 is_running = True
 clock = pygame.time.Clock()
 
-manager = pygame_gui.UIManager((800, 600))
+manager = pygame_gui.UIManager((800, 600), 'experiments/gui/theme.json')
 
 options_window = pygame_gui.elements.UIWindow(rect=pygame.Rect((10,10), (500,500)), manager=manager)
 
 hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)), text='Say Hello', manager=manager, container=options_window)
 
+select_file_window = pygame_gui.windows.UIFileDialog(
+	rect=pygame.Rect((10,10), (500,500)), 
+	manager=manager, 
+	window_title='File Dialog', 
+	initial_file_path= None, 
+	allow_existing_files_only=False,
+	allow_picking_directories=False)
 
 while is_running:
 	dt = clock.tick(60)
@@ -26,13 +33,15 @@ while is_running:
 		if event.type == pygame.QUIT:
 			is_running = False
 		
-		if event.type == pygame.USEREVENT:
-			if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-				if event.ui_element == hello_button:
-					print('Hello World!')
-			if event.user_type == pygame_gui.UI_WINDOW_CLOSE:
-				if event.ui_element == options_window:
-					print('Bye World!')
+		if event.type == pygame_gui.UI_BUTTON_PRESSED:
+			if event.ui_element == hello_button:
+				print('Hello World!')
+		if event.type == pygame_gui.UI_WINDOW_CLOSE:
+			if event.ui_element == options_window:
+				print('Bye World!')
+		if event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+			print(event.text)
+
 
 		manager.process_events(event)
 

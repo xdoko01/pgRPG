@@ -1,0 +1,9 @@
+from .config import DISPLAY
+
+DISPLAY_RESOLUTION = DISPLAY.get('resolution')
+DISPLAY_WIDTH = int(DISPLAY_RESOLUTION[0])
+DISPLAY_HEIGHT = int(DISPLAY_RESOLUTION[1])
+DISPLAY_BITDEPTH = DISPLAY.get('bitdepth')
+DISPLAY_MAX_FPS =  DISPLAY.get('max_fps')
+DISPLAY_SHOW_FPS = DISPLAY.get('show_fps')
+DISPLAY_FULLSCREEN = bool(DISPLAY.get('fullscreen'))

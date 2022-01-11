@@ -4,30 +4,22 @@
     -> pyrpg/pyrpg.py
 
     Aim:
-    -> Implements the main game loop - switching between game and the menus
+    -> Implements the main game loop - switching between game, console and the menus
 
     Usage:
-    -> Implements the main game loop - switching between game and the menus
+    -> Implements the main game loop - switching between game, console and the menus
 
     Notes:
-    -> Contains `main.game_mode` variable that holds state of the game
-    -> Contains `main.console` variable that holds reference to console
-
-    Examples:
+    -> Contains `GameState` static class that holds state of the game
+    -> Contains `GameConsole` static class that holds reference to console
 '''
 
 # Initiate logging
 import logging
-import logging.config
 logger = logging.getLogger(__name__)
 
-# Initiates pygame window
-# Initiates pygame clock
+# Initiates pygame, game window, clock and further
 import pyrpg.core.engine
-
-# Initiates console
-import pyrpg.core.config.console
-
 
 # Initiate keys used for the console toggle anywhere in the game
 from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
@@ -35,200 +27,238 @@ from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
 # It is needed to import pygame in order to have access to key events in the main game loop
 import pygame
 
-from pyrpg.core.config.config import DISPLAY, DEBUG, LOGGING
+# It is needed to have gui elements available in the game menu
+import pygame_gui
 
-# Definition of game states
-GAME_STATE = ['MAIN_MENU', 'GAME']
+from pyrpg.core.config.display import DISPLAY_RESOLUTION, DISPLAY_WIDTH, DISPLAY_MAX_FPS
+from pyrpg.core.config.config import DEBUG
 
-global _game_state
-global _prev_game_state # Introduced to remember from which game status I come to Console
-global console
-global show_cons_on_sys_msg
+from pyrpg.core.config.paths import QUEST_PATH
 
-def init(state='MAIN_MENU', cons_enabled=True, timed=False):
+from pathlib import Path # for passing the game filepath after selection via gui
 
-    ##################
-    # Init logging
-    ##################
+class GameState():
+    '''Persists the game state and manages the transitions'''
 
-    logging.config.dictConfig(LOGGING)
-    logger.info('Logging configured ...')
+    AVAILABLE_STATES = ['MAIN_MENU', 'GAME', 'PAUSE_GAME', 'END_PROGRAM', 'CONSOLE']
 
-    ##################
-    # Init the console
-    ##################
-    global console
-    global show_cons_on_sys_msg # remember if system messages should force displaying of the console
+    state, prev_state = None, None
+    changed = False # If the change happened in current loop, set to True else false
 
-    show_cons_on_sys_msg = cons_enabled
+    @classmethod
+    def change_state(cls, new_state):
+        '''Changes the game state and saves the previous state.'''
 
-    from pyrpg.core.config.console import game_console as console
-    # console = pyrpg.core.config.console.game_console
+        if new_state == cls.state: 
+            cls.changed = False
+            return
+
+        if new_state in cls.AVAILABLE_STATES:
+            cls.changed = True
+            cls.prev_state, cls.state = cls.state, new_state
+            logger.info(f'Game state changed from "{cls.prev_state}" to "{cls.state}".')
+        else:
+            logger.error(f'Cannot change from "{cls.state}" to unsupported game state "{new_state}".')
+            raise ValueError(f'Cannot change to unsupported game state "{new_state}".')
+
+    @classmethod
+    def revert_state(cls):
+        '''Return to the previous game state.'''
+        cls.change_state(cls.prev_state)
+
+class GameConsole():
+    '''Manipulates the game console.'''
+
+    console = None
+    show_on_sys_msg = None
+
+    @classmethod
+    def init(cls, show_on_sys_msg=True):
+
+        # Save if console should pop during loading of the game
+        cls.show_on_sys_msg = show_on_sys_msg
+
+        # Run the configuration fixing the paths for console configuration
+        from pyrpg.core.config.console import CONSOLE_CONFIG, CONSOLE_CLI_MODULE
+
+        # Imports support for LUA commands
+        from pyrpg.core.config.lua import LUA_RUNTIME
+
+        # Get the console class
+        from pyrpg.utils import Console
+
+        # Load the console from utils
+        cls.console = Console(
+            CONSOLE_CLI_MODULE,
+            LUA_RUNTIME,
+            DISPLAY_WIDTH,
+            CONSOLE_CONFIG
+        )
+
+        # Send reference to console text display function to engine
+        pyrpg.core.engine.init_console_fnc(cls.update_console)
+
+    @classmethod
+    def update_console(cls, text):
+        ''' Function is used to generate messages on the console
+        during startup of the game. Reference to this function is
+        passed as an argument in init functions and those functions
+        are then adding messages to the console.
+
+        In order to supress console animation, `disable_anim` parameter
+        is used - it overrides default settings of the console.
+        '''
+
+        cls.console.write(text)
+
+        if cls.show_on_sys_msg:
+            cls.console.show(pyrpg.core.engine.window, disable_anim=True)
+            pygame.display.flip()
+
+    @classmethod
+    def write(cls, text):
+        ''' Mandatory function used (not only) by the logger handler to write 
+        directly onto the game console.
+        '''
+        if cls.console: cls.console.write(text)
+
+class GameGUI():
+    '''Contains GUI components for the menus'''
+
+    game_window = None
+    background = None
+    gui_manager = None
+
+    @classmethod
+    def init(cls, game_window):
+        cls.game_window = game_window
+        cls.background = pygame.Surface(cls.game_window.get_size())
+        cls.gui_manager = pygame_gui.UIManager(cls.game_window.get_size())
+
+    @classmethod
+    def show_file_select(cls, init_path):
+        select_file_window = pygame_gui.windows.UIFileDialog(
+            rect=pygame.Rect((10,10), (500,500)), 
+            manager=cls.gui_manager, 
+            window_title='File Dialog', 
+            initial_file_path=init_path, 
+            allow_existing_files_only=False,
+            allow_picking_directories=False)
+
+    @classmethod
+    def process_events(cls, event):
+        cls.gui_manager.process_events(event)
+
+    @classmethod
+    def update(cls, time):
+        cls.gui_manager.update(time) # in seconds
+
+    @classmethod
+    def draw_gui(cls):
+        cls.gui_manager.draw_ui(cls.game_window)
+
+def _init_game(filepath, timed=True):
 
     # Enable console for startup messages
-    console.toggle(enable=show_cons_on_sys_msg)
-
-    # Send reference to console text display function to engine
-    pyrpg.core.engine.init_console_fnc(update_console)
-
-
-    ##################
-    # Init the game
-    ##################
+    GameConsole.console.toggle(enable=GameConsole.show_on_sys_msg)
 
     # Init world and put the messages to the console
     pyrpg.core.engine.init_world(timed)
 
-    #####################################
-    # Start game in the given GAME STATE
-    #####################################
+    pyrpg.core.engine.new_game(Path(filepath))
 
-    global _game_state
-    _game_state = state
-
-    # Load the definitions contained in the init quest - old processors
-    #pyrpg.core.engine.new_game('original/init')
-    #pyrpg.core.engine.new_game('original/collision_test')
-    #pyrpg.core.engine.new_game('original/debug_shoot_problem')
-    #pyrpg.core.engine.new_game('original/test04_weapons')
-    #pyrpg.core.engine.new_game('original/otik_lvl1')
-    #pyrpg.core.engine.new_game('original/test_quest')
-
-    # Load the example test quest
-    # TODO - in the future this will be triggered from the menu
-
-    ##################
-    ### Render Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/00_render/new_test_render_01')
-    #pyrpg.core.engine.new_game('new/tests/00_render/new_test_render_02')
-
-    ##################
-    ### Command Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/02_commands/new_test_commands_01')
-    #pyrpg.core.engine.new_game('new/tests/02_commands/new_test_commands_02')
-
-
-    ##################
-    ### Movement Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_01')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_02')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_03') # Support for diagonal moves
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_04')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_05')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_06')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_07')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_08')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_09')
-    #pyrpg.core.engine.new_game('new/tests/01_movements/new_test_movement_10')
-
-    ##################
-    ### Animation Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/03_animations/new_test_animations_01')
-    #pyrpg.core.engine.new_game('new/tests/03_animations/new_test_weapon_animations')
-
-    ##################
-    ### Collision Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_01')
-    pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_02')
-    #pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_03')
-    #pyrpg.core.engine.new_game('new/tests/04_collisions/new_test_collisions_04')
-    #pyrpg.core.engine.new_game('new/tests/04_collisions/map_collision_test_01')
-
-    ##################
-    ### Pickup Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/05_pickup/new_test_pickup_01')
-
-    ##################
-    ### Teleportation Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/06_teleportation/new_test_teleportation_01')
-    #pyrpg.core.engine.new_game('new/tests/06_teleportation/new_test_teleportation_02')
-
-    ##################
-    ### Arm Weapon Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/07_arm_weapon/new_test_arm_weapon_01')
-
-    ##################
-    ### Arm Ammo Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/08_arm_ammo/new_test_arm_ammo_01')
-
-    ##################
-    ### Projectile Tests
-    ##################
-    #pyrpg.core.engine.new_game('new/tests/09_projectiles/new_test_projectile_generation')
-    #pyrpg.core.engine.new_game('new/tests/09_projectiles/new_test_projectile_collision')
-
-
-    ##################
     # Hide the console
-    ##################
+    GameConsole.console.toggle(enable=False)
 
-    # Enable console for startup messages
-    console.toggle(enable=False)
+def init(console=True, filepath=None):
+    '''Inits console, logging and starts the main game loop.
 
-    # run the main loop
+    Parameters:
+        :param console: Should in-game console be available. Default True.
+        :type console: bool
+
+        :param filepath: Relative path to game definition file. Default None.
+        :type filepath: str
+    '''
+
+    # Console init
+    if console: 
+        GameConsole.init()
+        logger.info('Console enabled')
+
+    # Init logging config
+    import logging.config
+    from pyrpg.core.config.config import LOGGING
+    logging.config.dictConfig(LOGGING)
+
+    # If game file is specified, run the file immediatelly
+    if filepath:
+        GameState.change_state('GAME')
+        _init_game(filepath)
+        logger.info(f'Starting game from file "{filepath}".')
+    else:
+        GameState.change_state('MAIN_MENU')
+        GameGUI.init(pyrpg.core.engine.window)
+        logger.info(f'Starting game into the main menu.')
+    
+    # Start the main loop
     run()
 
 def run():
+    ''' Main game and menu loop. Contains references to other
+    loop codes depending of current GameState
+    '''
 
-    global _game_state
-    global console
-
-    console_enabled = False
+    console_toggle = False
 
     while True:
 
         # Get the time of the frame
-        dt = pyrpg.core.engine.clock.tick(DISPLAY['max_fps'])
+        dt = pyrpg.core.engine.clock.tick(DISPLAY_MAX_FPS)
 
         # Read the keys pressed, mouse, win resize etc.
         key_events = pygame.event.get()
         key_pressed = pygame.key.get_pressed()
 
-        # Check for End Game
         for event in key_events:
+
+            # Check for closing the main program window
             if event.type == pygame.QUIT:
-                end()
-                break
-            elif event.type == pygame.KEYUP:
-                if event.key == K_CONSOLE_TOGGLE and console:
-                    console.toggle()
-                    console_enabled = not console_enabled
-                    if console_enabled: 
+                GameState.change_state('END_PROGRAM')
+
+            if event.type == pygame.KEYUP:
+                if event.key == K_CONSOLE_TOGGLE and GameConsole.console:
+                    GameConsole.console.toggle()
+                    console_toggle = not console_toggle
+                    if console_toggle: 
                         pyrpg.core.engine.save_screen_copy() # Store the game screen
-                        _prev_game_state = _game_state
-                        _game_state = 'CONSOLE'
+                        GameState.change_state('CONSOLE')
                     else:
-                        _game_state = _prev_game_state
-                        _prev_game_state = 'CONSOLE'
+                        GameState.revert_state()
 
+        if GameState.state == 'GAME':
+            res_state = pyrpg.core.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
 
-        if _game_state == 'GAME':
-            _game_state = pyrpg.core.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
+        if GameState.state == 'PAUSE_GAME':
+            res_state = pyrpg.core.engine.pause_game(key_events=key_events, key_pressed=key_pressed, dt=dt)
 
-        elif _game_state == 'PAUSE_GAME':
-            _game_state = pyrpg.core.engine.pause_game(key_events=key_events, key_pressed=key_pressed, dt=dt)
+        if GameState.state == 'MAIN_MENU':
+            res_state = main_menu(key_events=key_events, key_pressed=key_pressed, dt=dt)
 
-        elif _game_state == 'MAIN_MENU':
-            _game_state = main_menu(key_events=key_events, key_pressed=key_pressed, dt=dt)
+        if GameState.state == 'CONSOLE':
+            res_state = pyrpg.core.engine.show_console(key_events=key_events, key_pressed=key_pressed, dt=dt)
 
-        elif _game_state == 'CONSOLE':
-            _game_state = pyrpg.core.engine.show_console(key_events=key_events, key_pressed=key_pressed, dt=dt)
+        if GameState.state == 'END_PROGRAM':
+            res_state = end_program()
 
+        # Change the game state as a result of above calls if needed
+        GameState.change_state(res_state)
 
         # Read and process events related to the console in case console is enabled
-        console.update(key_events)
+        GameConsole.console.update(key_events)
 
         # Display the console if enabled or animation is still in progress
-        console.show(pyrpg.core.engine.window)
+        GameConsole.console.show(pyrpg.core.engine.window)
 
         # Flip the frame buffers
         #pygame.display.update()
@@ -237,29 +267,29 @@ def run():
         # Display FPS in window title
         pygame.display.set_caption('FPS: ' + str(int(pyrpg.core.engine.clock.get_fps())))
 
-
-def update_console(text):
-    ''' Function is used to generate messages on the console
-    during startup of the game. Reference to this function is
-    passed as an argument in init functions and those functions
-    are then adding messages to the console.
-
-    In order to supress console animation, `disable_anim` parameter
-    is used - it overrides default settings of the console.
-    '''
-
-    global console
-    global show_cons_on_sys_msg # remember if system messages should force displaying of the console
-
-    console.write(text)
-    
-    if show_cons_on_sys_msg:
-        console.show(pyrpg.core.engine.window, disable_anim=True)
-        pygame.display.flip()
-
 def main_menu(key_events, key_pressed, dt):
-    print('In MAIN MENU')
+
+    # If first time coming from the game to the loop, generate the gui window again
+    if GameState.changed and GameState.prev_state != 'CONSOLE':
+        GameGUI.background = pyrpg.core.engine.screen_copy
+        GameGUI.show_file_select(QUEST_PATH)
+
+    for event in key_events:
+        if event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
+            logger.info(f'Loading game file "{event.text}".')
+            _init_game(event.text)
+            return 'GAME'
+        elif event.type == pygame_gui.UI_WINDOW_CLOSE and GameState.prev_state: # if MAIN_MENU is accessed from other existing state other than None
+            logger.info(f'Closing MAIN_MENU window')
+            return GameState.prev_state
+
+        GameGUI.process_events(event)
+
+    GameGUI.update(dt/1000)
+    pyrpg.core.engine.window.blit(GameGUI.background, (0, 0))
+    GameGUI.draw_gui()
+
     return 'MAIN_MENU'
 
-def end():
+def end_program():
     pyrpg.core.engine.quit()

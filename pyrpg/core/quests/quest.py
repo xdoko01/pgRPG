@@ -13,16 +13,19 @@ import re # For removing C-style comments before processing JSON
 ### Module functions
 ########################################################
 
-def load_quest(quest_id, event_queue):
+def load_quest(quest_filepath, event_queue):
 	''' load quest data from the json file and calls quest constructor
 	'''
-	# Open the quest file	
-	try:		
-		with open(QUEST_PATH / str(quest_id +'.json'), 'r') as quest_file:
+	# Check if path to the quest is absolute or relative and construct the full path to the file
+	quest_filepath = quest_filepath if quest_filepath.is_absolute() else QUEST_PATH / quest_filepath
+
+	# Open the quest file
+	try:
+		with open(quest_filepath, 'r') as quest_file:
 			json_quest_data = quest_file.read()
 			quest_data = json.loads(re.sub("//.*", "", json_quest_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
 	except FileNotFoundError:
-		print(f'File {QUEST_PATH / str(quest_id + ".json")} not found.')
+		print(f'File "{quest_filepath}" not found.')
 		raise
 
 	# Load the quest

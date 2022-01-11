@@ -177,7 +177,9 @@ LOGGING = {
         "in_game_console": {
             "class": "logging.StreamHandler",
             "formatter": "simple",
-            "stream": "ext://pyrpg.core.config.console" # Module containing write function
+            #"stream": "ext://pyrpg.core.config.console" # Module containing write function
+            "stream": "ext://pyrpg.main.GameConsole" # Module containing write function
+
         },
         "file_handler_proc": {
             "class": "logging.FileHandler",
@@ -249,9 +251,6 @@ CONSOLE = {**CONSOLE, **config_data.get('console', {})}
 
 # Override DEBUG with config debug
 DEBUG = {**DEBUG, **config_data.get('debug', {})}
-
-# Override PROCESSORS with config processors - obsolete, processors are now configured within the quest
-#PROCESSORS = [*PROCESSORS, *config_data.get('processors', [])]
 
 # Override GAME config with data from config file
 MOVE_SPEED = config_data.get('move_speed', MOVE_SPEED)

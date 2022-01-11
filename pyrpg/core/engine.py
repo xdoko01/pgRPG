@@ -29,12 +29,12 @@ global clock
 
 pygame.init()
 
-from pyrpg.core.config.config import DISPLAY
+from pyrpg.core.config.display import DISPLAY_RESOLUTION, DISPLAY_FULLSCREEN, DISPLAY_BITDEPTH
 
 window = pygame.display.set_mode(
-                DISPLAY['resolution'],
-                pygame.FULLSCREEN if DISPLAY['fullscreen'] else 0,
-                DISPLAY['bitdepth']
+                DISPLAY_RESOLUTION,
+                pygame.FULLSCREEN if DISPLAY_FULLSCREEN else 0,
+                DISPLAY_BITDEPTH
             )
 
 clock = pygame.time.Clock()
@@ -51,7 +51,6 @@ import pyrpg.core.config.keys as keys
 from pyrpg.core.config.paths import Path, ENTITY_PATH, DIALOG_PATH, SAVE_PATH, IMAGE_PATH, FONT_PATH
 
 import pyrpg.core.ecs.esper as esper
-#import pyrpg.core.ecs.components as components # this is soon to be obsolete
 
 from pyrpg.core.ecs.components.component import Component # generic component super-class
 
@@ -65,7 +64,7 @@ import pyrpg.core.messages.messages as messages # Fore in-game messages
 
 import pyrpg.utils.dialog as dialog # for creation of dialogs
 
-import pyrpg.core.lua as lua # for usage of lua scripts
+import pyrpg.utils.lua_utils as lua # for usage of lua scripts from the console
 
 ########################################################
 ### Module Import Init - Init global variables
@@ -84,6 +83,7 @@ global dialogs # stores all the dialogs that are necessary for the quest phase
 global cons_update_fnc # remember the function that is bliting text to the console
 
 global screen_copy # make copy of the window - used for pause game
+screen_copy = pygame.Surface(DISPLAY_RESOLUTION)
 
 cons_update_fnc = lambda x: None # console update function is empty function by default
 
@@ -156,7 +156,6 @@ def init_world(timed=False):
     global world
 
     world = esper.World(timed=timed)
-    #create_processors(world)
     cons_update_fnc('engine->init_world. World initiation finished.')
     logger.info(f'Init is done.')
 
@@ -686,7 +685,7 @@ def delete_entity_alias(alias):
     entity_id = alias_to_entity.get(alias, None)
 
     # If entity is registered, delete it
-    if entity is not None:
+    if entity_id is not None:
 
         # Delete it from Esper world
         world.delete_entity(entity_id)
@@ -818,6 +817,10 @@ def load_processors(processors: list) -> None:
 ########################################################
 ### Module Functions - Save and load game
 ########################################################
+def clear_game_resources():
+    ''' Clear all the game resources.
+    '''
+    pass
 
 def new_game(quest_name):
     ''' Loads definitions and objects from the defined quest
@@ -1027,61 +1030,6 @@ def pause_game(key_events, key_pressed, dt):
 ########################################################
 
 def run(key_events, key_pressed, dt, debug):
-    # Initialize Pygame stuff - at the beginning due to convert() function
-    ##global window
-
-    ##pygame.init()
-    ##window = pygame.display.set_mode((850, 850), 0, 32)
-    ##clock = pygame.time.Clock()
-
-    # All commands are queued here
-    ##global command_queue
-    ##command_queue = []
-
-    # All events are queued here
-    ##global event_queue
-    ##event_queue = []
-
-    # All maps are here
-    ##global maps
-    ##maps = {}
-
-    # Entity name vs id is stored here
-    ##global alias_to_entity
-    ##alias_to_entity = {}
-
-    #####
-    # Initialize Esper world with entites and processors
-    #####
-    ##global world
-
-    ##world = esper.World(timed=False)
-    ##create_processors(world)
-
-    # All quests are here
-    ##global quests
-    ##quests = {}
-
-    ##sample_quest = quest.load_quest('test_quest', event_queue)
-    ##quests.update({'test_quest' : sample_quest})
-
-    # Print entity mappings
-    ##print(alias_to_entity)
-
-    #####
-    # The main loop
-    #####
-    ##running = True
-    ##while running:
-
-    #global clock
-
-    # Keep game at constant FPS
-    #dt = clock.tick(config.FPS)
-
-    # Read the keys pressed, mouse, win resize etc.
-    ##key_events = pygame.event.get()
-    ##key_pressed = pygame.key.get_pressed()
 
     # Check for End Game
     for event in key_events:
@@ -1089,6 +1037,7 @@ def run(key_events, key_pressed, dt, debug):
             return 'QUIT_GAME'
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
+                save_screen_copy()
                 return 'MAIN_MENU'
             elif event.key == keys.K_SAVE_GAME:
                 print(f'Saving game ...')
