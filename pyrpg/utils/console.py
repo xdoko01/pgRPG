@@ -1526,7 +1526,7 @@ class Console(pygame.Surface):
 		# Without calling prepare_surface the text will not be shown immediatelly
 		self.console_output.prepare_surface()
 
-	def toggle(self, enable=None):
+	def toggle(self, enable=None) -> bool:
 		''' Toggle on/off the console. Influences if updade and show console functions are 
 		working. If `enable` parameter is True, showing of console is forced. If `enable`
 		parameter is False, hidding of the console is forced.
@@ -1536,6 +1536,8 @@ class Console(pygame.Surface):
 
 		# Remember toggle time for smooth animation purposes
 		if self.animation: self.anim_last_time = pygame.time.get_ticks()
+
+		return self.enabled # return the new state
 
 	def reset(self):
 		''' Method that reloads and resets the console

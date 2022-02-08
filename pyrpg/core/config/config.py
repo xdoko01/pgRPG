@@ -9,6 +9,7 @@ CONFIG_FILE = "config.json"
 MOVE_SPEED = 120 # in px per second
 TILE_RES = 64
 DEAD_TIME_TO_DISAPPEAR = 10000 # in ms
+MENU_BACKGROUND_ANIMATION_DELAY = 130 # in ms
 
 ''' MESSAGES contain format of message that should be generated
 upon game event generation. Such message is then displayed on 
@@ -117,12 +118,13 @@ PATHS = {
     "map_path" : "pyrpg/resources/maps/",
     "log_path" : "pyrpg/logs/",
     "save_path" : "pyrpg/save/",
-    "console_script_path" : "pyrpg/utils/scripts/"
+    "console_script_path" : "pyrpg/utils/scripts/",
+    "menu_background_path" : "pyrpg/resources/images/menu_background/waterfall/"
 }
 
 CONSOLE = {
     'global' : {
-        'cli_module' : None,
+        'cli_module' : 'pyrpg.main',
         'bck_alpha' : 150,
         },
     'input' : {
@@ -178,7 +180,7 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "simple",
             #"stream": "ext://pyrpg.core.config.console" # Module containing write function
-            "stream": "ext://pyrpg.main.GameConsole" # Module containing write function
+            "stream": "ext://pyrpg.core.managers.console_manager" # Module containing write function
 
         },
         "file_handler_proc": {

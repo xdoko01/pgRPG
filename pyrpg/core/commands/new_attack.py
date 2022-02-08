@@ -1,7 +1,7 @@
 ''' Module implementing attack command
 '''
 
-import pyrpg.core.engine as engine # To reference the world 
+import backup.core.engine as engine # To reference the world 
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack # To work with components in commands (remove search add ...)
 
 def cmd_new_attack(*args, **kwargs):

@@ -7,26 +7,24 @@
 
 	"processors" : [
 		// For commands
-		["GenerateCommandFromInputProcessor", {}],
-		["GenerateCommandFromBrainProcessor", {}],
-		["PerformCommandProcessor", {"debug" : true}],
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
-		["PerformMovementProcessor", {}],
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 		
-		// For displaying
-		["UpdateCameraOffsetProcessor", {}],
-		["RenderableModelAnimationActionProcessor", {}],
-		["RenderableModelAnimationUpdateProcessor", {}],
-		["RenderBackgroundProcessor", {}],
-		["RenderCameraBackgroundProcessor", {}],
-		["RenderMapProcessor", {}],
-		["RenderWorldProcessor", {}],
-		["RenderModelWorldProcessor", {}],
-		["RenderDebugProcessor", {}],
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For processing input and movements
-		["RemoveFlagDoMoveProcessor", {}]
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
 	],
 
 	"phases" : {
@@ -38,7 +36,7 @@
 			"entities" : [
 				{
 					"id" : "player01",
-					"templates" : ["darkmale"],
+					"templates" : ["new/model/body/male/human/brown"],
 					"components" : [
 
 						/////////////////////////////////////////////////////////
@@ -46,9 +44,9 @@
 						// - program is added to the brain and executed accross several cycles
 						//
 						/////////////////////////////////////////////////////////
-						{"type" : "Brain", "params" : {"commands" : []}},
+						{"type" : "new.brain:Brain", "params" : {"commands" : []}},
 
-						{"type" : "Controllable", "params" :  {"key_profile" : "default",
+						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {
 								// Do 3 circles upon pressing left
 								"left" : [["new_modify_brain", {"commands" : [
@@ -72,9 +70,9 @@
 						},
 
 
-						{"type" : "Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "Movable", "params" :  {"velocity" : 100}},
-						{"type" : "Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				}
 			],

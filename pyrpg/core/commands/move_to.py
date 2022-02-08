@@ -1,7 +1,7 @@
 ''' Module implementing move_to command
 '''
 
-import pyrpg.core.engine as engine # To reference the world 
+import backup.core.engine as engine # To reference the world 
 from pyrpg.core.ecs.components.original.position import Position
 from pyrpg.core.ecs.components.original.motion import Motion
 from .move import cmd_move

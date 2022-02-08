@@ -111,6 +111,12 @@ class World:
                 processor.world = None
                 self._processors.remove(processor)
 
+    def clear_processors(self) -> None:
+        """Remove all processors - ODO"""
+        for processor in self._processors:
+                processor.world = None
+                self._processors.remove(processor)
+
     def get_processor(self, processor_type: _Type[P]) -> P:
         """Get a Processor instance, by type.
 

@@ -44,55 +44,55 @@
 
 	"console" : {
 		"global" : {
-			"cli_module" : "pyrpg.core.engine",
+	//		"cli_module" : "pyrpg.core.engine",
 			"animation": ["TOP", 2000],
 			"layout" : "INPUT_BOTTOM",
-			"padding" : [10,10,20,20],
-			"bck_color" : [125,125,125],
+			"padding" : [0,0,0,0],
+	//		"bck_color" : [125,125,125],
 			"bck_image" : "quake.png",
 			"bck_image_resize" : true,
 			"bck_alpha" : 150,
-			"welcome_msg" : "Sample 1: Full feature console + top animation with 2s timing\n***************\nType 'exit' to quit\nType 'help'/'?' for help\nType '? shell' for examples of python commands",
+			"welcome_msg" : "Welcome to pyRPG Console\n***********************\nType 'exit' to quit\nType 'help'/'?' for help\nType '? shell' for examples of python commands",
 			"welcome_msg_color" : [0,255,0]
 			},
 		"header" : {
 			"text" : "pyRPG Console v0.1 | {} | ",
 			"text_params" : ["cons_get_info_header"],
-			"layout" : ["SCROLL_LEFT_CONTINUOUS", 0, 2],
+			"layout" : ["SCROLL_LEFT_CONTINUOUS", 0, 0.5],
 			"padding" :[10,10,10,10],
 			"font_file" : "IBMPlexMono-Regular.ttf",
 			"font_size" : 12,
 			"font_antialias" : true,
 			"font_color" : [255,255,255],
-			"bck_color" : [255,0,0],
-			"bck_image" : "quake.png",
-			"bck_image_resize" : true,
+	//		"bck_color" : [255,0,0],
+	//		"bck_image" : "quake.png",
+	//		"bck_image_resize" : true,
 			"bck_alpha" : 100
 			},
 		"output" : {
-			"padding" : [10,10,10,10],
-			"font_file" : "JackInput.ttf",
+			"padding" : [0,0,10,10],
+			"font_file" : "IBMPlexMono-Regular.ttf",
 			"font_size" : 12,
 			"font_antialias" : true,
 			"font_color" : [255,255,255],
-			"font_bck_color" : [55,0,0],
-			"bck_color" : [55,0,0],
-			"bck_alpha" : 120,
+	//		"font_bck_color" : [55,0,0],
+	//		"bck_color" : [55,0,0],
+			"bck_alpha" : 100,
 			"buffer_size" : 100,
-			"display_lines" : 20,
-			"display_columns" : 100
+			"display_lines" : 30,
+			"display_columns" : 90
 			},
 		"input" : {
-			"padding" : [10,10,10,10],
-			"font_file" : "JackInput.ttf",
+			"padding" : [0,0,10,10],
+			"font_file" : "IBMPlexMono-Regular.ttf",
 			"font_size" : 12,
 			"font_antialias" : true,
 			"font_color" : [255,0,0],
 			"bck_color" : [0,255,0],
-			"bck_alpha" : 75,
+			"bck_alpha" : 100,
 			"prompt" : ">>>",
-			"max_string_length" : 10,
-			"repeat_keys_initial_ms" : 400,
+	//		"max_string_length" : 10,
+	//		"repeat_keys_initial_ms" : 400,
 			"repeat_keys_interval_ms" : 35
 			},
 		"footer" : {
@@ -104,8 +104,8 @@
 			"font_size" : 10,
 			"font_antialias" : true,
 			"font_color" : [255,255,255],
-			"bck_color" : [0,0,0],
-			"bck_image_resize" : true,
+	//		"bck_color" : [0,0,0],
+	//		"bck_image_resize" : true,
 			"bck_alpha" : 100
 			}
 		}

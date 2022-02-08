@@ -26,6 +26,14 @@ select_file_window = pygame_gui.windows.UIFileDialog(
 	allow_existing_files_only=False,
 	allow_picking_directories=False)
 
+confirm_dialog = pygame_gui.windows.UIConfirmationDialog(rect=pygame.Rect((20,20), (200,100)), manager=manager, action_long_desc='Exit')
+
+free_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)), text='Say Hello', manager=manager, container=None)
+
+message_window = pygame_gui.windows.UIMessageWindow(rect=pygame.Rect((20,20), (200,100)), html_message = 'baf', manager=manager)
+test_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 10), (50, 50)), text='Hello', manager=manager, container=message_window)
+
+
 while is_running:
 	dt = clock.tick(60)
 

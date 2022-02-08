@@ -47,7 +47,7 @@ EXAMPLES
 '''
 
     try:
-      opts, args = getopt.getopt(argv, "hf:",["help", "file=", "disable-console"])
+      opts, _ = getopt.getopt(argv, "hf:",["help", "file=", "disable-console"])
     except getopt.GetoptError:
       print(usage_info)
       sys.exit(2)
@@ -62,8 +62,8 @@ EXAMPLES
 
     print(f'Starting PYRPG with the following arguments:\n"console"={console}\n"filepath"={filepath}')
 
-    import pyrpg.main
-    pyrpg.main.init(console=console, filepath=filepath)
+    from pyrpg.main import init
+    init(console=console, filepath=filepath)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

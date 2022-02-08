@@ -1,8 +1,10 @@
 ''' Module implementing new_move_vect_noadd command
 '''
+# Initiate logging
+import logging
+logger = logging.getLogger(__name__)
 
-import pyrpg.core.engine as engine # To reference the world 
-import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 
 
 def cmd_new_move_vect_noadd(*args, **kwargs):
@@ -12,6 +14,9 @@ def cmd_new_move_vect_noadd(*args, **kwargs):
     in moving only to the left (the latter move) in case this command is used.
     '''
 
+    # Get the world
+    world = kwargs.get("world")
+
     # Get the entity
     entity = kwargs.get("entity")
 
@@ -19,8 +24,8 @@ def cmd_new_move_vect_noadd(*args, **kwargs):
     vector = kwargs.get("vector", [0, 0])
 
     # Always create FlagDoMove
-    new_component = components.FlagDoMove(vector=vector)
-    engine.world.add_component(entity, new_component)
-    print(f'{__name__} - new component created {new_component}')
+    new_component = FlagDoMove(vector=vector)
+    world.add_component(entity, new_component)
+    logger.debug(f'{__name__} - new component created {new_component}')
 
     return 0

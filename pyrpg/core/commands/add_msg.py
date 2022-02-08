@@ -2,7 +2,7 @@
 '''
 
 import pyrpg.core.messages.messages as msg # To reference the message
-import pyrpg.core.engine as engine # To reference the message queue
+import backup.core.engine as engine # To reference the message queue
 import pygame
 
 def cmd_add_msg(*args, **kwargs):

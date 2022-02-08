@@ -3,3 +3,6 @@ __pycache__
 
 # Ignore all logs directories
 **/logs
+
+# Ignore all backup directories
+**/backup

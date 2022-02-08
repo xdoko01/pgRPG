@@ -1,7 +1,7 @@
 ''' Module implementing toggle_control command
 '''
 
-import pyrpg.core.engine as engine # To reference the world 
+import backup.core.engine as engine # To reference the world 
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
 
 def cmd_toggle_control(*args, **kwargs):

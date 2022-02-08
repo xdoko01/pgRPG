@@ -29,23 +29,10 @@
      {
          "misc":
          {
-             "border_width": "1",
-             "shadow_width": "1"
+             "border_width": "2",
+             "shadow_width": "1",
+			 "shape": "rounded_rectangle",
+			 "shape_corner_radius": "45"
          }
-    },
-    "@friendly_buttons":
-     {
-         "misc":
-         {
-             "shadow_width": "5",
-             "shape": "rounded_rectangle"
-         }
-    },
-    "#hello_button":
-     {
-         "misc":
-         {
-             "text_horiz_alignment": "left"
-         }
-    }
+	}
 }

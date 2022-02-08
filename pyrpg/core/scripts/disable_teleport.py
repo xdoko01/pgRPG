@@ -1,4 +1,4 @@
-import pyrpg.core.engine as engine
+import backup.core.engine as engine
 import pyrpg.core.ecs.components as components
 
 def script_disable_teleport(event=None, *args, **kwargs):

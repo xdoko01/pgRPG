@@ -383,7 +383,21 @@
 
 ## To Do
 
-### COnsole as static class to get rid of global vars in main.py
+### Re-doing of MAIN and ENGINE modules - Manager classes implemented
+  **Outstanding TODOs**
+    - [x] Correct ending of program
+    - [x] Possibility to run the game without any console
+    - [ ] Display console during loading of new game - somehow has dissapeared
+    - [x] Pause game/menu when console displayed
+    - [x] Save path once the game is loaded and start from that path when again selecting file
+    - [x] Buttons and windows are active when console is displayed, need to be disabled
+    - [x] Make nicer background animation implementation in the gui manager - rename, multiple folders, configurable paths, return number of animation frames from load_animation function, etc.
+    - [x] Backup and clear the unused manager and main and engine classes
+    - [x] Make console nicer - get rid of dummy data and display statistics from ECS manager + state + memory usage
+    - [ ] Make the diagram and implement Menu abstract class
+    - [ ] Document the changes in this document
+    - [ ] Retest all the test quests
+    - [ ] Clear the console and menus upon exit
 
 ### Improve collisions - NPC entities can walk around each other while hitting themselves
   - Different Entities have different collision behavior

@@ -34,7 +34,7 @@ class GenerateCommandFromInputProcessor(Processor):
 
     PREREQ = []
 
-    def __init__(self, add_command_fnc):
+    def __init__(self, FNC_ADD_COMMAND):
         ''' Initiation of NewInputProcessor processor.
 
         Parameters:
@@ -44,7 +44,7 @@ class GenerateCommandFromInputProcessor(Processor):
         super().__init__()
 
         # Reference to function for adding to command queue
-        self.add_command_fnc = add_command_fnc
+        self.add_command_fnc = FNC_ADD_COMMAND
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''

@@ -1,5 +1,7 @@
 
 pygame 1.9.6 # due to pygame.get_init()
+psutil # in order to get information about memory usage
+pygame_gui # in order to display dialog windows
 ---
 ---
 

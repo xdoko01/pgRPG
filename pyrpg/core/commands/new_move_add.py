@@ -2,7 +2,8 @@
 '''
 
 import logging
-import pyrpg.core.engine as engine # To reference the world 
+#!import pyrpg.core.engine as engine # To reference the world 
+
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
 
 # Init logger
@@ -14,6 +15,8 @@ def cmd_new_move_add(*args, **kwargs):
     Typical example is pressing 'up' + 'left' at the same time which results
     in moving diagonaly in case this command is used.
     '''
+    # Get the game world
+    world = kwargs.get("world")
 
     # Get the entity
     entity = kwargs.get("entity")
@@ -25,8 +28,9 @@ def cmd_new_move_add(*args, **kwargs):
     # if it already exists, recalculate the move_vect on the entity
     try:
         # Get the FlagDoMove component from the entity
-        flag_do_move = engine.world.component_for_entity(entity, FlagDoMove)
-
+        #!flag_do_move = engine.world.component_for_entity(entity, FlagDoMove)
+        flag_do_move = world.component_for_entity(entity, FlagDoMove)
+        
         logger.debug(f'Entity {entity} - already existing component {flag_do_move}.')
 
         # Add the movements to the NewFlafDoMove entity - for example if 'up' and 'left' are pressed
@@ -42,7 +46,7 @@ def cmd_new_move_add(*args, **kwargs):
     except KeyError:
         # Create new FlagDoMove component
         new_component = FlagDoMove(moves=moves)
-        engine.world.add_component(entity, new_component)
+        world.add_component(entity, new_component)
         logger.debug(f'Entity {entity} - new component created {new_component}.')
 
         return 0

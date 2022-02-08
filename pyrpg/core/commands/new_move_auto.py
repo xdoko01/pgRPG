@@ -1,7 +1,7 @@
 ''' Module implementing new_move_auto command
 '''
 
-import pyrpg.core.engine as engine # To reference the world 
+import backup.core.engine as engine # To reference the world 
 from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
 

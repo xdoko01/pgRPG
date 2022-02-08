@@ -1,0 +1,2 @@
+'''Menu abstract class'''
+pass

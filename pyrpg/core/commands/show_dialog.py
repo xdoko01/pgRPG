@@ -6,7 +6,7 @@
         "show_dialog", {"time" : 3000, "text" : "... Somebody please\nhelp me !!", "can_skip" : false}
 
 '''
-import pyrpg.core.engine as engine # To reference the world
+import backup.core.engine as engine # To reference the world
 from pyrpg.core.ecs.components.original.can_talk import CanTalk
 import pygame
 

@@ -1,8 +1,13 @@
 ''' Module implementing new_move_noadd command
 '''
 
-import pyrpg.core.engine as engine # To reference the world 
-import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
+import logging
+#!import pyrpg.core.engine as engine # To reference the world 
+
+from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
+
+# Init logger
+logger = logging.getLogger(__name__)
 
 
 def cmd_new_move_noadd(*args, **kwargs):
@@ -12,6 +17,9 @@ def cmd_new_move_noadd(*args, **kwargs):
     in moving only to the left (the latter move) in case this command is used.
     '''
 
+    # Get the world
+    world = kwargs.get("world")
+
     # Get the entity
     entity = kwargs.get("entity")
 
@@ -20,9 +28,9 @@ def cmd_new_move_noadd(*args, **kwargs):
 
 
     # Always create FlagDoMove
-    new_component = components.FlagDoMove(moves=moves)
-    engine.world.add_component(entity, new_component)
+    new_component = FlagDoMove(moves=moves)
+    world.add_component(entity, new_component)
 
-    print(f'{__name__} - new component created {new_component}')
+    logger.debug(f'{__name__} - new component created {new_component}')
 
     return 0

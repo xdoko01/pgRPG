@@ -1,7 +1,7 @@
 ''' Module implementing set_quest_phase command
 '''
 
-import pyrpg.core.engine as engine # To reference the world
+import backup.core.engine as engine # To reference the world
 
 def cmd_set_quest_phase(*args, **kwargs):
     ''' In the game cinematics processor, it may come to the point when I want to proceed

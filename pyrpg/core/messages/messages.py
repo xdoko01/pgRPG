@@ -1,5 +1,4 @@
 import pygame
-from pyrpg.core.config.fonts import GAME_MSG_FONT # used font
 from pyrpg.core.config.config import MSG_DEFAULT_TTL # default TTL
 
 class Message:
@@ -27,7 +26,7 @@ class Message:
         self.pos = pos
         self.created = pygame.time.get_ticks()
 
-
+""" not needed anymore - rendering realized by new PerformRenderMessagesProcessor
 def process(window, msg_list):
     ''' Do whatever needed with the message - store it into the file,
     display it on the screen ...
@@ -45,3 +44,4 @@ def process(window, msg_list):
 
         # Move the offset
         pos[1] += msg_surf.get_height()
+"""
