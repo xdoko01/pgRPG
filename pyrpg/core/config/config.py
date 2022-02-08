@@ -158,6 +158,9 @@ LOGGING = {
     "disable_existing_loggers": False,
 
     "formatters": {
+        "console_short": {
+            "format": "%(name)s - %(message)s"
+        },
         "short": {
             "format": "%(filename)-45s - %(message)s"
         },
@@ -178,10 +181,8 @@ LOGGING = {
         },
         "in_game_console": {
             "class": "logging.StreamHandler",
-            "formatter": "simple",
-            #"stream": "ext://pyrpg.core.config.console" # Module containing write function
+            "formatter": "console_short",
             "stream": "ext://pyrpg.core.managers.console_manager" # Module containing write function
-
         },
         "file_handler_proc": {
             "class": "logging.FileHandler",
