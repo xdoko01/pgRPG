@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 from pyrpg.core.config.states import State
 from pyrpg.core.managers.gui_manager import GUIManager
+from pyrpg.core.managers.sound_manager import SoundManager
 
 from pyrpg.core.managers.map_manager import MapManager
 from pyrpg.core.managers.message_manager import MessageManager
@@ -24,9 +25,11 @@ logger.info(f'Engine initiated')
 
 class Game:
 
-    def __init__(self, gui_manager: GUIManager, timed: bool=False) -> None:
+    def __init__(self, gui_manager: GUIManager, sound_manager: SoundManager, timed: bool=False) -> None:
 
-        self.gui_manager = gui_manager # Reference to GUI manager created in main module
+        self.gui_manager = gui_manager # for drawing anything on the screen
+        self.sound_manager = sound_manager # for playing music and sounds
+
         self.map_manager = MapManager()
         self.message_manager = MessageManager()
         self.dialog_manager = DialogManager()

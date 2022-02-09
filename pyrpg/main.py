@@ -80,6 +80,10 @@ class Main:
         from pyrpg.core.config.states import STATES_GRAPH, NON_GAME_STATES, START_STATE
         self.state_manager = StateManager(states_graph=STATES_GRAPH, start=START_STATE, non_game_states=NON_GAME_STATES)
 
+        # Sound Manager
+        from pyrpg.core.managers.sound_manager import SoundManager
+        self.sound_manager = SoundManager()
+
         # Class representing the game
         self.game = None
 
@@ -112,7 +116,7 @@ class Main:
 
         if self.game is None:
             from pyrpg.core.engine import Game
-            self.game = Game(self.gui_manager, timed)
+            self.game = Game(self.gui_manager, self.sound_manager, timed)
 
         from pathlib import Path
         self.game.new_game(Path(filepath))

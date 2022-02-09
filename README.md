@@ -394,7 +394,7 @@
     - [x] Make nicer background animation implementation in the gui manager - rename, multiple folders, configurable paths, return number of animation frames from load_animation function, etc.
     - [x] Backup and clear the unused manager and main and engine classes
     - [x] Make console nicer - get rid of dummy data and display statistics from ECS manager + state + memory usage
-    - [ ] Make the diagram and implement Menu abstract class
+    - [x] Make the diagram and implement Menu abstract class
     - [ ] Document the changes in this document
     - [ ] Retest all the test quests
     - [ ] Clear the console and menus upon exit
