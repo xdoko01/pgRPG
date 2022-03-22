@@ -33,5 +33,9 @@ class MapManager:
     def clear_maps(self) -> None:
         '''Dereference and delete all maps.'''
 
-        self._maps.clear()
+        maps = list(self._maps.keys()).copy()
+
+        # We need to use a copy in order not to delete parsed dictionary
+        for map_name in maps:
+            self.delete_map(map_name)
         logger.info(f'All maps cleared.')

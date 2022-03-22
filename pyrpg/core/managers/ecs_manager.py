@@ -12,25 +12,21 @@ logger = logging.getLogger(__name__)
 
 class ECSManager:
 
-    def __init__(self, timed: bool=False) -> None:
-        self._world = World(timed=timed)
+    def __init__(self) -> None:
+        self._world = None
         self._entity_to_alias = {}
         self._alias_to_entity = {}
         self._game_functions = {}
 
+        logger.info(f'ECSManager created.')
+
+    def initialize(self, timed: bool, game_functions: dict) -> None:
+        self._world = World(timed=timed)
+        self._game_functions = game_functions
         logger.info(f'ECSManager initiated.')
 
     def get_game_world(self) -> World:
         return self._world
-
-    def set_game_functions(self, game_functions_dict: dict) -> None:
-        '''Sets the reference to dictionary containing all
-        the game engine functions that can be used within ECS
-        world.
-        '''
-
-        self._game_functions = game_functions_dict
-        logger.info(f'ECSManager game functions dictionary initiated.')
 
     def get_entity_id(self, entity_alias: str) -> int:
         ''' Translate entity alias (string) to entity id (integer)
@@ -190,7 +186,11 @@ class ECSManager:
 
     def _clear_processors(self) -> None:
 
-        self._world.finalize()
+        try:
+            self._world.finalize()
+        except ValueError as e:
+            logger.warn(f'Processor "{e.args[0]}" does not have "finalize" method implemented.')
+
         logger.info(f'All processors finalized.')
 
         self._world.clear_processors()

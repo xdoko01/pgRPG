@@ -30,15 +30,15 @@ class GenerateCommandFromFileProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self, add_command_fnc, clear_commands_fnc, file, mode='append'):
+    def __init__(self, FNC_ADD_COMMAND, FNC_CLEAR_COMMANDS, file, mode='append'):
         ''' Init the processor.
 
         Parameters:
-            :param add_command_fnc: Reference to the function that adds command to the command queue.
-            :param add_command_fnc: reference
+            :param FNC_ADD_COMMAND: Reference to the function that adds command to the command queue.
+            :param FNC_ADD_COMMAND: reference
 
-            :param clear_commands_fnc: Reference to the function that clears all commands from the command queue.
-            :param clear_commands_fnc: reference
+            :param FNC_CLEAR_COMMANDS: Reference to the function that clears all commands from the command queue.
+            :param FNC_CLEAR_COMMANDS: reference
 
             :param file: Path to the file with stored commands.
             :param file: str
@@ -53,10 +53,10 @@ class GenerateCommandFromFileProcessor(Processor):
         super().__init__()
 
         # Reference to function for adding to command queue
-        self.add_command_fnc = add_command_fnc
+        self.add_command_fnc = FNC_ADD_COMMAND
 
         # Reference to function for clearing command queue
-        self.clear_commands_fnc = clear_commands_fnc
+        self.clear_commands_fnc = FNC_CLEAR_COMMANDS
         
         # File handler
         self.fh = open(file, 'r')

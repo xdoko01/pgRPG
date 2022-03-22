@@ -77,7 +77,8 @@ class GenerateProjectileFactoryDataProcessor(Processor):
                                         },
                                         adjust_collision={
                                                 "ignore_collision_with" : [parent],
-                                                # Here we can use data from the weapon/character to modify the collision zone for the projectile
+                                                # Here we can use data from the weapon/character to modify the collision zone for the projectile. For example if character is skilled,
+                                                # the projectile collision zone is greater than normal in order to hit more enemies in one go.
                                                 "x_fnc" : [lambda x: x, lambda x: x*1.5],
                                                 "y_fnc" : [lambda x: x, lambda x: x*1.5]
                                         },

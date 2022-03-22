@@ -49,3 +49,6 @@ class GameEventsExProcessor(Processor):
         ''' Call external function that processes events
         '''
         self.game_event_handler(process=self.to_process, ignore=self.to_ignore)
+
+    def finalize(self):
+        pass

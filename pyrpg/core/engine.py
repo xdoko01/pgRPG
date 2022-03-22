@@ -1,13 +1,13 @@
 ''' core.engine_3ex module
 '''
 
-import pygame # for pygame.QUIT, pygame.KEYDOWN
 import logging
-import pyrpg.core.config.keys as keys
-import pyrpg.core.quests.quest as quest
 
 # Create logger
 logger = logging.getLogger(__name__)
+
+import pygame # for pygame.QUIT, pygame.KEYDOWN
+import pyrpg.core.config.keys as keys
 
 from pyrpg.core.config.states import State
 from pyrpg.core.managers.gui_manager import GUIManager
@@ -35,7 +35,7 @@ class Game:
         self.dialog_manager = DialogManager()
         self.command_manager = CommandManager() # command manager must have reference to Game in order commands can manipulate the game world
         self.quest_manager = QuestManager()
-        self.ecs_manager = ECSManager(timed=timed)
+        self.ecs_manager = ECSManager()
         
         # Reference function for adding events
         # TODO - maybe it would be better to handle processing of events within processor that
@@ -43,9 +43,7 @@ class Game:
         # event processing.
         self.event_manager = EventManager(self.quest_manager.handle_event)
 
-        # Following functions will be visible for game processors. Processor can have several
-        # references from different managers and thus realize integration between those managers.
-        self._game_functions = {
+        self.ecs_manager.initialize(timed=timed, game_functions={
             'window' : self.gui_manager.window,
             'create_entity_fnc' : self.ecs_manager.create_entity,
             'remove_entity_fnc' : self.ecs_manager.delete_entity,
@@ -74,10 +72,10 @@ class Game:
             'clear_events_fnc' : self.event_manager.clear_events,
             'get_events_fnc' : self.event_manager.get_events,
             # ECS
-            'FNC_GET_ENTITY_ID' : self.ecs_manager.get_entity_id
-        }
-
-        self.ecs_manager.set_game_functions(self._game_functions)
+            'FNC_GET_ENTITY_ID' : self.ecs_manager.get_entity_id,
+            # Sound and Music
+            'FNC_PLAY_SOUND' : self.sound_manager.play_sound
+        })
         logger.info(f'Game initiated')
 
 
@@ -98,18 +96,16 @@ class Game:
         self._clear_game()
 
         #add new quest
-        new_quest = quest.load_quest_ex(quest_name,
+        self.quest_manager.add_quest(quest_name,
             map_mng=self.map_manager,
             dialog_mng=self.dialog_manager,
             event_mng=self.event_manager,
             ecs_mng=self.ecs_manager)
 
-        self.quest_manager.add_quest(quest_name, new_quest)
         logger.info(f'Quest "{quest_name}" successfully loaded.')
 
     def exit_game(self) -> None:
         self._clear_game()
-        pygame.quit()
 
     def run(self, key_events, key_pressed, dt, debug):
         # Check for End Game

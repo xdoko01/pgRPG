@@ -80,6 +80,9 @@ class DialogManager():
     def clear_dialogs(self) -> None:
         '''Dereference and delete all dialogs.'''
 
-        for dialog_name in self._dialogs.keys():
+        dialogs = list(self._dialogs.keys()).copy()
+
+        # We need to use a copy in order not to delete parsed dictionary
+        for dialog_name in dialogs:
             self.delete_dialog(dialog_name)
-        logger.info(f'All maps cleared.')
+        logger.info(f'All dialogs cleared.')

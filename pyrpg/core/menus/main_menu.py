@@ -39,6 +39,7 @@ class MainMenu(Menu):
             self.show()
 
         for event in key_events:
+
             if event.type == UI_BUTTON_PRESSED:
                 if event.ui_element == self.load_quest_button:
                     logger.info(f'Accessing load quest window')

@@ -1,0 +1,56 @@
+''' Module "pyrpg.core.ecs.components.sound_fx_on_collision" contains
+SoundFXOnCollision component implemented as a SoundFXOnCollision class.
+
+Use 'python -m pyrpg.core.ecs.components.sound_fx_on_collision -v' to run
+module tests.
+'''
+import pyrpg.core.sounds.sound as sound # For cached sounds
+
+from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.config.paths import SOUND_PATH, Path
+
+class SoundFXOnCollision(Component):
+    ''' Game plays sound effect upon collision with other entity.
+
+    Used by:
+        - GenerateSoundFXOnCollisionProcessor
+
+    Examples of JSON definition:
+        {"type" : "SoundFXOnCollision", "params" : {"sound" : "explosion.wav"}}
+
+    Tests:
+        >>> c = SoundFXOnCollision(**{"sound" : "explosion.wav"})
+    '''
+
+    __slots__ = ['sound']
+
+    def __init__(self, *args, **kwargs):
+        ''' Initiate values for the new SoundFXOnCollision component.
+
+        Parameters:
+            :param sound: Filename of the sound effect - reference to sound file.
+            :type sound: str
+        '''
+        super().__init__()
+
+        # Get the sound file name
+        sound_file = kwargs.get('sound')
+
+        # Check the sound_file name for validity
+        try:
+            assert isinstance(sound_file, str), f'Sound file name "{sound_file}" is not valid.'
+        except AssertionError:
+            # Notify component factory that initiation has failed
+            raise ValueError
+
+        # Initiate new sound
+        try:
+            self.sound = sound.load_sound(SOUND_PATH / Path(sound_file))
+        except:
+            print(f'Something went wrong during initiation of the sound "{SOUND_PATH / Path(sound_file)}".')
+            # Notify component factory that initiation has failed
+            raise ValueError
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

@@ -59,7 +59,7 @@ class PerformFrameUpdateProcessor(Processor):
         # Iterate all cameras
         for cam, (camera) in self.world.get_component(Camera):
 
-            # Get all entities with Position, RenderableModel and FlagDoMove
+            # Get all entities with Position, RenderableModel
             for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
 
                 # If already updated skip

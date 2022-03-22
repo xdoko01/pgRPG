@@ -225,7 +225,7 @@
 					{
 						"conditions" : {
 							"params" : {
-								"quest_id" : "new_test03_collisions"
+								"quest_id" : "new_test04_collisions"
 							}
 						},
 						"actions" : [

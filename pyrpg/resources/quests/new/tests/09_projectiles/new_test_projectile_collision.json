@@ -41,12 +41,13 @@
 		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
 		
 		// For destroy
-		["new.destroy_system.perform_destroy_on_collision_processor:PerformDestroyOnCollisionProcessor", {}],
-		["new.destroy_system.perform_destroy_on_stopped_movement_processor:PerformDestroyOnStoppedMovementProcessor", {}],
+		["new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
+		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
 		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
 
-		// For visual effects
+		// For visual and sound effects
 		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
 
 		// For displaying on screen
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -70,16 +71,16 @@
 		["new.collision_system.remove_flag_adjust_collision_processor:RemoveFlagAdjustCollisionProcessor", {}],
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}]//,
 
-		// For logging performance of processors
-		["new.debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]
+		// For logging performance of processors - timed must be True for this processor to work
+		//["new.debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]
 	],
 
 
 	"phases" : {
 		"phase01" :{
-			"name" : "Projectile Generation Test", "objective" : "","maps" : ["test_arena_sand"],
+			"name" : "Projectile Collision Test", "objective" : "","maps" : ["test_arena_sand"],
 			
 			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
 
@@ -101,21 +102,21 @@
 										{"type" : "new.debug:Debug", "params" : {}},
 
 										{"type" : "new.brain:Brain", "params" : {"commands" : [
-											[0, 	"new_move_auto", {"duration" : 1000}] // move for 3 seconds
+											[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
 											]}},
-				
-										//{"type" : "Damaging", "params" : {"damage" : 5}},
 
-										{"type" : "new.movable:Movable", "params" :  {"velocity" : 1000, "accelerate" : -10}},
+
+										{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "ignore_position_fix" : true}},
 										{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 										{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 										
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}}
+										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 									]
-								} 
+								}
 							}
 						}
 					]
@@ -175,6 +176,17 @@
 						]}},
 
 						{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+					]
+				},
+				{
+					"id" : "NPC02",
+					"templates" : ["new/model/body/special/minotaur"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]

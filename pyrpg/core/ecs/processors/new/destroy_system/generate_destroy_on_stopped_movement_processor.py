@@ -1,4 +1,4 @@
-__all__ = ['PerformDestroyOnStoppedMovementProcessor']
+__all__ = ['GenerateDestroyOnStoppedMovementProcessor']
 
 import logging
 
@@ -14,7 +14,7 @@ from pyrpg.core.ecs.components.new.destroy_on_no_movement import DestroyOnNoMove
 # Logger init
 logger = logging.getLogger(__name__)
 
-class PerformDestroyOnStoppedMovementProcessor(Processor):
+class GenerateDestroyOnStoppedMovementProcessor(Processor):
     ''' Marks entity as IsDestroyed if it has moved and stopped.
 
     Involved components:
@@ -48,7 +48,7 @@ class PerformDestroyOnStoppedMovementProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        ''' Removes the FlagHasCollided flag.
+        ''' Generates the IsDestroyed component.
         '''
         self.cycle += 1
 

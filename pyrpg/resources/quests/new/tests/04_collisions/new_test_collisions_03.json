@@ -198,7 +198,7 @@
 					"components" : [
 						{"type" : "new.debug:Debug", "params" : {}},
 						
-						{"type" : "new.positon:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
+						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8, "ignore_position_fix" : true}}
 					]
 				}

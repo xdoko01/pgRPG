@@ -43,12 +43,12 @@ class ResolveEntityCollisionsExProcessor(Processor):
         'new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor'
     ]
 
-    def __init__(self, add_command_fnc):
+    def __init__(self, FNC_ADD_COMMAND):
         ''' Init the processor.
         '''
         super().__init__()
 
-        self.add_command_fnc = add_command_fnc
+        self.add_command_fnc = FNC_ADD_COMMAND
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''

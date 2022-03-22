@@ -1,4 +1,4 @@
-__all__ = ['PerformDestroyOnCollisionProcessor']
+__all__ = ['GenerateSoundFXOnCollisionProcessor']
 
 import logging
 
@@ -6,31 +6,27 @@ import logging
 from pyrpg.core.ecs.esper import Processor
 
 # Used components
-from pyrpg.core.ecs.components.new.destroy_on_collision import DestroyOnCollision
+from pyrpg.core.ecs.components.new.sound_fx_on_collision import SoundFXOnCollision
 from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
-from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
-
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class PerformDestroyOnCollisionProcessor(Processor):
-    ''' Assigns IsDestroyed flag to the entity that collided and has
-    DestroyOnCollision flag.
+class GenerateSoundFXOnCollisionProcessor(Processor):
+    ''' Creates new entity containing visual fx on the collision spot.
 
     Involved components:
-        -   DestroyOnCollision
-        -   IsDestroyed
+        -   SoundFXOnCollision
+        -   FlagHasCollided
 
     Related processors:
-        -   PerformDestroyEntitiesProcessor
+        -   GenerateEntityCollisionsProcessor
 
     What if this processor is disabled?
-        -   entity is not destroyed upon collision
+        -   sound effect is not played
 
     Where the processor should be planned?
         -   after GenerateEntityCollisionsProcessor
-        -   before ResolveEntityCollisionsExProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
@@ -38,10 +34,13 @@ class PerformDestroyOnCollisionProcessor(Processor):
         'new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor'
     ]
 
-    def __init__(self):
+    __slots__ = ['play_sound_fnc']
+
+    def __init__(self, FNC_PLAY_SOUND):
         ''' Init the processor.
         '''
         super().__init__()
+        self.play_sound_fnc = FNC_PLAY_SOUND
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -52,11 +51,12 @@ class PerformDestroyOnCollisionProcessor(Processor):
         '''
         self.cycle += 1
 
-        for ent, (flag_has_collided, destroy_on_collision) in self.world.get_components(FlagHasCollided, DestroyOnCollision):
+        for ent, (flag_has_collided, sfx_on_collision) in self.world.get_components(FlagHasCollided, SoundFXOnCollision):
 
-            self.world.add_component(ent, IsDestroyed(ttl=destroy_on_collision.ttl))
+            # Use play sound fnc to play the effect
+            self.play_sound_fnc(sfx_on_collision.sound)
 
-            logger.debug(f'({self.cycle}) - Entity {ent} - flag "IsDestroyed" was added.')
+            logger.debug(f'({self.cycle}) - Entity {ent} - has produced sound fx {sfx_on_collision.sound} upon collision.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to

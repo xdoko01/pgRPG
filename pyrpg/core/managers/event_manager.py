@@ -34,7 +34,7 @@ class EventManager:
         quests event handlers'''
 
         # Send every event to every quest for handling
-        self._quests_event_handler_fnc(event)
+        self._quest_event_handler_fnc(event)
 
     def process_events(self, process: list(Event.EVENT_TYPES)=None, ignore: list(Event.EVENT_TYPES)=None) -> None:
         ''' Process particular game/quest event types that are specified on the input.

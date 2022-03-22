@@ -39,30 +39,33 @@ from pyrpg.core.config.states import State
 # Via this global variable, console can access all game properties
 main = None
 
-def init(console: bool=True, filepath: str=None):
+def init(console: bool=True, filepath: str=None, timed: bool=False) -> None:
     '''Create instance of main game class and remember it in 
     form of global variable so that console can use it'''
 
     global main
 
-    main = Main(console=console, filepath=filepath)
+    main = Main(console=console, filepath=filepath, timed=timed)
     logger.info(f'Instance of Main class created as "{main}".')
 
     logger.info(f'Starting the main loop.')
     main.run()
 
-def cons_get_info_header():
-    '''Returns info that is displayed in the console's header'''
+def exit() -> None:
+    '''Clears the references and exits'''
+    global main
 
-    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
-    game_state = main.state_manager.game_state if main else 'N/A'
-    no_of_entities =  len(main.game.ecs_manager._world._entities) if main and main.game else 'N/A'
+    main.end_program()
+    main = None
+    pygame.quit()
 
-    return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
+    logger.info(f'Program quits.')
 
 class Main:
 
-    def __init__(self, console: bool=True, filepath: str=None) -> None:
+    def __init__(self, console: bool=True, filepath: str=None, timed: bool=False) -> None:
+
+        self.timed = timed
 
         # Manager of GUI window and related
         from pyrpg.core.managers.gui_manager import GUIManager
@@ -102,28 +105,24 @@ class Main:
         # Start game into main menu or into the game
         if filepath:
             self.state_manager.change_state(State.GAME)
-            self.init_game(filepath, timed=False)
+            self.init_game(filepath)
             logger.info(f'Starting game into the game.')
 
         else:
             self.state_manager.change_state(State.MAIN_MENU)
             logger.info(f'Starting game into the main menu.')
 
-    def init_game(self, filepath, timed=False):
-        # Enable console for startup messages
-        if self.console: 
-            self.console.toggle(enable=True)
+    def init_game(self, filepath):
+        # Show loading screen here
+
 
         if self.game is None:
             from pyrpg.core.engine import Game
-            self.game = Game(self.gui_manager, self.sound_manager, timed)
+            self.game = Game(self.gui_manager, self.sound_manager, timed=self.timed)
 
         from pathlib import Path
         self.game.new_game(Path(filepath))
 
-        # Hide the console
-        if self.console: 
-            self.console.toggle(enable=False)
 
     def run(self):
         ''' Main game and menu loop. Contains references to other
@@ -176,7 +175,7 @@ class Main:
                 self.gui_manager.blit_background()
 
             elif self.state_manager.state == State.END_PROGRAM:
-                self.end_program()
+                exit()
                 break
 
             # Change the game state as a result of above calls if needed
@@ -196,7 +195,44 @@ class Main:
             pygame.display.set_caption('FPS: ' + str(int(self.gui_manager.clock.get_fps())))
 
 
-    def end_program(self):
+    def end_program(self) -> None:
+
+        # Clear Game
         if self.game:
             self.game.exit_game()
-        logger.info(f'Exiting game')
+        logger.info(f'Game closed')
+
+        # Clear Menus
+        self.exit_menu.clear()
+        self.load_quest_menu.clear()
+        self.main_menu.clear()
+        self.exit_menu, self.load_quest_menu, self.main_menu = None, None, None
+        logger.info(f'Menus closed')
+
+        # Clear Managers
+        self.gui_manager.clear()
+        self.sound_manager.clear()
+        self.state_manager.clear()
+        self.gui_manager, self.sound_manager, self.state_manager = None, None, None
+        logger.info(f'Managers closed')
+
+
+'''
+Functions that feed the console with header and footer data.
+'''
+
+def cons_get_info_header():
+    '''Returns info that is displayed in the console's header'''
+
+    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
+    game_state = main.state_manager.game_state if main else 'N/A'
+    no_of_entities =  len(main.game.ecs_manager._world._entities) if main and main.game else 'N/A'
+
+    return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
+
+def cons_get_info_footer():
+    '''Returns info that is displayed in the console's footer'''
+
+    loaded_quests = main.game.quest_manager._quests.keys() if main and main.game else 'N/A'
+
+    return f'loaded quests: {loaded_quests}'

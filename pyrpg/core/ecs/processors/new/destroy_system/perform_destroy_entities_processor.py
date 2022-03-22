@@ -31,8 +31,8 @@ class PerformDestroyEntitiesProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.destroy_system.perform_destroy_on_collision_processor:PerformDestroyOnCollisionProcessor',
-        'new.destroy_system.perform_destroy_on_stopped_movement_processor:PerformDestroyOnStoppedMovementProcessor'
+        'new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor',
+        'new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor'
     ]
 
     __slots__ = []
@@ -56,9 +56,28 @@ class PerformDestroyEntitiesProcessor(Processor):
         for ent, (is_destroyed) in self.world.get_component(IsDestroyed):
 
             # if the time is up, destroy the entity
-            logger.debug(f'({self.cycle}) - Entity {ent} - get_ticks {get_ticks()}, destroyed_time {is_destroyed.destroyed_time}, ttl {is_destroyed.ttl}')
+            remaining_ttl = is_destroyed.destroyed_time + is_destroyed.ttl - get_ticks()
+            logger.debug(f'({self.cycle}) - Entity {ent} - remaining ttl {remaining_ttl} ms, original ttl {is_destroyed.ttl} ms')
 
-            if get_ticks() - is_destroyed.destroyed_time > is_destroyed.ttl:
+            if remaining_ttl <= 0:
                 self.world.delete_entity(ent)
                 # Log information about successful removal
                 logger.debug(f'({self.cycle}) - Entity {ent} was deleted from the world.')
+
+    def pre_save(self):
+        ''' Prepare processor for serialization by disabling links to
+        non-serializable components
+        '''
+        pass
+
+    def post_load(self, window):
+        ''' Reconfigure the processor after de-serialization by attaching
+        the lost reference again
+        '''
+        pass
+
+    def finalize(self, *args, **kwargs):
+        ''' Method called when closing the game. Put all necessary statements 
+        such as closing of files/resources here, if necessary.
+        '''
+        pass

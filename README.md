@@ -380,14 +380,55 @@
    - The `pyrpg` logger catches all logs that are not processed by the child loggers (child entities) and prints them to the game console
    - The `pyrpg.core.ecs.processors` logger prints logs from processors to the file where those can be easily filtered
 
+### 2022-03-22 Solving problem with entities with IsDestroyed component that are not deleted from the ECS game world immediatelly
+
+  #### Context
+  There is a component called `DestroyOnCollision`. Entities having this component should be assigned `IsDestroyed` component after collision. Consequently, `PerformDestroyEntitiesProcessor` processor should delete from the ECS game world all entities with `IsDestroyed` flag. Typical scenario is an arrow entity that should cease to exist in the world after it hits the target.
+
+  #### Description of the problem
+  At the moment, there is a situation when arrow hits the target and is assigned `IsDestroyed` component. However, the arrow is not deleted from the world immediatelly by `PerformDestroyEntitiesProcessor` processor and stays in the game for small number of upcoming game cycles. It can be demonstrated in the log below:
+
+  Entity 6 represents the arrow that hitted the target in the cycle 2371 but was destroyed 3 cycles later.
+
+  ```
+  ❯ grep perform_destroy_entities_processor processors.log
+  perform_destroy_entities_processor.py         - (2371) - Entity 6 - get_ticks 11578, destroyed_time 11578, ttl 0
+  perform_destroy_entities_processor.py         - (2372) - Entity 6 - get_ticks 11633, destroyed_time 11633, ttl 0
+  perform_destroy_entities_processor.py         - (2373) - Entity 6 - get_ticks 11683, destroyed_time 11683, ttl 0
+  perform_destroy_entities_processor.py         - (2374) - Entity 6 - get_ticks 11744, destroyed_time 11743, ttl 0
+  perform_destroy_entities_processor.py         - (2374) - Entity 6 was deleted from the world.
+  ```
+
+  This situation results in generation of multiple unnecessary explosion effects (instead of one) and multiple overlapping sound effects. Both those effects happen based on collision. Normally, arrow should be destroyed upon the first collision in the cycle 2371, but it is not. Hence, further collisions occur with entity that has `IsDestroyed` component assigned.
+
+  #### Possible Ways of investigation
+  1. Most straightforward solution might be not to allow collisions with entities that have `IsDestroyed` flag assigned.
+  2. I feel that the bahavior of deleting entities needs to be investigated in order to prevent surprices in further development. I feel that this has something to do with the ESPER ECS caching logic.
+
+  #### Final solution
+  Probably there was a bug in `PerformDestroyEntitiesProcessor` - particularly in the way the elapsed time was calculated. After fixing of the condition it seems that the deletion from the ECS game world is done in the cycle when IsDestroyed flag is assigned.
 
 ## To Do
+### Fade-in Fade-out effect POC
+  - based on event - script
+  - based on global brain - command
+
+### Generate sound FX upon collision
+  - [x] generate
+  - [ ] document
+  - [ ] find some sound files
+
+### Generate music
+  Music will start as reaction on some event. So we need to prepare a script that uses sound manager. Cannot be implemented as processor as processor is called many times and I want to start the music only once at the beginning and then change it upon some event.
+  - [ ] implement script that starts music
+
+### Load game screen
+  When going from menu to the game - start of init game
 
 ### Re-doing of MAIN and ENGINE modules - Manager classes implemented
   **Outstanding TODOs**
     - [x] Correct ending of program
     - [x] Possibility to run the game without any console
-    - [ ] Display console during loading of new game - somehow has dissapeared
     - [x] Pause game/menu when console displayed
     - [x] Save path once the game is loaded and start from that path when again selecting file
     - [x] Buttons and windows are active when console is displayed, need to be disabled
@@ -395,9 +436,13 @@
     - [x] Backup and clear the unused manager and main and engine classes
     - [x] Make console nicer - get rid of dummy data and display statistics from ECS manager + state + memory usage
     - [x] Make the diagram and implement Menu abstract class
+    - [x] Retest all the test quests
+      - [x] for collision test 4 fix all the errors and dialogs are not displayed and not correctly cleared - RuntimeError: dictionary changed size during iteration
     - [ ] Document the changes in this document
-    - [ ] Retest all the test quests
     - [ ] Clear the console and menus upon exit
+    - [ ] Get rid of debug as parameter starting in main and ending in processors
+    - [ ] Think how to implement MenuManager
+    - [ ] Spread managers to the respective directiries - MenuManager to the menus, QuestManager to quests etc.
 
 ### Improve collisions - NPC entities can walk around each other while hitting themselves
   - Different Entities have different collision behavior
@@ -491,24 +536,6 @@ All components with RenderableModel and without Position component should have R
  -> before rendering add RenderPosition ->
    -> WeaponInUse + Position + HasWeapon + FlagDoMove -> on active weapon add `RenderPosition(x, y, dir_name)`
 
-
-
-PositionSyncSystem
-------------------
-
-NewGeneratePositionSyncProcessor
- - CanWear + Position + FlagDoMove-> for each wearable entity ID assign FlagSyncPosition(x,y,map, dir, dir_name)
- - WeaponInUse + Position + HasWeapon + FlagDoMove -> on active weapon add FlagSyncPosition(x,y,map, dir, dir_name)
- - AmmoInUse + Position + HasWeapon + FlagDoMove -> on active ammo add FlagSyncPosition(x,y,map, dir, dir_name)
-
-NewPerformPositionSyncProcessor
- - FlagSyncPosition(x,y,map, dir, dir_name) + Position -> adjust position
-
-NewRemoveFlagSyncPositionProcessor
- - FlagSyncPosition
-
-RenderActionSyncSystem
-----------------------
 
 
 

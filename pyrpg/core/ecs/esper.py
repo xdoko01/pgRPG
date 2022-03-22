@@ -469,7 +469,10 @@ class World:
         """ Add by xdoko01
         """
         for processor in self._processors:
-            processor.finalize(*args, **kwargs)
+            try:
+                processor.finalize(*args, **kwargs)
+            except NotImplementedError:
+                raise ValueError(processor)
 
     def finalize(self, *args, **kwargs):
         """ Added by xdoko01

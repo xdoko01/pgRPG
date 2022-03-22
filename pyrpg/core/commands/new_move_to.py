@@ -1,7 +1,6 @@
 ''' Module implementing move_to command
 '''
 
-import backup.core.engine as engine # To reference the world 
 from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 from .new_move_add import cmd_new_move_add
 import math # for calculation of square root move_to
@@ -15,6 +14,9 @@ def cmd_new_move_to(*args, **kwargs):
     TODO - change direction not immediatelly but after some time or number of steps
     '''
 
+    # World reference
+    world = kwargs.get("world")
+
     # Who (entity) needs to move
     entity = kwargs.get("entity")
 
@@ -23,7 +25,7 @@ def cmd_new_move_to(*args, **kwargs):
     ty = kwargs.get("y", None)
 
     # Get the coordinate of the entity and the target 
-    position = engine.world.component_for_entity(entity, Position)
+    position = world.component_for_entity(entity, Position)
 
     sign = lambda x: 1 if x>0 else (-1 if x<0 else 0)
 
@@ -39,9 +41,9 @@ def cmd_new_move_to(*args, **kwargs):
         # Create movement so to minimise the distance between entity and the target
         if abs(tx - position.x) > abs(ty - position.y):
             # Close on x-axis
-            cmd_new_move_add(entity=entity, moves=['left' if tx - position.x < 0 else 'right' if tx - position.x > 0 else None])
+            cmd_new_move_add(world=world, entity=entity, moves=['left' if tx - position.x < 0 else 'right' if tx - position.x > 0 else None])
         else:
             # Close on y-axis
-            cmd_new_move_add(entity=entity, moves=['up' if ty - position.y < 0 else 'down' if ty - position.y > 0 else None])
+            cmd_new_move_add(world=world, entity=entity, moves=['up' if ty - position.y < 0 else 'down' if ty - position.y > 0 else None])
 
         return -1

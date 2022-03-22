@@ -14,13 +14,14 @@
     Examples:
 '''
 
+from email.errors import NonPrintableDefect
 import sys, getopt # for processing of cli arguments
 
 def main(argv):
     '''Run the game using the CLI arguments'''
 
     console = True
-    filepath = None
+    filepath = 'new/tests/09_projectiles/new_test_projectile_collision.json'
     usage_info = '''
 DESCRIPTION
     pyrpg is a game engine.
@@ -63,7 +64,7 @@ EXAMPLES
     print(f'Starting PYRPG with the following arguments:\n"console"={console}\n"filepath"={filepath}')
 
     from pyrpg.main import init
-    init(console=console, filepath=filepath)
+    init(console=console, filepath=filepath, timed=False)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

@@ -1,5 +1,6 @@
-import backup.core.engine as engine
-from pyrpg.functions import wait # import wait function
+from pyrpg.main import main
+
+from pyrpg.functions.wait import wait # import wait function
 import pyrpg.utils.dialog as dialog # import display_dialog function
 
 import pygame
@@ -13,11 +14,12 @@ def script_show_dlg_window(event, *args, **kwargs):
 
     # Take a copy of the screen and store it in engine
     # Before taking the screen, everything is blittet (screen is updated)
-    engine.save_screen_copy(True)
+    #!engine.save_screen_copy(True)
+    main.gui_manager.save_screen()
 
     # Load dialog object based on the dialog_id
     dlg_id = kwargs.get('dialog_id', None)
-    dlg_obj = engine.dialogs.get(dlg_id, {})
+    dlg_obj = main.game.dialog_manager._dialogs.get(dlg_id, {})
 
     # Load the position of the dialog
     dlg_pos = kwargs.get('position', [0, 0])
@@ -34,10 +36,10 @@ def script_show_dlg_window(event, *args, **kwargs):
     for frame_id in dlg_frames:
 
         # Paste window copy
-        engine.window.blit(engine.screen_copy, (0, 0))
+        main.gui_manager.blit_background()
 
         # Show dialog
-        dialog.display_dlg(engine.window, dlg_pos, dlg_obj, frame_id)
+        dialog.display_dlg(main.gui_manager.window, dlg_pos, dlg_obj, frame_id)
 
         # Update screen
         pygame.display.update()

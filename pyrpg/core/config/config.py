@@ -116,6 +116,7 @@ PATHS = {
     "quest_path" : "pyrpg/resources/quests/",
     "entity_path" : "pyrpg/resources/entities/",
     "map_path" : "pyrpg/resources/maps/",
+    "sound_path" : "pyrpg/resources/sounds/",
     "log_path" : "pyrpg/logs/",
     "save_path" : "pyrpg/save/",
     "console_script_path" : "pyrpg/utils/scripts/",
