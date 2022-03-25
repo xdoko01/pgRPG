@@ -412,6 +412,7 @@
 ### Fade-in Fade-out effect POC
   - based on event - script
   - based on global brain - command
+  - as a processor (weather)
 
 ### Generate sound FX upon collision
   - [x] generate
