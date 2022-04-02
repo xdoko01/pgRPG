@@ -16,8 +16,8 @@ from pyrpg.core.events.event import Event
 
 from collections import namedtuple # for representation of vectors
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
-from ..functions import allow_deny_item_filter # for filtering the collision criteria
-from ..functions import sign
+from pyrpg.functions import sign
+from pyrpg.functions import allow_deny_list_filter
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -76,19 +76,42 @@ class NewGenerateEntityCollisionsProcessor(Processor):
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
 
+            # Get the list of entities together with components on the camera - exclude those whose collisions has been already calculated
+            collision_candidates = list(filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(Position, NewCollidable, exclude=FlagHasCollided)))
+
+            # Get only set of involved entities
+            collision_candidates_entities = set([ent for ent, [*_] in collision_candidates])
+
             # Get all entities that have Position, Collidable + are on some camera
-            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewCollidable)):
+            #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewCollidable)):
+            for ent_moved, (pos_moved, coll_moved) in collision_candidates:
 
                 # Prepare empty set for storing all collisions with ent_moved entity
                 collisions = set()
 
+                # Get the set of possible collisions with ent_moved
+                ent_moved_collision_entities = allow_deny_list_filter(input=collision_candidates_entities, allowlist=coll_moved.allowlist, denylist=coll_moved.denylist)
+
+                # Get the set of entities that ent_moved can force to move
+                ent_moved_position_fix_for_other = allow_deny_list_filter(input=ent_moved_collision_entities, allowlist=coll_moved.position_fix_others_allowlist, denylist=coll_moved.position_fix_others_denylist)
+
+                # Get the set of entities that allow ent_moved entity to correct its position
+                ent_moved_position_fix_for_self = allow_deny_list_filter(input=ent_moved_collision_entities, allowlist=coll_moved.position_fix_self_allowlist, denylist=coll_moved.position_fix_self_denylist)
+
+                logger.debug(f'({self.cycle}) - Entity moved collision entities - {ent_moved_collision_entities}.')
+                logger.debug(f'({self.cycle}) - Entity moved position fix for others entities - {ent_moved_position_fix_for_other}.')
+                logger.debug(f'({self.cycle}) - Entity moved position fix for self entities - {ent_moved_position_fix_for_self}.')
+
+
                 # Get all the entities again
-                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, NewCollidable)):
+                for ent_other, (pos_other, coll_other) in collision_candidates:
 
                     # If ent_other is to be ignored, ignore it
-                    if not allow_deny_item_filter(ent_other, coll_moved.allowlist, coll_moved.denylist): 
-                        logger.debug(f'({self.cycle}) - Entity {ent_moved} has denied collision with Entity {ent_other}.')
-                        continue
+                    if ent_other not in ent_moved_collision_entities: continue
+
+                    #if not allow_deny_item_filter(ent_other, coll_moved.allowlist, coll_moved.denylist): 
+                    #    logger.debug(f'({self.cycle}) - Entity {ent_moved} has denied collision with Entity {ent_other}.')
+                    #    continue
 
                     # Heuristic no.1 - Skip if testing itself
                     if ent_moved == ent_other: continue
@@ -110,9 +133,11 @@ class NewGenerateEntityCollisionsProcessor(Processor):
                         # Start with empty correction vector and calculate it only if is allowed by position_fix_for_other
                         correction_vect = Vect(x=0, y=0)
 
-                        position_fix_for_other = allow_deny_item_filter(ent_other, coll_moved.position_fix_other_allowlist, coll_moved.position_fix_other_denylist)
+                        # position_fix_for_other = allow_deny_item_filter(ent_other, coll_moved.position_fix_others_allowlist, coll_moved.position_fix_others_denylist)
 
-                        if position_fix_for_other:
+                        # if the entity that collided with ent_moved can be corrected
+                        #if position_fix_for_other:
+                        if ent_other in ent_moved_position_fix_for_other:
 
                             logger.debug(f'({self.cycle}) - Entity {ent_moved} has allowed position fix for other Entity {ent_other}.')
 
@@ -131,20 +156,25 @@ class NewGenerateEntityCollisionsProcessor(Processor):
                             correction_vect = Vect(overlap_vect.x * centres_sign_vect.x, overlap_vect.y * centres_sign_vect.y)
 
                             # Further adjust the correction vector in terms of walkaround mode and position fix behavior
-                            position_fix_for_self = allow_deny_item_filter(ent_other, coll_moved.position_fix_self_allowlist, coll_moved.position_fix_self_denylist)
+                            position_fix_for_self = ent_other in ent_moved_position_fix_for_self
+                            #position_fix_for_self = allow_deny_item_filter(ent_other, coll_moved.position_fix_self_allowlist, coll_moved.position_fix_self_denylist)
 
                             if not correction_vect.x and correction_vect.y:
-                                correction_vect.x = sign(correction_vect.y) * coll_moved.position_fix_walkaround_mode * position_fix_for_self
-                                correction_vect.y = correction_vect.y * position_fix_for_self
+                                correction_vect = Vect(
+                                                    x=sign(correction_vect.y) * coll_moved.position_fix_walkaround_mode * position_fix_for_self,
+                                                    y=correction_vect.y * position_fix_for_self)
                             elif correction_vect.x and not correction_vect.y:
-                                correction_vect.x = correction_vect.x * position_fix_for_self
-                                correction_vect.y = sign(correction_vect.x) * coll_moved.position_fix_walkaround_mode * position_fix_for_self
+                                correction_vect = Vect(
+                                                    x=correction_vect.x * position_fix_for_self,
+                                                    y=sign(correction_vect.x) * coll_moved.position_fix_walkaround_mode * position_fix_for_self)
                             elif abs(correction_vect.x) < abs(correction_vect.y):
-                                correction_vect.x = correction_vect.x * position_fix_for_self
-                                correction_vect.y = sign(correction_vect.y) * coll_moved.position_fix_walkaround_mode * position_fix_for_self
+                                correction_vect = Vect(
+                                                    x=correction_vect.x * position_fix_for_self,
+                                                    y=sign(correction_vect.y) * coll_moved.position_fix_walkaround_mode * position_fix_for_self)
                             else:
-                                correction_vect.x = sign(correction_vect.x) * coll_moved.position_fix_walkaround_mode * position_fix_for_self
-                                correction_vect.y = correction_vect.y * position_fix_for_self
+                                correction_vect = Vect(
+                                                    x=sign(correction_vect.x) * coll_moved.position_fix_walkaround_mode * position_fix_for_self,
+                                                    y=correction_vect.y * position_fix_for_self)
 
                         logger.debug(f'({self.cycle}) - Entity {ent_moved} was added correction vector for Entity {ent_other} = {correction_vect}')
 

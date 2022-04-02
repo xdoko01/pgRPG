@@ -30,7 +30,7 @@ class RemoveFlagHasCollidedProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor'
+        'new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor'
     ]
 
     def __init__(self):

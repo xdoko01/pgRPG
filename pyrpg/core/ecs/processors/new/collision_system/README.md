@@ -1,3 +1,16 @@
+# Player is not corrected by collision from anyone
+player ... `position_fix_self_denylist = {"ALL"}`
+
+# NPC is not corrected by collision from anyone except the player
+NPC ... `position_fix_self_allowlist = {"player"}`
+
+# LAVA that can be walked by player but all other entities will omit it
+lava ... no movable component and default collidable component
+player ... `position_fix_self_denylist = {"LAVA"}` ... is not corrected by lava
+other entities ... `position_fix_self_denylist = {}` ... correction is accepted by lava
+
+# Stone that is moved only by player, all other entities are corrected and not moving the stone
+stone ... `position_fix_self_allowlist = {"player"}` + `position_fix_walkaround_mode = False`
 
 # Available parameters
 

@@ -21,7 +21,7 @@ def main(argv):
     '''Run the game using the CLI arguments'''
 
     console = True
-    filepath = 'new/tests/09_projectiles/new_test_projectile_collision.json'
+    filepath = 'new/tests/04_collisions/new_test_01.json'
     usage_info = '''
 DESCRIPTION
     pyrpg is a game engine.

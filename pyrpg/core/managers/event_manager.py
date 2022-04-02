@@ -21,7 +21,7 @@ class EventManager:
         '''Adds new event into the event queue.'''
 
         self._event_queue.append(event)
-        logger.info(f'Event "{event.event_type}"added.')
+        logger.debug(f'Event "{event.event_type}" added.')
 
     def clear_events(self) -> None:
         '''Deletes all events from the event queue.'''

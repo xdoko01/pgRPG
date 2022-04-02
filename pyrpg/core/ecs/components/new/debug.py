@@ -24,7 +24,7 @@ class Debug(Component):
         2
     '''
 
-    __slots__ = ['collision', 'movement']
+    __slots__ = ['collision', 'movement', 'info']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Debug component.
@@ -44,11 +44,13 @@ class Debug(Component):
         
         # Dictionary of information that we want to display about the entity.
         # It is filled by debug processor and also displayed there.
-        self.info = {}
+        self.info = kwargs.get('info', {})
 
         try:
             assert isinstance(self.collision, dict), f'Collision must be passed as a dictionary'
             assert isinstance(self.movement, dict), f'Movement must be passed as a dictionary.'
+            assert isinstance(self.info, dict), f'Info must be passed as a dictionary.'
+
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError

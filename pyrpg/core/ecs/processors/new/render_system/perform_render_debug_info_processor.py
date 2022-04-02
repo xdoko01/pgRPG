@@ -13,7 +13,7 @@ from pyrpg.core.ecs.components.new.debug import Debug
 from pyrpg.core.ecs.components.new.has_inventory import HasInventory
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.movable import Movable
-from pyrpg.core.ecs.components.new.collidable import Collidable
+from pyrpg.core.ecs.components.new.new_collidable import NewCollidable
 
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
@@ -85,7 +85,7 @@ class PerformRenderDebugInfoProcessor(Processor):
 
             # Show COLLISION information
             # Show debug information to all entities with Position and Debug and Collidable component
-            for _, (position, debug, collidable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, Collidable)):
+            for _, (position, debug, collidable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, NewCollidable)):
 
                 pygame.draw.rect(
                     camera.screen,

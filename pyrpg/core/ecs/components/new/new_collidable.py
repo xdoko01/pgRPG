@@ -93,22 +93,22 @@ class NewCollidable(Component):
         self.dy = kwargs.get('dy', 0)
 
         # Allow collision only on items from allowlist, if filled
-        self.allowlist = kwargs.get('allowlist', set())
+        self.allowlist = set(kwargs.get('allowlist', {}))
 
         # Deny collision with items from denylist
-        self.denylist = kwargs.get('denylist', set())
+        self.denylist = set(kwargs.get('denylist', {}))
 
         # Allow fix position of others only in this allowlist upon hitting this entity
-        self.position_fix_others_allowlist = kwargs.get('position_fix_others_allowlist', set())
+        self.position_fix_others_allowlist = set(kwargs.get('position_fix_others_allowlist', {}))
 
         # Do not fix position of others in this denylist upon hitting this entity
-        self.position_fix_others_denylist = kwargs.get('position_fix_others_denylist', set())
+        self.position_fix_others_denylist = set(kwargs.get('position_fix_others_denylist', {}))
 
         # Should the entity adjust its position upon colliding into entity in the allowlist.
-        self.position_fix_self_allowlist = kwargs.get('position_fix_self_allowlist', set())
+        self.position_fix_self_allowlist = set(kwargs.get('position_fix_self_allowlist', {}))
 
         # Entity will not adjust its position upon colliding into entity in the denylist.
-        self.position_fix_self_denylist = kwargs.get('position_fix_self_denylist', set())
+        self.position_fix_self_denylist = set(kwargs.get('position_fix_self_denylist', {}))
 
         # Walkaround the colliding obstacle
         self.position_fix_walkaround_mode = kwargs.get('position_fix_walkaround_mode', True)
