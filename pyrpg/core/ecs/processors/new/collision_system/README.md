@@ -1,3 +1,6 @@
+# Support weight for the collisions - it is hard to push heavy entities
+m1v1 = m2v2???
+
 # Player is not corrected by collision from anyone
 player ... `position_fix_self_denylist = {"ALL"}`
 

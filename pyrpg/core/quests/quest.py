@@ -6,8 +6,10 @@ import pyrpg.core.scripts as scripts
 import pyrpg.core.commands as commands
 import backup.core.engine as engine # to call _create_entity() fnc (probably in the future also to call _create_map)
 
-import json # For loading quest from json
-import re # For removing C-style comments before processing JSON
+#import json # For loading quest from json
+#import re # For removing C-style comments before processing JSON
+
+from pyrpg.functions import get_dict_from_json, get_dict_from_yaml
 
 ########################################################
 ### Module functions
@@ -16,10 +18,23 @@ import re # For removing C-style comments before processing JSON
 def load_quest(quest_filepath, event_queue):
 	''' load quest data from the json file and calls quest constructor
 	'''
+	# Check if quest is in yaml or json format
+	quest_extension = quest_filepath.suffix
+
 	# Check if path to the quest is absolute or relative and construct the full path to the file
 	quest_filepath = quest_filepath if quest_filepath.is_absolute() else QUEST_PATH / quest_filepath
 
 	# Open the quest file
+	try:
+		if quest_extension in ['yml', 'yaml']:
+			quest_data = get_dict_from_yaml(quest_filepath)
+		elif quest_extension in ['json']:
+			quest_data = get_dict_from_json(quest_filepath)
+		else:
+			raise ValueError(f'Unsupported quest file format with extension "{quest_extension}". Only .json, .yml, .yaml files are supported.')
+	except:
+		raise ValueError(f'Cannot load quest file "{quest_filepath}".')
+	'''
 	try:
 		with open(quest_filepath, 'r') as quest_file:
 			json_quest_data = quest_file.read()
@@ -27,6 +42,7 @@ def load_quest(quest_filepath, event_queue):
 	except FileNotFoundError:
 		print(f'File "{quest_filepath}" not found.')
 		raise
+	'''
 
 	# Load the quest
 	q = Quest(quest_data, event_queue)
@@ -305,9 +321,25 @@ class Quest:
 def load_quest_ex(quest_filepath, map_mng=None, dialog_mng=None, event_mng=None, ecs_mng=None):
 	''' load quest data from the json file and calls quest constructor
 	'''
+
+	# Check if quest is in yaml or json format
+	quest_extension = quest_filepath.suffix
+
 	# Check if path to the quest is absolute or relative and construct the full path to the file
 	quest_filepath = quest_filepath if quest_filepath.is_absolute() else QUEST_PATH / quest_filepath
 
+	# Open the quest file
+	try:
+		if quest_extension in ['.yml', '.yaml']:
+			quest_data = get_dict_from_yaml(quest_filepath)
+		elif quest_extension in ['.json']:
+			quest_data = get_dict_from_json(quest_filepath)
+		else:
+			raise ValueError(f'Unsupported quest file format with extension "{quest_extension}". Only .json, .yml, .yaml files are supported.')
+	except:
+		raise ValueError(f'Cannot load quest file "{quest_filepath}".')
+
+	'''
 	# Open the quest file
 	try:
 		with open(quest_filepath, 'r') as quest_file:
@@ -316,6 +348,7 @@ def load_quest_ex(quest_filepath, map_mng=None, dialog_mng=None, event_mng=None,
 	except FileNotFoundError:
 		print(f'File "{quest_filepath}" not found.')
 		raise
+	'''
 
 	# Load the quest
 	q = QuestEx(quest_data, map_mng, dialog_mng, event_mng, ecs_mng)
