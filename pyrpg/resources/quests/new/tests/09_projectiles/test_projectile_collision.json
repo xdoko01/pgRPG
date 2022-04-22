@@ -37,8 +37,8 @@
 		["new.movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
-		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 		
 		// For destroy
 		["new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
@@ -107,7 +107,7 @@
 
 
 										{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "ignore_position_fix" : true}},
+										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "position_fix_self_denylist" : ["ALL"]}},
 										{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 										{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 										

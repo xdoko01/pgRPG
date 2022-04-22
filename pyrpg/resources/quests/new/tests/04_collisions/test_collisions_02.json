@@ -19,8 +19,8 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
-		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -62,7 +62,7 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8, "position_fix__walkaround_mode" : false, "position_fix_for_self" : false}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8, "position_fix_walkaround_mode" : false}},
 						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				},

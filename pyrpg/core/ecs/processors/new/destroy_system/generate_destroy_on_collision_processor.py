@@ -35,7 +35,7 @@ class GenerateDestroyOnCollisionProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor'
+        'new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor'
     ]
 
     def __init__(self):

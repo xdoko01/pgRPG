@@ -20,8 +20,8 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
-		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 
 		// For teleportation
 		["new.teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
@@ -183,7 +183,7 @@
 							}
 						},
 						"actions" : [
-							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
+							//["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
 						]
 					}
 				],

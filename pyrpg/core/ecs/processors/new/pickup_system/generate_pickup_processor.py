@@ -37,7 +37,7 @@ class GeneratePickupProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor'
+        'new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor'
     ]
 
     def __init__(self):
@@ -59,10 +59,11 @@ class GeneratePickupProcessor(Processor):
         for ent_pickable, (pickable, flag_has_collided) in self.world.get_components(Pickable, FlagHasCollided):
 
             # Assign the FlagIsAboutToPickEntity to ALL entities that collided with pickable entity ent
-            for ent_picker, _, _, _ in flag_has_collided.collisions:
+            #for ent_picker, *_ in flag_has_collided.collisions:
+            for collision in flag_has_collided.collisions:
 
-                self.world.add_component(ent_picker, FlagIsAboutToPickEntity(entity_for_pickup=ent_pickable))
-                logger.debug(f'({self.cycle}) - Entity {ent_picker} is trying to pick entity {ent_pickable}.')
+                self.world.add_component(collision.entity, FlagIsAboutToPickEntity(entity_for_pickup=ent_pickable))
+                logger.debug(f'({self.cycle}) - Entity {collision.entity} is trying to pick entity {ent_pickable}.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

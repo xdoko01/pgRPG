@@ -52,10 +52,10 @@ class PerformAdjustCollisionProcessor(Processor):
         for ent, (collidable, flag_adjust_collision) in self.world.get_components(Collidable, FlagAdjustCollision):
 
             # Update ignore list
-            logger.debug(f'({self.cycle}) - Entity {ent} - original collision ignore list: {collidable.ignore_collision_with}')
+            logger.debug(f'({self.cycle}) - Entity {ent} - original collision ignore list: {collidable.denylist}')
             logger.debug(f'({self.cycle}) - Entity {ent} - requested additions to the ignore list: {flag_adjust_collision.ignore_collision_with}')
-            collidable.ignore_collision_with = {*flag_adjust_collision.ignore_collision_with, *collidable.ignore_collision_with}
-            logger.debug(f'({self.cycle}) - Entity {ent} - new collision ignore list: {collidable.ignore_collision_with}')
+            collidable.denylist = {*flag_adjust_collision.ignore_collision_with, *collidable.denylist}
+            logger.debug(f'({self.cycle}) - Entity {ent} - new collision ignore list: {collidable.denylist}')
 
             # Update collidable dimensions
             logger.debug(f'({self.cycle}) - Entity {ent} - original collision dimensions: [{collidable.x}, {collidable.y}]')

@@ -20,8 +20,8 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor", {}],
-		["new.collision_system.new_resolve_entity_collisions_ex_processor:NewResolveEntityCollisionsExProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -124,7 +124,7 @@
 						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
 						{
-							"type" : "new.new_collidable:NewCollidable", 
+							"type" : "new.collidable:Collidable", 
 							"params" :  {
 								"x" : 15, 
 								"y" : 27, 
@@ -148,11 +148,11 @@
 								}
 							}
 						},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 0, "screen_width" : 320, "screen_height" : 240}},
+						//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 0, "screen_width" : 320, "screen_height" : 240}},
 
 						{"type" : "new.position:Position", "params" : {"x" : 300, "y" : 10, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {
+						{"type" : "new.collidable:Collidable", "params" :  {
 							"x" : 15, 
 							"y" : 15, 
 							"dx" : 0, 
@@ -177,7 +177,7 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 300, "y" : 300, "map" : "test_arena_sand"}},
 						//{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {
+						{"type" : "new.collidable:Collidable", "params" :  {
 							"x" : 100, 
 							"y" : 100, 
 							"dx" : 0, 
@@ -207,11 +207,11 @@
 							[0, 	"goto", {}]
 						]}},
 
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
+						//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
 
 						{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {
+						{"type" : "new.collidable:Collidable", "params" :  {
 							"x" : 15, 
 							"y" : 27, 
 							"dx" : 0, 
@@ -243,7 +243,7 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -268,7 +268,7 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -294,7 +294,7 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 					]
 				},
 				{
@@ -319,7 +319,7 @@
 						
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-						{"type" : "new.new_collidable:NewCollidable", "params" :  {"x" : 15,
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
 																"y" : 27,
 																"dx" : 0,
 																"dy" : 8}}

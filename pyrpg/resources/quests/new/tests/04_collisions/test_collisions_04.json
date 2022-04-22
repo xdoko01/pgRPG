@@ -20,8 +20,8 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
-		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -211,10 +211,10 @@
 																"y" : 27,
 																"dx" : 0,
 																"dy" : 8,
-																"ignore_position_fix" : true,
-																// Collision event between player01 (ent_moved) and NPC05 (ent_other) exists
-																// But collision event between NPC05(ent_moved) and player01(ent_other) does not exist
-																"ignore_collision_with" : ["player01"]}}
+																"position_fix_self_denylist" : ["ALL"], // do not adjust upon collision with anybody
+																"denylist" : ["player01"] // no collision with player01 will be recorded
+																}
+						}
 					]
 				}
 			],
@@ -229,7 +229,7 @@
 							}
 						},
 						"actions" : [
-							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
+							//["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
 						]
 					}
 				],

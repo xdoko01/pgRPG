@@ -408,7 +408,16 @@
   #### Final solution
   Probably there was a bug in `PerformDestroyEntitiesProcessor` - particularly in the way the elapsed time was calculated. After fixing of the condition it seems that the deletion from the ECS game world is done in the cycle when IsDestroyed flag is assigned.
 
+### 2022-03-04 Adding support for YAML quest files definition
+  Newly, pyRPG supports loading quest in YAML file format. It can be more readable for some people than json.
+
 ## To Do
+
+### update collision processor according to the new concept and document it
+
+### BUG - debug processor works only with one camera
+
+
 ### Fade-in Fade-out effect POC
   - based on event - script
   - based on global brain - command

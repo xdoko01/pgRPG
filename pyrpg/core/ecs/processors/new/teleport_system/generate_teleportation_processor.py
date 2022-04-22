@@ -37,7 +37,7 @@ class GenerateTeleportationProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor'
+        'new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor'
     ]
 
     def __init__(self):
@@ -59,9 +59,10 @@ class GenerateTeleportationProcessor(Processor):
         for ent_teleport, (teleport, flag_has_collided) in self.world.get_components(Teleport, FlagHasCollided):
 
             # Assign the FlagIsAboutToBeTeleportedBy to ALL entities that collided with teleport entity ent_teleport
-            for ent_teleportee, _, _, _ in flag_has_collided.collisions:
-                self.world.add_component(ent_teleportee, FlagIsAboutToBeTeleportedBy(teleport=ent_teleport, dest_x=teleport.dest_x, dest_y=teleport.dest_y, dest_map=teleport.dest_map, key=teleport.key))
-                logger.debug(f'({self.cycle}) - Entity {ent_teleport} is trying to teleport entity {ent_teleportee}.')
+            #for ent_teleportee, _, _, _ in flag_has_collided.collisions:
+             for collision in flag_has_collided.collisions:
+                self.world.add_component(collision.entity, FlagIsAboutToBeTeleportedBy(teleport=ent_teleport, dest_x=teleport.dest_x, dest_y=teleport.dest_y, dest_map=teleport.dest_map, key=teleport.key))
+                logger.debug(f'({self.cycle}) - Entity {ent_teleport} is trying to teleport entity {collision.entity}.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -1,8 +1,8 @@
 {
-	"id" : "new_test_pickup_01",
-	"name" : "Pickup Test",
-	"description" : "Test new pickup processors",
-	"objective" : "POC of the new pickup system",
+	"id" : "new_test_teleportation_02",
+	"name" : "Teleportation with Key Test",
+	"description" : "Test new teleportation processors",
+	"objective" : "POC of the new teleportation system",
 	"init_phase" : "phase01",
 
 	"processors" : [
@@ -20,12 +20,12 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
-		["new.collision_system.resolve_entity_collisions_ex_processor:ResolveEntityCollisionsExProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 
-		// For pickup
-		["new.pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
-		["new.pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+		// For teleportation
+		["new.teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
+		["new.teleport_system.perform_teleportation_processor:PerformTeleportationProcessor", {}],
 
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -44,15 +44,15 @@
 
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 
-		["new.pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
-		["new.pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-		["new.pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+		["new.teleport_system.remove_flag_is_about_to_be_teleported_by_processor:RemoveFlagIsAboutToBeTeleportedByProcessor", {}],
+		["new.teleport_system.remove_flag_has_teleported_processor:RemoveFlagHasTeleportedProcessor", {}],
+		["new.teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor", {}]
 
 	],
 
 	"phases" : {
 		"phase01" :{
-			"name" : "Pickup Test", "objective" : "", "maps" : ["test_arena_sand"],
+			"name" : "Teleportation Test", "objective" : "", "maps" : ["test_arena_sand"],
 			
 			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
 
@@ -72,7 +72,7 @@
 				
 					"texts" : [
 						{
-							"text" : "Pickup test no.1 - Demonstration of pickup action",
+							"text" : "Teleportation test no.2 - Demonstration of teleportation with keys",
 							"position" : [5, 20]
 						}
 					],
@@ -88,7 +88,7 @@
 		
 							"texts" : [
 								{
-									"text" : "Pickable entity can be picked up\nby HasInventory entity upon collision.",
+									"text" : "Teleportable entity can be teleported\nby Teleport entity upon collision.\nTeleportee must have key in order to teleport.\nHence the middle teleport will not work.",
 									"position" : [5, 65]
 								}
 							]
@@ -106,9 +106,26 @@
 			],
 
 			"entities" : [
+				// Entity representing key to the teleport
+				{
+					"id" : "key01",
+					"templates" : [],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}}
+					]
+				},
+
+				{
+					"id" : "key02",
+					"templates" : [],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}}
+					]
+				},
+
 				{
 					"id" : "player01",
-					"templates" : ["new/model/body/male/human/dark2"],
+					"templates" : ["new/model/body/male/human/olive"],
 					"components" : [
 						{"type" : "new.debug:Debug", "params" : {}},
 
@@ -122,8 +139,8 @@
 							}
 						},
 
-						// New component for facilitating pickup
-						{"type" : "new.has_inventory:HasInventory", "params" :  {}},
+						// New component for facilitating teleportation - Teleportee has the key so it can use teleport that requires this key01
+						{"type" : "new.teleportable:Teleportable", "params" : {"keys" : ["key02"]}},
 
 						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
@@ -131,42 +148,49 @@
 						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
 				},
+
 				{
-					"id" : "item01",
+					"id" : "teleport01",
+					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						// New component for facilitationg teleportation - no key needed in order to teleport
+						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+					]
+				},
+
+				{
+					"id" : "teleport02",
+					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
+					"components" : [
+						{"type" : "new.debug:Debug", "params" : {}},
+
+						// New component for facilitationg teleportation - key key01 needed in order to teleport
+						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10, "key" : "key01"}},
+
+						{"type" : "new.position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+					]
+				},
+
+				{
+					"id" : "teleport03",
 					"templates" : ["new/model/ammo_pack/fireball_spell_pack"],
 					"components" : [
 						{"type" : "new.debug:Debug", "params" : {}},
 
-						// New component for facilitationg pickup
-						{"type" : "new.pickable:Pickable", "params" :  {}},
-						{"type" : "new.position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "item02",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
+						// New component for facilitationg teleportation - key key02 needed in order to teleport
+						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3, "key" : "key02"}},
 
-						// New component for facilitationg pickup
-						{"type" : "new.pickable:Pickable", "params" :  {}},
-						{"type" : "new.position:Position", "params" : {"x" : 140, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "item03",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						// New component for facilitationg pickup
-						{"type" : "new.pickable:Pickable", "params" :  {}},
-						{"type" : "new.position:Position", "params" : {"x" : 170, "y" : 450, "map" : "test_arena_sand"}},
+						{"type" : "new.position:Position", "params" : {"x" : 260, "y" : 450, "map" : "test_arena_sand"}},
 						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 					]
 				}
+
 
 			],
 
@@ -176,11 +200,11 @@
 					{
 						"conditions" : {
 							"params" : {
-								"quest_id" : "new_test_pickup_01"
+								"quest_id" : "new_test_teleportation_02"
 							}
 						},
 						"actions" : [
-							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
+							//["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
 						]
 					}
 				],

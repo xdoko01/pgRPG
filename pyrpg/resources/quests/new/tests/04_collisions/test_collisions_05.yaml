@@ -20,8 +20,8 @@ processors:
 - ["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}]
 
   # For collisions
-- ["new.collision_system.new_generate_entity_collisions_processor:NewGenerateEntityCollisionsProcessor", {}]
-- ["new.collision_system.new_resolve_entity_collisions_ex_processor:NewResolveEntityCollisionsExProcessor", {}]
+- ["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}]
+- ["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}]
 
   # For displaying
 - ["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}]
@@ -143,7 +143,7 @@ phases:
           velocity: 200
 
       # Collidable component
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 27
@@ -151,6 +151,7 @@ phases:
           dy: 8
           position_fix_self_denylist:
           - ALL
+
 
       # Camera component
       - type: new.camera:Camera
@@ -186,7 +187,7 @@ phases:
       - type: new.movable:Movable
         params:
           velocity: 100
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 15
@@ -195,6 +196,7 @@ phases:
           position_fix_self_allowlist:
           - player01
           position_fix_walkaround_mode: false
+
     - id: LAVA
       templates: []
       components:
@@ -207,7 +209,7 @@ phases:
           x: 300
           y: 300
           map: test_arena_sand
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 100
           y: 100
@@ -252,7 +254,7 @@ phases:
       - type: new.movable:Movable
         params:
           velocity: 100
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 27
@@ -297,7 +299,7 @@ phases:
       - type: new.movable:Movable
         params:
           velocity: 100
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 27
@@ -333,7 +335,7 @@ phases:
       - type: new.movable:Movable
         params:
           velocity: 100
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 27
@@ -369,7 +371,7 @@ phases:
       - type: new.movable:Movable
         params:
           velocity: 100
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 27
@@ -405,7 +407,7 @@ phases:
           x: 100
           y: 100
           map: test_arena_sand
-      - type: new.new_collidable:NewCollidable
+      - type: new.collidable:Collidable
         params:
           x: 15
           y: 27

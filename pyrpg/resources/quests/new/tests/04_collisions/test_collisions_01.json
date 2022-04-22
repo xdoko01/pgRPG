@@ -19,7 +19,7 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_entity_collisions_processor:GenerateEntityCollisionsProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
 
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
