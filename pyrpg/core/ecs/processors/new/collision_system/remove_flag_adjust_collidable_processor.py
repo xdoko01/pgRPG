@@ -1,4 +1,4 @@
-__all__ = ['RemoveFlagAdjustCollisionProcessor']
+__all__ = ['RemoveFlagAdjustCollidableProcessor']
 
 import logging
 
@@ -6,31 +6,31 @@ import logging
 from pyrpg.core.ecs.esper import Processor
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_adjust_collision import FlagAdjustCollision
+from pyrpg.core.ecs.components.new.flag_adjust_collidable import FlagAdjustCollidable
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class RemoveFlagAdjustCollisionProcessor(Processor):
+class RemoveFlagAdjustCollidableProcessor(Processor):
     ''' Removes FlagAdjustCollision flag after the cycle.
 
     Involved components:
-        -   FlagAdjustCollision
+        -   FlagAdjustCollidable
 
     Related processors:
-        -   NewGenerateCollisionsProcessor
-        -   PerformAdjustCollisionProcessor
+        -   GenerateCollisionsProcessor
+        -   PerformAdjustCollidableProcessor
 
     What if this processor is disabled?
         -   collision zone is continuously changing
 
     Where the processor should be planned?
-        -   after PerformAdjustCollisionProcessor
+        -   after PerformAdjustCollidableProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.perform_adjust_collision_processor:PerformAdjustCollisionProcessor'
+        'new.collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor'
     ]
 
     def __init__(self):
@@ -47,9 +47,9 @@ class RemoveFlagAdjustCollisionProcessor(Processor):
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(FlagAdjustCollision):
+        for ent, (_) in self.world.get_components(FlagAdjustCollidable):
 
-            self.world.remove_component(ent, FlagAdjustCollision)
+            self.world.remove_component(ent, FlagAdjustCollidable)
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "FlagAdjustCollision" was removed.')
 
     def pre_save(self):

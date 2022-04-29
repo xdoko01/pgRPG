@@ -21,9 +21,9 @@ def main(argv):
     '''Run the game using the CLI arguments'''
 
     console = True
-    filepath = 'new/tests/09_projectiles/new_test_projectile_generation.json'
+    #filepath = 'new/tests/09_projectiles/new_test_projectile_generation.json'
     #filepath = 'new/tests/05_pickup/new_test_pickup_01.json'
-    #filepath = 'new/tests/04_collisions/test_collisions_05.json'
+    filepath = 'new/tests/04_collisions/test_collisions_05.json'
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
 
     usage_info = '''

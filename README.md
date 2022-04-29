@@ -411,9 +411,18 @@
 ### 2022-03-04 Adding support for YAML quest files definition
   Newly, pyRPG supports loading quest in YAML file format. It can be more readable for some people than json.
 
+### 2022-04-22 Optimization of performance of collision processor
+  Originally, the collision generation processor has time complexity N^2. Newly this was changed to N*(N-1)/2
+
 ## To Do
 
-### update collision processor according to the new concept and document it
+  - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
+  - [ ] update collision processor according to the new concept and document it
+  - [x] write documentation how to add new component/processor class without the need to change all the dependencies - multiple classes in the files
+  - [ ] BUG - when shooting arrow the entity moves down
+  - [ ] BUG - debug processor works onlywith one camera
+
+###
 
 ### BUG - debug processor works only with one camera
 

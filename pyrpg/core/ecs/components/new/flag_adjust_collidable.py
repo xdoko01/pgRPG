@@ -1,24 +1,24 @@
-''' Module "pyrpg.core.ecs.components.flag_adjust_collision" contains
-FlagAdjustCollision component implemented as a FlagAdjustCollision class.
+''' Module "pyrpg.core.ecs.components.flag_adjust_collidable" contains
+FlagAdjustCollidable component implemented as a FlagAdjustCollidable class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_adjust_collision -v' to run
+Use 'python -m pyrpg.core.ecs.components.flag_adjust_collidable -v' to run
 module tests.
 '''
 
 from pyrpg.core.ecs.components.component import Component
 
-class FlagAdjustCollision(Component):
+class FlagAdjustCollidable(Component):
     ''' Entity should adjust its collision component by given inputs
 
     Used by:
-        -   PerformAdjustCollisionProcessor
-        -   RemoveFlagAdjustCollisionProcessor
+        -   PerformAdjustCollidableProcessor
+        -   RemoveFlagAdjustCollidableProcessor
     '''
 
     __slots__ = ['x_fnc', 'y_fnc', 'ignore_collision_with']
 
     def __init__(self, x_fnc=[lambda x:x], y_fnc=[lambda y:y], ignore_collision_with=[]):
-        ''' Initiate value for the new FlagAdjustCollision component.
+        ''' Initiate value for the new FlagAdjustCollidable component.
 
         Parameters:
             :param x_fnc: Functions for modification of x-dimension of collidable component

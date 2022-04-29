@@ -20,7 +20,7 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
+		["new.collision_system:GenerateCollisionsProcessor", {}],
 		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
 
 		// For displaying

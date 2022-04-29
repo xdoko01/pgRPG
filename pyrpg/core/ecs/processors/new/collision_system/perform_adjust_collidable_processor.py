@@ -1,4 +1,4 @@
-__all__ = ['PerformAdjustCollisionProcessor']
+__all__ = ['PerformAdjustCollidableProcessor']
 
 import logging
 
@@ -7,28 +7,28 @@ from pyrpg.core.ecs.esper import Processor
 
 # Used components
 from pyrpg.core.ecs.components.new.collidable import Collidable
-from pyrpg.core.ecs.components.new.flag_adjust_collision import FlagAdjustCollision
+from pyrpg.core.ecs.components.new.flag_adjust_collidable import FlagAdjustCollidable
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class PerformAdjustCollisionProcessor(Processor):
+class PerformAdjustCollidableProcessor(Processor):
     ''' Addjust existing Collidable component with the new parameters
 
     Involved components:
         -   Collidable
-        -   FlagAdjustCollision
+        -   FlagAdjustCollidable
 
     Related processors:
-        -   GenerateEntityCollisionsFullProcessor
-        -   GenerateEntityCollisionsProcessor
+        -   GenerateCollisionsFullProcessor
+        -   GenerateCollisionsProcessor
         -   RemoveFlagAdjustCollisionProcessor
 
     What if this processor is disabled?
-        -   collisions are modified on the factory generated entities (projectiles)
+        -   collisions are not modified on the factory generated entities (projectiles)
 
     Where the processor should be planned?
-        -   before GenerateEntityCollisionsProcessor
+        -   before GenerateCollisionsProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
@@ -49,7 +49,7 @@ class PerformAdjustCollisionProcessor(Processor):
         self.cycle += 1
 
         # Get all entities that have Collidable component and flag to ignore some more entities
-        for ent, (collidable, flag_adjust_collision) in self.world.get_components(Collidable, FlagAdjustCollision):
+        for ent, (collidable, flag_adjust_collision) in self.world.get_components(Collidable, FlagAdjustCollidable):
 
             # Update ignore list
             logger.debug(f'({self.cycle}) - Entity {ent} - original collision ignore list: {collidable.denylist}')

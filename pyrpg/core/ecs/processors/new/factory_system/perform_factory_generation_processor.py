@@ -10,7 +10,7 @@ from pyrpg.core.ecs.components.new.flag_create_from_factory import FlagCreateFro
 from pyrpg.core.ecs.components.new.flag_generated_from_factory import FlagGeneratedFromFactory
 from pyrpg.core.ecs.components.new.factory import Factory
 from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.flag_adjust_collision import FlagAdjustCollision
+from pyrpg.core.ecs.components.new.flag_adjust_collidable import FlagAdjustCollidable
 from pyrpg.core.ecs.components.new.flag_adjust_movement import FlagAdjustMovement
 
 # Logger init
@@ -92,7 +92,7 @@ class PerformFactoryGenerationProcessor(Processor):
             if flag_create_from_factory.adjust_collision:
                 self.world.add_component(
                     new_entity,
-                    FlagAdjustCollision(**flag_create_from_factory.adjust_collision)
+                    FlagAdjustCollidable(**flag_create_from_factory.adjust_collision)
                 )
                 # Log information about successful generation
                 logger.debug(f'({self.cycle}) - Entity {new_entity} will have adjustment in its collision component.')

@@ -1,0 +1,1 @@
+from .generate_collisions_processor import GenerateCollisionsOptimizedProcessor as GenerateCollisionsProcessor
