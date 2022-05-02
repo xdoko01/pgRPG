@@ -32,7 +32,7 @@ class GenerateVisualFXOnCollisionProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor'
+        'new.collision_system:GenerateCollisionsProcessor'
     ]
 
     __slots__ = ['create_entity_fnc']

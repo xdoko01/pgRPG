@@ -1,0 +1,5 @@
+from .generate_arm_ammo_processor import GenerateArmAmmoProcessor
+from .perform_arm_ammo_processor import PerformArmAmmoProcessor
+from .remove_flag_has_armed_ammo_processor import RemoveFlagHasArmedAmmoProcessor
+from .remove_flag_is_about_to_arm_ammo_processor import RemoveFlagIsAboutToArmAmmoProcessor
+from .remove_flag_was_armed_as_ammo_by_processor import RemoveFlagWasArmedAsAmmoByProcessor

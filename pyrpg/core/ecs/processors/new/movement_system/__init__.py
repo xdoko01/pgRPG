@@ -1,0 +1,5 @@
+from .perform_adjust_movement_processor import PerformAdjustMovementProcessor
+from .perform_movement_processor import PerformMovementProcessor
+from .remove_flag_adjust_movement_processor import RemoveFlagAdjustMovementProcessor
+from .remove_flag_do_move_processor import RemoveFlagDoMoveProcessor
+from .remove_flag_has_stopped_movement_processor import RemoveFlagHasStoppedMovementProcessor

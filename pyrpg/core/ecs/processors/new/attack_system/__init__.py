@@ -1,0 +1,2 @@
+from .generate_projectile_factory_data_processor import GenerateProjectileFactoryDataProcessor
+from .remove_flag_do_attack_processor import RemoveFlagDoAttackProcessor

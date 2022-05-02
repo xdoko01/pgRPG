@@ -223,12 +223,12 @@ class ECSManager:
             try:
                 check_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + prereq_module, prereq_class)
             except ValueError:
-                logger.error(f'Prerequisite class "{prereq_module}.{prereq_class}" cannot be loaded from definition of processor "{proc_class.__name__}".')
+                logger.warning(f'Prerequisite class "{prereq_module}.{prereq_class}" cannot be loaded from definition of processor "{proc_class.__name__}".')
                 raise ValueError(f'Prerequisite class "{prereq_module}.{prereq_class}" cannot be loaded from definition of processor "{proc_class.__name__}".')
 
             # Verify that the prerequisite processor class has been already instantiated
             if not self._world.get_processor(check_class):
-                logger.error(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
+                logger.warning(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
                 raise ValueError(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
 
     def _load_processor(self, proc_module : str, proc_class : str, cust_proc_class_attrs : dict) -> Processor:

@@ -191,17 +191,24 @@ LOGGING = {
             "filename": "pyrpg/logs/processors.log",
             "mode": "w",
             "encoding": "utf-8"
-      }
+        },
+        "null": {
+            "class": "logging.NullHandler"
+        }
+
     },
 
     "loggers" : {
 
+        
         # Save all the logs from processor classes to the file
         "pyrpg.core.ecs.processors" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_proc"],
+            #"handlers" : ["file_handler_proc"],
+            "handlers" : ["null"],  # do not log to file for speed
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
+        
 
         # Save all the logs other from processor classes to console
         "pyrpg" : {
@@ -210,6 +217,7 @@ LOGGING = {
             "handlers" : ["in_game_console", "console"],
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         }
+        
 
     },
 

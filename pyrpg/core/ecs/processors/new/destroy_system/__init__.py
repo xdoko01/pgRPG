@@ -1,0 +1,3 @@
+from .generate_destroy_on_collision_processor import GenerateDestroyOnCollisionProcessor
+from .generate_destroy_on_stopped_movement_processor import GenerateDestroyOnStoppedMovementProcessor
+from .perform_destroy_entities_processor import PerformDestroyEntitiesProcessor

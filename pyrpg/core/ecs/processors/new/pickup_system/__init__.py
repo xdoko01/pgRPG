@@ -1,0 +1,5 @@
+from .generate_pickup_processor import GeneratePickupProcessor
+from .perform_pickup_processor import PerformPickupProcessor
+from .remove_flag_has_picked_processor import RemoveFlagHasPickedProcessor
+from .remove_flag_is_about_to_pick_entity_processor import RemoveFlagIsAboutToPickEntityProcessor
+from .remove_flag_was_picked_by_processor import RemoveFlagWasPickedByProcessor

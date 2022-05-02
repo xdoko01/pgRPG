@@ -31,14 +31,14 @@
 		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
 
 		// NEW - adjust collision component of the entity - mainly for factory generated entities
-		["new.collision_system.perform_adjust_collision_processor:PerformAdjustCollisionProcessor", {}],
+		["new.collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}],
 
 		// NEW - adjust movable component of the entity - mainly for factory generated entities
 		["new.movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
+		["new.collision_system:GenerateCollisionsProcessor", {}],
+		["new.collision_system:ResolveCollisionsProcessor", {}],
 		
 		// For destroy
 		["new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
@@ -68,7 +68,7 @@
 		["new.movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}],
 
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
-		["new.collision_system.remove_flag_adjust_collision_processor:RemoveFlagAdjustCollisionProcessor", {}],
+		["new.collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}]//,
