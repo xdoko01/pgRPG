@@ -11,6 +11,7 @@ from pyrpg.core.ecs.components.new.flag_is_animation_action_frame import FlagIsA
 from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
 from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.flag_create_from_factory import FlagCreateFromFactory
+from pyrpg.core.ecs.components.new.collidable import Collidable
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -60,11 +61,12 @@ class GenerateProjectileFactoryDataProcessor(Processor):
         self.cycle += 1
 
         # Get entities that in this cycle have all what it needs to generate projectile
-        for parent, (position, is_action_frame, has_weapon, weapon_in_use) in self.world.get_components(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse):
+        for parent, (position, is_action_frame, has_weapon, weapon_in_use, collidable) in self.world.get_components_opt(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse, optional=Collidable):
 
             # calculate position for the new projectile
             ##(ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)
             ##(pos_x, pos_y, pos_map) = (int(position.x + (position.direction[0] * (ent_col_x))), int(position.y + (position.direction[1] * (ent_col_y))), position.map)
+            print(f'Collidable component on parent: {collidable}')
 
             # Create component FlagCreateFromFactory and add it to Generator entity
             self.world.add_component(has_weapon.weapons[weapon_in_use.type]["generator"],

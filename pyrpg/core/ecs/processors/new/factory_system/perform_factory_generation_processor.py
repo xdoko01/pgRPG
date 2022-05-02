@@ -54,7 +54,7 @@ class PerformFactoryGenerationProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        ''' Get all Factory components that should generate the entity
+        ''' Get all Factory components that should generate the entity 
         and generate the entity into the world.
         '''
         self.cycle += 1

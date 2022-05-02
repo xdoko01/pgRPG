@@ -55,6 +55,7 @@ class PerformAdjustCollidableProcessor(Processor):
             logger.debug(f'({self.cycle}) - Entity {ent} - original collision ignore list: {collidable.denylist}')
             logger.debug(f'({self.cycle}) - Entity {ent} - requested additions to the ignore list: {flag_adjust_collision.ignore_collision_with}')
             collidable.denylist = {*flag_adjust_collision.ignore_collision_with, *collidable.denylist}
+
             logger.debug(f'({self.cycle}) - Entity {ent} - new collision ignore list: {collidable.denylist}')
 
             # Update collidable dimensions

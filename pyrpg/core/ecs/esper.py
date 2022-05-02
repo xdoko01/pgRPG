@@ -78,6 +78,8 @@ class World:
         self.get_components.cache_clear()
         self.get_components_ex.cache_clear() # additionally added
         self.get_components_exs.cache_clear() #additionally added
+        self.get_components_opt.cache_clear() #additionally added
+
 
     def clear_database(self) -> None:
         """Remove all Entities and Components from the World."""
@@ -367,6 +369,25 @@ class World:
         except KeyError:
             pass
 
+    def _get_components_opt(self, *component_types: _Type, **kwargs) -> _Iterable[_Tuple[int, ...]]:
+        """Get an iterator for Entity and multiple Component sets.
+
+        :param component_types: Two or more Component types.
+        :return: An iterator for Entity, (Component1, Component2, etc)
+        tuples.
+        """
+        entity_db = self._entities
+        comp_db = self._components
+        optional_component_type = kwargs.get('optional')
+
+        try:
+            for entity in set.intersection(*[comp_db[ct] for ct in component_types]):
+                # If the component for entity is not in the database, return None
+                yield entity, [entity_db[entity].get(ct, None) for ct in [*component_types, optional_component_type]]
+        except KeyError:
+            pass
+
+
     @_lru_cache()
     def get_component(self, component_type: _Type[C]) -> _List[_Tuple[int, C]]:
         return [query for query in self._get_component(component_type)]
@@ -382,6 +403,11 @@ class World:
     @_lru_cache()
     def get_components_ex(self, *component_types: _Type, **kwargs):
         return [query for query in self._get_components_ex(*component_types, **kwargs)]
+
+    @_lru_cache()
+    def get_components_opt(self, *component_types: _Type, **kwargs):
+        return [query for query in self._get_components_opt(*component_types, **kwargs)]
+
 
     def try_component(self, entity: int, component_type: _Type):
         """Try to get a single component type for an Entity.

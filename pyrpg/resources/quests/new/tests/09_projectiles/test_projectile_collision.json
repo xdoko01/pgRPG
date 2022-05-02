@@ -136,7 +136,14 @@
 					"components" : [
 
 						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+
+						//{
+						//	"type" : "new.collidable:Collidable", 
+						//	"params" :  {
+						//		"x" : 15, "y" : 27, "dx" : 0, "dy" : 8,
+						//		"position_fix_self_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
+						//	}
+						//},
 
 						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 							"control_cmds" : {

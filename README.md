@@ -414,17 +414,35 @@
 ### 2022-04-22 Optimization of performance of collision processor
   Originally, the collision generation processor has time complexity N^2. Newly this was changed to N*(N-1)/2
 
+### 2022-05-02 Added new function `get_components_opt` into ESPER framework
+  This new function returns `None` or `Component` entity based on information if optional component exists or not. This is useful to omit *ifs* in the processors and I plan to use it in 
+    - *Collision System* to implement weight or push factor
+    - *Attack System* for calculation of position of the projectile
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
   - [x] update collision processor according to the new concept and document it
   - [x] write documentation how to add new component/processor class without the need to change all the dependencies - multiple classes in the files
-  - [ ] BUG - when shooting arrow the entity moves down
+  - [x] BUG - when shooting arrow the entity moves down - fixed by adding `position_fix_self_denylist=["ALL"]`
+    [ ] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have position_fix_self_denylist set to [ALL]
   - [ ] BUG - debug processor works onlywith one camera
 
 ###
 
-### BUG - debug processor works only with one camera
+### Solve creation of arrow/sword swing so that it does not move player and the player does not need to have position_fix_self_denylist set to [ALL]
+  - add `FlagAdjustCollidable` on parent to include the arrow entity into denylist
+  - but arrow entity is temporary, how to solve this, se do not want denylist to be growing. Does generator remembers all the entities generated? Can we use this? 
+    - PerformFactoryGenerationProcessor
+      - store entity id that is generated on Factory
+      - if required, add FlagAdjustCollidable on parent so that it updates the denylist of parent. Use the list on factory not to pass all but only some.
+  - alternativelly, adjust COllision system further to apply parameters on both entities
+  - play with esper to allow optional parameters
+  ```
+        for parent, (position, is_action_frame, has_weapon, weapon_in_use, collidable) in self.world.get_components_opt(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse, optional=Collidable):
+  ```
+  - arrow ... position_fix_others_denylist -> player position_fix_self_denylist = arrow
+  - we need Collidable to calculate 
 
 
 ### Fade-in Fade-out effect POC
