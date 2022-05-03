@@ -61,22 +61,31 @@ class GenerateProjectileFactoryDataProcessor(Processor):
         self.cycle += 1
 
         # Get entities that in this cycle have all what it needs to generate projectile
+        # Return also Collidable component if the entity has it, otherwise return None
         for parent, (position, is_action_frame, has_weapon, weapon_in_use, collidable) in self.world.get_components_opt(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse, optional=Collidable):
 
-            # calculate position for the new projectile
-            ##(ent_col_x, ent_col_y) = (collidable.x, collidable.y) if collidable else (0, 0)
-            ##(pos_x, pos_y, pos_map) = (int(position.x + (position.direction[0] * (ent_col_x))), int(position.y + (position.direction[1] * (ent_col_y))), position.map)
-            print(f'Collidable component on parent: {collidable}')
-
+            # Calculate position for the new projectile based on position of the parent and collision zones of the parent.
+            # The aim is to avoid collision zone with the parent
+            (parent_col_x, parent_col_y, parent_col_dx, parent_col_dy) = (collidable.x, collidable.y, collidable.dx, collidable.dy) if collidable else (0, 0, 0, 0)
+            (projectile_pos_x, projectile_pos_y) = (int(position.x + (position.direction[0] * (parent_col_x)) + parent_col_dx), int(position.y + (position.direction[1] * (parent_col_y)) + parent_col_dy))
+            
             # Create component FlagCreateFromFactory and add it to Generator entity
             self.world.add_component(has_weapon.weapons[weapon_in_use.type]["generator"],
                                     FlagCreateFromFactory(
+
                                         adjust_position={
-                                                "x" : int(position.x),
-                                                "y" : int(position.y),
+                                                # Originaly, the centre of parent entity
+                                                #"x" : int(position.x),
+                                                #"y" : int(position.y),
+                                                #"dir_name" : position.dir_name,
+                                                #"map" : position.map
+
+                                                "x" : projectile_pos_x,
+                                                "y" : projectile_pos_y,
                                                 "dir_name" : position.dir_name,
                                                 "map" : position.map
                                         },
+
                                         adjust_collision={
                                                 "ignore_collision_with" : [parent],
                                                 # Here we can use data from the weapon/character to modify the collision zone for the projectile. For example if character is skilled,

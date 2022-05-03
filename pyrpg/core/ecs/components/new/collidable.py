@@ -32,10 +32,10 @@ class Collidable(Component):
         'dy', 
         'allowlist', 
         'denylist', 
-        'position_fix_others_allowlist',
-        'position_fix_others_denylist',
-        'position_fix_self_allowlist',
-        'position_fix_self_denylist',
+        'apply_pos_fix_to_allowlist',
+        'apply_pos_fix_to_denylist',
+        'accept_pos_fix_from_allowlist',
+        'accept_pos_fix_from_denylist',
         'position_fix_walkaround_mode'
     ]
 
@@ -64,17 +64,17 @@ class Collidable(Component):
             :param denylist: Allow collision only with entities that are NOT present in the denylist
             :type denylist: set
 
-            :param position_fix_others_allowlist: Allow fix position of others only in this allowlist upon hitting this entity
-            :type position_fix_others_allowlist: set
+            :param apply_pos_fix_to_allowlist: Allow fix position of others only in this allowlist upon hitting this entity
+            :type apply_pos_fix_to_allowlist: set
 
-            :param position_fix_others_denylist: Do not fix position of others in this denylist upon hitting this entity
-            :type position_fix_others_denylist: set
+            :param apply_pos_fix_to_denylist: Do not fix position of others in this denylist upon hitting this entity
+            :type apply_pos_fix_to_denylist: set
 
-            :param position_fix_self_allowlist: Should the entity adjust its position upon colliding into entity in the allowlist.
-            :type position_fix_self_allowlist: set
+            :param accept_pos_fix_from_allowlist: Should the entity adjust its position upon colliding into entity in the allowlist.
+            :type accept_pos_fix_from_allowlist: set
 
-            :param position_fix_self_denylist: Entity will not adjust its position upon colliding into entity in the denylist.
-            :type position_fix_self_denylist: set
+            :param accept_pos_fix_from_denylist: Entity will not adjust its position upon colliding into entity in the denylist.
+            :type accept_pos_fix_from_denylist: set
 
             :param position_fix_walkaround_mode: Should the entity try to walk around the colliding entity or not.
             :type position_fix_walkaround_mode: boolean (default True)
@@ -99,16 +99,16 @@ class Collidable(Component):
         self.denylist = set(kwargs.get('denylist', {}))
 
         # Allow fix position of others only in this allowlist upon hitting this entity
-        self.position_fix_others_allowlist = set(kwargs.get('position_fix_others_allowlist', {}))
+        self.apply_pos_fix_to_allowlist = set(kwargs.get('apply_pos_fix_to_allowlist', {}))
 
         # Do not fix position of others in this denylist upon hitting this entity
-        self.position_fix_others_denylist = set(kwargs.get('position_fix_others_denylist', {}))
+        self.apply_pos_fix_to_denylist = set(kwargs.get('apply_pos_fix_to_denylist', {}))
 
         # Should the entity adjust its position upon colliding into entity in the allowlist.
-        self.position_fix_self_allowlist = set(kwargs.get('position_fix_self_allowlist', {}))
+        self.accept_pos_fix_from_allowlist = set(kwargs.get('accept_pos_fix_from_allowlist', {}))
 
         # Entity will not adjust its position upon colliding into entity in the denylist.
-        self.position_fix_self_denylist = set(kwargs.get('position_fix_self_denylist', {}))
+        self.accept_pos_fix_from_denylist = set(kwargs.get('accept_pos_fix_from_denylist', {}))
 
         # Walkaround the colliding obstacle
         self.position_fix_walkaround_mode = kwargs.get('position_fix_walkaround_mode', True)
@@ -120,10 +120,10 @@ class Collidable(Component):
             assert isinstance(self.dy, int), f'Offset centre y-axis must be passed as an int.'
             assert isinstance(self.allowlist, set), f'Parameter "allowlist" must be a set.'
             assert isinstance(self.denylist, set), f'Parameter "denylist" must be a set.'
-            assert isinstance(self.position_fix_others_allowlist, set), f'Parameter "position_fix_others_allowlist" must be a set.'
-            assert isinstance(self.position_fix_others_denylist, set), f'Parameter "position_fix_others_denylist" must be a set.'
-            assert isinstance(self.position_fix_self_allowlist, set), f'Parameter "position_fix_self_allowlist" must be a set.'
-            assert isinstance(self.position_fix_self_denylist, set), f'Parameter "position_fix_self_denylist" must be a set.'
+            assert isinstance(self.apply_pos_fix_to_allowlist, set), f'Parameter "apply_pos_fix_to_allowlist" must be a set.'
+            assert isinstance(self.apply_pos_fix_to_denylist, set), f'Parameter "apply_pos_fix_to_denylist" must be a set.'
+            assert isinstance(self.accept_pos_fix_from_allowlist, set), f'Parameter "accept_pos_fix_from_allowlist" must be a set.'
+            assert isinstance(self.accept_pos_fix_from_denylist, set), f'Parameter "accept_pos_fix_from_denylist" must be a set.'
             assert isinstance(self.position_fix_walkaround_mode, bool), f'Parameter "position_fix_walkaround_mode" must be a boolean.'
 
         except AssertionError:

@@ -419,18 +419,28 @@
     - *Collision System* to implement weight or push factor
     - *Attack System* for calculation of position of the projectile
 
+### 2022-05-03 Collision System - adjustment of logic for accept_fix and pos_fix_oth
+  Fixing the logic of those 2 boolean variables passed with every collision.
+    * `accept_fix` ... entity moved answers the question if entity moved can be moved by entity other. So better name for this var will be `accept_fix` (is determined by the whitelists of moved entity).
+    * `apply_fix` ... entity other answers the question if entity moved can be moved by entity other. So better name for this var will be `apply_fix` (is determined by the whitelists on other entity).
+
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
   - [x] update collision processor according to the new concept and document it
   - [x] write documentation how to add new component/processor class without the need to change all the dependencies - multiple classes in the files
-  - [x] BUG - when shooting arrow the entity moves down - fixed by adding `position_fix_self_denylist=["ALL"]`
-    [ ] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have position_fix_self_denylist set to [ALL]
+  - [x] BUG - when shooting arrow the entity moves down - fixed by adding `accept_pos_fix_from_denylist=["ALL"]`
+    [ ] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
   - [ ] BUG - debug processor works onlywith one camera
 
 ###
 
-### Solve creation of arrow/sword swing so that it does not move player and the player does not need to have position_fix_self_denylist set to [ALL]
+### How to solve following situation
+  - SwordSlash has accept_pos_fix_from_denylist = [ALL] and apply_pos_fix_to_denylist = [ALL]
+  - Ideally, we need that under this configuration NPC is not corrected upon the slash without any parameters needed on NPC side
+
+### Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
   - add `FlagAdjustCollidable` on parent to include the arrow entity into denylist
   - but arrow entity is temporary, how to solve this, se do not want denylist to be growing. Does generator remembers all the entities generated? Can we use this? 
     - PerformFactoryGenerationProcessor
@@ -441,7 +451,7 @@
   ```
         for parent, (position, is_action_frame, has_weapon, weapon_in_use, collidable) in self.world.get_components_opt(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse, optional=Collidable):
   ```
-  - arrow ... position_fix_others_denylist -> player position_fix_self_denylist = arrow
+  - arrow ... apply_pos_fix_to_denylist -> player accept_pos_fix_from_denylist = arrow
   - we need Collidable to calculate 
 
 

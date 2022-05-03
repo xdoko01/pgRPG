@@ -68,10 +68,10 @@ class ResolveCollisionsProcessor(Processor):
             for collision in flag_has_collided.collisions:
 
                 # Information about collision with other entity
-                coll_ent, correction_vect, pos_fix_other, pos_fix_self, walkaround_mode = collision
+                coll_ent, correction_vect, apply_fix, accept_fix, walkaround_mode = collision
 
                 # Ignore correction - if entity should not be corrected by this particular entity
-                if not pos_fix_other: continue
+                if not apply_fix: continue
 
                 # Store the last position
                 position.lastx = position.x
@@ -80,20 +80,20 @@ class ResolveCollisionsProcessor(Processor):
 
                 # Change position based on the correction vector and other parameters - this particular algorithm is supporting walking around entities
                 if not correction_vect.x and correction_vect.y:
-                    position.x += sign(correction_vect.y) * collidable.position_fix_walkaround_mode * pos_fix_self
-                    position.y += correction_vect.y * pos_fix_self
+                    position.x += sign(correction_vect.y) * collidable.position_fix_walkaround_mode * accept_fix
+                    position.y += correction_vect.y * accept_fix
 
                 elif correction_vect.x and not correction_vect.y:
-                    position.x += correction_vect.x * pos_fix_self 
-                    position.y += sign(correction_vect.x) * collidable.position_fix_walkaround_mode * pos_fix_self
+                    position.x += correction_vect.x * accept_fix 
+                    position.y += sign(correction_vect.x) * collidable.position_fix_walkaround_mode * accept_fix
         
                 elif abs(correction_vect.x) < abs(correction_vect.y):
-                    position.x += correction_vect.x * pos_fix_self
-                    position.y += sign(correction_vect.y) * collidable.position_fix_walkaround_mode * pos_fix_self
+                    position.x += correction_vect.x * accept_fix
+                    position.y += sign(correction_vect.y) * collidable.position_fix_walkaround_mode * accept_fix
 
                 else:
-                    position.x += sign(correction_vect.x) * collidable.position_fix_walkaround_mode * pos_fix_self
-                    position.y += correction_vect.y * pos_fix_self
+                    position.x += sign(correction_vect.x) * collidable.position_fix_walkaround_mode * accept_fix
+                    position.y += correction_vect.y * accept_fix
 
 
                 logger.debug(f'({self.cycle}) - Entity {ent} corrected after collision with entity {coll_ent} - New possition: [{position.x}, {position.y}]')

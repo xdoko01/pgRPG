@@ -373,6 +373,7 @@ class World:
         """Get an iterator for Entity and multiple Component sets.
 
         :param component_types: Two or more Component types.
+        :param optional: Component type whose entity should be returned also or None if entity does not have it
         :return: An iterator for Entity, (Component1, Component2, etc)
         tuples.
         """

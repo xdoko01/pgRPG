@@ -149,7 +149,7 @@ phases:
           y: 27
           dx: 0
           dy: 8
-          position_fix_self_denylist:
+          accept_pos_fix_from_denylist:
           - ALL
 
 
@@ -193,7 +193,7 @@ phases:
           y: 15
           dx: 0
           dy: 8
-          position_fix_self_allowlist:
+          accept_pos_fix_from_allowlist:
           - player01
           position_fix_walkaround_mode: false
 
@@ -260,7 +260,7 @@ phases:
           y: 27
           dx: 0
           dy: 8
-          position_fix_self_allowlist:
+          accept_pos_fix_from_allowlist:
           - player01
     - id: NPC02
       templates:

@@ -30,8 +30,21 @@ logger = logging.getLogger(__name__)
 # For collision correction vector
 Vect = namedtuple('Vect', ['x', 'y'])
 
-# Object to be passed in the list of collisions
-Collision = namedtuple('Collision', ['entity', 'corr_vect', 'pos_fix_other', 'pos_fix_self', 'walkaround_mode'])
+''' Object to be passed in the list of collisions
+
+Terminology:
+  - `moved entity` ... entity being moved/adjusted by the collision object. It is entity whose FlagHasCollided
+  component is being processed.
+  - `other entity` ... entity that is trying to adjust the position of moved entity. It is the entity that is 
+  specified in collision.entity variable.
+
+Collision object bears following important information:
+  - entity ... it is `other entity as specified above
+  - corr_vect ... if applied on `moved entity`, it will omit collision with `other entity`
+  - (apply_fix) apply_fix ... answers the question if `other entity` can/wants to push/adjust `moved entity` position
+  - (allow_fix) accept_fix ... answers the question if `moved entity` can/wants to be pushed by `other entity`
+'''
+Collision = namedtuple('Collision', ['entity', 'corr_vect', 'apply_fix', 'accept_fix', 'walkaround_mode'])
 
 class GenerateCollisionsOptimizedProcessor(Processor):
     ''' Detects collisions amongst objects visible on camera and stores them
@@ -93,10 +106,10 @@ class GenerateCollisionsOptimizedProcessor(Processor):
             allowed_collisions = [allow_deny_list_filter(input=collision_candidates_entities, allowlist=coll_comp.allowlist, denylist=coll_comp.denylist) for _, (pos_comp, coll_comp) in collision_candidates]
             
             # NEW - position_fix_other
-            position_fix_other = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.position_fix_others_allowlist, denylist=coll_comp.position_fix_others_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
+            position_fix_other = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.apply_pos_fix_to_allowlist, denylist=coll_comp.apply_pos_fix_to_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
             # NEW - position_fix_self
-            position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.position_fix_self_allowlist, denylist=coll_comp.position_fix_self_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
+            position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.accept_pos_fix_from_allowlist, denylist=coll_comp.accept_pos_fix_from_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
             # Get all entities that have Position, Collidable + are on some camera
             #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
@@ -143,9 +156,11 @@ class GenerateCollisionsOptimizedProcessor(Processor):
                             coll_list[ent_moved_idx].append(
                                 Collision(
                                     entity=ent_other_id, 
-                                    corr_vect=correction_vect, 
-                                    pos_fix_other=ent_other_id in position_fix_other[ent_moved_idx],
-                                    pos_fix_self=ent_other_id in position_fix_self[ent_moved_idx],
+                                    corr_vect=correction_vect,
+                                    # Ask ent_other_id entity if it can apply fix to ent_moved_id 
+                                    apply_fix=ent_moved_id in position_fix_other[ent_other_idx],
+                                    # Ask ent_moved_id entity if it allows to be fixed by ent_other_id entity
+                                    accept_fix=ent_other_id in position_fix_self[ent_moved_idx],
                                     walkaround_mode=coll_other.position_fix_walkaround_mode
                                 )
                             )
@@ -159,8 +174,8 @@ class GenerateCollisionsOptimizedProcessor(Processor):
                                 Collision(
                                     entity=ent_moved_id, 
                                     corr_vect=Vect(x=-1*correction_vect.x,y=-1*correction_vect.y),
-                                    pos_fix_other=ent_moved_id in position_fix_other[ent_other_idx],
-                                    pos_fix_self=ent_moved_id in position_fix_self[ent_other_idx],
+                                    apply_fix=ent_other_id in position_fix_other[ent_moved_idx],
+                                    accept_fix=ent_moved_id in position_fix_self[ent_other_idx],
                                     walkaround_mode=coll_moved.position_fix_walkaround_mode
                                 )
                             )
@@ -249,10 +264,10 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
         allowed_collisions = [allow_deny_list_filter(input=collision_candidates_entities, allowlist=coll_comp.allowlist, denylist=coll_comp.denylist) for _, (pos_comp, coll_comp) in collision_candidates]
         
         # NEW - position_fix_other
-        position_fix_other = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.position_fix_others_allowlist, denylist=coll_comp.position_fix_others_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
+        position_fix_other = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.apply_pos_fix_to_allowlist, denylist=coll_comp.apply_pos_fix_to_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
         # NEW - position_fix_self
-        position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.position_fix_self_allowlist, denylist=coll_comp.position_fix_self_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
+        position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.accept_pos_fix_from_allowlist, denylist=coll_comp.accept_pos_fix_from_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
         # Get all entities that have Position, Collidable + are on some camera
         #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
@@ -300,8 +315,8 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
                             Collision(
                                 entity=ent_other_id, 
                                 corr_vect=correction_vect, 
-                                pos_fix_other=ent_other_id in position_fix_other[ent_moved_idx],
-                                pos_fix_self=ent_other_id in position_fix_self[ent_moved_idx],
+                                apply_fix=ent_other_id in position_fix_other[ent_moved_idx],
+                                accept_fix=ent_other_id in position_fix_self[ent_moved_idx],
                                 walkaround_mode=coll_other.position_fix_walkaround_mode
                             )
                         )
@@ -315,8 +330,8 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
                             Collision(
                                 entity=ent_moved_id, 
                                 corr_vect=Vect(x=-1*correction_vect.x,y=-1*correction_vect.y),
-                                pos_fix_other=ent_moved_id in position_fix_other[ent_other_idx],
-                                pos_fix_self=ent_moved_id in position_fix_self[ent_other_idx],
+                                apply_fix=ent_moved_id in position_fix_other[ent_other_idx],
+                                accept_fix=ent_moved_id in position_fix_self[ent_other_idx],
                                 walkaround_mode=coll_moved.position_fix_walkaround_mode
                             )
                         )
@@ -444,15 +459,15 @@ class GenerateCollisionsNotOptimizedProcessor(Processor):
                             Collision(
                                 entity=ent_other,
                                 corr_vect=correction_vect,
-                                pos_fix_self=allow_deny_item_filter(
+                                accept_fix=allow_deny_item_filter(
                                     input=coll_other,
-                                    allowlist=coll_moved.position_fix_self_allowlist,
-                                    denylist=coll_moved.position_fix_self_denylist
+                                    allowlist=coll_moved.accept_pos_fix_from_allowlist,
+                                    denylist=coll_moved.accept_pos_fix_from_denylist
                                 ),
-                                pos_fix_other=allow_deny_item_filter(
+                                apply_fix=allow_deny_item_filter(
                                     input=coll_other,
-                                    allowlist=coll_moved.position_fix_others_allowlist,
-                                    denylist=coll_moved.position_fix_others_denylist
+                                    allowlist=coll_moved.apply_pos_fix_to_allowlist,
+                                    denylist=coll_moved.apply_pos_fix_to_denylist
                                 ),
                                 walkaround_mode=coll_other.position_fix_walkaround_mode
                             )
@@ -591,15 +606,15 @@ class GenerateCollisionsNotOptimizedFullProcessor(Processor):
                         Collision(
                             entity=ent_other,
                             corr_vect=correction_vect,
-                            pos_fix_self=allow_deny_item_filter(
+                            accept_fix=allow_deny_item_filter(
                                 input=coll_other,
-                                allowlist=coll_moved.position_fix_self_allowlist,
-                                denylist=coll_moved.position_fix_self_denylist
+                                allowlist=coll_moved.accept_pos_fix_from_allowlist,
+                                denylist=coll_moved.accept_pos_fix_from_denylist
                             ),
-                            pos_fix_other=allow_deny_item_filter(
+                            apply_fix=allow_deny_item_filter(
                                 input=coll_other,
-                                allowlist=coll_moved.position_fix_others_allowlist,
-                                denylist=coll_moved.position_fix_others_denylist
+                                allowlist=coll_moved.apply_pos_fix_to_allowlist,
+                                denylist=coll_moved.apply_pos_fix_to_denylist
                             ),
                             walkaround_mode=coll_other.position_fix_walkaround_mode
                         )

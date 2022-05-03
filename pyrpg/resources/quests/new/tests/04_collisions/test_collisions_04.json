@@ -211,7 +211,7 @@
 																"y" : 27,
 																"dx" : 0,
 																"dy" : 8,
-																"position_fix_self_denylist" : ["ALL"], // do not adjust upon collision with anybody
+																"accept_pos_fix_from_denylist" : ["ALL"], // do not adjust upon collision with anybody
 																"denylist" : ["player01"] // no collision with player01 will be recorded
 																}
 						}

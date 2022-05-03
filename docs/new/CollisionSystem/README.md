@@ -124,16 +124,16 @@ The parameters in `Collidable` component can be in detail seen in the code itsel
  * If Entity XYZ has `allowlist = {}` + `denylist = {3,4}` = allow collision *with everybody except entity 3 and 4*
 
 ##### Allow/Deny Fixing Position of Other Entities
- * If Entity XYZ has `position_fix_others_allowlist = {}` + `position_fix_others_denylist = {}` = allow fixing of collision of *every* entity that collided with Entity XZY (DEFAULT)
- * If Entity XYZ has `position_fix_others_allowlist = {}` + `position_fix_others_denylist = {"ALL"}` = allow fixing of collision of *no entity* that collided with Entity XZY
- * If Entity XYZ has `position_fix_others_allowlist = {1,2}` + `position_fix_others_denylist = {}` = allow fixing of collision of *entities 1 and 2 only* that collided with Entity XZY
- * If Entity XYZ has `position_fix_others_allowlist = {}` + `position_fix_others_denylist = {3,4}` = allow fixing of collision of *every entity except 3 and 4* that collided with Entity XZY
+ * If Entity XYZ has `apply_pos_fix_to_allowlist = {}` + `apply_pos_fix_to_denylist = {}` = allow fixing of collision of *every* entity that collided with Entity XZY (DEFAULT)
+ * If Entity XYZ has `apply_pos_fix_to_allowlist = {}` + `apply_pos_fix_to_denylist = {"ALL"}` = allow fixing of collision of *no entity* that collided with Entity XZY
+ * If Entity XYZ has `apply_pos_fix_to_allowlist = {1,2}` + `apply_pos_fix_to_denylist = {}` = allow fixing of collision of *entities 1 and 2 only* that collided with Entity XZY
+ * If Entity XYZ has `apply_pos_fix_to_allowlist = {}` + `apply_pos_fix_to_denylist = {3,4}` = allow fixing of collision of *every entity except 3 and 4* that collided with Entity XZY
 
 ##### Allow/Deny Fixing Position of the Entity
- * If Entity XYZ has `position_fix_self_allowlist = {}` + `position_fix_self_denylist = {}` = allow fixing of position of Entity XYZ in case it collides everyone (DEFAULT)
- * If Entity XYZ has `position_fix_self_allowlist = {}` + `position_fix_self_denylist = {"ALL"}` = disable fixing of position of Entity XYZ in case it collides anyone
- * If Entity XYZ has `position_fix_self_allowlist = {1,2}` + `position_fix_self_denylist = {}` = allow fixing of position of Entity XYZ in case it collides with *entities 1 and 2 only* 
- * If Entity XYZ has `position_fix_self_allowlist = {}` + `position_fix_self_denylist = {3,4}` = allow fixing of position of Entity XYZ in case it collides *every entity except 3 and 4* 
+ * If Entity XYZ has `accept_pos_fix_from_allowlist = {}` + `accept_pos_fix_from_denylist = {}` = allow fixing of position of Entity XYZ in case it collides everyone (DEFAULT)
+ * If Entity XYZ has `accept_pos_fix_from_allowlist = {}` + `accept_pos_fix_from_denylist = {"ALL"}` = disable fixing of position of Entity XYZ in case it collides anyone
+ * If Entity XYZ has `accept_pos_fix_from_allowlist = {1,2}` + `accept_pos_fix_from_denylist = {}` = allow fixing of position of Entity XYZ in case it collides with *entities 1 and 2 only* 
+ * If Entity XYZ has `accept_pos_fix_from_allowlist = {}` + `accept_pos_fix_from_denylist = {3,4}` = allow fixing of position of Entity XYZ in case it collides *every entity except 3 and 4* 
 
 #### Examples
 
@@ -196,13 +196,13 @@ To achieve the above, we would need to introduce the following configuration.
       "params" :  {
         "x" : 15, "y" : 27, 
         "dx" : 0, "dy" : 8,
-        "position_fix_self_denylist" : ["LAVA"] // LAVA cannot move the player
+        "accept_pos_fix_from_denylist" : ["LAVA"] // LAVA cannot move the player
       }
     }
   ]
 }
 ```
-> **_NOTE_**: Player must state LAVA in the `position_fix_self_denylist`. Otherwise, it will not be able to walk on the lava. At the same moment note that LAVA is not specified in the `denylist`. If it were there, no collision with Lava will be detected and hence no damage on Player would be generated. Precondition for damage generation is collision.
+> **_NOTE_**: Player must state LAVA in the `accept_pos_fix_from_denylist`. Otherwise, it will not be able to walk on the lava. At the same moment note that LAVA is not specified in the `denylist`. If it were there, no collision with Lava will be detected and hence no damage on Player would be generated. Precondition for damage generation is collision.
 
 ```
 {
@@ -228,18 +228,18 @@ To achieve the above, we would need to introduce the following configuration.
       "type" : "new.collidable:Collidable", 
       "params" :  {
         "x" : 15, "y" : 27, "dx" : 0, "dy" : 8,
-        "position_fix_self_denylist" : []  // this is also default value so can be omitted
+        "accept_pos_fix_from_denylist" : []  // this is also default value so can be omitted
       }
     }
   ]
 }
 ```
-> **_NOTE_**: The NPC is allowing LAVA entity to correct its position by not putting anything on `position_fix_self_denylist`.
+> **_NOTE_**: The NPC is allowing LAVA entity to correct its position by not putting anything on `accept_pos_fix_from_denylist`.
 
 ##### Stone
 Let's imagine that we want to implement Stone entity, i.e. entity that can be moved only by Player and no other entity can move the stone.
 
-In such case, we need to set following parameters on the `Collidable` component of the Stone entity `position_fix_self_allowlist = {"player"}` + `position_fix_walkaround_mode = False`
+In such case, we need to set following parameters on the `Collidable` component of the Stone entity `accept_pos_fix_from_allowlist = {"player"}` + `position_fix_walkaround_mode = False`
 
 ```
 {
@@ -262,7 +262,7 @@ In such case, we need to set following parameters on the `Collidable` component 
       "params" :  {
         "x" : 15, "y" : 15, 
         "dx" : 0, "dy" : 8,
-        "position_fix_self_allowlist" : ["player01"], // can be moved only by player
+        "accept_pos_fix_from_allowlist" : ["player01"], // can be moved only by player
         "position_fix_walkaround_mode" : false // can be pushed only straight
       }
     }
@@ -270,7 +270,7 @@ In such case, we need to set following parameters on the `Collidable` component 
 }
 ```
 ##### Player
-The Player as the entity controlled by the real person does not need to be pushed by other entities after collisions. To achieve that effect it is possible to tell the Player to forbid all entities to move him by `position_fix_self_denylist = {"ALL"}`.
+The Player as the entity controlled by the real person does not need to be pushed by other entities after collisions. To achieve that effect it is possible to tell the Player to forbid all entities to move him by `accept_pos_fix_from_denylist = {"ALL"}`.
 
 ```
 {
@@ -297,7 +297,7 @@ The Player as the entity controlled by the real person does not need to be pushe
       "params" :  {
         "x" : 15, "y" : 27, 
         "dx" : 0, "dy" : 8,
-        "position_fix_self_denylist" : ["ALL"] // noone can move the player
+        "accept_pos_fix_from_denylist" : ["ALL"] // noone can move the player
       }
     }
   ]
@@ -364,7 +364,7 @@ There might be several approaches to fixing of the position. The most simple is 
 
 The more realistic approach is to perform the correction only on one axis, i.e. take only one dimension of the vector and apply it. This will cause more realistic bahavior without skipping.
 
-The `ResolveCollisionsProcessor` also takes into account specific attributes of `Collidable` component passed in `FlagHasCollided`- `pos_fix_self` and `pos_fix_oth`. Those attributes are further determining if the position correction should happen or not (see chapter about `Collidable` component for more details).
+The `ResolveCollisionsProcessor` also takes into account specific attributes of `Collidable` component passed in `FlagHasCollided`- `accept_fix` and `pos_fix_oth`. Those attributes are further determining if the position correction should happen or not (see chapter about `Collidable` component for more details).
 
 > **NOTE:** Same as `GenerateCollisionsProcessor` also this processor might have several versions. Each version can implement different position fixing algorithms - for example how 2 entities should walk around each other.
 
