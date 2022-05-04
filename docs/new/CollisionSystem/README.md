@@ -364,7 +364,7 @@ There might be several approaches to fixing of the position. The most simple is 
 
 The more realistic approach is to perform the correction only on one axis, i.e. take only one dimension of the vector and apply it. This will cause more realistic bahavior without skipping.
 
-The `ResolveCollisionsProcessor` also takes into account specific attributes of `Collidable` component passed in `FlagHasCollided`- `accept_fix` and `pos_fix_oth`. Those attributes are further determining if the position correction should happen or not (see chapter about `Collidable` component for more details).
+The `ResolveCollisionsProcessor` also takes into account specific attributes of `Collidable` component passed in `FlagHasCollided`- `accept_fix` and `allow_fix`. Those attributes are further determining if the position correction should happen or not (see chapter about `Collidable` component for more details).
 
 > **NOTE:** Same as `GenerateCollisionsProcessor` also this processor might have several versions. Each version can implement different position fixing algorithms - for example how 2 entities should walk around each other.
 

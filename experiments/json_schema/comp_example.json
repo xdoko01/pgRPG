@@ -1,0 +1,10 @@
+
+{
+	"$schema": "./component.schema.json",
+	"type" : "new.movable:Movable",
+	"params" :  {
+		"velocity" : 500,
+		"accelerate" : -3
+	}
+
+}

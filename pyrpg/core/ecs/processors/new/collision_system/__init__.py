@@ -1,6 +1,6 @@
 # Entity Collisions Detection/Position Resolution Processors
 from .generate_collisions_processor import GenerateCollisionsOptimizedProcessor as GenerateCollisionsProcessor
-from .resolve_collisions_processor import ResolveCollisionsProcessor
+from .resolve_collisions_processor import ResolveCollisionsOptimizedProcessor as ResolveCollisionsProcessor
 from .remove_flag_has_collided_processor import RemoveFlagHasCollidedProcessor
 
 # Collidable adjustment Processors

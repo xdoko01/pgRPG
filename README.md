@@ -431,28 +431,15 @@
   - [x] update collision processor according to the new concept and document it
   - [x] write documentation how to add new component/processor class without the need to change all the dependencies - multiple classes in the files
   - [x] BUG - when shooting arrow the entity moves down - fixed by adding `accept_pos_fix_from_denylist=["ALL"]`
-    [ ] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
+  - [x] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
   - [ ] BUG - debug processor works onlywith one camera
+  - [ ] BUG - Dialogs stopped working
+  - [x] Prepare all weapons in some test quest - to test the factory functionality
+  - [ ] JSON schema - every component can have one and quest also entity and processor
 
-###
+## QUestions
+  - [] should position fixing be part of collision system or in separate component/processors?
 
-### How to solve following situation
-  - SwordSlash has accept_pos_fix_from_denylist = [ALL] and apply_pos_fix_to_denylist = [ALL]
-  - Ideally, we need that under this configuration NPC is not corrected upon the slash without any parameters needed on NPC side
-
-### Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
-  - add `FlagAdjustCollidable` on parent to include the arrow entity into denylist
-  - but arrow entity is temporary, how to solve this, se do not want denylist to be growing. Does generator remembers all the entities generated? Can we use this? 
-    - PerformFactoryGenerationProcessor
-      - store entity id that is generated on Factory
-      - if required, add FlagAdjustCollidable on parent so that it updates the denylist of parent. Use the list on factory not to pass all but only some.
-  - alternativelly, adjust COllision system further to apply parameters on both entities
-  - play with esper to allow optional parameters
-  ```
-        for parent, (position, is_action_frame, has_weapon, weapon_in_use, collidable) in self.world.get_components_opt(Position, FlagIsAnimationActionFrame, HasWeapon, WeaponInUse, optional=Collidable):
-  ```
-  - arrow ... apply_pos_fix_to_denylist -> player accept_pos_fix_from_denylist = arrow
-  - we need Collidable to calculate 
 
 
 ### Fade-in Fade-out effect POC

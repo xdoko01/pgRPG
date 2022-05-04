@@ -1,0 +1,11 @@
+{
+	"$id": "component.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "Schema validating components.",
+	"title": "Component",
+	"type": "object",
+	"oneOf": [
+		{"$ref": "components/movable.schema.json"},
+		{"$ref": "components/position.schema.json"}
+	]
+}
