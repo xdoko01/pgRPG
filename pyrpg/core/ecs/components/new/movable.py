@@ -32,10 +32,10 @@ class Movable(Component):
         ''' Initiate values for the new Movable component.
 
         Parameters:
-            :param accelerate: Pace of acceleration.
+            :param accelerate: Pace of acceleration (optional).
             :type accelerate: int
 
-            :param velocity: Speed of the movement.
+            :param velocity: Speed of the movement (mandatory).
             :type velocity: int
 
             :raise: ValueError - in case movement params are not numbers.

@@ -1,0 +1,39 @@
+{
+	"$id": "visual_fx_on_collision.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "VisualFXOnCollision Component",
+	"description": "Schema validating the VisualFXOnCollision component.",
+
+	"examples" : [
+		{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"ttl" : 1000}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.visual_fx_on_collision:VisualFXOnCollision" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the VisualFXOnCollision component class - 'effect'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["effect"],
+			"properties": {
+				"effect" : {
+					"$ref": "../definitions.schema.json#/definitions/model_file"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

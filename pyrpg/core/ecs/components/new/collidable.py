@@ -55,9 +55,6 @@ class Collidable(Component):
             :param dy: Y-axis set offset +- from the y-centre of the entity in pixel coordinates
             :type dy: int
 
-            :param dy: Y-axis set offset +- from the y-centre of the entity in pixel coordinates
-            :type dy: int
-
             :param allowlist: Allow collision only with entities that are present in the allowlist
             :type allowlist: set
 
@@ -85,8 +82,8 @@ class Collidable(Component):
         super().__init__()
 
         # With and height of the collision zone - from the center +/-x and +/-y
-        self.x = kwargs.get('x', 0)
-        self.y = kwargs.get('y', 0)
+        self.x = kwargs.get('x')
+        self.y = kwargs.get('y')
 
         # Correction of the centre from which the collision zone is calculated
         self.dx = kwargs.get('dx', 0)

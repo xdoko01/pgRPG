@@ -1,0 +1,46 @@
+{
+	"$id": "ammo_pack.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "AmmoPack Component",
+	"description": "Schema validating the AmmoPack component.",
+
+	"examples" : [
+		{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type": "wooden_arrows_pack"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.ammo_pack:AmmoPack" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the AmmoPack component class - 'weapon', 'type'.",
+			"type": "object",
+			"required": ["weapon", "type"],
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"weapon" : {
+					"title": "Weapon Type",
+					"description": "Type of weapon for which ammo pack is aimed.",
+					"enum": ["bow", "sword", "spear", "spell"]
+				},
+				"type" : {
+					"title": "AmmoPack Type",
+					"description": "Identifier of ammo type so that same types can be grouped together.",
+					"type": "string"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

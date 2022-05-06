@@ -1,0 +1,81 @@
+{
+	"$id": "debug.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Debug Component",
+	"description": "Schema validating the Movable component.",
+
+	"examples" : [
+		{
+			"type" : "new.debug:Debug", 
+			"params" : {
+				"collision" : {
+					"color" : [125, 125, 125], 
+					"width" : 1
+				}, 
+				"movement" : {
+					"color" : [0,0,0], 
+					"width" : 2
+				}
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.debug:Debug" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Debug component class - 'collision', 'movement'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"collision" : {
+					"title": "Collision Zone Display Params",
+					"description": "Collision Zone Display Params.",
+					"type": "object",
+					"properties": {
+						"color": {
+							"description": "RGB color of the collision zone.",
+							"$ref": "../definitions.schema.json#/definitions/color_rgb",
+							"default": [0, 0, 255]
+						},
+						"width": {
+							"description": "With of the collision area line.",
+							"$ref": "../definitions.schema.json#/definitions/pixel_dim",
+							"default": 1
+						}
+					}
+				},
+				"movement" : {
+					"title": "Movement Display Params",
+					"description": "Movement Zone Display Params.",
+					"type": "object",
+					"properties": {
+						"color": {
+							"description": "RGB color of the movement arrow.",
+							"$ref": "../definitions.schema.json#/definitions/color_rgb",
+							"default": [255, 0, 0]
+						},
+						"width": {
+							"description": "With of the movement arrow.",
+							"$ref": "../definitions.schema.json#/definitions/pixel_dim",
+							"default": 1
+						}
+					}
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

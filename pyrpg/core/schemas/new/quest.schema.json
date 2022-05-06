@@ -1,0 +1,75 @@
+{
+	"$id": "quest.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Game Quest specification document",
+	"description": "Schema validating the Game Quest specification.",
+
+
+	"required": [ "id", "title", "description", "objective", "init_phase", "processors", "phases"],
+	"properties": {
+		"id": {
+			"title": "Quest ID",
+			"description" : "The unique ID that is used by the program to identify the game quest.",
+			"type": "string",
+			"minLength": 3
+		},
+		"title": {
+			"title": "Quest title",
+			"description" : "The Quest title to be shown on different game screens.",
+			"type": "string"
+		},
+		"description": {
+			"title": "Quest description",
+			"description" : "The Quest description to be shown on different game screens.",
+			"type": "string"
+		},
+		"objective": {
+			"title": "Quest objective",
+			"description" : "The Quest objective to be shown on different game screens.",
+			"type": "string"
+		},
+		"init_phase": {
+			"title": "The First Phase of the Quest",
+			"description" : "The First Phase of the Quest to be loaded first with the quest.",
+			"type": "string"
+		},
+		"processors": {
+			"title": "Quest Processors",
+			"description" : "List of processors used for processing the game logic.",
+			"type": "array"
+		},
+		"phases": {
+			"title": "Quest Phases",
+			"description" : "Dictionary of phases used within the quest.",
+			"type": "object",
+			"patternProperties": {
+				"^phase": {
+					"title": "Quest Phase",
+					"description": "Definition of particular Quest Phase.",
+					"type": "object",
+					"properties": {
+						"title": true,
+						"description": true,
+						"objective": true,
+						"cleanup": true,
+
+						"maps": true,
+
+						"entities": {
+							"type": "array",
+							"items": {
+								"$ref": "entity.schema.json"
+							},
+							"uniqueItems": true
+						},
+
+						"event_handling": true,
+						"after_steps": true
+					}
+				}
+			}
+		}
+	}
+	
+}

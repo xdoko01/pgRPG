@@ -1,0 +1,43 @@
+{
+	"$id": "renderable_model.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "RenderableModel Component",
+	"description": "Schema validating the RenderableModel component.",
+
+	"examples" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "darkfemale.json"}},
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "darkfemale.json", "action" : "idle"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.renderable_model:RenderableModel" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the RenderableModel component class - 'model', 'action'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"model" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_model"
+				},
+				"action": {
+					"$ref": "../definitions.schema.json#/definitions/entity_action",
+					"default": "idle"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

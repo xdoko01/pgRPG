@@ -1,0 +1,113 @@
+{
+	"$id": "collidable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Collidable Component",
+	"description": "Schema validating the Collidable component.",
+
+	"examples" : [
+		{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
+		{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10}},
+		{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10, "allowlist" : ["player"]}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.collidable:Collidable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Collidable component class - 'x', 'y', 'dx', 'dy', 'allowlist', 'denylist', 'apply_pos_fix_to_allowlist', 'apply_pos_fix_to_denylist', 'accept_pos_fix_from_allowlist', 'accept_pos_fix_from_denylist', 'position_fix_walkaround_mode'.",
+			
+			"type": "object",
+			"required": ["x", "y"],
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"x" : {
+					"title": "X-axis",
+					"description": "X-axis collision zone in pixels.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"dx" : {
+					"title": "X-axis offset",
+					"description": "Offset for X-axis collision zone.",
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				},
+				"y" : {
+					"title": "Y-axis",
+					"description": "Y-axis collision zone in pixels.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"dy" : {
+					"title": "Y-axis offset",
+					"description": "Offset for Y-axis collision zone.",
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				},
+				"allowlist": {
+					"title": "Collision Allowlist",
+					"description": "List of entities which can collide with entity. ['ALL'] for all entities.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				},
+				"denylist": {
+					"title": "Collision Denylist",
+					"description": "List of entities which can not collide with entity. ['ALL'] for all entities.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				},
+				"apply_pos_fix_to_allowlist": {
+					"title": "Apply Collision Allowlist",
+					"description": "Apply fixing of position of others only in this allowlist upon hitting this entity.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				},
+				"apply_pos_fix_to_denylist": {
+					"title": "Apply Collision Denylist",
+					"description": "Do not apply fixing of position of others only in this denylist upon hitting this entity.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				},
+				"accept_pos_fix_from_allowlist": {
+					"title": "Accept Collision Allowlist",
+					"description": "Accept fixing of entity's position from entities in allowlist only.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				},
+				"accept_pos_fix_from_denylist": {
+					"title": "Accept Collision Denylist",
+					"description": "Do not accept fixing of entity's position from entities in denylist only.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				},
+				"position_fix_walkaround_mode": {
+					"title": "Walkaround Mode",
+					"description": "Should the entity walkaround the other entity upon collision",
+					"default": true,
+					"type": "boolean"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+
+}

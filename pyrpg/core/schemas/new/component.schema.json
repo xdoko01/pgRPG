@@ -1,0 +1,31 @@
+{
+	"$id": "component.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "Schema validating components.",
+	"title": "Component",
+	"type": "object",
+	"oneOf": [
+		{"$ref": "components/movable.schema.json"},
+		{"$ref": "components/position.schema.json"},
+		{"$ref": "components/ammo_pack.schema.json"},
+		{"$ref": "components/factory.schema.json"},
+		{"$ref": "components/debug.schema.json"},
+		{"$ref": "components/collidable.schema.json"},
+		{"$ref": "components/brain.schema.json"},
+		{"$ref": "components/destroy_on_collision.schema.json"},
+		{"$ref": "components/destroy_on_no_movement.schema.json"},
+		{"$ref": "components/camera.schema.json"},
+		{"$ref": "components/controllable.schema.json"},
+		{"$ref": "components/has_inventory.schema.json"},
+		{"$ref": "components/has_weapon.schema.json"},
+		{"$ref": "components/is_destroyed.schema.json"},
+		{"$ref": "components/pickable.schema.json"},
+		{"$ref": "components/renderable_model.schema.json"},
+		{"$ref": "components/sound_fx_on_collision.schema.json"},
+		{"$ref": "components/teleport.schema.json"},
+		{"$ref": "components/teleportable.schema.json"},
+		{"$ref": "components/visual_fx_on_collision.schema.json"},
+		{"$ref": "components/weapon_in_use.schema.json"},
+		{"$ref": "components/weapon.schema.json"}
+	]
+}

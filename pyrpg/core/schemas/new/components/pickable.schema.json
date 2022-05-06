@@ -1,0 +1,34 @@
+{
+	"$id": "pickable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Pickable Component",
+	"description": "Schema validating the Pickable component.",
+
+	"examples" : [
+		{"type" : "new.pickable:Pickable", "params" : {}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.pickable:Pickable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Pickable component class - no parameters.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"default": {}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

@@ -1,0 +1,74 @@
+{
+	"$id": "camera.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Camera Component",
+	"description": "Schema validating the Camera component.",
+
+	"examples" : [
+		{"type" : "new.camera:Camera", "params" : {"always_center" : false}},
+		{"type" : "new.camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200}},
+		{
+			"type" : "new.camera:Camera", 
+			"params" : {
+				"always_center" : 5, 
+				"screen_width" : 200, 
+				"screen_height": 200,
+				"screen_pos_x": 0,
+				"screen_pos_y": 0
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.camera:Camera" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Camera component class - 'always_center', 'screen_width', 'screen_height', 'screen_pos_x', 'screen_pos_y'.",
+			"type": "object",
+			"required": ["screen_width", "screen_height"],
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"always_center" : {
+					"title": "Centered",
+					"description": "Should the entity always be in the centre of the camera?.",
+					"default": false,
+					"type": "boolean"
+				},
+				"screen_width" : {
+					"title": "Camera Width",
+					"description": "With of the camera pane.",
+					"default" : 100,
+					"type": "integer",
+					"exclusiveMinimum": 0
+				},
+				"screen_pos_x" : {
+					"title": "Camera Position X-axis",
+					"description": "X-coordinate of the upper-left camera pane corner.",
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				},
+				"screen_pos_y" : {
+					"title": "Camera Position Y-axis",
+					"description": "Y-coordinate of the upper-left camera pane corner.",
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

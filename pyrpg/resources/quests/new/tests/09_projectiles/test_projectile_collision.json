@@ -1,6 +1,8 @@
 {
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
 	"id" : "new_test_projectile_collision",
-	"name" : "Test of Projectile Collision",
+	"title" : "Test of Projectile Collision",
 	"description" : "Test of Attack and Factory and Effect system - collision of projectile",
 	"objective" : "POC of the new Attack and Factory and Effect system",
 	"init_phase" : "phase01",

@@ -1,0 +1,39 @@
+{
+	"$id": "weapon_in_use.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Weapon Component",
+	"description": "Schema validating the Weapon component.",
+
+	"examples" : [
+		{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+		{"type" : "new.weapon:Weapon", "params" : {"type" : "sword"}}	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.weapon:Weapon" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Weapon component class - 'type'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["type"],
+			"properties": {
+				"type" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_weapon_type"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

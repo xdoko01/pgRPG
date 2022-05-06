@@ -1,0 +1,42 @@
+{
+	"$id": "is_destroyed.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "IsDestroyed Component",
+	"description": "Schema validating the IsDestroyed component.",
+
+	"examples" : [
+		{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 1000}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.is_destroyed:IsDestroyed" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the IsDestroyed component class - 'ttl', 'action'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"ttl" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_ttl"
+				},
+				"action": {
+					"$ref": "../definitions.schema.json#/definitions/entity_action",
+					"default": "expire"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

@@ -1,0 +1,76 @@
+{
+	"$id": "controllable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Controllable Component",
+	"description": "Schema validating the Controllable component.",
+
+	"examples" : [
+		{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "key_controls_1"}},
+		{
+			"type" : "new.controllable:Controllable", 
+			"params" :  {
+				"key_profile" : "key_controls_1",
+				"control_keys" : {
+					"left" : 276, 
+					"right": 275, 
+					"up": 273, 
+					"down" : 274, 
+					"attack" : 122
+				},
+				"control_cmds" : {
+					"left" : [["move", {"direction" : "left"}]],
+					"right": [["move", {"direction" : "right"}]],
+					"up" : [["move", {"direction" : "up"}]],
+					"down" : [["move", {"direction" : "down"}]],
+					"attack" : [["attack", {}]]}
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.controllable:Controllable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Controllable component class - 'key_profile', 'control_keys', 'control_cmds'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"key_profile" : {
+					"title": "Keys Layout",
+					"description": "Layout of control keys.",
+					"type": "string",
+					"oneOf":[
+						{"pattern": "^key_controls*"},
+						{"enum": ["default"]}
+					],
+					"default": "default"
+				},
+				"control_keys" : {
+					"title": "Control Keys",
+					"description": "Keys assigned to actions.",
+					"type": "object",
+					"required": ["left", "right", "up", "down", "attack"]
+				},
+				"control_cmds" : {
+					"title": "Control Commands",
+					"description": "List of commands assigned to actions.",
+					"type": "object",
+					"required": ["left", "right", "up", "down", "attack"]
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}
