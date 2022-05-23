@@ -424,6 +424,10 @@
     * `accept_fix` ... entity moved answers the question if entity moved can be moved by entity other. So better name for this var will be `accept_fix` (is determined by the whitelists of moved entity).
     * `apply_fix` ... entity other answers the question if entity moved can be moved by entity other. So better name for this var will be `apply_fix` (is determined by the whitelists on other entity).
 
+### 2022-05-06 All components have JSON schema
+
+### 2022-05-22 Damage system implemented
+  New `Damage System` was implemented and new components `Damaging` and `Damageable` introduced.
 
 ## To Do
 
@@ -435,12 +439,12 @@
   - [ ] BUG - debug processor works onlywith one camera
   - [ ] BUG - Dialogs stopped working
   - [x] Prepare all weapons in some test quest - to test the factory functionality
-  - [ ] JSON schema - every component can have one and quest also entity and processor
+  - [x] JSON schema - every component can have one 
+  - [ ] JSON Scheme for the whole quest
+  - [ ] BUG - NPC is destroyed but the brain still works - as a result it is lying dead and moving forward
 
-## QUestions
-  - [] should position fixing be part of collision system or in separate component/processors?
-
-
+## Questions
+  - [ ] should position fixing be part of collision system or in separate component/processors?
 
 ### Fade-in Fade-out effect POC
   - based on event - script

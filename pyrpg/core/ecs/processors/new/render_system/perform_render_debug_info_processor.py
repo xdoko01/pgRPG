@@ -14,6 +14,8 @@ from pyrpg.core.ecs.components.new.has_inventory import HasInventory
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.collidable import Collidable
+from pyrpg.core.ecs.components.new.damageable import Damageable
+
 
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
@@ -39,6 +41,7 @@ class PerformRenderDebugInfoProcessor(Processor):
         -   HasInventory
         -   Movable
         -   Collidable
+        -   Damageable
 
     Related processors:
         -   whole render system
@@ -82,6 +85,10 @@ class PerformRenderDebugInfoProcessor(Processor):
             # Get inventory info
             for _, (position, debug, inventory) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, HasInventory)):
                 debug.info.update({'inventory' : inventory.inventory})
+
+            # Get health info
+            for _, (position, debug, damageable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, Damageable)):
+                debug.info.update({'Health' : damageable.health})
 
             # Show COLLISION information
             # Show debug information to all entities with Position and Debug and Collidable component

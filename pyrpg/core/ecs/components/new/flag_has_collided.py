@@ -21,7 +21,7 @@ class FlagHasCollided(Component):
         ''' Initiate values for the new FlagHasCollided component.
 
         Parameters:
-            :param collisions: Set of tuples defininf the collision
+            :param collisions: Set of tuples defining the collision
             :type collisions: set
 
         '''

@@ -35,7 +35,15 @@ class FlagCreateFromFactory(Component):
 
     __slots__ = ['adjust_position', 'register', 'id_suffix', 'ignore_collision_with']
 
-    def __init__(self, adjust_position=None, adjust_collision=None, adjust_movement=None, register=False, id_suffix='from_factory'):
+    def __init__(
+        self, 
+        adjust_position=None, 
+        adjust_collision=None, 
+        adjust_movement=None, 
+        adjust_damaging=None, 
+        register=False, 
+        id_suffix='from_factory'
+    ):
         ''' Initiate values for the FlagCreateFromFactory component.
 
         Parameters:
@@ -47,6 +55,9 @@ class FlagCreateFromFactory(Component):
 
             :param adjust_movement: Parameters to adjust existing Movable component
             :type adjust_movement: dir
+
+            :param adjust_damaging: Parameters to adjust existing Damaging component
+            :type adjust_damaging: dir
 
             :param register: Should the entity be globally registered with engine
             :type register: bool
@@ -61,6 +72,8 @@ class FlagCreateFromFactory(Component):
         self.adjust_position = adjust_position
         self.adjust_collision = adjust_collision
         self.adjust_movement = adjust_movement
+        self.adjust_damaging = adjust_damaging
+
 
         self.register = register
         self.id_suffix = id_suffix

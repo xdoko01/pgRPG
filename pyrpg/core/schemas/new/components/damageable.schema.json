@@ -1,0 +1,38 @@
+{
+	"$id": "damageable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Damageable Component",
+	"description": "Schema validating the Damageable component.",
+
+	"examples" : [
+		{"type" : "new.damageable:Damageable", "params" : {"health" : 100}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.damageable:Damageable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Damageable component class - 'health'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"health" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_health"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

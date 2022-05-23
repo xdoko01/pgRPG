@@ -13,11 +13,18 @@
 
 			"type": "array",
 			"items":{
-				"oneOf": [
-					{"$ref": "#/definitions/entity_id_int"},
-					{"$ref": "#/definitions/entity_id_str"}
-				]
+				"$ref": "#/definitions/entity_id"
 			}
+		},
+
+		"entity_id" : {
+			"title": "Entity ID",
+			"description": "Either number or name uniquelly specifying the entity.",
+			"examples": ["player", 1, 56, "npc02"],
+			"oneOf": [
+				{"$ref": "#/definitions/entity_id_int"},
+				{"$ref": "#/definitions/entity_id_str"}
+			]
 		},
 
 		"entity_id_int": {
@@ -84,6 +91,25 @@
 
 			"enum": ["bow", "spear", "sword", "spell"]
 
+		},
+
+		"entity_health": {
+			"title": "Entity Health",
+			"description": "Percentage of entity health",
+			"examples": [100, 50, 0],
+
+			"type": "integer",
+			"default": 100,
+			"minimum": 0
+		},
+
+		"entity_damage": {
+			"title": "Entity Damage",
+			"description": "Damage",
+			"examples": [100, 50, 1],
+
+			"type": "integer",
+			"minimum": 0
 		},
 
 		"sound_file": {

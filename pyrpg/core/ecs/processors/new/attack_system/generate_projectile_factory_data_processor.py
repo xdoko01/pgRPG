@@ -98,6 +98,10 @@ class GenerateProjectileFactoryDataProcessor(Processor):
                                                 "velocity_fnc" : [lambda x: x],
                                                 "accelerate_fnc" : [lambda x: x]
                                         },
+                                        adjust_damaging={
+                                                "parent": parent,
+                                                "damage_fnc": [lambda x: x]
+                                        },
                                         id_suffix='projectile'
                                         )
                                     )

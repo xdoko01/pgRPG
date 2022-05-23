@@ -1,0 +1,43 @@
+[
+    {
+        "id": 2,
+        "name": "direction",
+        "storageType": "string",
+        "type": "enum",
+        "values": [
+            "left",
+            "right",
+            "up",
+            "down"
+        ],
+        "valuesAsFlags": false
+    },
+    {
+        "id": 1,
+        "members": [
+            {
+                "name": "direction",
+                "propertyType": "direction",
+                "type": "string",
+                "value": "down"
+            },
+            {
+                "name": "map",
+                "type": "object",
+                "value": 0
+            },
+            {
+                "name": "x",
+                "type": "int",
+                "value": 0
+            },
+            {
+                "name": "y",
+                "type": "int",
+                "value": 0
+            }
+        ],
+        "name": "Movable",
+        "type": "class"
+    }
+]

@@ -12,6 +12,8 @@ from pyrpg.core.ecs.components.new.factory import Factory
 from pyrpg.core.ecs.components.new.position import Position
 from pyrpg.core.ecs.components.new.flag_adjust_collidable import FlagAdjustCollidable
 from pyrpg.core.ecs.components.new.flag_adjust_movement import FlagAdjustMovement
+from pyrpg.core.ecs.components.new.flag_adjust_damaging import FlagAdjustDamaging
+
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -105,6 +107,15 @@ class PerformFactoryGenerationProcessor(Processor):
                 )
                 # Log information about successful generation
                 logger.debug(f'({self.cycle}) - Entity {new_entity} will have adjustment in its movement component.')
+
+            # if damaging adjustment was part of the FlagCreateFromFactory then do it
+            if flag_create_from_factory.adjust_damaging:
+                self.world.add_component(
+                    new_entity,
+                    FlagAdjustDamaging(**flag_create_from_factory.adjust_damaging)
+                )
+                # Log information about successful generation
+                logger.debug(f'({self.cycle}) - Entity {new_entity} will have adjustment in its damaging component.')
 
 
     def pre_save(self):

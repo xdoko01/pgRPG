@@ -26,6 +26,9 @@
 		{"$ref": "components/teleportable.schema.json"},
 		{"$ref": "components/visual_fx_on_collision.schema.json"},
 		{"$ref": "components/weapon_in_use.schema.json"},
-		{"$ref": "components/weapon.schema.json"}
+		{"$ref": "components/weapon.schema.json"},
+		{"$ref": "components/damaging.schema.json"},
+		{"$ref": "components/damageable.schema.json"}
+
 	]
 }

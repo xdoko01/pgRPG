@@ -1,0 +1,20 @@
+{
+    "maps": [
+        {
+            "fileName": "oticek_hra_level_1.tmx",
+            "height": 1600,
+            "width": 1600,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "test_arena_sand.tmx",
+            "height": 3200,
+            "width": 3200,
+            "x": 1600,
+            "y": 0
+        }
+    ],
+    "onlyShowAdjacentMaps": false,
+    "type": "world"
+}

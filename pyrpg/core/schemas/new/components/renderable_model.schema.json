@@ -23,7 +23,7 @@
 			"$ref": "#/$defs/cond_params",
 			"properties": {
 				"model" : {
-					"$ref": "../definitions.schema.json#/definitions/entity_model"
+					"$ref": "../definitions.schema.json#/definitions/entity_model_file"
 				},
 				"action": {
 					"$ref": "../definitions.schema.json#/definitions/entity_action",

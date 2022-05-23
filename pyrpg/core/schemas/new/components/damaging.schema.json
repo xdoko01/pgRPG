@@ -1,0 +1,41 @@
+{
+	"$id": "damaging.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Damaging Component",
+	"description": "Schema validating the Damaging component.",
+
+	"examples" : [
+		{"type" : "new.damaging:Damaging", "params" : {"damage" : 1}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.damaging:Damaging" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Damaging component class - 'damage', 'parent'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"damage" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_damage"
+				},
+				"parent" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_id"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}
