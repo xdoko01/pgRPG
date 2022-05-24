@@ -1,0 +1,39 @@
+{
+	"$id": "scorable_on_destroy.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "ScorableOnDestroy Component",
+	"description": "Schema validating the ScorableOnDamage component.",
+
+	"examples" : [
+		{"type" : "new.scorable_on_destroy:ScorableOnDestroy", "params" : {"score" : 10}},
+		{"type" : "new.scorable_on_destroy:ScorableOnDestroy", "params" : {}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.scorable_on_destroy:ScorableOnDestroy" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the ScorableOnDestroy component class - 'score'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"score" : {
+					"$ref": "../definitions.schema.json#/definitions/score"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

@@ -1,0 +1,4 @@
+from .generate_score_on_damage_processor import GenerateScoreOnDamageProcessor
+from .generate_score_on_destroy_processor import GenerateScoreOnDestroyProcessor
+from .calculate_score_processor import CalculateScoreProcessor
+from .remove_flag_add_score_processor import RemoveFlagAddScoreProcessor

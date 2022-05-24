@@ -1,0 +1,71 @@
+__all__ = ['RemoveFlagAddScoreProcessor']
+
+import logging
+
+# Parent super-class
+from pyrpg.core.ecs.esper import Processor
+
+# Used components
+from pyrpg.core.ecs.components.new.flag_add_score import FlagAddScore
+
+# Logger init
+logger = logging.getLogger(__name__)
+
+class RemoveFlagAddScoreProcessor(Processor):
+    ''' Removes the flag that the entity has scored.
+
+    Involved components:
+        -   FlagAddScore
+
+    Related processors:
+        -   CalculateScoreProcessor
+
+    What if this processor is disabled?
+        -   uncontrolled adding of score
+
+    Where the processor should be planned?
+        -   after CalculateScoreProcessor
+    '''
+
+    # Processors that need to be planned before this processor in order for it to work.
+    PREREQ = [
+        'new.score_system:CalculateScoreProcessor'
+    ]
+
+    def __init__(self):
+        ''' Init the processor.
+        '''
+        super().__init__()
+
+    def initialize(self, register):
+        '''Processor registers itself at esper ECS World'''
+        register(self)
+
+    def process(self, *args, **kwargs):
+        ''' Removes the flag that the entity has scored.
+        '''
+        self.cycle += 1
+
+        for ent, (_) in self.world.get_components(FlagAddScore):
+
+            self.world.remove_component(ent, FlagAddScore)
+            logger.debug(f'({self.cycle}) - Entity {ent} - flag "FlagAddScore" was removed.')
+
+    def pre_save(self):
+        ''' Prepare processor for serialization by disabling links to 
+        non-serializable components
+        '''
+        pass
+
+    def post_load(self):
+        ''' Reconfigure the processor after de-serialization by attaching
+        the removed references again.
+        '''
+        pass
+
+    def finalize(self, *args, **kwargs):
+        ''' Method called when closing the game. Put all necessary statements 
+        such as closing of files/resources here, if necessary.
+        '''
+        pass
+

@@ -15,6 +15,7 @@ from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.damageable import Damageable
+from pyrpg.core.ecs.components.new.has_score import HasScore
 
 
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
@@ -42,6 +43,7 @@ class PerformRenderDebugInfoProcessor(Processor):
         -   Movable
         -   Collidable
         -   Damageable
+        -   HasScore
 
     Related processors:
         -   whole render system
@@ -89,6 +91,10 @@ class PerformRenderDebugInfoProcessor(Processor):
             # Get health info
             for _, (position, debug, damageable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, Damageable)):
                 debug.info.update({'Health' : damageable.health})
+
+            # Get score info
+            for _, (position, debug, has_score) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, HasScore)):
+                debug.info.update({'Score' : has_score.score})
 
             # Show COLLISION information
             # Show debug information to all entities with Position and Debug and Collidable component

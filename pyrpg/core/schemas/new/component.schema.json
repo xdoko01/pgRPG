@@ -28,7 +28,10 @@
 		{"$ref": "components/weapon_in_use.schema.json"},
 		{"$ref": "components/weapon.schema.json"},
 		{"$ref": "components/damaging.schema.json"},
-		{"$ref": "components/damageable.schema.json"}
+		{"$ref": "components/damageable.schema.json"},
+		{"$ref": "components/scorable_on_destroy.schema.json"},
+		{"$ref": "components/scorable_on_damage.schema.json"},
+		{"$ref": "components/has_score.schema.json"}
 
 	]
 }

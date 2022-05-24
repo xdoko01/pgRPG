@@ -112,6 +112,15 @@
 			"minimum": 0
 		},
 
+		"entity_score": {
+			"title": "Entity Score",
+			"description": "Score",
+			"examples": [100, 50, 1],
+
+			"type": "integer",
+			"minimum": 0
+		},
+
 		"sound_file": {
 			"title": "Sound File",
 			"description": "Sound file in the SOUND_PATH.",
