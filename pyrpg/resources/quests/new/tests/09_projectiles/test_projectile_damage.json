@@ -52,6 +52,8 @@
 		// For destroy
 		["new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
 		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
+		["new.destroy_system.generate_destroy_on_no_health_processor:GenerateDestroyOnNoHealthProcessor", {}],
+
 		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
 
 		// For visual and sound effects
@@ -85,7 +87,8 @@
 		["new.damage_system.remove_flag_is_about_to_be_damaged_by_processor:RemoveFlagIsAboutToBeDamagedByProcessor", {}],
 		["new.damage_system.remove_flag_was_damaged_by_processor:RemoveFlagWasDamagedByProcessor", {}],
 		["new.damage_system.remove_flag_has_damaged_processor:RemoveFlagHasDamagedProcessor", {}],
-		["new.damage_system.remove_flag_adjust_damaging_processor:RemoveFlagAdjustDamagingProcessor", {}]
+		["new.damage_system.remove_flag_adjust_damaging_processor:RemoveFlagAdjustDamagingProcessor", {}],
+		["new.damage_system.remove_flag_has_no_health_processor:RemoveFlagHasNoHealthProcessor", {}]
 
 
 		// For logging performance of processors - timed must be True for this processor to work
@@ -342,6 +345,8 @@
 						]}},
 
 						{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
+						{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+
 
 						{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
@@ -355,6 +360,8 @@
 						{"type" : "new.debug:Debug", "params" : {}},
 
 						{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
+						{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+
 
 						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},

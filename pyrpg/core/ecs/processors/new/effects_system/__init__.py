@@ -1,2 +1,5 @@
 from .generate_sound_fx_on_collision_processor import GenerateSoundFXOnCollisionProcessor
+from .generate_sound_fx_on_damage_processor import GenerateSoundFXOnDamageProcessor
+from .generate_sound_fx_on_no_health_processor import GenerateSoundFXOnNoHealthProcessor
+
 from .generate_visual_fx_on_collision_processor import GenerateVisualFXOnCollisionProcessor

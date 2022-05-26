@@ -1,0 +1,38 @@
+{
+	"$id": "destroy_on_no_health.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Destroy On No Health Component",
+	"description": "Schema validating the Destroy On No Health component.",
+
+	"examples" : [
+		{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 1000}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.destroy_on_no_health:DestroyOnNoHealth" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the DestroyOnNoHealth component class - 'ttl'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"ttl" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_ttl"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

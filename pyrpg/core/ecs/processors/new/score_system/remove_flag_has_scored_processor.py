@@ -1,4 +1,4 @@
-__all__ = ['CalculateScoreProcessor']
+__all__ = ['RemoveFlagHasScoredProcessor']
 
 import logging
 
@@ -7,36 +7,29 @@ from pyrpg.core.ecs.esper import Processor
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
-from pyrpg.core.ecs.components.new.has_score import HasScore
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class CalculateScoreProcessor(Processor):
-    ''' Detects entities that can have score and that earned some scor in this cycle.
+class RemoveFlagHasScoredProcessor(Processor):
+    ''' Removes the flag that the entity has scored.
 
     Involved components:
-        -   HasScore
         -   FlagHasScored
 
     Related processors:
-        -   GenerateScoreOnDamageProcessor
-        -   GenerateScoreOnDestroyProcessor
-        -   RemoveFlagHasScoredProcessor
+        -   CalculateScoreProcessor
 
     What if this processor is disabled?
-        -   no score is calculated
+        -   uncontrolled adding of score
 
     Where the processor should be planned?
-        -   after GenerateScoreOnDamageProcessor
-        -   after GenerateScoreOnDestroyProcessor
-        -   before RemoveFlagHasScoredProcessor
+        -   after CalculateScoreProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.score_system:GenerateScoreOnDamageProcessor',
-        'new.score_system:GenerateScoreOnNoHealthProcessor'
+        'new.score_system:CalculateScoreProcessor'
     ]
 
     def __init__(self):
@@ -49,17 +42,14 @@ class CalculateScoreProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        '''  Detects entities that can have score and that earned 
-        some score in this cycle.
+        ''' Removes the flag that the entity has scored.
         '''
         self.cycle += 1
 
-        # Get all entities that have Damaging and FlagHasCollided - those are candidates for causing damage
-        for ent_with_score, (has_score, flag_has_scored) in self.world.get_components(HasScore, FlagHasScored):
+        for ent, (_) in self.world.get_components(FlagHasScored):
 
-            has_score.score += flag_has_scored.score
-
-            logger.debug(f'({self.cycle}) - Entity {ent_with_score} increased score by {flag_has_scored.score}. New score is {has_score.score}.')
+            self.world.remove_component(ent, FlagHasScored)
+            logger.debug(f'({self.cycle}) - Entity {ent} - flag "FlagHasScored" was removed.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 
@@ -78,3 +68,4 @@ class CalculateScoreProcessor(Processor):
         such as closing of files/resources here, if necessary.
         '''
         pass
+

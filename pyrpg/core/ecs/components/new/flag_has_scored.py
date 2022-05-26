@@ -1,26 +1,26 @@
-''' Module "pyrpg.core.ecs.components.flag_add_score" contains
-FlagAddScore component implemented as a FlagAddScore class.
+''' Module "pyrpg.core.ecs.components.flag_has_scored" contains
+FlagHasScored component implemented as a FlagHasScored class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_add_score -v' to run
+Use 'python -m pyrpg.core.ecs.components.flag_has_scored -v' to run
 module tests.
 '''
 
 from pyrpg.core.ecs.components.component import Component
 
-class FlagAddScore(Component):
+class FlagHasScored(Component):
     ''' Flag/tag to mark entity(generator) which has scored
     some points.
 
     Used by:
-        - GenerateScoreOnDestroyProcessor
+        - GenerateScoreOnNoHealthProcessor
         - GenerateScoreOnDamageProcessor
         - CalculateScoreProcessor
 
     Examples of JSON definition:
-        {"type" : "FlagAddScore", "params" : {score : 5}}
+        {"type" : "FlagHasScored", "params" : {score : 5}}
 
     Tests:
-        >>> c = FlagAddScore(**{"score" : 5})
+        >>> c = FlagHasScored(**{"score" : 5})
         >>> c.score
         5
     '''
@@ -28,7 +28,7 @@ class FlagAddScore(Component):
     __slots__ = ['score']
 
     def __init__(self, *args, **kwargs):
-        ''' Initiate values for the new FlagAddScore component.
+        ''' Initiate values for the new FlagHasScored component.
 
         Parameters:
             :param score: Count of Score points to be added

@@ -276,6 +276,36 @@ class World:
         self.clear_cache()
         return entity
 
+    def remove_component_force(self, entity: int, component_type: _Any) -> int:
+        """ODO added - do not throw exception if entity and/or component not found
+        Remove a Component instance from an Entity, by type.
+
+        A Component instance can be removed by providing it's type.
+        For example: world.delete_component(enemy_a, Velocity) will remove
+        the Velocity instance from the Entity enemy_a.
+
+        Raises a KeyError if either the given entity or Component type does
+        not exist in the database.
+        :param entity: The Entity to remove the Component from.
+        :param component_type: The type of the Component to remove.
+        """
+        try:
+            self._components[component_type].discard(entity)
+
+            if not self._components[component_type]:
+                del self._components[component_type]
+
+            del self._entities[entity][component_type]
+
+            if not self._entities[entity]:
+                del self._entities[entity]
+
+            self.clear_cache()
+            return entity
+        except KeyError:
+            return None
+
+
     def _get_component(self, component_type: _Type[C]) -> _Iterable[_Tuple[int, C]]:
         """Get an iterator for Entity, Component pairs.
 

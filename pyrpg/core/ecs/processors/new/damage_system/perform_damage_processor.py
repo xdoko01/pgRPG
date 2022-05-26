@@ -7,7 +7,7 @@ from pyrpg.core.ecs.esper import Processor
 
 # Used components
 from pyrpg.core.ecs.components.new.damageable import Damageable
-from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
+from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
 from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
 from pyrpg.core.ecs.components.new.flag_has_damaged import FlagHasDamaged
 from pyrpg.core.ecs.components.new.flag_is_about_to_be_damaged_by import FlagIsAboutToBeDamagedBy
@@ -27,6 +27,7 @@ class PerformDamageSingleProcessor(Processor):
         -   Damageable
         -   FlagWasDamagedBy
         -   FlagHasDamaged
+        -   FlagHasNoHealth
         -   FlagIsAboutToBeDamagedBy
 
     Related processors:
@@ -34,6 +35,8 @@ class PerformDamageSingleProcessor(Processor):
         -   RemoveFlagIsAboutToBeDamagedByProcessor
         -   RemoveFlagWasDamagedByProcessor
         -   RemoveFlagHasDamagedProcessor
+        -   RemoveFlagHasNoHealthProcessor
+
 
     What if this processor is disabled?
         -   entities are not being damaged
@@ -42,6 +45,8 @@ class PerformDamageSingleProcessor(Processor):
         -   after GenerateDamageProcessor
         -   before RemoveFlagWasDamageddByProcessor
         -   before RemoveFlagIsAboutToBeDamagedByProcessor
+        -   before RemoveFlagHasNoHealthProcessor
+
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
@@ -62,8 +67,8 @@ class PerformDamageSingleProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        '''  Detects entities that are about to be teleported and performs
-        the actual teleportation, if the picker is capable.
+        ''' Detects entities that are about to be damaged and performs
+        the actual damage if those are damageable.
         '''
         self.cycle += 1
 
@@ -93,7 +98,7 @@ class PerformDamageSingleProcessor(Processor):
 
                 # Check if is destroyed
                 if damageable.health == 0:
-                    self.world.add_component(ent_damageable, IsDestroyed(ttl=1000))
+                    self.world.add_component(ent_damageable, FlagHasNoHealth())
 
 
     def pre_save(self):
@@ -197,7 +202,7 @@ class PerformDamageFullProcessor(Processor):
 
                 # Check if is destroyed
                 if damageable.health == 0:
-                    self.world.add_component(ent_damageable, IsDestroyed(ttl=1000))
+                    self.world.add_component(ent_damageable, FlagHasNoHealth())
 
 
     def pre_save(self):

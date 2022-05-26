@@ -1,28 +1,28 @@
-''' Module "pyrpg.core.ecs.components.scorable_on_destroy" contains
-ScorableOnDestroy component implemented as a ScorableOnDestroy class.
+''' Module "pyrpg.core.ecs.components.scorable_on_no_health" contains
+ScorableOnNoHealth component implemented as a ScorableOnNoHealth class.
 
-Use 'python -m pyrpg.core.ecs.components.scorable_on_destroy -v' to run
+Use 'python -m pyrpg.core.ecs.components.scorable_on_no_health -v' to run
 module tests.
 '''
 
 from pyrpg.core.ecs.components.component import Component
 
 
-class ScorableOnDestroy(Component):
+class ScorableOnNoHealth(Component):
     ''' Entity is generating score when 0 health.
 
     Used by:
-        -   GenerateScoreDestroyProcessor
+        -   GenerateScoreOnNoHealthProcessor
 
     Examples of JSON definition:
-        {"type" : "ScorableOnDestroy", "params" : {"score" : 5}},
-        {"type" : "ScorableOnDestroy", "params" : {}}
+        {"type" : "ScorableOnNoHealth", "params" : {"score" : 5}},
+        {"type" : "ScorableOnNoHealth", "params" : {}}
 
     Tests:
-        >>> c = ScorableOnDestroy(**{"score" : 3})
+        >>> c = ScorableOnNoHealth(**{"score" : 3})
         >>> c.score
         3
-        >>> c = ScorableOnDestroy()
+        >>> c = ScorableOnNoHealth()
         >>> c.score
         1
     '''
@@ -30,7 +30,7 @@ class ScorableOnDestroy(Component):
     __slots__ = ['score']
 
     def __init__(self, *args, **kwargs):
-        ''' Initiate values for the new ScorableOnPickup component.
+        ''' Initiate values for the new ScorableOnNoHealth component.
 
         Parameters:
             :param score: Count of Score points.

@@ -429,6 +429,9 @@
 ### 2022-05-22 Damage system implemented
   New `Damage System` was implemented and new components `Damaging` and `Damageable` introduced.
 
+### 2022-05-24 Score System Implemented
+  New `Score System` was implemented and new components `HasScore`, `ScorableOnDamage`, `ScorableOnNoHealth` were introduced.
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -441,7 +444,7 @@
   - [x] Prepare all weapons in some test quest - to test the factory functionality
   - [x] JSON schema - every component can have one 
   - [ ] JSON Scheme for the whole quest
-  - [ ] BUG - NPC is destroyed but the brain still works - as a result it is lying dead and moving forward
+  - [x] BUG - NPC is destroyed but the brain still works - as a result it is lying dead and moving forward
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

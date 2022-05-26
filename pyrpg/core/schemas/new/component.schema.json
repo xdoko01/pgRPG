@@ -14,6 +14,7 @@
 		{"$ref": "components/brain.schema.json"},
 		{"$ref": "components/destroy_on_collision.schema.json"},
 		{"$ref": "components/destroy_on_no_movement.schema.json"},
+		{"$ref": "components/destroy_on_no_health.schema.json"},
 		{"$ref": "components/camera.schema.json"},
 		{"$ref": "components/controllable.schema.json"},
 		{"$ref": "components/has_inventory.schema.json"},
@@ -29,7 +30,7 @@
 		{"$ref": "components/weapon.schema.json"},
 		{"$ref": "components/damaging.schema.json"},
 		{"$ref": "components/damageable.schema.json"},
-		{"$ref": "components/scorable_on_destroy.schema.json"},
+		{"$ref": "components/scorable_on_no_health.schema.json"},
 		{"$ref": "components/scorable_on_damage.schema.json"},
 		{"$ref": "components/has_score.schema.json"}
 

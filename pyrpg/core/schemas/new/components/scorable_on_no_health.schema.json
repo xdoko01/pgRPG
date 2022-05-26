@@ -1,24 +1,24 @@
 {
-	"$id": "scorable_on_destroy.schema.json",
+	"$id": "scorable_on_no_health.schema.json",
 	"$schema": "https://json-schema.org/draft-07/schema",
 
-	"title": "ScorableOnDestroy Component",
-	"description": "Schema validating the ScorableOnDamage component.",
+	"title": "ScorableOnNoHealth Component",
+	"description": "Schema validating the ScorableOnNoHealth component.",
 
 	"examples" : [
-		{"type" : "new.scorable_on_destroy:ScorableOnDestroy", "params" : {"score" : 10}},
-		{"type" : "new.scorable_on_destroy:ScorableOnDestroy", "params" : {}}
+		{"type" : "new.scorable_on_no_health:ScorableOnNoHealth", "params" : {"score" : 10}},
+		{"type" : "new.scorable_on_no_health:ScorableOnNoHealth", "params" : {}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.scorable_on_destroy:ScorableOnDestroy" ]
+			"enum": [ "new.scorable_on_no_health:ScorableOnNoHealth" ]
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the ScorableOnDestroy component class - 'score'.",
+			"description" : "Parameters of the ScorableOnNoHealth component class - 'score'.",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
 			"properties": {

@@ -1,4 +1,4 @@
-__all__ = ['RemoveFlagAddScoreProcessor']
+__all__ = ['RemoveFlagWasDamagedByProcessor']
 
 import logging
 
@@ -6,30 +6,31 @@ import logging
 from pyrpg.core.ecs.esper import Processor
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_add_score import FlagAddScore
+from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class RemoveFlagAddScoreProcessor(Processor):
-    ''' Removes the flag that the entity has scored.
+class RemoveFlagHasNoHealthProcessor(Processor):
+    ''' Removes FlagNoHealth flag after the cycle.
 
     Involved components:
-        -   FlagAddScore
+        -   FlagHasNoHealth
 
     Related processors:
-        -   CalculateScoreProcessor
+        -   GenerateDamageProcessor
+        -   PerformDamageProcessor
 
     What if this processor is disabled?
-        -   uncontrolled adding of score
+        -   sound efects upon dying are repeating
 
     Where the processor should be planned?
-        -   after CalculateScoreProcessor
+        -   after PerformDamageProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.score_system:CalculateScoreProcessor'
+        'new.damage_system:PerformDamageProcessor'
     ]
 
     def __init__(self):
@@ -42,24 +43,24 @@ class RemoveFlagAddScoreProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        ''' Removes the flag that the entity has scored.
+        ''' Removes the FlagNoHealth flag.
         '''
         self.cycle += 1
 
-        for ent, (_) in self.world.get_components(FlagAddScore):
+        for ent, (_) in self.world.get_components(FlagHasNoHealth):
 
-            self.world.remove_component(ent, FlagAddScore)
-            logger.debug(f'({self.cycle}) - Entity {ent} - flag "FlagAddScore" was removed.')
+            self.world.remove_component(ent, FlagHasNoHealth)
+            logger.debug(f'({self.cycle}) - Entity {ent} - flag "FlagHasNoHealth" was removed.')
 
     def pre_save(self):
-        ''' Prepare processor for serialization by disabling links to 
+        ''' Prepare processor for serialization by disabling links to
         non-serializable components
         '''
         pass
 
-    def post_load(self):
+    def post_load(self, window):
         ''' Reconfigure the processor after de-serialization by attaching
-        the removed references again.
+        the lost reference again
         '''
         pass
 
@@ -68,4 +69,3 @@ class RemoveFlagAddScoreProcessor(Processor):
         such as closing of files/resources here, if necessary.
         '''
         pass
-
