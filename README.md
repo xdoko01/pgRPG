@@ -445,6 +445,11 @@
   - [x] JSON schema - every component can have one 
   - [ ] JSON Scheme for the whole quest
   - [x] BUG - NPC is destroyed but the brain still works - as a result it is lying dead and moving forward
+  - [ ] Make universal loader that takes full path, partial path, with or without suffix - all possible options - RenderableModel path, templates path, SOund path, vfx path
+  - [ ] Extend sound effects - SoundFXOnGeneration - generator produces sound - shooted arrow
+  - [ ] Person can generate many sound effects at once - damage and no health and collision and footsteps - how to stop playing damage sound when no health?
+  - [ ] Extend Visual FX - VisualFXOnGeneration - for weapons, VisualFXOnCreation, VisualFXOnDamage, VisualFXOnNoHealth
+
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

@@ -1,10 +1,10 @@
 {
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
-	"id" : "new_test_projectile_score_generation",
-	"title" : "Test of Projectile Score Generation",
-	"description" : "Test of Attack and Factory and Effect system - score of projectiles",
-	"objective" : "POC of the new Attack and Factory and Effect system",
+	"id" : "test_fx_01",
+	"title" : "Test of SFX and VFX",
+	"description" : "Test of Sound and Visual Effects processors",
+	"objective" : "POC of the new effect system",
 	"init_phase" : "phase01",
 
 	"processors" : [
@@ -62,7 +62,16 @@
 
 		// For visual and sound effects
 		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		["new.effects_system.generate_visual_fx_on_creation_processor:GenerateVisualFXOnCreationProcessor", {}],
+		["new.effects_system.generate_visual_fx_on_damage_processor:GenerateVisualFXOnDamageProcessor", {}],
+		["new.effects_system.generate_visual_fx_on_generation_processor:GenerateVisualFXOnGenerationProcessor", {}],
+		["new.effects_system.generate_visual_fx_on_no_health_processor:GenerateVisualFXOnNoHealthProcessor", {}],
+
 		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+		["new.effects_system.generate_sound_fx_on_damage_processor:GenerateSoundFXOnDamageProcessor", {}],
+		["new.effects_system.generate_sound_fx_on_no_health_processor:GenerateSoundFXOnNoHealthProcessor", {}],
+		["new.effects_system.generate_sound_fx_on_creation_processor:GenerateSoundFXOnCreationProcessor", {}],
+		["new.effects_system.generate_sound_fx_on_generation_processor:GenerateSoundFXOnGenerationProcessor", {}],
 
 		// For displaying on screen
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -76,7 +85,6 @@
 		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-
 		// For processing input and movements and attacks
 		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["new.movement_system.remove_flag_adjust_movement_processor:RemoveFlagAdjustMovementProcessor", {}],
@@ -87,6 +95,8 @@
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
+
 
 		["new.damage_system.remove_flag_is_about_to_be_damaged_by_processor:RemoveFlagIsAboutToBeDamagedByProcessor", {}],
 		["new.damage_system.remove_flag_was_damaged_by_processor:RemoveFlagWasDamagedByProcessor", {}],
@@ -103,7 +113,7 @@
 
 	"phases" : {
 		"phase01" :{
-			"name" : "Projectile Score Test", "objective" : "","maps" : ["test_arena_sand"],
+			"name" : "Effect Test", "objective" : "","maps" : ["test_arena_sand"],
 			
 			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
 
@@ -115,6 +125,9 @@
 					"templates" : [], // no model needed
 					"components" : [
 						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
+						{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
+						{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
+
 						{
 							"type" : "new.factory:Factory", 
 							"params" : {
@@ -138,7 +151,8 @@
 										{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
 										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/shade12.wav"}}
+										{"type" : "new.visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
+
 
 									]
 								}
@@ -159,9 +173,12 @@
 				// Dagger
 				{
 					"id" : "sword_generator",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
+					"templates" : [],
 					"components" : [
 						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
+						{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
+						{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
+
 						{
 							"type" : "new.factory:Factory", 
 							"params" : {
@@ -185,8 +202,7 @@
 										{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
 										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
-
+										{"type" : "new.visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
 
 									]
 								}
@@ -205,39 +221,12 @@
 
 
 				// wooden_arrows_pack AmmoPack is Factory for generation of arrows
+				// Definition can be found in entity json files
 				{
 					"id" : "wooden_arrows_pack",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
+					"templates" : ["new/thing/ammo_pack/shoot/wooden_arrows_pack"],
 					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
-						{
-							"type" : "new.factory:Factory", 
-							"params" : {
-								"prescription" : {
-									"id" : "wooden_arrow",
-									"templates" : ["new/model/ammo/wooden_arrow"],
-									"components" : [
-										{"type" : "new.debug:Debug", "params" : {}},
-
-										{"type" : "new.brain:Brain", "params" : {"commands" : [
-											[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-											]}},
-
-										{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
-
-										{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-										{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-										{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
-										
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/shade12.wav"}}
-
-
-									]
-								}
-							}
-						}
+						{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}}
 					]
 				},
 
@@ -254,12 +243,15 @@
 					"templates" : [],
 					"components" : [
 						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
+						{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
+						{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion"}},
+
 						{
 							"type" : "new.factory:Factory", 
 							"params" : {
 								"prescription" : {
 									"id" : "fireball_spell",
-									"templates" : ["new/model/ammo/wooden_arrow"],
+									"templates" : ["new/model/ammo/shoot/wooden_arrow"],
 									"components" : [
 										{"type" : "new.debug:Debug", "params" : {}},
 
@@ -273,9 +265,8 @@
 										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 										{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 										
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/shade12.wav"}}
-
+										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}}
+										//{"type" : "new.visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
 
 									]
 								}
@@ -359,7 +350,11 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+						{"type" : "new.sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "hurt/10.mp3"}},
+						{"type" : "new.sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
+						{"type" : "new.visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "new/effects/explosion"}}
+
 					]
 				},
 				{
@@ -375,7 +370,13 @@
 
 						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+
+						{"type" : "new.sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "hurt/10.mp3"}},
+						{"type" : "new.sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
+
+						{"type" : "new.visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "new/effects/explosion"}}
+
 					]
 				}
 

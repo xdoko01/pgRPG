@@ -20,12 +20,12 @@
 			"uniqueItems": true
 		},
 		"components": {
-			"description": "Coponents list",
+			"description": "Components list",
 			"type": "array",
 			"items":{
 				"$ref": "component.schema.json"
 			},
-			"minItems": 1,
+			"minItems": 0,
 			"uniqueItems": true
 		}
 	}

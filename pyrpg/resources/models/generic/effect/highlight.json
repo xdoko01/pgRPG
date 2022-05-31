@@ -1,0 +1,15 @@
+{ "columns":5,
+ "image":"highlight.png",
+ "imageheight":280,
+ "imagewidth":350,
+ "margin":0,
+ "name":"highlight",
+ "spacing":0,
+ "tilecount":20,
+ "tiledversion":"1.8.4",
+ "tileheight":64,
+ "tilewidth":64,
+ "transparentcolor":"#000000",
+ "type":"tileset",
+ "version":"1.8"
+}

@@ -1,0 +1,42 @@
+{
+	"$id": "visual_fx_on_creation.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "VisualFXOnCreation Component",
+	"description": "Schema validating the VisualFXOnCreation component.",
+
+	"examples" : [
+		{"type" : "new.visual_fx_on_creation:VisualFXOnCreation", "params" : {"ttl" : 1000}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.visual_fx_on_creation:VisualFXOnCreation" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the VisualFXOnCreation component class - 'effect'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["effect"],
+			"properties": {
+				"effect" : {
+					"$ref": "../definitions.schema.json#/definitions/model_file"
+				},
+				"fixed_position": {
+					"type": "boolean"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

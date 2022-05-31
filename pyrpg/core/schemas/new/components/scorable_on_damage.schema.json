@@ -23,7 +23,7 @@
 			"$ref": "#/$defs/cond_params",
 			"properties": {
 				"score" : {
-					"$ref": "../definitions.schema.json#/definitions/score"
+					"$ref": "../definitions.schema.json#/definitions/entity_score"
 				}
 			}
 		}

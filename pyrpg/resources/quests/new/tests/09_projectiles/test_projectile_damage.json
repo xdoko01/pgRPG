@@ -83,6 +83,8 @@
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
+
 
 		["new.damage_system.remove_flag_is_about_to_be_damaged_by_processor:RemoveFlagIsAboutToBeDamagedByProcessor", {}],
 		["new.damage_system.remove_flag_was_damaged_by_processor:RemoveFlagWasDamagedByProcessor", {}],

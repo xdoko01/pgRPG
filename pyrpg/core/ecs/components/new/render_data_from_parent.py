@@ -16,13 +16,16 @@ class RenderDataFromParent(Component):
         - GenerateRenderDataFromParentProcessor
     '''
 
-    __slots__ = ['x', 'y', 'dir_name', 'action', 'last_frame']
+    __slots__ = ['parent_pos_comp', 'x', 'y', 'dir_name', 'action', 'last_frame']
 
-    def __init__(self, x, y, dir_name, action, last_frame):
+    def __init__(self, parent_pos_comp, x, y, dir_name, action, last_frame):
         ''' Initiation of NewRenderPosition component
         '''
 
         super().__init__()
+
+        # For visual effect to follow the parent position
+        self.parent_pos_comp = parent_pos_comp
 
         # Position parameters from parent necessary for rendering
         self.x = x

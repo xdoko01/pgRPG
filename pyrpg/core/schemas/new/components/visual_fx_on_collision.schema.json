@@ -24,6 +24,9 @@
 			"properties": {
 				"effect" : {
 					"$ref": "../definitions.schema.json#/definitions/model_file"
+				},
+				"fixed_position": {
+					"type": "boolean"
 				}
 			}
 		}

@@ -1,0 +1,18 @@
+{
+	"id" : "iron_arrows_pack",
+	"templates" : ["new/thing/ammo_pack/shoot", "new/model/ammo_pack/shoot/iron_arrows_pack"],
+	"components" : [
+		{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "iron_arrows_pack"}},
+		
+		{
+			"type" : "new.factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "wooden_arrow",
+					"templates" : ["new/thing/ammo/shoot/iron_arrow"],
+					"components" : []
+				}
+			}
+		}
+	]
+}

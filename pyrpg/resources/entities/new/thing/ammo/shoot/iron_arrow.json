@@ -1,0 +1,17 @@
+{
+	"id" : "iron_arrow",
+	"templates" : ["new/thing/ammo/shoot", "new/model/ammo/shoot/iron_arrow"],
+	"components" : [
+
+		{"type" : "new.brain:Brain", "params" : {"commands" : [
+			[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
+			]}},
+
+		{"type" : "new.damaging:Damaging", "params" : {"damage" : 35}},
+
+		{"type" : "new.movable:Movable", "params" :  {"velocity" : 400, "accelerate" : -3}},
+		{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+		{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+		{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
+	]
+}

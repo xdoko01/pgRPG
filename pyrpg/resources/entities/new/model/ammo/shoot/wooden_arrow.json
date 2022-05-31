@@ -1,0 +1,8 @@
+{
+	"id" : "wooden_arrow_model",
+	"templates" : ["new/model/ammo/shoot"],
+
+	"components" : [
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/ammo/shoot/wooden_arrow.json"}}
+	]
+}

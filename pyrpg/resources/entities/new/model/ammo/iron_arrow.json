@@ -1,8 +1,0 @@
-{
-	"id" : "iron_arrow_model",
-	"templates" : ["new/model/ammo"],
-
-	"components" : [
-		{"type" : "new.original.renderable_model:RenderableModel", "params" : {"model" : "generic/ammo/iron_arrow.json"}}
-	]
-}

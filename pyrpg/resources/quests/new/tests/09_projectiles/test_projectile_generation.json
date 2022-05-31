@@ -47,6 +47,7 @@
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}] // NEW - for removing flag for generation of projectile
+		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
 
 	],
 

@@ -73,7 +73,8 @@
 		["new.collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}]//,
+		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
 
 		// For logging performance of processors - timed must be True for this processor to work
 		//["new.debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]

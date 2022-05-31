@@ -1,6 +1,7 @@
 __all__ = ['GenerateVisualFXOnCollisionProcessor']
 
 import logging
+import copy
 
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor
@@ -62,10 +63,11 @@ class GenerateVisualFXOnCollisionProcessor(Processor):
                 register=False
             )
 
-            # Add the correct position
+            # Add the correct position - either the position of the effect moves dynamically together with the entity
+            # or position of the effect is fixed on one place
             self.world.add_component(
-                    new_entity,
-                    position
+                new_entity, 
+                copy.copy(position) if vfx_on_collision.fixed_position else position
             )
 
             logger.debug(f'({self.cycle}) - Entity {ent} - has produced visual fx entity {new_entity} upon collision.')

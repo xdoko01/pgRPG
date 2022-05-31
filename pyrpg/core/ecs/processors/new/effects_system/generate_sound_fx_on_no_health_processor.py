@@ -51,7 +51,7 @@ class GenerateSoundFXOnNoHealthProcessor(Processor):
         '''
         self.cycle += 1
 
-        for ent, (flag_no_health, sfx_on_no_health) in self.world.get_components(FlagNoHealth, SoundFXOnNoHealth):
+        for ent, (flag_has_no_health, sfx_on_no_health) in self.world.get_components(FlagHasNoHealth, SoundFXOnNoHealth):
 
             # Use play sound fnc to play the effect
             self.play_sound_fnc(sfx_on_no_health.sound)
