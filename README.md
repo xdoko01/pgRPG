@@ -432,6 +432,9 @@
 ### 2022-05-24 Score System Implemented
   New `Score System` was implemented and new components `HasScore`, `ScorableOnDamage`, `ScorableOnNoHealth` were introduced.
 
+### 2022-06-02 Extension of PREREQ on Processors to support logical operations while evaluating the prerequisities
+
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -449,7 +452,9 @@
   - [ ] Extend sound effects - SoundFXOnGeneration - generator produces sound - shooted arrow
   - [ ] Person can generate many sound effects at once - damage and no health and collision and footsteps - how to stop playing damage sound when no health?
   - [ ] Extend Visual FX - VisualFXOnGeneration - for weapons, VisualFXOnCreation, VisualFXOnDamage, VisualFXOnNoHealth
-
+  - [x] Prereq extension so that it supports `and`, `or`, `oneOf`, `anyOf`
+  - [ ] Implement post-requisities on processor and change the process of processor loads - 1st load all processors without checks, 2nd check prerequisities for all proc 3rd check post-requisities for all proc
+  - [ ] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

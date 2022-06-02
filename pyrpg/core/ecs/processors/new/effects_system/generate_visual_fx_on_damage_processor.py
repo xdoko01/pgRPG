@@ -32,7 +32,7 @@ class GenerateVisualFXOnDamageProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.damage_system:PerformDamageProcessor'
     ]
 

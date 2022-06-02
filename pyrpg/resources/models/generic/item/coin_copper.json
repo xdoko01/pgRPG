@@ -1,13 +1,13 @@
-{ "columns":1,
- "image":"coins.png",
- "imageheight":178,
- "imagewidth":40,
+{ "columns":8,
+ "image":"coin_copper.png",
+ "imageheight":32,
+ "imagewidth":256,
  "margin":0,
- "name":"coin",
- "spacing":5,
- "tilecount":4,
+ "name":"coin_copper",
+ "spacing":0,
+ "tilecount":8,
  "tiledversion":"1.8.4",
- "tileheight":40,
+ "tileheight":32,
  "tiles":[
         {
          "animation":[
@@ -29,15 +29,29 @@
                 }, 
                 {
                  "duration":50,
-                 "tileid":2
+                 "tileid":4
                 }, 
                 {
                  "duration":50,
-                 "tileid":1
+                 "tileid":5
+                }, 
+                {
+                 "duration":50,
+                 "tileid":6
+                }, 
+                {
+                 "duration":50,
+                 "tileid":7
                 }],
-         "id":3
+         "id":0,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"idle"
+                }]
         }],
- "tilewidth":40,
+ "tilewidth":32,
  "transparentcolor":"#000000",
  "type":"tileset",
  "version":"1.8"

@@ -34,7 +34,7 @@ class GenerateDestroyOnStoppedMovementProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 

@@ -47,7 +47,7 @@ class PerformPickupProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.pickup_system.generate_pickup_processor:GeneratePickupProcessor'
     ]
 

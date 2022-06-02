@@ -13,8 +13,8 @@ class RecordCommandToFileProcessor(Processor):
     ''' Dumps the command queue and saves it into the defined file.
     '''
 
-    PREREQ = [
-        'new.command_system.generate_command_from_input_processor', 'GenerateCommandFromInputProcessor'
+    PREREQ = ['allOf',
+        'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 
     def __init__(self, get_commands_fnc, file):

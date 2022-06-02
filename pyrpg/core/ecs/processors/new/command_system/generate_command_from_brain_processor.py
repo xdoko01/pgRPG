@@ -32,7 +32,7 @@ class GenerateCommandFromBrainProcessor(Processor):
         -   before PerformCommandProcessor
     '''
 
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 

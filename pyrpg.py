@@ -21,7 +21,8 @@ def main(argv):
 
     console = True
 
-    filepath = 'new/tests/10_effects/test_fx_01.json'
+    filepath = 'new/games/collect_coins/collect_coins.json'
+    #filepath = 'new/tests/10_effects/test_fx_01.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_damage.json'
     #filepath = 'new/tests/05_pickup/test_pickup_01.json'

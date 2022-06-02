@@ -43,7 +43,7 @@ class GenerateDamageSingleProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.collision_system:GenerateCollisionsProcessor'
     ]
 

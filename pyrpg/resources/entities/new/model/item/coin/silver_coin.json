@@ -1,0 +1,8 @@
+{
+	"id" : "silver_coin_model",
+	"templates" : ["new/model/item/coin"],
+
+	"components" : [
+		{"type" : "new.original.renderable_model:RenderableModel", "params" : {"model" : "generic/item/coin_silver.json"}}
+	]
+}

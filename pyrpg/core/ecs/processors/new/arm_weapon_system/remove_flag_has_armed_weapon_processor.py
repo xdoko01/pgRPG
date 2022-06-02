@@ -31,7 +31,7 @@ class RemoveFlagHasArmedWeaponProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor'
     ]
 

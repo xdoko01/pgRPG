@@ -1,0 +1,9 @@
+{
+	"id" : "copper_coin",
+	"templates" : ["new/thing/item/coin", "new/model/item/coin/copper_coin"],
+	"components" : [
+
+		{"type" : "new.scorable_on_pickup:ScorableOnPickup", "params" : {"score" : 1}}
+
+	]
+}

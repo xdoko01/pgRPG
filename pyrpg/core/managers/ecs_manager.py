@@ -6,6 +6,7 @@ from pyrpg.core.ecs.components.component import Component
 from pyrpg.functions import get_class_object # for dynamic creation of components and processors from json definition
 from pyrpg.functions import translate # for creation of the component
 from pyrpg.functions import get_dict_from_json # for loading of json without C-style comments
+from pyrpg.functions import json_logic # for evaluating conditions for processor prerequisites
 
 # Create logger
 logger = logging.getLogger(__name__)
@@ -200,20 +201,50 @@ class ECSManager:
         self._clear_entities()
         self._clear_processors()
 
-    def _check_processor(self, proc_class: Processor) -> None:
-        '''Checks if the class representing the processors contains all necessary
-        parts in order to successfully work in the game.
-
-        Checks are following:
-            - Existence of prerequisited classes in the game world
+    def _check_proc_in_world(self, proc: str) -> bool:
+        ''' Checks, if the class represented by string exists and is already initiated in the
+        game world. Returns True in case the prerequisit processor is present inthe game world.
+        Else, returns False.
         '''
 
-        # Check that the dependencies of the processor on other processors are kept - are already in the world
+        # Unpack the prerequisity processor information
+        proc_module, proc_class = proc.split(':')
+
+        # Get the processor class
+        try:
+            check_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + proc_module, proc_class)
+        except ValueError:
+            logger.warning(f'Processor class "{proc_module}.{proc_class}" cannot be checked.')
+            return False
+
+        # Verify that the processor class has been already instantiated in the game world
+        if self._world.get_processor(check_class):
+            logger.info(f'Processor "{proc_module}.{proc_class}" is instantiated in the game world.')
+            return True
+        else:
+            logger.warning(f'Processor "{proc_module}.{proc_class}" is not instantiated in the game world.')
+            return False
+
+    def _check_proc_prereq(self, proc_class: Processor) -> bool:
+        '''Checks if the processor has all necessary prerequisities for
+        other processors in the game fulfilled.
+        '''
+
         try:
             prereqs = proc_class.PREREQ
+            if not prereqs: return True
         except AttributeError:
-            prereqs = []    # no prerequisities if class attr PREREQ does not exist
+            return True    # no prerequisities hence the check is ok
 
+        if json_logic(expr=prereqs, fnc=self._check_proc_in_world):
+            logger.info(f'Processor "{proc_class.__name__}": Prerequisities are ok!')
+            return True
+        else:
+            logger.warning(f'Processor "{proc_class.__name__}": Problem with prerequisities. Game might work incorrectly!')
+            return False
+            #raise ValueError(f'Processor "{proc_class.__name__}": Problem with prerequisities. Game might work incorrectly!')
+
+        '''
         for prereq in prereqs:
 
             # Unpack the prerequisity processor information
@@ -230,6 +261,25 @@ class ECSManager:
             if not self._world.get_processor(check_class):
                 logger.warning(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
                 raise ValueError(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
+        '''
+
+    def _check_processor(self, proc_class: Processor) -> bool:
+        '''Checks if the class representing the processors contains all necessary
+        parts in order to successfully work in the game.
+
+        Checks are following:
+            - Existence of prerequisited classes in the game world
+        '''
+        try:
+            # Check the prerequisities
+            if not self._check_proc_prereq(proc_class):
+                return False
+            else:
+                return True
+        except ValueError:
+            logger.error(f'Error during checking or prerequisities of the processor class "{proc_class.__name__}".')
+            raise ValueError(f'Error during checking or prerequisities of the processor class "{proc_class.__name__}".')
+
 
     def _load_processor(self, proc_module : str, proc_class : str, cust_proc_class_attrs : dict) -> Processor:
         '''Imports the processor class and registers it into the world'''
@@ -241,12 +291,15 @@ class ECSManager:
             logger.error(f'Error during loading of processor class "{proc_class}".')
             raise ValueError(f'Error during loading of processor class "{proc_class}".')
 
-        # Check that prerequisities are fulfilled - all required processors are already initiated in the game world
+        # Check that processor has everything that it needs to work in the game
         try:
-            self._check_processor(new_class)
+            if not self._check_processor(new_class):
+                logger.warning(f'Processor "{new_class.__name__}" did not pass all the checks. Game might work incorrectly!')
+            else:
+                logger.info(f'Processor "{new_class.__name__}" has passed all the checks successfully!')
         except ValueError:
-            logger.error(f'Error during checking of prerequisities of processor "{new_class.__name__}".')
-            raise ValueError(f'Error during checking of prerequisities of processor "{new_class.__name__}".')
+            logger.error(f'Error during checking of the of processor "{new_class.__name__}".')
+            raise ValueError(f'Error during checking of the of processor "{new_class.__name__}".')
 
         # Get all attributes of the processor class
         proc_attrs = new_class.__init__.__code__.co_varnames[1:]

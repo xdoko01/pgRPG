@@ -42,10 +42,10 @@ class PerformActionAnimationProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
-        'new.command_system.perform_command_processor:PerformCommandProcessor', 
-        'new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor'
-    ]
+    PREREQ = ['allOf',
+                'new.command_system.perform_command_processor:PerformCommandProcessor', 
+                'new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor'
+            ]
 
     def __init__(self):
         ''' Init the processor.

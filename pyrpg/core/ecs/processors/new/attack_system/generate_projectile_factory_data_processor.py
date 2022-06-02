@@ -40,7 +40,7 @@ class GenerateProjectileFactoryDataProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = [
+    PREREQ = ['allOf',
         'new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor'
     ]
 

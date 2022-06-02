@@ -1,0 +1,6 @@
+{
+	"id" : "coin_model",
+	"templates" : ["new/model/item"],
+	"components" : [
+	]
+}

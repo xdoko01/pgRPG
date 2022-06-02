@@ -35,8 +35,6 @@ class CalculateScoreProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.score_system:GenerateScoreOnDamageProcessor',
-        'new.score_system:GenerateScoreOnNoHealthProcessor'
     ]
 
     def __init__(self):
