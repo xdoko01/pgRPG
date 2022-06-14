@@ -28,14 +28,14 @@ for ent in (all_params[1:-1] if list_all_attrs else all_params[1:]):
     # Translate alias to entity id
     if isinstance(ent, str):
         alias = ent
-        entity = game.get_entity_id(alias)
+        entity = game.main.engine.ecs_manager.get_entity_id(alias)
         if entity is None:
             print(f'Alias "{alias}" does not represent any entity.')
             continue
     # Translate entity to alias
     elif isinstance(ent, int):
         entity = ent
-        alias = game.entity_to_alias.get(entity, None)
+        alias = game.main.engine.ecs_manager.get_entity_alias(entity)
         if alias is None:
             print(f'Entity {entity} does not exist.')
             continue
@@ -46,7 +46,7 @@ for ent in (all_params[1:-1] if list_all_attrs else all_params[1:]):
     print(f'E: {entity} A: {alias}')
 
     # Print all components of entity/alias
-    for component in game.world.components_for_entity(entity):
+    for component in game.main.engine.ecs_manager.get_game_world().components_for_entity(entity):
         print(f'C: {component}')
 
         if list_all_attrs:

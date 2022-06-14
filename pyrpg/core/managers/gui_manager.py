@@ -15,6 +15,10 @@ from pyrpg.functions.load_animation import load_animation
 from pyrpg.core.config.paths import MENU_BACKGROUND_PATH
 from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
 
+from pyrpg.utils.bitmap_font import BitmapFont
+from pyrpg.core.config.paths import FONT_PATH
+
+
 Dim = namedtuple('Dim', ['width', 'height'])
 Pos = namedtuple('Pos', ['x', 'y'])
 
@@ -55,18 +59,10 @@ class GUIManager:
         self.background_animation_last_time = pygame.time.get_ticks()
         self.background_animation_frames = len(self.background_animation)
 
+        # Font
+        self.font = BitmapFont(FONT_PATH /'good_neighbours_font.json')
+
         logger.info(f'GUIManager initiated.')
-
-    def show_file_select(self, title: str, path: Path) -> None:
-        '''Obsolete, it will be on the level of Menu classes'''
-
-        _ = pygame_gui.windows.UIFileDialog(
-                rect=pygame.Rect(self._gui_dlg_start, self._gui_dlg_dim),
-                manager=self.window_manager,
-                window_title=title,
-                initial_file_path=path,
-                allow_existing_files_only=False,
-                allow_picking_directories=False)
 
     def process_events(self, event) -> None:
         self.window_manager.process_events(event)
@@ -82,6 +78,9 @@ class GUIManager:
 
     def blit_image(self, image: pygame.image=None):
         self.window.blit(image, (0, 0))
+    
+    def blit_text(self, text: str, pos=(0,0)):
+        self.window.blit(self.font.render(text), pos)
 
     def blit_background_animation(self):
         if pygame.time.get_ticks() >= self.background_animation_last_time + self.background_animation_delay:
@@ -91,13 +90,17 @@ class GUIManager:
 
         self.blit_image(self.background_animation[self.background_animation_last_image])
 
+    def flip(self):
+        '''Trigger displaying on the screen'''
+        pygame.display.flip()
+
     def save_screen(self, flip_before_copy=False):
         ''' Parameter is used to force displaying everything on screen.
         Was prepared due to PHASE start of the first quest that was processed
         before anything was blitted on the screen
         '''
 
-        if flip_before_copy: pygame.display.update()
+        if flip_before_copy: self.flip()
 
         self.screen_copy = self.window.copy()
         logger.info(f'Screen has been copied')

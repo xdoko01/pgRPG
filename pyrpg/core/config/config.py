@@ -120,7 +120,8 @@ PATHS = {
     "log_path" : "pyrpg/logs/",
     "save_path" : "pyrpg/save/",
     "console_script_path" : "pyrpg/utils/scripts/",
-    "menu_background_path" : "pyrpg/resources/images/menu_background/waterfall/"
+    "menu_background_path" : "pyrpg/resources/images/menu_background/waterfall/",
+    "script_module_path" : "pyrpg.core.scripts."
 }
 
 CONSOLE = {

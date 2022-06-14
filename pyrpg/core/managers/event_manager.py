@@ -64,3 +64,5 @@ class EventManager:
         # event_queue = new_event_queue because other processors have stored link directly to original
         # global event_queue
         self._event_queue.extend(new_event_queue)
+
+

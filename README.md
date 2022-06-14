@@ -434,6 +434,8 @@
 
 ### 2022-06-02 Extension of PREREQ on Processors to support logical operations while evaluating the prerequisities
 
+### 2022-06-07 New ScriptManager prepared
+  The `ScriptManager` is responsible for loading and execution of the script. Script is single python module that can be dynamically specified within quest specification.
 
 ## To Do
 
@@ -443,7 +445,7 @@
   - [x] BUG - when shooting arrow the entity moves down - fixed by adding `accept_pos_fix_from_denylist=["ALL"]`
   - [x] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
   - [ ] BUG - debug processor works onlywith one camera
-  - [ ] BUG - Dialogs stopped working
+  - [x] BUG - Dialogs stopped working - because engine.py imports QuestManager and QuestManager imports Quest quest.py imports scripts  (for get_script_fnc) and there are all scripts imported - we need to have script same as processor - define it at JSON string
   - [x] Prepare all weapons in some test quest - to test the factory functionality
   - [x] JSON schema - every component can have one 
   - [ ] JSON Scheme for the whole quest
@@ -454,7 +456,15 @@
   - [ ] Extend Visual FX - VisualFXOnGeneration - for weapons, VisualFXOnCreation, VisualFXOnDamage, VisualFXOnNoHealth
   - [x] Prereq extension so that it supports `and`, `or`, `oneOf`, `anyOf`
   - [ ] Implement post-requisities on processor and change the process of processor loads - 1st load all processors without checks, 2nd check prerequisities for all proc 3rd check post-requisities for all proc
-  - [ ] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button
+  - [x] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button - None command must be assigned in Controllable component
+  - [ ] Prepare script module that implements YES/NO decision + IF json logic
+  - [x] Prepare script that restarts the quest - clear all quest and loads specific quest
+  - [ ] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
+  - [ ] *Also reimplement EventManager to manage all the handlers loaded from the quests*.
+  - [ ] rewrite conditions and actions upon events into JSON logic format
+  - [x] loading game on GUI using threading library
+  - [ ] there is many managers - what about having list of managers and every manager inherits from some abstract class things like `clear()` or `register()` methods. By doing that clearing will be easier done by iterating the list and also can be part of the progress bar.
+  - [ ] maybe the ProgressBar might be created in the Game class only and not in the Main class. By doing that, I will pass one less argument to the engine.
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

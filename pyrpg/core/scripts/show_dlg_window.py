@@ -1,4 +1,3 @@
-from pyrpg.main import main
 
 from pyrpg.functions.wait import wait # import wait function
 import pyrpg.utils.dialog as dialog # import display_dialog function
@@ -6,16 +5,20 @@ import pyrpg.utils.dialog as dialog # import display_dialog function
 import pygame
 from pyrpg.core.config.keys import K_SUBMIT
 
+from pyrpg.main import main
+
 def script_show_dlg_window(event, *args, **kwargs):
     ''' Script that displays dialog window and freezes the game.
     Dialog can have several frames that are switched by pressing
     the submit button.
     '''
 
+
     # Take a copy of the screen and store it in engine
     # Before taking the screen, everything is blittet (screen is updated)
     #!engine.save_screen_copy(True)
-    main.gui_manager.save_screen()
+    print(f'MAIN: {main}')
+    main.game.gui_manager.save_screen()
 
     # Load dialog object based on the dialog_id
     dlg_id = kwargs.get('dialog_id', None)

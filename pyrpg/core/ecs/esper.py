@@ -115,7 +115,7 @@ class World:
 
     def clear_processors(self) -> None:
         """Remove all processors - ODO"""
-        for processor in self._processors:
+        for processor in self._processors.copy(): # copy must be iterated as we are deleting while iterating the same list
                 processor.world = None
                 self._processors.remove(processor)
 

@@ -28,6 +28,10 @@
 		["new.collision_system:GenerateCollisionsProcessor", {}],
 		["new.collision_system:ResolveCollisionsProcessor", {}],
 
+		// For visual and sound effects concerning collisions
+		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+
 		// For pickup
 		["new.pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
 		["new.pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
@@ -35,10 +39,9 @@
 		// For score
 		["new.score_system:GenerateScoreOnPickupProcessor", {}],
 		["new.score_system:CalculateScoreProcessor", {}],
-		
-		// For visual and sound effects
-		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
-		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+
+		// For destroy
+		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
 
 		// For displaying on screen
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -51,6 +54,9 @@
 		["new.render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
 		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "SCORE"]}],
 
 		// Removal at the end of the cycle
 
@@ -78,10 +84,195 @@
 		"phase01" :{
 			"name" : "Collect Coins Demo Game", "objective" : "","maps" : ["test_arena_sand"],
 			
-			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
+
+			"dialogs" : [
+				{
+					"id" : "dlg_quest_start",
+					"templates" : ["basic"],
+
+					"dimensions" : [630, 200],
+
+					"font" : {
+						"path" : "small_font.json",
+						"size" : 24,
+						"color" : "#00FFFF",
+						"align" : "LEFT"
+						},
+				
+					"texts" : [
+						{
+							"text" : "Simple Demo Game - Collect Coins",
+							"position" : [5, 20]
+						}
+					],
+					
+					"frames" : [
+						{
+							"font" : {
+								"path" : "small_font.json",
+								"size" : 16,
+								"color" : "#FFFFFF",
+								"align" : "LEFT"
+								},
+		
+							"texts" : [
+								{
+									"text" : "TODOs:\n1/Display info about coin type and value \nonly the first time you pick it.\n2/Display dialog at the end if you want to repeat or not.",
+									"position" : [5, 65]
+								}
+							]
+						},
+						{
+							"texts" : [
+								{
+									"text" : "Press Enter to continue ...",
+									"position" : [5, 165]
+								}
+							]
+						}
+					]
+				}
+			],
 
 			"entities" : [
-				
+				{
+					"id": "golden_coin01",
+					"templates": ["new/thing/item/coin/golden_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "golden_coin02",
+					"templates": ["new/thing/item/coin/golden_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 2, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "golden_coin03",
+					"templates": ["new/thing/item/coin/golden_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 2, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "golden_coin04",
+					"templates": ["new/thing/item/coin/golden_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 2, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "golden_coin05",
+					"templates": ["new/thing/item/coin/golden_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 2, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "silver_coin01",
+					"templates": ["new/thing/item/coin/silver_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 4, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "silver_coin02",
+					"templates": ["new/thing/item/coin/silver_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 4, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "silver_coin03",
+					"templates": ["new/thing/item/coin/silver_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 4, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "silver_coin04",
+					"templates": ["new/thing/item/coin/silver_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 4, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "silver_coin05",
+					"templates": ["new/thing/item/coin/silver_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 4, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "copper_coin01",
+					"templates": ["new/thing/item/coin/copper_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 6, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "copper_coin02",
+					"templates": ["new/thing/item/coin/copper_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 6, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "copper_coin03",
+					"templates": ["new/thing/item/coin/copper_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 6, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "copper_coin04",
+					"templates": ["new/thing/item/coin/copper_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 6, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+					]
+				},
+				{
+					"id": "copper_coin05",
+					"templates": ["new/thing/item/coin/copper_coin"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 6, "map" : "test_arena_sand"}},
+						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+					]
+				},
+
+
 				{
 					"id" : "player01",
 					"templates" : ["new/model/body/male/human/white"],
@@ -104,10 +295,13 @@
 									"left" : [["new_move_add", {"moves" : ["left"]}]],
 									"right": [["new_move_add", {"moves" : ["right"]}]],
 									"up" : [["new_move_add", {"moves" : ["up"]}]],
-									"down" : [["new_move_add", {"moves" : ["down"]}]]
+									"down" : [["new_move_add", {"moves" : ["down"]}]],
+									"attack" : [["none", {}]]
 								}
 							}
 						},
+
+						{"type" : "new.has_inventory:HasInventory", "params" : {}},
 
 						{"type" : "new.has_score:HasScore", "params" : {}},
 
@@ -121,7 +315,85 @@
 
 			"event_handling" : {
 
-				"QUEST_START" : [
+				"QUEST_START" :[
+					{
+						"id": "ev_collect_coins",
+						
+						//"actions": [
+						//	"SEQ",
+						//		["SCRIPT", "new.show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}],
+						//		["SCRIPT", "new.fade_in", {"speed" : 0.05}],
+						//		["SCRIPT","new.show_window", {"html_text" : "Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
+						//	]
+						
+						"actions" : [
+							["new.show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}],
+							["new.fade_in", {"speed" : 1}],
+							["new.show_window", {"html_text" : "Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
+						]
+					}
+				],
+
+				"SCORE": [
+					{
+						"id": "ev_scored_golden_coin",
+
+						//"actions": [
+						//	"IF",
+						//		["==", ["VAR", "score"], 100],
+						//		["SCRIPT", "new.show_window", {"html_text" : "You have just picked golden coin!"}]
+						//],
+
+						"conditions" : {
+							"params" : {
+								"score" : 100
+							}
+						},
+						"actions" : [
+							["new.show_window", {"html_text" : "You have just picked golden coin!"}]
+						]
+					},
+
+					{
+						"id": "ev_scored_exactly_500_points",
+
+						//"actions": [
+						//	"IF",
+						//		["==", ["VAR", "total"], 500],
+						//		["SCRIPT", "new.show_window", {"html_text" : "WOW! You have just reached the score 500!<br/>WELL DONE!"}]
+						//],
+
+						"conditions" : {
+							"params" : {
+								"total" : 500
+							}
+						},
+						"actions" : [
+							["new.show_window", {"html_text" : "WOW! You have just reached the score 500!<br/>WELL DONE!"}]
+						]
+					},
+
+					{
+						"id": "ev_scored_more_than_500_points",
+
+						//"actions": [
+						//	"IF",
+						//		[">", ["VAR", "total"], 500],
+						//		["SEQ",
+						//			["SCRIPT", "new.show_window", {"html_text" : "Bad luck, you are over the limit. Try it again!"}],
+						//			["SCRIPT", "new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+						//		]
+						//],
+
+						"conditions" : {
+							"function" : ["new.games.collect_coins.total_score_greater_than", { "score" : 500}]
+						},
+						"actions" : [
+							["new.show_window", {"html_text" : "Bad luck, you are over the limit. Try it again!"}],
+							["new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+						]
+					}
+
 				],
 
 				"PHASE_START" : [

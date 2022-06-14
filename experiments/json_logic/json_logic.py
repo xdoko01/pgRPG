@@ -2,6 +2,7 @@
   PREREQ = ['new.collision_system:GenerateCollisionsProcessor']
   PREREQ = ["AND", 'new.collision_system:GenerateCollisionsProcessor', 'new.collision_system:GenerateCollisionsProcessor']
   PREREQ = ["OR", 'new.collision_system:GenerateCollisionsProcessor', 'new.collision_system:GenerateCollisionsProcessor']
+  PREREQ = ["IF", "old.processor", "some.processor", "other.processor"]
 '''
 
 '''
@@ -26,6 +27,7 @@ OPERATORS = {
 	"AND" : lambda a, b: a and b,
 	"OR" : lambda a, b: a or b,
 	"XOR" : lambda a, b: a != b,
+	"IF" : lambda a,b,c: b if a else c,
 	">" : lambda a, b: a > b
 }
 
@@ -62,8 +64,8 @@ def evaluate(expr, fnc=lambda x: x, data={}, operators={}) -> bool:
 
 
 expression = ["AND", "1==1", ["OR", "1==2", "1==1"], [">", ["VAR","$num"], "10"]]
-
 #expression = ["ONEOF", "1==1", "1==1", "1==1", "2==3"]
+expression = ["IF", "1==1", "print('It is true')", "print('It is false')"]
 data = { "$num" : "22"}
 
 print(f'Evaluating expression {expression} \n')

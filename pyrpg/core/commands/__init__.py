@@ -13,6 +13,7 @@ from .wait import *
 from .wait_key import *
 from .goto import *
 from .none import *
+'''
 from .move_to import *
 from .face_entity import *
 from .disable_talk import *
@@ -29,6 +30,7 @@ from .remove_from_inventory import *
 from .add_to_inventory import *
 from .set_quest_phase import *
 from .add_msg import *
+'''
 
 from .new_move_add import *
 from .new_move_noadd import *
@@ -47,6 +49,8 @@ __all__ = [
     'cmd_wait_key',
     'cmd_goto',
     'cmd_none',
+
+    '''
     'cmd_move_to',
     'cmd_face_entity',
     'cmd_disable_talk',
@@ -64,6 +68,7 @@ __all__ = [
     'cmd_add_to_inventory',
     'cmd_set_quest_phase',
     'cmd_add_msg',
+    '''
 
     'cmd_new_move_add',
     'cmd_new_move_noadd',
@@ -81,6 +86,7 @@ CMD_DICT = {
     'wait_key' : cmd_wait_key,
     'goto' : cmd_goto,
     'none' : cmd_none,
+    '''
     'move_to' : cmd_move_to,
     'face_entity' : cmd_face_entity,
     'disable_talk' : cmd_disable_talk,
@@ -97,7 +103,7 @@ CMD_DICT = {
     'add_to_inventory' : cmd_add_to_inventory,
     'set_quest_phase' : cmd_set_quest_phase,
     'add_msg' : cmd_add_msg,
-
+    '''
     'new_move_noadd' : cmd_new_move_noadd,
     'new_move_add' : cmd_new_move_add,
     'new_move_vect_noadd' : cmd_new_move_vect_noadd,

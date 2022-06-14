@@ -28,6 +28,7 @@ def main(argv):
     #filepath = 'new/tests/05_pickup/test_pickup_01.json'
     #filepath = 'new/tests/04_collisions/test_collisions_05.json'
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
+    #filepath = None
 
     usage_info = '''
 DESCRIPTION

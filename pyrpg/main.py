@@ -36,6 +36,8 @@ from pyrpg.core.config.display import DISPLAY_MAX_FPS
 
 from pyrpg.core.config.states import State
 
+from threading import Thread
+
 # Via this global variable, console can access all game properties
 main = None
 
@@ -88,11 +90,15 @@ class Main:
         self.sound_manager = SoundManager()
 
         # Class representing the game
-        self.game = None
+        self.engine = None
 
         # Class representing the main menu
         from pyrpg.core.menus.main_menu import MainMenu
         self.main_menu = MainMenu(gui_manager=self.gui_manager, state_manager=self.state_manager)
+
+        # Class representing progress bar
+        from pyrpg.core.menus.progress_bar import ProgressBar
+        self.progress_bar = ProgressBar(gui_manager=self.gui_manager)
 
         # Class representing the load quest menu
         from pyrpg.core.menus.load_quest_menu import LoadQuestMenu
@@ -104,8 +110,13 @@ class Main:
         
         # Start game into main menu or into the game
         if filepath:
-            self.state_manager.change_state(State.GAME)
+
+            # Init the game
             self.init_game(filepath)
+
+            # Everything is loaded, game can start
+            self.state_manager.change_state(State.GAME)
+
             logger.info(f'Starting game into the game.')
 
         else:
@@ -115,13 +126,12 @@ class Main:
     def init_game(self, filepath):
         # Show loading screen here
 
-
-        if self.game is None:
+        if self.engine is None:
             from pyrpg.core.engine import Game
-            self.game = Game(self.gui_manager, self.sound_manager, timed=self.timed)
+            self.engine = Game(self.gui_manager, self.sound_manager, progress_bar=self.progress_bar, timed=self.timed)
 
         from pathlib import Path
-        self.game.new_game(Path(filepath))
+        self.engine.new_game(Path(filepath))
 
 
     def run(self):
@@ -130,6 +140,7 @@ class Main:
         '''
 
         while True:
+
 
             # Get the time of the frame
             dt = self.gui_manager.clock.tick(DISPLAY_MAX_FPS)
@@ -156,7 +167,7 @@ class Main:
 
             if self.state_manager.state == State.GAME:
                 #res_state = self.game.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
-                self.state_manager.change_state(self.game.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG))
+                self.state_manager.change_state(self.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG))
 
             elif self.state_manager.state == State.MAIN_MENU:
                 #res_state = self.main_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt)
@@ -198,8 +209,8 @@ class Main:
     def end_program(self) -> None:
 
         # Clear Game
-        if self.game:
-            self.game.exit_game()
+        if self.engine:
+            self.engine.exit_game()
         logger.info(f'Game closed')
 
         # Clear Menus
@@ -226,13 +237,13 @@ def cons_get_info_header():
 
     memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
     game_state = main.state_manager.game_state if main else 'N/A'
-    no_of_entities =  len(main.game.ecs_manager._world._entities) if main and main.game else 'N/A'
+    no_of_entities =  len(main.engine.ecs_manager._world._entities) if main and main.engine else 'N/A'
 
     return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
 
 def cons_get_info_footer():
     '''Returns info that is displayed in the console's footer'''
 
-    loaded_quests = main.game.quest_manager._quests.keys() if main and main.game else 'N/A'
+    loaded_quests = main.engine.quest_manager._quests.keys() if main and main.engine else 'N/A'
 
     return f'loaded quests: {loaded_quests}'

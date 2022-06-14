@@ -1,12 +1,14 @@
 ''' Module implementing face_entity command
 '''
 
-import backup.core.engine as engine # To reference the world 
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
 
 def cmd_face_entity(*args, **kwargs):
     ''' Change the direction of the entity so that it faces other entity.
     '''
+
+    # World reference
+    world = kwargs.get("world")
 
     # Get the entity whose direction needs to be changed
     entity = kwargs.get("entity", None)
@@ -22,10 +24,10 @@ def cmd_face_entity(*args, **kwargs):
 
     try:
         # Get the Position component from the entity
-        pos_entity = engine.world.component_for_entity(entity, components.Position)
+        pos_entity = world.component_for_entity(entity, components.Position)
 
         # Get the Position component from the Face to entity
-        pos_face = engine.world.component_for_entity(face_ent, components.Position)
+        pos_face = world.component_for_entity(face_ent, components.Position)
 
         # if possitive, pos_entity must face Right
         x_dir = pos_face.x - pos_entity.x

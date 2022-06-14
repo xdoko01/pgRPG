@@ -14,3 +14,5 @@ LOG_PATH = Path(PATHS.get('log_path'))
 SAVE_PATH = Path(PATHS.get('save_path'))
 CONSOLE_SCRIPT_PATH = Path(PATHS.get('console_script_path'))
 MENU_BACKGROUND_PATH = Path(PATHS.get('menu_background_path'))
+
+SCRIPT_MODULE_PATH = PATHS.get('script_module_path')

@@ -9,6 +9,9 @@ from pyrpg.core.ecs.esper import Processor
 from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
 from pyrpg.core.ecs.components.new.has_score import HasScore
 
+# For creation of events
+from pyrpg.core.events.event import Event
+
 # Logger init
 logger = logging.getLogger(__name__)
 
@@ -37,10 +40,12 @@ class CalculateScoreProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self):
+    def __init__(self, FNC_ADD_EVENT):
         ''' Init the processor.
         '''
         super().__init__()
+        self.add_event_fnc = FNC_ADD_EVENT
+
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -56,6 +61,10 @@ class CalculateScoreProcessor(Processor):
         for ent_with_score, (has_score, flag_has_scored) in self.world.get_components(HasScore, FlagHasScored):
 
             has_score.score += flag_has_scored.score
+
+            # Report score was counted
+            score_event = Event('SCORE', ent_with_score, None, params={'scored' : ent_with_score, 'score' : flag_has_scored.score, 'total' : has_score.score})
+            self.add_event_fnc(score_event)
 
             logger.debug(f'({self.cycle}) - Entity {ent_with_score} increased score by {flag_has_scored.score}. New score is {has_score.score}.')
 

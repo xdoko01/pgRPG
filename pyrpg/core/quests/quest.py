@@ -2,7 +2,7 @@ import pyrpg.core.events.event as event # for creation of QUEST_START, QUEST_FIN
 
 from pyrpg.core.config.paths import QUEST_PATH
 
-import pyrpg.core.scripts as scripts
+from  pyrpg.core.scripts import get_script_fnc
 import pyrpg.core.commands as commands
 import backup.core.engine as engine # to call _create_entity() fnc (probably in the future also to call _create_map)
 
@@ -192,9 +192,9 @@ class Quest:
 			try:
 				#cond_function_result = globals()[cond_function](event, **cond_function_params)
 				##cond_function_result = getattr(scripts, scripts.get_script_fnc(cond_function))(event, **cond_function_params)
-				cond_function_result = scripts.get_script_fnc(cond_function)(event, **cond_function_params)
+				cond_function_result = get_script_fnc(cond_function)(event, **cond_function_params)
 			except TypeError:
-				print(f'Function {scripts.get_script_fnc(cond_function)} cannot be called')
+				print(f'Function {get_script_fnc(cond_function)} cannot be called')
 				raise
 
 			#print(f'Cond_function_result: {cond_function_result}')
@@ -218,9 +218,9 @@ class Quest:
 					try:
 						#action_function_result = globals()[action_function](event, **action_function_params)
 						##action_function_result = getattr(scripts, scripts.get_script_fnc(action_function))(event, **action_function_params)
-						action_function_result = scripts.get_script_fnc(action_function)(event, **action_function_params)
+						action_function_result = get_script_fnc(action_function)(event, **action_function_params)
 					except TypeError:
-						print(f'Function {scripts.get_script_fnc(action_function)} cannot be called')
+						print(f'Function {get_script_fnc(action_function)} cannot be called')
 						raise
 					
 		#print(f'*Finishing quest event processing')
@@ -318,7 +318,7 @@ class Quest:
 ### Module functions - EXPERIMENTAL
 ########################################################
 
-def load_quest_ex(quest_filepath, map_mng=None, dialog_mng=None, event_mng=None, ecs_mng=None):
+def load_quest_ex(quest_filepath, progress, map_mng=None, dialog_mng=None, event_mng=None, ecs_mng=None, script_mng=None):
 	''' load quest data from the json file and calls quest constructor
 	'''
 
@@ -351,7 +351,7 @@ def load_quest_ex(quest_filepath, map_mng=None, dialog_mng=None, event_mng=None,
 	'''
 
 	# Load the quest
-	q = QuestEx(quest_data, map_mng, dialog_mng, event_mng, ecs_mng)
+	q = QuestEx(quest_data, progress, map_mng, dialog_mng, event_mng, ecs_mng, script_mng)
 
 	# Return the quest
 	return q
@@ -363,7 +363,7 @@ def load_quest_ex(quest_filepath, map_mng=None, dialog_mng=None, event_mng=None,
 
 class QuestEx:
 
-	def __init__(self, quest_data, map_mng, dialog_mng, event_mng, ecs_mng):
+	def __init__(self, quest_data, progress, map_mng, dialog_mng, event_mng, ecs_mng, script_mng):
 		''' Load the data from quest dictionary
 		'''
 		# Store managers
@@ -371,6 +371,7 @@ class QuestEx:
 		self.dialog_mng = dialog_mng
 		self.event_mng = event_mng
 		self.ecs_mng = ecs_mng
+		self.script_mng = script_mng
 
 		# All quest data
 		self.quest_data = quest_data
@@ -384,14 +385,21 @@ class QuestEx:
 
 		# Load processors
 		self.processors = self.quest_data.get("processors", [])
-		ecs_mng.load_processors(self.processors)
+		progress(progress=0, total=len(self.processors), text='Loading Processors')
+		
+		for n, processor in enumerate(self.processors):
+			self.ecs_mng.load_processor(processor)
+			progress(progress=n+1)
+		
+		#ecs_mng.load_processors(self.processors)
+		#progress(progress=len(self.processors))
 
 		# Phase data init
 		self.phase_name = self.phase_objective = None
 		self.maps = self.entities = self.event_handlers = None
 		
 		# Phase data load
-		self.load_phase(self.phase_id)
+		self.load_phase(self.phase_id, progress)
 
 		# Report that quest was loaded - generate event
 		self.event_mng.add_event(event.Event('QUEST_START', self, None, params={'quest_id' : self.id}))
@@ -429,7 +437,7 @@ class QuestEx:
 				# having entity as parameter. For example QUEST_START has quest id string as a value.
 				cond_param_result = cond_param_result and (event.params.get(cond_param_key, None) == engine.alias_to_entity.get(cond_param_value, cond_param_value))
 
-			#print(f'Cond_param_result: {cond_param_result}')
+			print(f'Cond_param_result: {cond_param_result}')
 
 			#####
 			# SCRIPT condition
@@ -447,7 +455,7 @@ class QuestEx:
 			except SyntaxError:
 				print('Error in script condition for event {event}.')
 
-			#print(f'Cond_script_result: {cond_script_result}')
+			print(f'Cond_script_result: {cond_script_result}')
 
 			#####
 			# FUNCTION condition
@@ -464,12 +472,14 @@ class QuestEx:
 			try:
 				#cond_function_result = globals()[cond_function](event, **cond_function_params)
 				##cond_function_result = getattr(scripts, scripts.get_script_fnc(cond_function))(event, **cond_function_params)
-				cond_function_result = scripts.get_script_fnc(cond_function)(event, **cond_function_params)
+				#cond_function_result = get_script_fnc(cond_function)(event, **cond_function_params)
+				cond_function_result = self.script_mng.execute_script(cond_function, event, **cond_function_params)
+
 			except TypeError:
-				print(f'Function {scripts.get_script_fnc(cond_function)} cannot be called')
+				print(f'Function {get_script_fnc(cond_function)} cannot be called')
 				raise
 
-			#print(f'Cond_function_result: {cond_function_result}')
+			print(f'Cond_function_result: {cond_function_result}')
 
 			#####
 			# Execute ACTION 
@@ -490,14 +500,16 @@ class QuestEx:
 					try:
 						#action_function_result = globals()[action_function](event, **action_function_params)
 						##action_function_result = getattr(scripts, scripts.get_script_fnc(action_function))(event, **action_function_params)
-						action_function_result = scripts.get_script_fnc(action_function)(event, **action_function_params)
+						#action_function_result = get_script_fnc(action_function)(event, **action_function_params)
+						action_function_result = self.script_mng.execute_script(action_function, event, **action_function_params)
+
 					except TypeError:
-						print(f'Function {scripts.get_script_fnc(action_function)} cannot be called')
+						print(f'Function {get_script_fnc(action_function)} cannot be called')
 						raise
 					
 		#print(f'*Finishing quest event processing')
 
-	def load_phase(self, phase_id):
+	def load_phase(self, phase_id, progress):
 		''' Load the phase data into the quest 
 		properties.
 		'''
@@ -513,21 +525,27 @@ class QuestEx:
 
 		# Clean the entities that are no longer needed
 		entities_to_clean = phase_data.get("cleanup", {}).get("entities", [])
+		progress(text='Cleaning Entities', progress=0, total=len(entities_to_clean))
 
-		for entity_name_to_clean in entities_to_clean:
+		for n, entity_name_to_clean in enumerate(entities_to_clean):
 			self.ecs_mng.delete_entity(alias=entity_name_to_clean)
+			progress(progress=n+1)
 
 		# Clean the maps that are no longer needed
 		maps_to_clean = phase_data.get("cleanup", {}).get("maps", [])
+		progress(text='Cleaning Maps', progress=0, total=len(maps_to_clean))
 
-		for map_name_to_clean in maps_to_clean:
+		for n, map_name_to_clean in enumerate(maps_to_clean):
 			self.map_mng.delete_map(map_name_to_clean)
+			progress(progress=n+1)
 
 		# Clean the dialogs that are no longer needed
 		dialogs_to_clean = phase_data.get("cleanup", {}).get("dialogs", [])
+		progress(text='Cleaning Dialogs', progress=0, total=len(dialogs_to_clean))
 
 		for dialog_name_to_clean in dialogs_to_clean:
 			self.dialog_mng.delete_dialog(dialog_name_to_clean)
+			progress(progress=n+1)
 
 
 		#####
@@ -536,34 +554,42 @@ class QuestEx:
 
 		# Load Maps #####
 		self.maps = phase_data.get("maps", [])
+		progress(text='Loading Maps', progress=0, total=len(self.maps))
 
 		# Create maps existing in the world
 		try:
-			for map_name in self.maps:
+			for n, map_name in enumerate(self.maps):
 				self.map_mng.add_map(map_name)
+				progress(progress=n+1)
+
 		except ValueError:
 			print(f'Problem with initiation of maps for quest (id-name-phase-map): {self.id} - {self.name} - {self.phase_id} - {map_name}')
 			raise ValueError
 
 		# Load Dialogs #####
 		self.dialogs = phase_data.get("dialogs", [])
+		progress(text='Loading Dialogs', progress=0, total=len(self.dialogs))
 
 		# Create dialogs necessery for the phase
 		try:
-			for dialog in self.dialogs:
+			for n, dialog in enumerate(self.dialogs):
 				self.dialog_mng.add_dialog(dialog)
+				progress(progress=n+1)
+
 		except ValueError:
 			print(f'Problem with initiation of dialogs for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
 			raise ValueError
 
 		# Load Entities #####
 		self.entities = phase_data.get("entities", [])
+		progress(text='Loading Entities', progress=0, total=len(self.entities))
 
 		# Create entities in the world
 		try:
-			for entity in self.entities:
+			for n, entity in enumerate(self.entities):
 				#engine._create_entity(entity)
 				self.ecs_mng.create_entity(entity)
+				progress(progress=n+1)
 
 		except ValueError:
 			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')

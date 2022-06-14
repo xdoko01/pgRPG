@@ -3,6 +3,6 @@
 	"templates" : ["new/model/item/coin"],
 
 	"components" : [
-		{"type" : "new.original.renderable_model:RenderableModel", "params" : {"model" : "generic/item/coin_gold.json"}}
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/item/coin_gold.json"}}
 	]
 }

@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 import pygame # for pygame.QUIT, pygame.KEYDOWN
 import pyrpg.core.config.keys as keys
 
+from threading import Thread
+
 from pyrpg.core.config.states import State
 from pyrpg.core.managers.gui_manager import GUIManager
 from pyrpg.core.managers.sound_manager import SoundManager
@@ -20,12 +22,13 @@ from pyrpg.core.managers.command_manager import CommandManager
 from pyrpg.core.managers.quest_manager import QuestManager
 from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.managers.event_manager import EventManager
+from pyrpg.core.managers.script_manager import ScriptManager
 
 logger.info(f'Engine initiated')
 
 class Game:
 
-    def __init__(self, gui_manager: GUIManager, sound_manager: SoundManager, timed: bool=False) -> None:
+    def __init__(self, gui_manager: GUIManager, sound_manager: SoundManager, progress_bar, timed: bool=False) -> None:
 
         self.gui_manager = gui_manager # for drawing anything on the screen
         self.sound_manager = sound_manager # for playing music and sounds
@@ -36,6 +39,10 @@ class Game:
         self.command_manager = CommandManager() # command manager must have reference to Game in order commands can manipulate the game world
         self.quest_manager = QuestManager()
         self.ecs_manager = ECSManager()
+        self.script_manager = ScriptManager()
+
+        # Class representing the progress bar
+        self.progress_bar = progress_bar
         
         # Reference function for adding events
         # TODO - maybe it would be better to handle processing of events within processor that
@@ -68,6 +75,7 @@ class Game:
             'FNC_GET_COMMANDS' : self.command_manager.get_commands,
             'FNC_PROCESS_COMMANDS' : self.command_manager.process_commands,
             # Events
+            'FNC_ADD_EVENT' : self.event_manager.add_event,
             'add_event_fnc' : self.event_manager.add_event,
             'clear_events_fnc' : self.event_manager.clear_events,
             'get_events_fnc' : self.event_manager.get_events,
@@ -79,28 +87,61 @@ class Game:
         logger.info(f'Game initiated')
 
 
-    def _clear_game(self) -> None:
+    def _clear_game(self, progress) -> None:
         '''Clear all game related resources'''
+
+        # Init the cleaning progress
+        self.progress_bar.update(total=8, text='Clearing resources')
+
         self.map_manager.clear_maps()
+        self.progress_bar.update(progress=1)
+
         self.dialog_manager.clear_dialogs()
+        self.progress_bar.update(progress=2)
+
         self.message_manager.clear_messages()
+        self.progress_bar.update(progress=3)
+
         self.command_manager.clear_commands()
+        self.progress_bar.update(progress=4)
+
         self.event_manager.clear_events()
+        self.progress_bar.update(progress=5)
+
         self.quest_manager.clear_quests()
+        self.progress_bar.update(progress=6)
+
         self.ecs_manager.clear_ecs()
+        self.progress_bar.update(progress=7)
+
+        self.script_manager.clear_scripts()
+        self.progress_bar.update(progress=8)
+
         logger.info(f'All game resources cleared.')
 
     def new_game(self, quest_name: str) -> None:
 
-        #clear everything
-        self._clear_game()
+        # Get the progress bar ready for new game
+        self.progress_bar.update(progress=0, total=0, header="LOADING", text='', finished=False)
+        
+        # Thread with displaying of the progress bar
+        t = Thread(target=self.progress_bar.run)
+        t.start()
+
+        # Clear everything
+        self._clear_game(progress=self.progress_bar.update)
 
         #add new quest
         self.quest_manager.add_quest(quest_name,
+            progress=self.progress_bar.update,
             map_mng=self.map_manager,
             dialog_mng=self.dialog_manager,
             event_mng=self.event_manager,
-            ecs_mng=self.ecs_manager)
+            ecs_mng=self.ecs_manager,
+            script_mng=self.script_manager)
+
+        # End the progress bar
+        self.progress_bar.update(finished=True)
 
         logger.info(f'Quest "{quest_name}" successfully loaded.')
 

@@ -31,13 +31,24 @@ class ECSManager:
 
     def get_entity_id(self, entity_alias: str) -> int:
         ''' Translate entity alias (string) to entity id (integer)
-        based on alias_to_entity dictionary.
+        based on _alias_to_entity dictionary.
         '''
 
         try:
             return self._alias_to_entity.get(entity_alias, None)
         except TypeError:
             # If entity_alias is list or dictionary (non hashable)
+            return None
+
+    def get_entity_alias(self, entity_id: int) -> str:
+        ''' Translate entity id (integer) to entity alias (str)
+        based on _entity_to_alias dictionary.
+        '''
+
+        try:
+            return self._entity_to_alias.get(entity_id, None)
+        except TypeError:
+            # If entity_id is list or dictionary (non hashable)
             return None
 
     def _create_component(self, comp_path: str, comp_params: dict) -> Component:
@@ -236,7 +247,7 @@ class ECSManager:
         except AttributeError:
             return True    # no prerequisities hence the check is ok
 
-        if json_logic(expr=prereqs, fnc=self._check_proc_in_world):
+        if json_logic(expr=prereqs, value_fnc=self._check_proc_in_world):
             logger.info(f'Processor "{proc_class.__name__}": Prerequisities are ok!')
             return True
         else:
@@ -280,7 +291,6 @@ class ECSManager:
             logger.error(f'Error during checking or prerequisities of the processor class "{proc_class.__name__}".')
             raise ValueError(f'Error during checking or prerequisities of the processor class "{proc_class.__name__}".')
 
-
     def _load_processor(self, proc_module : str, proc_class : str, cust_proc_class_attrs : dict) -> Processor:
         '''Imports the processor class and registers it into the world'''
 
@@ -313,6 +323,26 @@ class ECSManager:
         # Initiate and return the processor class
         return new_class(**proc_attrs)
 
+    def load_processor(self, processor: list) -> None:
+        '''Takes processor definition from the JSON and registers
+        it into the game world'''
+
+        # Parse the JSON definition of the processor
+        class_path, params = processor
+        module_name, class_name = class_path.split(':')
+
+        logger.info(f'Preparing load of processor "{class_name}" .')
+
+        # Create instance of the processor
+        new_proc = self._load_processor(module_name, class_name, params)
+
+        # Registers processor at esper ECS World
+        new_proc.initialize(register=self._world.add_processor)
+
+        # Log the initiation of the processor
+        logger.info(f'Processor "{class_name}" initiated.')
+
+    """Should be obsolete now. It was substituted by load_processor and iteration done on load quest/phase level
     def load_processors(self, processors: list) -> None:
         '''Imports and registers to the world processors specified by the quest definition.'''
 
@@ -330,6 +360,7 @@ class ECSManager:
 
             # Log the initiation of the processor
             logger.info(f'Processor "{class_name}" initiated.')
+    """
 
     def process(self, events, keys, dt: float, debug: bool) -> None:
         '''Calls process method on all loaded processors.'''

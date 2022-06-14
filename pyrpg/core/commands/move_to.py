@@ -1,7 +1,6 @@
 ''' Module implementing move_to command
 '''
 
-import backup.core.engine as engine # To reference the world 
 from pyrpg.core.ecs.components.original.position import Position
 from pyrpg.core.ecs.components.original.motion import Motion
 from .move import cmd_move
@@ -16,6 +15,9 @@ def cmd_move_to(*args, **kwargs):
     TODO - change direction not immediatelly but after some time or number of steps
     '''
 
+    # World reference
+    world = kwargs.get("world")
+
     # Who (entity) needs to move
     entity = kwargs.get("entity")
 
@@ -24,8 +26,8 @@ def cmd_move_to(*args, **kwargs):
     ty = kwargs.get("y", None)
 
     # Get the coordinate of the entity and the target 
-    position = engine.world.component_for_entity(entity, Position)
-    motion = engine.world.component_for_entity(entity, Motion)
+    position = world.component_for_entity(entity, Position)
+    motion = world.component_for_entity(entity, Motion)
 
     sign = lambda x: 1 if x>0 else (-1 if x<0 else 0)
 
