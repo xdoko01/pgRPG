@@ -9,7 +9,7 @@ import backup.core.engine as engine # to call _create_entity() fnc (probably in 
 #import json # For loading quest from json
 #import re # For removing C-style comments before processing JSON
 
-from pyrpg.functions import get_dict_from_json, get_dict_from_yaml
+from pyrpg.functions import get_dict_from_json, get_dict_from_yaml, translate, json_logic
 
 ########################################################
 ### Module functions
@@ -403,6 +403,29 @@ class QuestEx:
 
 		# Report that quest was loaded - generate event
 		self.event_mng.add_event(event.Event('QUEST_START', self, None, params={'quest_id' : self.id}))
+
+
+	def event_handler_ex(self, event):
+		'''New event handler that is working with JSON logic statements rather than
+		separate conditions and actions statements.
+		'''
+
+		# Get all actions defined for given event type
+		for event_handler in self.event_handlers.get(event.event_type, []):
+
+			# Perform the event handler
+			actions = event_handler.get('actions', [])
+
+			# Translate entity names for entity IDs before processing of the action
+			translated_actions = translate(self.ecs_mng._alias_to_entity, actions)
+
+			# Run the actions
+			json_logic(
+				expr=translated_actions, 
+				value_fnc=lambda x: x, 
+				script_fnc=lambda *args: self.script_mng.execute_script(args[0], event, **args[1]), 
+				data=event.params
+			)
 
 
 	def event_handler(self, event):

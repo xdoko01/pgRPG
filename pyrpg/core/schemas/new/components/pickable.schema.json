@@ -6,7 +6,8 @@
 	"description": "Schema validating the Pickable component.",
 
 	"examples" : [
-		{"type" : "new.pickable:Pickable", "params" : {}}
+		{"type" : "new.pickable:Pickable", "params" : {}},
+		{"type" : "new.pickable:Pickable", "params" : {"category": "items.coins.golden"}}
 	],
 
 	"required": [ "type", "params"],
@@ -17,10 +18,17 @@
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the Pickable component class - no parameters.",
+			"description" : "Parameters of the Pickable component class - category.",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
-			"default": {}
+			"default": {},
+			"properties": {
+				"category" : {
+					"title": "Category of inventory item",
+					"description": "Category of inventory item",
+					"type": "string"
+				}
+			}
 		}
 	},
 

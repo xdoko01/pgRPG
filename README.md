@@ -437,6 +437,13 @@
 ### 2022-06-07 New ScriptManager prepared
   The `ScriptManager` is responsible for loading and execution of the script. Script is single python module that can be dynamically specified within quest specification.
 
+### 2022-06-14 ProgressBar screen implemented
+  Now, there is a new class `ProgressBar` that is initiated in `Main` class and passed to `Game` class. In the `new_game` method, new thread is created that calls `ProgressBar.run` function that draws progress bar in the separate thread. The status of the progress is updated by calling `ProgressBar.update` function. Once the progress is done and no more progress bar should be displayed, `update(finished=True)` needs to triggered. This effectivelly stops the `run` method from execution and hence the thread operation ends.
+
+### 2022-06-24 Event handling logic was rewritten to json logic
+
+### 2022-06-24 Implemented category of Pickable entities - now we can test the event on number of items in any given category in HasInventory
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -457,14 +464,16 @@
   - [x] Prereq extension so that it supports `and`, `or`, `oneOf`, `anyOf`
   - [ ] Implement post-requisities on processor and change the process of processor loads - 1st load all processors without checks, 2nd check prerequisities for all proc 3rd check post-requisities for all proc
   - [x] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button - None command must be assigned in Controllable component
-  - [ ] Prepare script module that implements YES/NO decision + IF json logic
+  - [ ] **Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler**
   - [x] Prepare script that restarts the quest - clear all quest and loads specific quest
   - [ ] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
   - [ ] *Also reimplement EventManager to manage all the handlers loaded from the quests*.
-  - [ ] rewrite conditions and actions upon events into JSON logic format
+  - [x] rewrite conditions and actions upon events into JSON logic format
   - [x] loading game on GUI using threading library
   - [ ] there is many managers - what about having list of managers and every manager inherits from some abstract class things like `clear()` or `register()` methods. By doing that clearing will be easier done by iterating the list and also can be part of the progress bar.
   - [ ] maybe the ProgressBar might be created in the Game class only and not in the Main class. By doing that, I will pass one less argument to the engine.
+  - [ ] BUG - when restarting quest in the `collect_coins` game, there is loading screen in the background
+  - [ ] option not to scale-up the render models to 64x64
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

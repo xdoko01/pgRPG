@@ -13,6 +13,8 @@ from pyrpg.core.ecs.components.new.flag_was_picked_by import FlagWasPickedBy
 from pyrpg.core.ecs.components.new.flag_has_picked import FlagHasPicked
 from pyrpg.core.ecs.components.new.flag_is_about_to_pick_entity import FlagIsAboutToPickEntity
 
+from pyrpg.functions.dict_utils import add_dict_value, get_dict_value
+
 # For creation of events
 from pyrpg.core.events.event import Event
 
@@ -75,6 +77,10 @@ class PerformPickupProcessor(Processor):
             # Add the entity into the HasInventory inventory set
             has_inventory.inventory.add(flag_is_about_to_pick_entity.entity_for_pickup)
 
+            # Add the entity into the HasInventory categories dictionary, if category defined
+            if flag_is_about_to_pick_entity.category:
+                add_dict_value(has_inventory.categories, flag_is_about_to_pick_entity.category, flag_is_about_to_pick_entity.entity_for_pickup)
+
             # Remove Position component from the item so that it is not displayable on the map - item is picked
             self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, Position) 
 
@@ -93,7 +99,18 @@ class PerformPickupProcessor(Processor):
             logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_pick_entity.entity_for_pickup} was picked by entity {ent_picker}.')
 
             # Report that item was picked up - generate event
-            pickup_event = Event('ITEM_PICKUP', flag_is_about_to_pick_entity.entity_for_pickup, ent_picker, params={'item' : flag_is_about_to_pick_entity.entity_for_pickup, 'picker' : ent_picker})
+            pickup_event = Event(
+                'ITEM_PICKUP', 
+                flag_is_about_to_pick_entity.entity_for_pickup, 
+                ent_picker, 
+                params={
+                    'item' : flag_is_about_to_pick_entity.entity_for_pickup, 
+                    'picker' : ent_picker, 
+                    'category' :  flag_is_about_to_pick_entity.category,
+                    'amount_in_category' : len(get_dict_value(has_inventory.categories, flag_is_about_to_pick_entity.category, not_found=[]))
+                }
+            )
+
             self.add_event_fnc(pickup_event)
 
     def pre_save(self):

@@ -16,19 +16,23 @@ class FlagIsAboutToPickEntity(Component):
 
     '''
 
-    __slots__ = ['entity_for_pickup']
+    __slots__ = ['entity_for_pickup', 'category']
 
-    def __init__(self, entity_for_pickup=None):
+    def __init__(self, entity_for_pickup=None, category=None):
         ''' Initiate value for the new FlagIsAboutToPickEntity component.
 
         Parameters:
             :param entity_for_pickup: Entity ID of pickable entity
             :type entity_for_pickup: int
 
+            :param category: Category of pickable entity, used for storage in the proper inventory category
+            :type category: str
+
         '''
         super().__init__()
 
         self.entity_for_pickup = entity_for_pickup
+        self.category = category
 
 
 if __name__ == '__main__':

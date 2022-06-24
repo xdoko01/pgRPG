@@ -21,7 +21,7 @@ class QuestManager:
         '''Send every event to every quest for handling'''
 
         for quest_name, quest_object in self._quests.copy().items(): # the copy() is there due to restart_quest script that is deleting the quests and loading new ones. It was falling on Runtime error that the dictionary has changed during runtime. Problem is fixed by using copy
-            quest_object.event_handler(event)
+            quest_object.event_handler_ex(event)
             logger.info(f'Event "{event.event_type}" was passed to quest "{quest_name}" for handling.')
 
     def delete_quest(self, quest_name: str) -> None:

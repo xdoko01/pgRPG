@@ -17,12 +17,18 @@ def get_var(data: dict, key):
 OPERATORS = {
 	# Condition operators - true/false
 	"ONEOF" : lambda *args: args.count(True) == 1,
-	"ALLOF": lambda *args: reduce(lambda a,b: a and b, args),
-	"ANYOF": lambda *args: reduce(lambda a,b: a or b, args),
-	"AND": lambda *args: reduce(lambda a,b: a and b, args),
-	"OR": lambda *args: reduce(lambda a,b: a or b, args),
-	"==": lambda *args: reduce(lambda a,b: a==b, args),
-	"!=": lambda *args: reduce(lambda a,b: a!=b, args),
+	"ALLOF": lambda *args: reduce(lambda a, b: a and b, args),
+	"ANYOF": lambda *args: reduce(lambda a, b: a or b, args),
+	"AND": lambda *args: reduce(lambda a, b: a and b, args),
+	"OR": lambda *args: reduce(lambda a, b: a or b, args),
+
+	"==": lambda *args: reduce(lambda a, b: a==b, args),
+	"!=": lambda *args: reduce(lambda a, b: a!=b, args),
+	">": lambda a, b: a>b,
+	">=": lambda a, b: a>=b,
+	"<": lambda a, b: a<b,
+	"<=": lambda a, b: a<=b,
+
 	# Non-condition operators
 	"VAR": lambda *args: None,
 	"IF": lambda *args: None,

@@ -15,12 +15,14 @@ class Pickable(Component):
 
     Examples of JSON definition:
         {"type" : "Pickable", "params" : {}}
+        {"type" : "Pickable", "params" : {"category" : "items.coins.golden"}}
+
 
     Tests:
         >>> c = Pickable()
     '''
 
-    __slots__ = []
+    __slots__ = ['category']
 
     def __init__(self, *args, **kwargs):
         ''' Just a tag marking the entity that it can
@@ -28,6 +30,8 @@ class Pickable(Component):
         '''
 
         super().__init__()
+
+        self.category = kwargs.get('category', '')
 
 
 if __name__ == '__main__':
