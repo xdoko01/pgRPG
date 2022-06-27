@@ -61,6 +61,8 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 		except IndexError:
 			# if the list is empty, return True
 			return True
+		except AttributeError:
+			raise ValueError(f'Cannot evaluate the following expression: {expr}')
 
 		# In case of unknown operator
 		if operator not in OPERATORS:

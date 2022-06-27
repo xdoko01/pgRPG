@@ -444,6 +444,8 @@
 
 ### 2022-06-24 Implemented category of Pickable entities - now we can test the event on number of items in any given category in HasInventory
 
+### 2022-06-27 Implemented confirmation dialog as a form of script. After clicking on OK, custom event with custom parameters is generated and can be further processed by standard event handling logic.
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -464,7 +466,7 @@
   - [x] Prereq extension so that it supports `and`, `or`, `oneOf`, `anyOf`
   - [ ] Implement post-requisities on processor and change the process of processor loads - 1st load all processors without checks, 2nd check prerequisities for all proc 3rd check post-requisities for all proc
   - [x] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button - None command must be assigned in Controllable component
-  - [ ] **Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler**
+  - [x] **Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler**
   - [x] Prepare script that restarts the quest - clear all quest and loads specific quest
   - [ ] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
   - [ ] *Also reimplement EventManager to manage all the handlers loaded from the quests*.

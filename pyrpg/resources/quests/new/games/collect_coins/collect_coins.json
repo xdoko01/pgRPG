@@ -56,7 +56,7 @@
 		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the quest - after first game screen is generated
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "SCORE", "ITEM_PICKUP"]}],
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "SCORE", "ITEM_PICKUP", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
 
@@ -86,54 +86,7 @@
 			
 			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
 
-			"dialogs" : [
-				{
-					"id" : "dlg_quest_start",
-					"templates" : ["basic"],
-
-					"dimensions" : [630, 200],
-
-					"font" : {
-						"path" : "small_font.json",
-						"size" : 24,
-						"color" : "#00FFFF",
-						"align" : "LEFT"
-						},
-				
-					"texts" : [
-						{
-							"text" : "Simple Demo Game - Collect Coins",
-							"position" : [5, 20]
-						}
-					],
-					
-					"frames" : [
-						{
-							"font" : {
-								"path" : "small_font.json",
-								"size" : 16,
-								"color" : "#FFFFFF",
-								"align" : "LEFT"
-								},
-		
-							"texts" : [
-								{
-									"text" : "TODOs:\n1/Display info about coin type and value \nonly the first time you pick it.\n2/Display dialog at the end if you want to repeat or not.",
-									"position" : [5, 65]
-								}
-							]
-						},
-						{
-							"texts" : [
-								{
-									"text" : "Press Enter to continue ...",
-									"position" : [5, 165]
-								}
-							]
-						}
-					]
-				}
-			],
+			"dialogs" : [],
 
 			"entities" : [
 				{
@@ -334,18 +287,8 @@
 					{
 						"id": "ev_collect_coins",
 						
-						"actions": [
-							"SEQ",
-								["SCRIPT", "new.show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}],
-								//["SCRIPT", "new.fade_in", {"speed" : 0.05}],
-								["SCRIPT","new.show_window", {"html_text" : "Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
-							]
-						
-						//"actions" : [
-						//	["new.show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}],
-						//	["new.fade_in", {"speed" : 1}],
-						//	["new.show_window", {"html_text" : "Your goal is to collect coins with exact value of 620.<br/>Not less, not more!"}]
-						//]
+						"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to %quest_id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
+
 					}
 				],
 
@@ -357,17 +300,22 @@
 						"actions": [
 							"IF",
 								["==", ["VAR", "total"], 500],
-								["SCRIPT", "new.show_window", {"html_text" : "WOW! You have just reached the score 500!<br/>WELL DONE!"}]
+								["SEQ",
+									["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! You have just reached the score %total!<br/>WELL DONE!"}],
+									[
+										"SCRIPT", 
+										"new.show_confirm_dlg", 
+										{
+											"title": "Play again?",
+											"long_desc" : "Do you want to play again?",
+											"event_type": "CUST_UI_CONFIRM",
+											"event_params" : {
+												"from": "ev_scored_exactly_500_points"
+											}
+										}
+									]
+								]
 						]
-
-						//"conditions" : {
-						//	"params" : {
-						//		"total" : 620
-						//	}
-						//},
-						//"actions" : [
-						//	["new.show_window", {"html_text" : "WOW! You have just reached the score 620!<br/>WELL DONE!"}]
-						//]
 					},
 
 					{
@@ -376,21 +324,36 @@
 						"actions": [
 							"IF",
 								[">", ["VAR", "total"], 500],
-								["SEQ",
-									["SCRIPT", "new.show_window", {"html_text" : "Bad luck, you are over the limit. Try it again!"}],
-									["SCRIPT", "new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+								[
+									"SCRIPT", 
+									"new.show_confirm_dlg", 
+									{
+										"title": "Play again?",
+										"long_desc" : "Bad luck, you are over the limit. Your score %total is greater than 500. Do you want to try again?",
+										"event_type": "CUST_UI_CONFIRM",
+										"event_params" : {
+											"from": "ev_scored_more_than_500_points"
+										}
+									}
 								]
 						]
-
-						//"conditions" : {
-						//	"function" : ["new.games.collect_coins.total_score_greater_than", { "score" : 620}]
-						//},
-						//"actions" : [
-						//	["new.show_window", {"html_text" : "Bad luck, you are over the limit. Try it again!"}],
-						//	["new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
-						//]
 					}
 
+				],
+
+				"CUST_UI_CONFIRM" : [
+					{
+						"id": "ev_restart_confirmed",
+
+						"actions": [
+							"IF",
+								["OR",
+									["==", ["VAR", "from"], "ev_scored_more_than_500_points"],
+									["==", ["VAR", "from"], "ev_scored_exactly_500_points"]
+								],
+								["SCRIPT", "new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+						]
+					}
 				],
 
 				"PHASE_START" : [
@@ -420,7 +383,7 @@
 									["==", ["VAR", "amount_in_category"], 1]
 								],
 								["SEQ",
-									["SCRIPT", "new.show_window", {"html_text" : "You have picked your first golden coin. It counts for 100 points!"}]
+									["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first golden coin. It counts for 100 points!"}]
 								]
 						]
 					},
@@ -435,7 +398,7 @@
 									["==", ["VAR", "amount_in_category"], 1]
 								],
 								["SEQ",
-									["SCRIPT", "new.show_window", {"html_text" : "You have picked your first silver coin. It counts for 20 points!"}]
+									["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first silver coin. It counts for 20 points!"}]
 								]
 						]
 					},
@@ -450,7 +413,7 @@
 									["==", ["VAR", "amount_in_category"], 1]
 								],
 								["SEQ",
-									["SCRIPT", "new.show_window", {"html_text" : "You have picked your first copper coin. It counts for 5 points!"}]
+									["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first copper coin. It counts for 5 points!"}]
 								]
 						]
 					}

@@ -12,6 +12,10 @@ class EventManager:
         self._quest_event_handler_fnc = quests_event_handler_fnc
         logger.info(f'EventManager initiated.')
 
+    def create_event(self, type: str, params: dict) -> Event:
+        '''Create an instance of new event from dictionary'''
+        return Event(event_type=type, generator_obj=None, other_obj=None, params=params)
+    
     def get_events(self) -> list:
         '''Returns event queue.'''
 

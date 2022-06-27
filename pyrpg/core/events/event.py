@@ -14,7 +14,7 @@ class Event:
 
 	def __init__(self, event_type, generator_obj, other_obj, params={}):
 
-		assert(event_type in Event.EVENT_TYPES)
+		#assert(event_type in Event.EVENT_TYPES)
 
 		self.event_type = event_type
 		self.generator_obj = generator_obj

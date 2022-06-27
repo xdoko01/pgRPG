@@ -1,7 +1,7 @@
 '''
 Can be run from the console by putting following command
 
-py game.main.game.script_manager._scripts['show_window'](None, html_text='Hello')
+py game.main.game.script_manager._scripts['show_msg_window'](None, html_text='Hello')
 
 '''
 import pygame
@@ -10,20 +10,24 @@ from pygame_gui import UI_WINDOW_CLOSE
 from pygame import Rect
 from pyrpg.main import main
 from pyrpg.core.config.display import DISPLAY_MAX_FPS
+from pyrpg.functions.str_utils import translate_str
 
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''
     # Mandatory line
-    register(fnc=script_show_window, alias=module_name)
+    register(fnc=script_show_msg_window, alias=module_name)
     # Optional names for the script
-    register(fnc=script_show_window, alias='show_window')
+    register(fnc=script_show_msg_window, alias='show_msg_window')
 
-def script_show_window(event, *args, **kwargs):
+def script_show_msg_window(event, *args, **kwargs):
     ''' Script that displays pygame_gui dialog window and freezes the game.
     '''
 
     html_text = kwargs.get('html_text', '')
+
+    # Substitute words starting by % with values from event.params dict
+    html_text = translate_str(for_trans=html_text, trans_dict=event.params, prefix='%')
 
     # Must be with parameter True because the flip is done at the end of main loop
     main.gui_manager.save_screen(flip_before_copy=True)
