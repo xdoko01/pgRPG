@@ -74,7 +74,7 @@ class PerformRenderMapProcessor(Processor):
             # Cycle through visible layers and display tiles
             for layer in map.tmxdata.visible_tile_layers:
 
-                for x, y, tile in map.get_tile_images_by_rect(layer, camera.map_screen_rect):
+                for x, y, tile in map.get_tile_images_by_rect(layer, camera.map_screen_rect): # is this needed - can we simplify this?
                     camera.screen.blit(tile, camera.apply((x * TILE_RES, y * TILE_RES)))
 
     def pre_save(self):

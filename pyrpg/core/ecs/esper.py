@@ -99,7 +99,9 @@ class World:
         assert issubclass(processor_instance.__class__, Processor)
         processor_instance.priority = priority
         processor_instance.world = self
-        processor_instance.cycle = 0
+
+        processor_instance.cycle = 0 # Added by xdoko01
+
         self._processors.append(processor_instance)
         self._processors.sort(key=lambda proc: proc.priority, reverse=True)
 

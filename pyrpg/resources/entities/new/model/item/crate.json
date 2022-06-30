@@ -1,0 +1,6 @@
+{
+	"id" : "crate_model",
+	"templates" : ["new/model/item"],
+	"components" : [
+	]
+}

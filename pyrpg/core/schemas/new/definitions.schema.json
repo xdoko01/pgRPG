@@ -6,6 +6,17 @@
 
 	"definitions" : {
 
+		"list_of_position_targets": {
+			"title": "List of position targets",
+			"description": "List of position targets",
+			"examples": [["test_map", 4, 5, 1 ],["other_map", 10, 10, 5]],
+
+			"type": "array",
+			"items":{
+				"$ref": "#/definitions/position_target"
+			}
+		},
+
 		"list_of_entities": {
 			"title": "List of entities",
 			"description": "List of entities",
@@ -166,7 +177,35 @@
 			"examples": [0, 1, 5, 10, -10],
 
 			"type": "integer"
-		}
+		},
 
+		"map_name": {
+			"title": "Map name",
+			"description": "Name of the map.",
+			"examples": ["test_map", "level01"],
+			"type": "string"
+		},
+
+		"pixel_radius": {
+			"title": "Pixel name",
+			"description": "Radius of target in pixels.",
+			"examples": [0, 10, 102],
+			"type": "integer",
+			"minimum": 1
+		},
+
+		"position_target": {
+			"title": "Position of the target.",
+			"description": "Position of the target.",
+			"examples": [ ["test_map", 10, 10, 5], ["some_other_map", 12, 1, 5]],
+			"type": "array",
+			"prefixItems": [
+				{ "$ref": "#/definitions/map_name" },
+				{ "$ref": "#/definitions/tile_pos" },
+				{ "$ref": "#/definitions/tile_pos" },
+				{ "$ref": "#/definitions/pixel_radius" }
+			],
+			"items": false
+		}
 	}
 }

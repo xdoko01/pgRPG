@@ -476,7 +476,13 @@
   - [ ] maybe the ProgressBar might be created in the Game class only and not in the Main class. By doing that, I will pass one less argument to the engine.
   - [ ] BUG - when restarting quest in the `collect_coins` game, there is loading screen in the background
   - [ ] option not to scale-up the render models to 64x64
-
+  - [ ] implement Sokoban-like game - moving the boxes is ok, when box is landed to the correct spot, it changes??? How to implement that?
+  - [ ] rewrite commands so that code in the package is not needed and commands register themselves with the command manager
+  - [ ] implement that the processors are not running in every cycle - some nice implementation for all processors in esper probably would be nice
+  - [ ] BUG - on the map the second layer is not transparent but has black background
+  - [ ] Template not only from files but also from previous entities definition in the quest file - implement copy entity method, maybe on esper level. Then use it in quest definition.
+  - [ ] optimize  `map.get_tile_images_by_rect(layer, camera.map_screen_rect)` function. there are unnecessary calculation being done every cycle - tiles to show
+  - [ ] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
 

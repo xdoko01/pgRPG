@@ -1,0 +1,7 @@
+{
+	"id" : "crate",
+	"templates" : ["new/thing/item"],
+	"components" : [
+		{"type" : "new.collidable:Collidable", "params" : {"x" : 30, "y" : 30}}
+	]
+}

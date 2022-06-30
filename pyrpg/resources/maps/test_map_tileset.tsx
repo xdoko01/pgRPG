@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.4" name="test_map_tileset" tilewidth="32" tileheight="32" tilecount="3072" columns="64" backgroundcolor="#000000">
+<tileset version="1.8" tiledversion="1.8.4" name="test_map_tileset" tilewidth="32" tileheight="32" tilecount="3072" columns="64">
  <image source="tileset.png" trans="000000" width="2048" height="1536"/>
  <tile id="0">
   <animation>

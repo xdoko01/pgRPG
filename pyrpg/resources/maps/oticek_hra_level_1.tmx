@@ -110,7 +110,7 @@
 1034,1039,1036,1040,1037,1035,1038,1038,1038,1034,1038,1039,1039,1034,1036,1035,1040,1038,1033,1039,1040,1040,1035,1034,1038,1033,1033,1034,1035,1040,1034,1040,1038,1040,1039,1040,1039,1040,1037,1034,1035,1038,1033,1038,1034,1036,1036,1033,1039,1040
 </data>
  </layer>
- <layer id="3" name="Tile Layer 3" width="50" height="50" locked="1">
+ <layer id="3" name="Tile Layer 3" width="50" height="50" visible="0" locked="1">
   <properties>
    <property name="collisionLayer" type="bool" value="true"/>
   </properties>
@@ -167,19 +167,14 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="Object Layer 1">
+ <objectgroup id="4" name="Object Layer 1" visible="0">
   <object id="1" x="96" y="64">
    <point/>
   </object>
   <object id="2" name="test" type="entity" gid="11" x="240" y="80" width="32" height="32">
    <properties>
-    <property name="new.movable:Movable" type="class" propertytype="Movable">
-     <properties>
-      <property name="x" type="int" value="5"/>
-      <property name="y" type="int" value="7"/>
-     </properties>
-    </property>
-    <property name="templates" propertytype="templates" value="new/model/body/male/human/olive"/>
+    <property name="new.movable:Movable" type="class"/>
+    <property name="templates" value="new/model/body/male/human/olive"/>
    </properties>
   </object>
   <object id="3" gid="11" x="1253.33" y="185.333" width="32" height="32"/>

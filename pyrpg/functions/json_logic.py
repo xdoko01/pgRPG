@@ -21,6 +21,7 @@ OPERATORS = {
 	"ANYOF": lambda *args: reduce(lambda a, b: a or b, args),
 	"AND": lambda *args: reduce(lambda a, b: a and b, args),
 	"OR": lambda *args: reduce(lambda a, b: a or b, args),
+	"IN": lambda item, list: item in list,
 
 	"==": lambda *args: reduce(lambda a, b: a==b, args),
 	"!=": lambda *args: reduce(lambda a, b: a!=b, args),
@@ -88,7 +89,7 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 
 if __name__ == '__main__':
 
-	data = {"param1" : 10, "param2": "Hello"}
+	data = {"param1" : 10, "param2": "Hello", "param_list": [1,2,3,4]}
 	#expression = ["AND", "1==1", ["OR", "1==2", "1==1"]]
 	#expression = ["and", "1==1", "1==1", "1==1", "2==3"]
 	#expression = ["oneOf", "1==1", "1==1", "1==1", "2==3"]
@@ -119,6 +120,7 @@ if __name__ == '__main__':
 			["SCRIPT", "script.name.4", "script.args.4"]
 		]
 	]
+	expression = ["IN", 5, ["VAR", "param_list"]]
 
 	print(f'Evaluating expression {expression} \n')
 	print(f'Final result is {json_logic(expr=expression, value_fnc=lambda x: x, script_fnc=lambda *args: print(*args), data=data)}')

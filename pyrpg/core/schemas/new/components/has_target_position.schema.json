@@ -1,0 +1,38 @@
+{
+	"$id": "has_target_position.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "HasTargetPosition Component",
+	"description": "Schema validating the HasTargetPosition component.",
+
+	"examples" : [
+		{"type" : "new.has_target_position:HasTargetPosition", "params" : {"targets": [[10,10,5], [20,10,5]]}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.has_target_position:HasTargetPosition" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the HasWeapon component class - 'targets'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"targets" : {
+					"$ref": "../definitions.schema.json#/definitions/list_of_position_targets"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

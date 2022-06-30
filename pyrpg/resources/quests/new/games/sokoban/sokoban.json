@@ -1,0 +1,460 @@
+{
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
+	"id" : "sokoban",
+	"title" : "Sokoban Demo Game",
+	"description" : "SimpleSokoban-like game, the aim is to push all the boxes on the marked spots.",
+	"objective" : "Push all the boxes on the marked spots.",
+	"init_phase" : "level01",
+
+	"processors" : [
+
+		// For commands
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		//["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		//["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		//["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["new.collision_system:GenerateCollisionsProcessor", {}],
+		["new.collision_system:ResolveCollisionsProcessor", {}],
+		["new.collision_system:ResolveMapCollisionsProcessor", {}],
+
+		// For visual and sound effects concerning collisions
+		//["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		//["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+
+		// For pickup
+		//["new.pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+		//["new.pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+		
+		// For score
+		//["new.score_system:GenerateScoreOnPickupProcessor", {}],
+		//["new.score_system:CalculateScoreProcessor", {}],
+
+		// For destroy
+		//["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+
+		// For displaying on screen
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		//["new.render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		//["new.render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		//["new.render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For checking of position targets are reached - run once per 500 cycles
+		["new.position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
+
+		// Removal at the end of the cycle
+
+		// Removal - movement
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+
+		// Removal - collision
+		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		
+		// Removal - animation
+		//["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+
+		// Removal - score
+		//["new.score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor", {}],
+
+		// Removal - pickup
+		//["new.pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		//["new.pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+		//["new.pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+
+	],
+
+
+	"phases" : {
+		"level01" :{
+			"name" : "Level 1", "objective" : "","maps" : ["game_sokoban_lvl01"],
+			
+			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
+
+			"dialogs" : [],
+
+			"entities" : [
+				{
+					"id" : "player01",
+					"templates" : ["new/model/body/male/human/white"],
+					"components" : [
+
+						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+
+						{
+							"type" : "new.collidable:Collidable", 
+							"params" :  {
+								"x" : 30, "y" : 30,
+								"position_fix_walkaround_mode" : false // can pushed only straight
+							}
+						},
+
+						{
+							"type" : "new.controllable:Controllable", 
+							"params" :  {
+								"key_profile" : "default",
+								"control_cmds" : {
+									"left" : [["new_move_noadd", {"moves" : ["left"]}]],
+									"right": [["new_move_noadd", {"moves" : ["right"]}]],
+									"up" : [["new_move_noadd", {"moves" : ["up"]}]],
+									"down" : [["new_move_noadd", {"moves" : ["down"]}]],
+									"attack" : [["none", {}]]
+								}
+							}
+						},
+
+						{"type" : "new.has_score:HasScore", "params" : {}},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 3, "tile_y" : 3, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+					]
+				},
+				{
+					"id": "crate01",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 3, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				},
+				{
+					"id": "crate02",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 4, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				},
+				{
+					"id": "crate03",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				},
+				{
+					"id": "crate04",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				},
+				{
+					"id": "crate05",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				},
+				{
+					"id": "crate06",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				},
+				{
+					"id": "crate07",
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+					]
+				}//,
+				//,
+				//,
+				//{
+				//	"id": "crate02",
+				//	"templates": ["#crate01"],
+				//	"components": [
+				//		{
+				//			"type" : "new.position:Position", 
+				//			"params" : {
+				//				"tile_x" : 10, 
+				//				"tile_y" : 6, 
+				//				"map" : "game_sokoban_lvl01"
+				//			}
+				//		}
+				//	]
+				//}
+			],
+
+			"event_handling" : {
+
+				"QUEST_START" :[
+					{
+						"id": "ev_start_game",
+						
+						"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+
+					}
+				],
+
+				"CUST_UI_CONFIRM" : [
+					{
+						"id": "ev_restart_confirmed",
+
+						"actions": [
+							"IF",
+								["==", ["VAR", "from"], "ev_all_crates_in_place"],
+								["SCRIPT", "new.restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
+						]
+					}
+				],
+
+				"ON_POS_TARGET": [
+					{
+						"id": "ev_all_crates_in_place",
+						
+						"actions": [
+							"IF", 
+								["AND",
+									["IN", "crate01", ["VAR", "on_target"]], 
+									["IN", "crate02", ["VAR", "on_target"]], 
+									["IN", "crate03", ["VAR", "on_target"]],
+									["IN", "crate04", ["VAR", "on_target"]],
+									["IN", "crate05", ["VAR", "on_target"]],
+									["IN", "crate06", ["VAR", "on_target"]],
+									["IN", "crate07", ["VAR", "on_target"]]
+								],
+								["SEQ",
+									["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
+									[
+										"SCRIPT", 
+										"new.show_confirm_dlg", 
+										{
+											"title": "Play again?",
+											"long_desc" : "Do you want to play again?",
+											"event_type": "CUST_UI_CONFIRM",
+											"event_params" : {
+												"from": "ev_all_crates_in_place"
+											}
+										}
+									]
+								]
+						]
+					}
+				],
+
+				"SCORE": [
+				],
+
+				"PHASE_START" : [
+				],
+
+				"KILL" : [
+				],
+
+				"DAMAGE" : [
+				],
+
+				"COLLISION" : [
+				],
+	
+				"TELEPORTATION" : [
+				],
+
+				"ITEM_PICKUP" : [
+				],
+
+				"WEARABLE_WEARED" : [
+				],
+
+				"WEAPON_ARMED" : [
+				]
+
+			},
+
+			"after_steps" : [
+				{
+					"erase" : ""
+				}
+			]
+		}
+	}
+}

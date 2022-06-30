@@ -1,0 +1,25 @@
+{ "columns":1,
+ "image":"crate_wooden.png",
+ "imageheight":64,
+ "imagewidth":64,
+ "margin":0,
+ "name":"crate_wooden",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.8.4",
+ "tileheight":64,
+ "tiles":[
+        {
+         "id":0,
+         "properties":[
+                {
+                 "name":"action",
+                 "type":"string",
+                 "value":"idle"
+                }]
+        }],
+ "tilewidth":64,
+ "transparentcolor":"#000000",
+ "type":"tileset",
+ "version":"1.8"
+}

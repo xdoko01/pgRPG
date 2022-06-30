@@ -10,7 +10,7 @@
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
 		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
 
-		// For movement
+		// For movement 
 		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 		
 		// For displaying

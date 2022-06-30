@@ -71,5 +71,6 @@ class CommandManager:
             # If command is not recognized by the command module, none command function is returned
 
             result = commands.get_cmd_fnc(cmd_fnc)(**cmd_params)
+            logger.debug(f'Command "{cmd_fnc}" with parameters {cmd_params} executed with status {result}.')
 
             if brain: brain.process_result(result)

@@ -21,13 +21,16 @@ def main(argv):
 
     console = True
 
-    filepath = 'new/games/collect_coins/collect_coins.json'
+    filepath = 'new/games/sokoban/sokoban.json'
+    #filepath = 'new/games/collect_coins/collect_coins.json'
     #filepath = 'new/tests/10_effects/test_fx_01.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_damage.json'
     #filepath = 'new/tests/05_pickup/test_pickup_01.json'
     #filepath = 'new/tests/04_collisions/test_collisions_05.json'
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
+    #filepath = 'new/tests/01_movements/test_movement_01.json'
+
     #filepath = None
 
     usage_info = '''

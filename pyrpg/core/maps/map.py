@@ -70,12 +70,12 @@ class Map:
 		(x1, y1, x2, y2) = rect
 
 		# Calculate the topleft and bottom-right tile map cell positions to display
-		x1 = int(x1 // config.TILE_RES)
-		y1 = int(y1 // config.TILE_RES)
-		x2 = int(x2 // config.TILE_RES)
-		y2 = int(y2 // config.TILE_RES)
+		x1 = int(x1 // config.TILE_RES) #0 -> 0
+		y1 = int(y1 // config.TILE_RES) #0 -> 0
+		x2 = int(x2 // config.TILE_RES) #640 -> 10+1 ... 10(real)
+		y2 = int(y2 // config.TILE_RES) #480 -> 8+1  ... 11(real)
 
-		for y, x in product(range(y1, y2 + 1), range(x1, x2 + 1)):
+		for y, x in product(range(y1, min(y2 + 1, self.tmxdata.height)), range(x1, min(x2 + 1, self.tmxdata.width))): # added min function so that small maps are not throwing errors
 			tile = self.get_tile_image(x, y, layer)
 			if tile:
 				yield x, y, tile

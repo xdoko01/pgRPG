@@ -193,15 +193,27 @@ LOGGING = {
             "mode": "w",
             "encoding": "utf-8"
         },
+        "file_handler_mng": {
+            "class": "logging.FileHandler",
+            "formatter": "short",
+            "filename": "pyrpg/logs/managers.log",
+            "mode": "w",
+            "encoding": "utf-8"
+        },
+        "file_handler_cmd": {
+            "class": "logging.FileHandler",
+            "formatter": "short",
+            "filename": "pyrpg/logs/commands.log",
+            "mode": "w",
+            "encoding": "utf-8"
+        },
         "null": {
             "class": "logging.NullHandler"
         }
-
     },
 
     "loggers" : {
 
-        
         # Save all the logs from processor classes to the file
         "pyrpg.core.ecs.processors" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -209,7 +221,22 @@ LOGGING = {
             "handlers" : ["null"],  # do not log to file for speed
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
-        
+
+        # Save all the logs from manager classes to the file
+        "pyrpg.core.managers" : {
+            "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+            #"handlers" : ["file_handler_mng"], # uncomment to log all the managers
+            "handlers" : ["null"],  # do not log to file for speed
+            "propagate" : False # Do not send messages from these loggers to parent (root) logger
+        },
+
+        # Save all the logs from command functions to the file
+        "pyrpg.core.commands" : {
+            "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+            #"handlers" : ["file_handler_cmd"], # uncomment to log all the managers
+            "handlers" : ["null"],  # do not log to file for speed
+            "propagate" : False # Do not send messages from these loggers to parent (root) logger
+        },
 
         # Save all the logs other from processor classes to console
         "pyrpg" : {
