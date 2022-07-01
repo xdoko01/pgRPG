@@ -77,16 +77,16 @@ class CreateEntityOnPositionProcessor(Processor):
         for ent, (factory, flag_create_from_factory) in self.world.get_components(Factory, FlagCreateFromFactory):
 
             # Prepare ID for the new entity
-            id_str = f'ORIG_ID:{factory.prescription.get("id", "")}:SUFF_ID:{flag_create_from_factory.id_suffix}:PARENT_ENT:{flag_create_from_factory.parent}:FACT_ENT:{ent}:TS:{pygame.time.get_ticks()}'
+            #id_str = f'ORIG_ID:{factory.prescription.get("id", "")}:SUFF_ID:{flag_create_from_factory.id_suffix}:PARENT_ENT:{flag_create_from_factory.parent}:FACT_ENT:{ent}:TS:{pygame.time.get_ticks()}'
 
             new_entity = self.create_entity_fnc(
                 factory.prescription,
 
                 # New ID for new Entity
-                entity_id=id_str,
+                entity_alias=None #id_str,
 
                 # Do not register in engine global variable alias_to_entity - not needed
-                register=False
+                #register=False
             )
 
             # If position is passed in FlagCreateFromFactory, add the Position component to the new entity
@@ -189,10 +189,7 @@ class GenerateProjectileProcessor(Processor):
                     factory.prescription.update({"id": id_str})
 
                     new_entity = self.create_entity_fnc(
-                            factory.prescription,
-
-                            # Do not register in engine global variable alias_to_entity - not needed
-                            register=False
+                            factory.prescription
                         )
 
                     # Add position component pos = (pos_x, pos_y, pos_dir, pos_map)

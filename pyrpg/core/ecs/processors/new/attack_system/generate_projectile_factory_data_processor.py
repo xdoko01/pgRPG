@@ -102,7 +102,8 @@ class GenerateProjectileFactoryDataProcessor(Processor):
                                                 "parent": parent,
                                                 "damage_fnc": [lambda x: x]
                                         },
-                                        id_suffix='projectile'
+                                        id_suffix='projectile',
+                                        register=False
                                         )
                                     )
 

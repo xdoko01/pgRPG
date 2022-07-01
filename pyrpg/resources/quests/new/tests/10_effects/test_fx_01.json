@@ -180,10 +180,11 @@
 						//{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
 
 						{
-							"type" : "new.factory:Factory", 
+							"type" : "new.factory:Factory",
 							"params" : {
 								"prescription" : {
-									"id" : "sword_slash",
+									
+									//"id" : "sword_slash", # Never have ID on the prescription if you do not want the projectiles to be in the lookup tables
 									"templates" : [], // Only collision zone is created, no sprite.
 									"components" : [
 										{"type" : "new.debug:Debug", "params" : {}},

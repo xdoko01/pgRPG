@@ -67,10 +67,13 @@ class PerformFactoryGenerationProcessor(Processor):
             new_entity = self.create_entity_fnc(
                 factory.prescription,
                 # New ID for new Entity
-                entity_id=f'ORIG_ID:{factory.prescription.get("id", "")}:SUFF_ID:{flag_create_from_factory.id_suffix}:FACT_ENT:{ent}',
+                entity_alias = (factory.prescription.get('id') + '_' + flag_create_from_factory.id_suffix + '_' + ent + '_' + factory.current_units) if flag_create_from_factory.register else None
                 # Register in the world if prescribed
-                register=flag_create_from_factory.register
+                #register=flag_create_from_factory.register
             )
+
+            # Increase number of generated items from factory
+            factory.current_units += 1
 
             # Add FlagGeneratedFromFactory to the new entity
             self.world.add_component(new_entity, FlagGeneratedFromFactory())

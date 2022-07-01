@@ -51,6 +51,64 @@ class ECSManager:
             # If entity_id is list or dictionary (non hashable)
             return None
 
+    def register_entity_lookup(self, entity_id: int, entity_alias: str):
+        '''Register entity alias and id for later lookup.'''
+
+        self._alias_to_entity.update({entity_alias: entity_id})
+        self._entity_to_alias.update({entity_id: entity_alias})
+
+        logger.debug(f'Entity id: "{entity_id}" registered under alias: "{entity_alias}"')
+
+    def unregister_entity_lookup(self, entity_id: int, entity_alias: str):
+        '''Unregister entity from lookup dictionaries.'''
+
+        # Un-register the entity - ignore if not found
+        try:
+            del self._alias_to_entity[entity_alias]
+            del self._entity_to_alias[entity_id]
+        except KeyError:
+            pass
+
+        logger.debug(f'Entity id: "{entity_id}" unregistered from alias: "{entity_alias}"')
+
+    def get_all_entities(self) -> list:
+        '''Return all existing entity ids'''
+        return list(self._world._entities.keys())
+
+    def get_entities_with_alias(self) -> list:
+        '''Return list of entity ids having alias'''
+        return list(self._entity_to_alias.keys())
+
+    def get_entities_no_alias(self) -> list:
+        '''Return list of entity ids without alias'''
+        return [e for e in self.get_all_entities() if e not in self.get_entities_with_alias()]
+    
+    def check_lookup_tables(self):
+        '''
+        '''
+        return len(self._entity_to_alias) == len(self._alias_to_entity)
+
+    def create_empty_entity(self, entity_alias: str=None) -> int:
+        '''Create empty envelope for the entity where later components will be added'''
+        
+        # Create new entity and get its id
+        entity_id = self._world.create_entity()
+
+        # Registration requires entity alias
+        if entity_alias:
+
+            # Update the lookup dictionaries
+            self.register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+
+        logger.info(f'*Creating new empty entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
+        logger.debug(f'All entities: {self.get_all_entities()}')
+        logger.debug(f'All entities with alias: {self.get_entities_with_alias()}')
+        logger.debug(f'All entities no alias: {self.get_entities_no_alias()}')
+        logger.debug(f'Entity to alias: {self._entity_to_alias}')
+        logger.debug(f'Entity to alias: {self._alias_to_entity}')
+
+        return entity_id
+
     def _create_component(self, comp_path: str, comp_params: dict) -> Component:
         ''' Returns new instance of component created.
 
@@ -95,15 +153,110 @@ class ECSManager:
             logger.error(f'Incorrect parameters while creating component "{comp_class}"')
             raise ValueError
 
-    def create_entity(self, json_ent_obj: dict, entity_id: int=None, register: bool=True, child_ref: int=None) -> int:
-        ''' Create entity from json definition. See Quest for definitions
+    def update_entity(self, json_ent_obj: dict, entity_id: int):
+        '''Add components/templates specified in json_ent_object on specified entity_id.
 
             Parameters:
                 :param json_ent_obj: Description of entity in JSON format (python dict).
                 :type json_ent_obj: dict
 
-                :param entity_id: Parameter overrides entity id that is present in json_ent_obj definition.
-                :type entity_id: str
+                :param entity_id: Specifies entity id on which the update should be done
+                :type entity_id: int
+        '''
+        # Read the components from the templates - order matters! latter has priority and overwrites
+        # the previous components.
+        for template in json_ent_obj.get("templates", []):
+
+            try:
+                template_path = Path(ENTITY_PATH / Path(template + '.json'))
+                template_entity_data = get_dict_from_json(template_path)
+            except FileNotFoundError:
+                logger.error(f'Entity file "{template_path}" not found.')
+                raise
+
+            logger.info(f'**Creating components from template ""{template + ".json"}"".')
+            self.update_entity(template_entity_data, entity_id=entity_id)
+            logger.info(f'**Creating components from template ""{template + ".json"}"" done.')
+
+        # Initiate every component
+        for component in json_ent_obj.get("components", []):
+
+            # Get component type
+            comp_type = component.get("type")
+
+            # Get component params
+            comp_params = component.get("params", {})
+
+            # Create and add/overwrite component
+            try:
+                new_comp = self._create_component(comp_type, comp_params)
+
+                self._world.add_component(entity_id, new_comp)
+
+                logger.info(f'***{new_comp} for entity {entity_id} created.')
+
+            except ValueError:
+                logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
+                raise ValueError
+
+    #def create_entity_ex(self, json_ent_obj: dict, entity_alias: str=None, register: bool=True) -> int:
+    def create_entity_ex(self, json_ent_obj: dict, entity_alias: str=None) -> int:
+        '''Alternative create_entity function using update_entity function
+
+            Parameters:
+                :param json_ent_obj: Description of entity in JSON format (python dict).
+                :type json_ent_obj: dict
+
+                :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
+                    key 'id'.
+                :type entity_alias: str
+
+                #:param register: Should the entity be globally registered with engine.
+                #:type register: bool
+                
+                :returns: Integer specifying entity id
+
+                :raise: ValueError - in case of problem with component creation
+        '''
+
+        # Create empty entity
+        # First check for explicit alias then for id in json and if nothing found, do not register
+        # problem when prescription has id and factory generator is returning none
+        entity_id = self.create_empty_entity(entity_alias=entity_alias if entity_alias else json_ent_obj.get("id", None))
+
+        '''
+        # Create new entity and get its id
+        entity_id = self._world.create_entity()
+
+        # Registration requires entity alias
+        if register:
+
+            # Decide on entity alias - either from json dict or from fction call
+            entity_alias = entity_alias if entity_alias else json_ent_obj["id"]
+
+            # Update the lookup dictionaries
+            self.register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+
+        logger.info(f'*Creating new entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
+        '''
+
+        # Now add components to this entity id empty envelope
+        self.update_entity(json_ent_obj=json_ent_obj, entity_id=entity_id)
+
+        return entity_id
+
+    """
+    def create_entity(self, json_ent_obj: dict, entity_alias: str=None, register: bool=True, child_ref: int=None) -> int:
+        ''' OBSOLETE - substituted by create_entity_ex
+        Create entity from json definition. See Quest for definitions 
+
+            Parameters:
+                :param json_ent_obj: Description of entity in JSON format (python dict).
+                :type json_ent_obj: dict
+
+                :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
+                    key 'id'.
+                :type entity_alias: str
 
                 :param register: Should the entity be globally registered with engine.
                 :type register: bool
@@ -116,16 +269,24 @@ class ECSManager:
                 :raise: ValueError - in case of problem with component creation
         '''
 
-        # Prepare new_entity obj
-        new_entity_obj = None
-
-        # Decode entity id - use the one from fcion call with priority or the on fron entity description
-        new_entity_id = entity_id if entity_id else json_ent_obj.get("id")
+        entity_id, entity_alias = None, None
 
         # Create new entity obj for the root entity
         if not child_ref:
-            new_entity_obj = self._world.create_entity()
-            logger.info(f'\n*Creating new entity "{new_entity_id}", id: {new_entity_obj}')
+            entity_id = self._world.create_entity()
+
+            # Registration requires entity alias
+            if register:
+
+                # Decide on entity alias - either from json dict or from fction call
+                entity_alias = entity_alias if entity_alias else json_ent_obj["id"]
+
+                # Update the lookup dictionaries
+                self._alias_to_entity.update({entity_alias: entity_id})
+                self._entity_to_alias.update({entity_id: entity_alias})
+
+            logger.info(f'*Creating new entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
+
 
         # Read the components from the templates - order matters! latter has priority and overwrites
         # the previous components
@@ -139,8 +300,8 @@ class ECSManager:
                 logger.error(f'Entity file "{template_path}" not found.')
                 raise
 
-            logger.info(f'**Creating components from template ""{template + ".json"}"".')
-            self.create_entity(template_entity_data, child_ref=new_entity_obj if not child_ref else child_ref)
+            logger.info(f'**Creating components from template ""{template + ".json"}"" - entity_id: {entity_id} vs. child_ref: {child_ref}.')
+            self.create_entity(template_entity_data, child_ref=entity_id if not child_ref else child_ref)
             logger.info(f'**Creating components from template ""{template + ".json"}"" done.')
 
         # Initiate every component
@@ -157,38 +318,31 @@ class ECSManager:
                 new_comp = self._create_component(comp_type, comp_params)
 
                 # Add new component to the world
-                self._world.add_component(new_entity_obj if not child_ref else child_ref, new_comp)
+                self._world.add_component(entity_id if not child_ref else child_ref, new_comp)
 
-                logger.info(f'***{new_comp} for entity {new_entity_obj if not child_ref else child_ref} created.')
+                logger.info(f'***{new_comp} for entity {entity_id if not child_ref else child_ref} created.')
 
             except ValueError:
                 logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
                 raise ValueError
 
-        # Add entity to the entity map - for the root entity
-        if not child_ref and register:
-            self._alias_to_entity.update({new_entity_id : new_entity_obj})
-            self._entity_to_alias.update({new_entity_obj: new_entity_id})
-
-        return new_entity_obj
+        return entity_id
+    """
 
     def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
         ''' Delete and un-register entity from the world.'''
 
         # Get alias and id
-        alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
-        id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
+        entity_alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
+        entity_id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
 
         # Delete it from Esper world
-        self._world.delete_entity(id)
+        self._world.delete_entity(entity_id)
 
         # Un-register the entity - ignore if not found, can be unregistered entity
-        try:
-            del self._alias_to_entity[alias]
-            del self._entity_to_alias[entity_id]
-        except KeyError:
-            pass
-        logger.info(f'Entity id "{id}" deleted.')
+        self.unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+
+        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} deleted.')
 
     def _clear_entities(self) -> None:
         '''Delete all entities and components from the world'''

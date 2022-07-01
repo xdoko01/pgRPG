@@ -446,6 +446,8 @@
 
 ### 2022-06-27 Implemented confirmation dialog as a form of script. After clicking on OK, custom event with custom parameters is generated and can be further processed by standard event handling logic.
 
+### 2022-07-01 Adjustments in ECS_MANAGER. Entities are not loaded before components, so entity alias can be used anywhere in the quest JSON!
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -482,7 +484,8 @@
   - [ ] BUG - on the map the second layer is not transparent but has black background
   - [ ] Template not only from files but also from previous entities definition in the quest file - implement copy entity method, maybe on esper level. Then use it in quest definition.
   - [ ] optimize  `map.get_tile_images_by_rect(layer, camera.map_screen_rect)` function. there are unnecessary calculation being done every cycle - tiles to show
-  - [ ] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
+  - [x] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
+  - [ ] Revise usage of `dict.get()` because it is always returning None if value is not found. Sometimes I want the `KeyError` when the key does not exist and not `None`.
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
 

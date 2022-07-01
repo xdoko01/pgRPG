@@ -59,8 +59,7 @@ class GenerateVisualFXOnGenerationProcessor(Processor):
             new_entity = self.create_entity_fnc(
                 {
                     "templates" : [vfx_on_generation.effect]
-                },
-                register=False
+                }
             )
 
             # Add the correct position - either the position of the effect moves dynamically together with the entity

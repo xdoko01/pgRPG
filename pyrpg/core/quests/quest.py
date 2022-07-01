@@ -589,7 +589,9 @@ class QuestEx:
 			print(f'Problem with initiation of maps for quest (id-name-phase-map): {self.id} - {self.name} - {self.phase_id} - {map_name}')
 			raise ValueError
 
+		######################
 		# Load Dialogs #####
+		######################
 		self.dialogs = phase_data.get("dialogs", [])
 		progress(text='Loading Dialogs', progress=0, total=len(self.dialogs))
 
@@ -603,22 +605,37 @@ class QuestEx:
 			print(f'Problem with initiation of dialogs for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
 			raise ValueError
 
+		######################
 		# Load Entities #####
+		######################
 		self.entities = phase_data.get("entities", [])
-		progress(text='Loading Entities', progress=0, total=len(self.entities))
+
+		# Extract all aliases for the entities and create them as an empty, registered in lookup tables in ecs_manager
+		progress(text='Loading Entities - Registration', progress=0, total=len(self.entities))
+		
+		for n, entity in enumerate(self.entities):
+			try:
+				self.ecs_mng.create_empty_entity(entity_alias=entity['id'])
+				progress(progress=n+1)
+			except KeyError:
+				raise ValueError(f'Entity definition is missing required parameter id. Every entity defined in the quest must have unique entity alias')
 
 		# Create entities in the world
+		progress(text='Loading Entities - Components Update', progress=0, total=len(self.entities))
 		try:
 			for n, entity in enumerate(self.entities):
 				#engine._create_entity(entity)
-				self.ecs_mng.create_entity(entity)
+				#self.ecs_mng.create_entity_ex(entity)
+				entity_id = self.ecs_mng.get_entity_id(entity_alias=entity['id'])
+				self.ecs_mng.update_entity(entity, entity_id)
 				progress(progress=n+1)
 
 		except ValueError:
-			print(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
-			raise ValueError
+			raise ValueError(f'Problem with initiation of entities for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
 
+		######################
 		# Event handlers
+		######################
 		self.event_handlers = phase_data.get("event_handling", {})
 
 		# Report that phase was loaded - generate event
