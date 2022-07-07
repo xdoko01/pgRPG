@@ -7,6 +7,7 @@ from pyrpg.functions import get_class_object # for dynamic creation of component
 from pyrpg.functions import translate # for creation of the component
 from pyrpg.functions import get_dict_from_json # for loading of json without C-style comments
 from pyrpg.functions import json_logic # for evaluating conditions for processor prerequisites
+from pyrpg.functions import parse_fnc_str # for creation of entity from template with parameters
 
 # Create logger
 logger = logging.getLogger(__name__)
@@ -18,6 +19,8 @@ class ECSManager:
         self._entity_to_alias = {}
         self._alias_to_entity = {}
         self._game_functions = {}
+        self._entity_definitions = {}
+        self._template_definitions = {}
 
         logger.info(f'ECSManager created.')
 
@@ -51,7 +54,7 @@ class ECSManager:
             # If entity_id is list or dictionary (non hashable)
             return None
 
-    def register_entity_lookup(self, entity_id: int, entity_alias: str):
+    def _register_entity_lookup(self, entity_id: int, entity_alias: str):
         '''Register entity alias and id for later lookup.'''
 
         self._alias_to_entity.update({entity_alias: entity_id})
@@ -59,7 +62,7 @@ class ECSManager:
 
         logger.debug(f'Entity id: "{entity_id}" registered under alias: "{entity_alias}"')
 
-    def unregister_entity_lookup(self, entity_id: int, entity_alias: str):
+    def _unregister_entity_lookup(self, entity_id: int, entity_alias: str):
         '''Unregister entity from lookup dictionaries.'''
 
         # Un-register the entity - ignore if not found
@@ -84,30 +87,9 @@ class ECSManager:
         return [e for e in self.get_all_entities() if e not in self.get_entities_with_alias()]
     
     def check_lookup_tables(self):
-        '''
+        ''' Returns true if lookup tables are consistent among each other.
         '''
         return len(self._entity_to_alias) == len(self._alias_to_entity)
-
-    def create_empty_entity(self, entity_alias: str=None) -> int:
-        '''Create empty envelope for the entity where later components will be added'''
-        
-        # Create new entity and get its id
-        entity_id = self._world.create_entity()
-
-        # Registration requires entity alias
-        if entity_alias:
-
-            # Update the lookup dictionaries
-            self.register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
-
-        logger.info(f'*Creating new empty entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
-        logger.debug(f'All entities: {self.get_all_entities()}')
-        logger.debug(f'All entities with alias: {self.get_entities_with_alias()}')
-        logger.debug(f'All entities no alias: {self.get_entities_no_alias()}')
-        logger.debug(f'Entity to alias: {self._entity_to_alias}')
-        logger.debug(f'Entity to alias: {self._alias_to_entity}')
-
-        return entity_id
 
     def _create_component(self, comp_path: str, comp_params: dict) -> Component:
         ''' Returns new instance of component created.
@@ -153,6 +135,35 @@ class ECSManager:
             logger.error(f'Incorrect parameters while creating component "{comp_class}"')
             raise ValueError
 
+    def store_template_definition(self, json_ent_obj: dict, template_id: str) -> None:
+        '''Stores the template definition from which new templates can be created
+        '''
+        template_vars = json_ent_obj.pop("vars", []) # Store variables separatelly
+        self._template_definitions.update({ template_id: { "definition": json_ent_obj, "vars": template_vars } })
+
+    def store_entity_definition(self, json_ent_obj: dict, entity_id: int) -> None:
+        '''Stores the up level definition of entity from the quest specification.
+        Used for possibility to use existing entity definition as a template
+        for creation of other entity.
+        '''
+        self._entity_definitions.update({ entity_id: json_ent_obj })
+
+    def create_empty_entity(self, entity_alias: str=None) -> int:
+        '''Create empty envelope for the entity where later components will be added'''
+        
+        # Create new entity and get its id
+        entity_id = self._world.create_entity()
+
+        # Registration requires entity alias
+        if entity_alias:
+
+            # Update the lookup dictionaries
+            self._register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+
+        logger.info(f'*Creating new empty entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
+
+        return entity_id
+
     def update_entity(self, json_ent_obj: dict, entity_id: int):
         '''Add components/templates specified in json_ent_object on specified entity_id.
 
@@ -167,16 +178,44 @@ class ECSManager:
         # the previous components.
         for template in json_ent_obj.get("templates", []):
 
-            try:
-                template_path = Path(ENTITY_PATH / Path(template + '.json'))
-                template_entity_data = get_dict_from_json(template_path)
-            except FileNotFoundError:
-                logger.error(f'Entity file "{template_path}" not found.')
-                raise
+            # Template starts with &, i.e. creation from template, possibly using variables
+            if template[0] == '&':
+                # Get template name and variables as a list
+                template_name, template_values = parse_fnc_str(template[1:])
 
-            logger.info(f'**Creating components from template ""{template + ".json"}"".')
+                # Substitute the variables in template definition for the actual passed data
+                
+                # Get variable names as a list
+                template_vars_defs = self._template_definitions[template_name]['vars']
+
+                # Return the definition where variables are substituted with the actual values
+                template_entity_data = translate(
+                    dict(zip(template_vars_defs, template_values)), # Translation dictionary made from list of variables and their values
+                    self._template_definitions[template_name]['definition']
+                )
+
+
+            # Template starts with #, i.e. copy of definition of other entity in quest def.
+            elif template[0] == '#':
+                template_entity_id = self.get_entity_id(entity_alias=template[1:])
+                try:
+                    if template_entity_id:
+                        template_entity_data = self._entity_definitions[template_entity_id]
+                    else:
+                        raise KeyError
+                except KeyError:
+                    logger.error(f'Entity definition for entity "{template[1:]}" not found.')
+            else:
+                try:
+                    template_path = Path(ENTITY_PATH / Path(template + '.json'))
+                    template_entity_data = get_dict_from_json(template_path)
+                except FileNotFoundError:
+                    logger.error(f'Entity file "{template_path}" not found.')
+                    raise
+
+            logger.info(f'**Creating components from template ""{template}"".')
             self.update_entity(template_entity_data, entity_id=entity_id)
-            logger.info(f'**Creating components from template ""{template + ".json"}"" done.')
+            logger.info(f'**Creating components from template ""{template}"" done.')
 
         # Initiate every component
         for component in json_ent_obj.get("components", []):
@@ -199,7 +238,6 @@ class ECSManager:
                 logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
                 raise ValueError
 
-    #def create_entity_ex(self, json_ent_obj: dict, entity_alias: str=None, register: bool=True) -> int:
     def create_entity_ex(self, json_ent_obj: dict, entity_alias: str=None) -> int:
         '''Alternative create_entity function using update_entity function
 
@@ -245,89 +283,10 @@ class ECSManager:
 
         return entity_id
 
-    """
-    def create_entity(self, json_ent_obj: dict, entity_alias: str=None, register: bool=True, child_ref: int=None) -> int:
-        ''' OBSOLETE - substituted by create_entity_ex
-        Create entity from json definition. See Quest for definitions 
-
-            Parameters:
-                :param json_ent_obj: Description of entity in JSON format (python dict).
-                :type json_ent_obj: dict
-
-                :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
-                    key 'id'.
-                :type entity_alias: str
-
-                :param register: Should the entity be globally registered with engine.
-                :type register: bool
-
-                :param child_ref: Used for recursive creation of entity from templates.
-                :type child_ref: world.entity Object
-
-                :returns: Integer specifying entity id
-
-                :raise: ValueError - in case of problem with component creation
-        '''
-
-        entity_id, entity_alias = None, None
-
-        # Create new entity obj for the root entity
-        if not child_ref:
-            entity_id = self._world.create_entity()
-
-            # Registration requires entity alias
-            if register:
-
-                # Decide on entity alias - either from json dict or from fction call
-                entity_alias = entity_alias if entity_alias else json_ent_obj["id"]
-
-                # Update the lookup dictionaries
-                self._alias_to_entity.update({entity_alias: entity_id})
-                self._entity_to_alias.update({entity_id: entity_alias})
-
-            logger.info(f'*Creating new entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
-
-
-        # Read the components from the templates - order matters! latter has priority and overwrites
-        # the previous components
-        for template in json_ent_obj.get("templates", []):
-
-            # Read the entity.json
-            try:
-                template_path = Path(ENTITY_PATH / Path(template + '.json'))
-                template_entity_data = get_dict_from_json(template_path)
-            except FileNotFoundError:
-                logger.error(f'Entity file "{template_path}" not found.')
-                raise
-
-            logger.info(f'**Creating components from template ""{template + ".json"}"" - entity_id: {entity_id} vs. child_ref: {child_ref}.')
-            self.create_entity(template_entity_data, child_ref=entity_id if not child_ref else child_ref)
-            logger.info(f'**Creating components from template ""{template + ".json"}"" done.')
-
-        # Initiate every component
-        for component in json_ent_obj.get("components", []):
-
-            # Get component type
-            comp_type = component.get("type")
-
-            # Get component params
-            comp_params = component.get("params", {})
-
-            # Create component
-            try:
-                new_comp = self._create_component(comp_type, comp_params)
-
-                # Add new component to the world
-                self._world.add_component(entity_id if not child_ref else child_ref, new_comp)
-
-                logger.info(f'***{new_comp} for entity {entity_id if not child_ref else child_ref} created.')
-
-            except ValueError:
-                logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
-                raise ValueError
-
-        return entity_id
-    """
+    def copy_entity(self, entity_id: int) -> int:
+        '''TBD - Copy entity from existing entity and return entity id 
+        of the new entity.'''
+        pass
 
     def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
         ''' Delete and un-register entity from the world.'''
@@ -340,7 +299,7 @@ class ECSManager:
         self._world.delete_entity(entity_id)
 
         # Un-register the entity - ignore if not found, can be unregistered entity
-        self.unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+        self._unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
 
         logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} deleted.')
 
@@ -520,3 +479,87 @@ class ECSManager:
         '''Calls process method on all loaded processors.'''
 
         self._world.process(events=events, keys=keys, dt=dt, debug=debug)
+
+    """
+    def create_entity(self, json_ent_obj: dict, entity_alias: str=None, register: bool=True, child_ref: int=None) -> int:
+        ''' OBSOLETE - substituted by create_entity_ex
+        Create entity from json definition. See Quest for definitions 
+
+            Parameters:
+                :param json_ent_obj: Description of entity in JSON format (python dict).
+                :type json_ent_obj: dict
+
+                :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
+                    key 'id'.
+                :type entity_alias: str
+
+                :param register: Should the entity be globally registered with engine.
+                :type register: bool
+
+                :param child_ref: Used for recursive creation of entity from templates.
+                :type child_ref: world.entity Object
+
+                :returns: Integer specifying entity id
+
+                :raise: ValueError - in case of problem with component creation
+        '''
+
+        entity_id, entity_alias = None, None
+
+        # Create new entity obj for the root entity
+        if not child_ref:
+            entity_id = self._world.create_entity()
+
+            # Registration requires entity alias
+            if register:
+
+                # Decide on entity alias - either from json dict or from fction call
+                entity_alias = entity_alias if entity_alias else json_ent_obj["id"]
+
+                # Update the lookup dictionaries
+                self._alias_to_entity.update({entity_alias: entity_id})
+                self._entity_to_alias.update({entity_id: entity_alias})
+
+            logger.info(f'*Creating new entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
+
+
+        # Read the components from the templates - order matters! latter has priority and overwrites
+        # the previous components
+        for template in json_ent_obj.get("templates", []):
+
+            # Read the entity.json
+            try:
+                template_path = Path(ENTITY_PATH / Path(template + '.json'))
+                template_entity_data = get_dict_from_json(template_path)
+            except FileNotFoundError:
+                logger.error(f'Entity file "{template_path}" not found.')
+                raise
+
+            logger.info(f'**Creating components from template ""{template + ".json"}"" - entity_id: {entity_id} vs. child_ref: {child_ref}.')
+            self.create_entity(template_entity_data, child_ref=entity_id if not child_ref else child_ref)
+            logger.info(f'**Creating components from template ""{template + ".json"}"" done.')
+
+        # Initiate every component
+        for component in json_ent_obj.get("components", []):
+
+            # Get component type
+            comp_type = component.get("type")
+
+            # Get component params
+            comp_params = component.get("params", {})
+
+            # Create component
+            try:
+                new_comp = self._create_component(comp_type, comp_params)
+
+                # Add new component to the world
+                self._world.add_component(entity_id if not child_ref else child_ref, new_comp)
+
+                logger.info(f'***{new_comp} for entity {entity_id if not child_ref else child_ref} created.')
+
+            except ValueError:
+                logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
+                raise ValueError
+
+        return entity_id
+    """

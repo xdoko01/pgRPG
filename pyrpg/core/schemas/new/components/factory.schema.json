@@ -37,7 +37,10 @@
 					"title": "New Entity Prescription",
 					"description": "Dictionary with prescription describing new entity.",
 					"type": "object",
-					"$ref": "../entity.schema.json"
+					"$ref": "../entity.schema.json",
+					"not": {
+						"required": [ "id" ]
+					}
 				},
 				"max_units" : {
 					"title": "Max Units",

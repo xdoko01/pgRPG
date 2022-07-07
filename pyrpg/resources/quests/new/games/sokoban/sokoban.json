@@ -92,7 +92,111 @@
 
 			"dialogs" : [],
 
+			"templates": [
+				
+				// By using this template it is easy to define position of any entity
+				{
+					"id": "tmp_tile_pos",
+					"vars": ["$tileX", "$tileY"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "game_sokoban_lvl01"}}
+					]
+				},
+
+				// Following is template without variables
+				{
+					"id": "tmp_crate",
+
+					"templates": ["new/thing/item/crate/wooden_crate"],
+					
+					"components": [
+						{"type" : "new.debug:Debug", "params" : {}},
+						
+						{
+							"type" : "new.has_target_position:HasTargetPosition", 
+							"params" : {
+								"targets": [
+									["game_sokoban_lvl01", 2, 3, 10],
+									["game_sokoban_lvl01", 6, 4, 10],
+									["game_sokoban_lvl01", 2, 5, 10],
+									["game_sokoban_lvl01", 5, 6, 10],
+									["game_sokoban_lvl01", 4, 7, 10],
+									["game_sokoban_lvl01", 7, 7, 10],
+									["game_sokoban_lvl01", 5, 8, 10]
+								]
+							}
+						},
+
+						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+						{"type" : "new.collidable:Collidable", "params" :  {
+							"x" : 30, 
+							"y" : 30, 
+							"position_fix_walkaround_mode" : false // can be pushed only straight
+							}
+						}
+
+					]
+				}
+			],
+
 			"entities" : [
+
+				// Below examples show the possibility to create entity from already defined entity or
+				// by using template with variables.
+
+				// New entity created from one template without parameters and one template using parameters
+				{
+					"id": "crate01",
+					"templates": ["&tmp_crate()", "&tmp_tile_pos(4, 3)"],  // Crate is created at tile position 4, 3
+					"components": [
+					]
+				},
+
+				// New entity created using already existing entity
+				{
+					"id": "crate02",
+					"templates": ["#crate01"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 4, "map" : "game_sokoban_lvl01"}}
+					]
+				},
+
+				// New entity created using template without parameters
+				{
+					"id": "crate03",
+					"templates": ["&tmp_crate()"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
+					]
+				},
+				{
+					"id": "crate04",
+					"templates": ["#crate01"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+					]
+				},
+				{
+					"id": "crate05",
+					"templates": ["#crate01"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+					]
+				},
+				{
+					"id": "crate06",
+					"templates": ["#crate01"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+					]
+				},
+				{
+					"id": "crate07",
+					"templates": ["#crate01"],
+					"components": [
+						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+					]
+				},
 				{
 					"id" : "player01",
 					"templates" : ["new/model/body/male/human/white"],
@@ -128,224 +232,8 @@
 						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
 						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 					]
-				},
-				{
-					"id": "crate01",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
+				}
 
-						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 3, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				},
-				{
-					"id": "crate02",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 4, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				},
-				{
-					"id": "crate03",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				},
-				{
-					"id": "crate04",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				},
-				{
-					"id": "crate05",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				},
-				{
-					"id": "crate06",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				},
-				{
-					"id": "crate07",
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-					]
-				}//,
 				//,
 				//,
 				//{

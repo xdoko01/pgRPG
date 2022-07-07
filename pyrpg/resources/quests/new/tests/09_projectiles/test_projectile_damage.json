@@ -116,7 +116,6 @@
 							"type" : "new.factory:Factory", 
 							"params" : {
 								"prescription" : {
-									"id" : "spear_thrust",
 									"templates" : [], // Only collision zone is created, no sprite.
 									"components" : [
 										{"type" : "new.debug:Debug", "params" : {}},
@@ -163,7 +162,6 @@
 							"type" : "new.factory:Factory", 
 							"params" : {
 								"prescription" : {
-									"id" : "sword_slash",
 									"templates" : [], // Only collision zone is created, no sprite.
 									"components" : [
 										{"type" : "new.debug:Debug", "params" : {}},
@@ -211,7 +209,6 @@
 							"type" : "new.factory:Factory", 
 							"params" : {
 								"prescription" : {
-									"id" : "wooden_arrow",
 									"templates" : ["new/model/ammo/wooden_arrow"],
 									"components" : [
 										{"type" : "new.debug:Debug", "params" : {}},
@@ -255,7 +252,6 @@
 							"type" : "new.factory:Factory", 
 							"params" : {
 								"prescription" : {
-									"id" : "fireball_spell",
 									"templates" : ["new/model/ammo/wooden_arrow"],
 									"components" : [
 										{"type" : "new.debug:Debug", "params" : {}},

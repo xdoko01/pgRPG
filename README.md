@@ -486,6 +486,8 @@
   - [ ] optimize  `map.get_tile_images_by_rect(layer, camera.map_screen_rect)` function. there are unnecessary calculation being done every cycle - tiles to show
   - [x] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
   - [ ] Revise usage of `dict.get()` because it is always returning None if value is not found. Sometimes I want the `KeyError` when the key does not exist and not `None`.
+  - [ ] Rewrite all event handling conditions in tests to JSON LOGIC.
+  - [ ] Rename create_entity_ex to create_entity
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
 

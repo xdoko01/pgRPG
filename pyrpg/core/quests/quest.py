@@ -605,6 +605,22 @@ class QuestEx:
 			print(f'Problem with initiation of dialogs for quest (id-name-phase): {self.id} - {self.name} - {self.phase_id}')
 			raise ValueError
 
+		#############################
+		# Load Entity Templates #####
+		#############################
+		self.templates = phase_data.get("templates", [])
+
+		progress(text='Loading Entity Templates', progress=0, total=len(self.templates))
+
+		for n, entity in enumerate(self.templates):
+			try:
+				template_id = entity['id']
+				self.ecs_mng.store_template_definition(entity, template_id)
+				progress(progress=n+1)
+			except KeyError:
+				raise ValueError(f'Template definition is missing required parameter "id". Every template defined in the quest must have unique template id.')
+
+
 		######################
 		# Load Entities #####
 		######################
@@ -616,6 +632,17 @@ class QuestEx:
 		for n, entity in enumerate(self.entities):
 			try:
 				self.ecs_mng.create_empty_entity(entity_alias=entity['id'])
+				progress(progress=n+1)
+			except KeyError:
+				raise ValueError(f'Entity definition is missing required parameter id. Every entity defined in the quest must have unique entity alias')
+
+		# Store entity definitions
+		progress(text='Loading Entities - Storing definitions', progress=0, total=len(self.entities))
+		
+		for n, entity in enumerate(self.entities):
+			try:
+				entity_id = self.ecs_mng.get_entity_id(entity_alias=entity['id'])
+				self.ecs_mng.store_entity_definition(entity, entity_id)
 				progress(progress=n+1)
 			except KeyError:
 				raise ValueError(f'Entity definition is missing required parameter id. Every entity defined in the quest must have unique entity alias')
