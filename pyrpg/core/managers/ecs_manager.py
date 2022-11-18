@@ -1,5 +1,5 @@
 import logging
-from copy import deepcopy # for creating copy of existing entity
+from copy import copy # for creating copy of existing entity
 
 from pyrpg.core.ecs.esper import World, Processor
 from pyrpg.core.config.paths import Path, ENTITY_PATH
@@ -182,7 +182,7 @@ class ECSManager:
         return entity_id
 
     def _get_template(self, template_id: str) -> dict:
-        ''' Takes template alias/id/path/variables and returns the dictionary containing
+        ''' Takes template id/path/variables and returns the dictionary containing
         information for creation of entity from the template
 
         Parameters:
@@ -195,39 +195,26 @@ class ECSManager:
         # Parse the template to Name and parameters (if there are any)
         template_name, template_values = parse_fnc_str(template_id)
 
-        # If template_id starts with #, we are referencing existing entity using entity alias
-        if template_name.startswith('#'):
-            template_entity_id = self.get_entity_id(entity_alias=template_id[1:])
-            try:
-                if template_entity_id:
-                    template_entity_data = self._entity_definitions[template_entity_id]
-                else:
-                    raise KeyError
-            except KeyError:
-                logger.error(f'Entity definition for entity "{template_id[1:]}" not found.')
-                raise ValueError
         
-        # Otherwise, get the template definition either from quest or if not exist from file
-        else:
-
-            # Try to get the template from quest and if not found try to get them from file
-            template_from_quest = self._template_definitions.get(template_name, None)
+        # Get the template definition either from quest or if not exist from file
+        # Try to get the template from quest and if not found try to get them from file
+        template_from_quest = self._template_definitions.get(template_name, None)
+        
+        try:
+            template_entity_data = template_from_quest if template_from_quest else get_dict_from_json(template_path := Path(ENTITY_PATH / Path(template_name + '.json')))
             
-            try:
-                template_entity_data = template_from_quest if template_from_quest else get_dict_from_json(template_path := Path(ENTITY_PATH / Path(template_name + '.json')))
-                
-            except FileNotFoundError:
-                logger.error(f'Entity file "{template_path}" not found.')
-                raise ValueError
-            
-            # Get the definition of variables from the template, empty list if no variables are defined
-            template_vars_defs = template_entity_data.get('vars', [])
+        except FileNotFoundError:
+            logger.error(f'Entity file "{template_path}" not found.')
+            raise ValueError
+        
+        # Get the definition of variables from the template, empty list if no variables are defined
+        template_vars_defs = template_entity_data.get('vars', [])
 
-            # Fill the template with the variables
-            template_entity_data = translate(
-                dict(zip(template_vars_defs, template_values)), # Translation dictionary made from list of variables and their values
-                template_entity_data
-            )
+        # Fill the template with the variables
+        template_entity_data = translate(
+            dict(zip(template_vars_defs, template_values)), # Translation dictionary made from list of variables and their values
+            template_entity_data
+        )
 
         return template_entity_data
 
@@ -280,21 +267,38 @@ class ECSManager:
         # the previous components.
         for template_id in json_ent_obj.get("templates", []):
 
-            # Get the template data
-            logger.info(f'**Preparing entity data from template ""{template_id}"".')
-            try:
-                template_entity_data = self._get_template(template_id)
-            except ValueError:
-                logger.error(f'Error in preparation of template data for template "{template_id}".')
-                raise ValueError
+            # If template is existing entity (starts with #) - EXPERIMENTAL
+            if template_id.startswith('#'):
 
-            # Create all entities from the template
-            logger.info(f'**Creating components from template ""{template_id}"".')
-            try:
-                self.update_entity(template_entity_data, entity_id=entity_id)
-            except ValueError:
-                logger.error(f'Error in creation of entity from template "{template_id}".')
-                raise ValueError
+                logger.info(f'**Preparing entity data from existing entity ""{template_id[1:]}"".')
+                template_entity_id = self.get_entity_id(entity_alias=template_id[1:])
+                try:
+                    # If the source entity exists, copy its components
+                    if template_entity_id:                
+                        self.copy_entity_components(source_entity_id=template_entity_id, dest_entity_id=entity_id)
+                    else:
+                        raise KeyError
+                except KeyError:
+                    logger.error(f'Template entity "{template_id[1:]}" not found.')
+                    raise ValueError
+
+            # If template is real template
+            else:
+                # Get the template data
+                logger.info(f'**Preparing entity data from template ""{template_id}"".')
+                try:
+                    template_entity_data = self._get_template(template_id)
+                except ValueError:
+                    logger.error(f'Error in preparation of template data for template "{template_id}".')
+                    raise ValueError
+
+                # Create all entities from the template
+                logger.info(f'**Creating components from template ""{template_id}"".')
+                try:
+                    self.update_entity(template_entity_data, entity_id=entity_id)
+                except ValueError:
+                    logger.error(f'Error in creation of entity from template "{template_id}".')
+                    raise ValueError
 
         # Initiate every component
         for component in json_ent_obj.get("components", []):
@@ -348,7 +352,7 @@ class ECSManager:
             for comp_instance in self._world.components_for_entity(entity=source_entity_id):
 
                 # Create a deepcopy and assign it to the destination entity
-                self._world.add_component(entity=dest_entity_id, component_instance=deepcopy(comp_instance))
+                self._world.add_component(entity=dest_entity_id, component_instance=copy(comp_instance))
         except KeyError:
             logger.error(f'Source entity "{source_entity_id}" does not exist.')
             raise ValueError

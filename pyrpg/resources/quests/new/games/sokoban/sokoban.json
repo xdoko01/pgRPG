@@ -156,8 +156,7 @@
 				// New entity created using already existing entity + template for defining the position
 				{
 					"id": "crate02",
-					"parents": ["#crate01"],
-					"templates": ["#crate01", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
+					"templates": ["t_crate", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
 					"components": []
 				},
 
@@ -171,28 +170,28 @@
 				},
 				{
 					"id": "crate04",
-					"templates": ["#crate01"],
+					"templates": ["t_crate"],
 					"components": [
 						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 					]
 				},
 				{
 					"id": "crate05",
-					"templates": ["#crate01"],
+					"templates": ["t_crate"],
 					"components": [
 						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 					]
 				},
 				{
 					"id": "crate06",
-					"templates": ["#crate01"],
+					"templates": ["t_crate"],
 					"components": [
 						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 					]
 				},
 				{
 					"id": "crate07",
-					"templates": ["#crate01"],
+					"templates": ["t_crate"],
 					"components": [
 						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 					]
