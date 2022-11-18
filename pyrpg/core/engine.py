@@ -52,7 +52,7 @@ class Game:
 
         self.ecs_manager.initialize(timed=timed, game_functions={
             'window' : self.gui_manager.window,
-            'create_entity_fnc' : self.ecs_manager.create_entity_ex,
+            'create_entity_fnc' : self.ecs_manager.create_entity,
             'remove_entity_fnc' : self.ecs_manager.delete_entity,
             #'ammo_pack_event_queue' : event_queue,
             'maps' : self.map_manager._maps,

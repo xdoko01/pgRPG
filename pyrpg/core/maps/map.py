@@ -22,7 +22,7 @@ if not pygame.get_init(): pygame.init()
 ########################################################
 
 def images_rescale(images=[], scale=(64, 64)):
-	return [pygame.transform.scale(i, scale).convert() if i else None for i in images]
+	return [pygame.transform.scale(i, scale) if i else None for i in images]
 
 ########################################################
 ### Map class

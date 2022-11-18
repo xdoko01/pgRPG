@@ -1,0 +1,7 @@
+{
+	"id": "t_tile_position",
+	"vars": ["$tileX", "$tileY", "$map"],
+	"components": [
+		{"type" : "new.position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
+	]
+}

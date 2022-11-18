@@ -9,14 +9,14 @@ def _create_dict_list(path: list, value) -> dict:
 	
 	return new_dict
 
-def _create_dict_str(path: str, value) -> dict:
+def _create_dict_str(path: str, value, sep: str='.') -> dict:
 	'''Create a dictionary(tree) specified by path and
 	put the value to the deepest key.'''
 
-	return _create_dict_list(path.split("."), value)
+	return _create_dict_list(path.split(sep), value)
 
 
-def set_dict_value(d: dict, path: str, value):
+def set_dict_value(d: dict, path: str, value, sep: str='.'):
 	'''Create a new path in the dictionary and
 	put the required value there.
 	'''
@@ -24,7 +24,7 @@ def set_dict_value(d: dict, path: str, value):
 	parse_dict = d
 
 	# For tracing the path
-	parse_path = path.split(".")
+	parse_path = path.split(sep)
 
 	# For keeping track how deep we made it in the dict, starting in the root
 	depth = 0
@@ -42,22 +42,25 @@ def set_dict_value(d: dict, path: str, value):
 		# If path no longer exists
 		parse_dict.update(_create_dict_list(parse_path[depth:], value))
 
-def get_dict_value(d: dict, path: str, not_found=None):
+def get_dict_value(d: dict, path: str, sep :str='.', not_found=None):
 	'''Get the value from the dictionary that
 	is on the path specified by the path string.'''
 
+	# In case path is not specified, return the whole dict
+	if not path: return d
+	
 	# For narrowed down dictionary
 	parse_dict = d
 	try:
 		# Dive deep into the dictionary
-		for p in path.split("."):
+		for p in path.split(sep):
 			parse_dict = parse_dict[p]
 		
 		return parse_dict
 	except KeyError:
 		return not_found
 
-def add_dict_value(d: dict, path: str, value) -> int:
+def add_dict_value(d: dict, path: str, value, sep: str='.') -> int:
 	'''Add new value to the dictionary. Do not overwrite
 	the existing value but convert to set and add it to
 	the set.
@@ -65,17 +68,17 @@ def add_dict_value(d: dict, path: str, value) -> int:
 	try:
 		assert isinstance(value, int), f'Value must be integer.'
 
-		current_value = get_dict_value(d, path)
+		current_value = get_dict_value(d, path, sep=sep)
 
 		# If there is currently already some value stored
 		if current_value:
 			assert (isinstance(current_value, list) or isinstance(current_value, set) or isinstance(current_value, tuple)), f'Current Value must be iterable.'
 			new_value = set(current_value)
 			new_value.add(value)
-			set_dict_value(d, path, new_value)
+			set_dict_value(d, path, new_value, sep=sep)
 			return len(new_value)
 		else:
-			set_dict_value(d, path, set([value]))
+			set_dict_value(d, path, set([value]), sep=sep)
 			return 1
 	except AssertionError:
 		raise
@@ -119,6 +122,9 @@ if __name__ == '__main__':
 		}
 	}
 
+	# Get the whole dict
+	print(f"{get_dict_value(d, '')}")
+
 	# Get all available sword weapon
 	print(f"{get_dict_value(d, 'items.weapons.sword.weapon')}")
 
@@ -136,12 +142,12 @@ if __name__ == '__main__':
 	print(f'New dictionary: {_create_dict_list(["one", "two", "three", "four"], 75121)}')
 
 	new = _create_dict_str('items.weapons.bow', 1)
-	get_dict_value(new, 'items.weapons.sword', 5)
-	get_dict_value(new, 'items.weapons.spear', 15)
+	get_dict_value(new, 'items.weapons.sword', sep='.', not_found=5)
+	get_dict_value(new, 'items.weapons.spear', sep='.', not_found=15)
 
 	print(new)
 
-	get_dict_value(new, 'items.weapons.sword', 6)
+	get_dict_value(new, 'items.weapons.sword', sep='.', not_found=6)
 
 	print(new)
 

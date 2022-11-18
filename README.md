@@ -448,6 +448,13 @@
 
 ### 2022-07-01 Adjustments in ECS_MANAGER. Entities are not loaded before components, so entity alias can be used anywhere in the quest JSON!
 
+### 2022-08-04 Templates with parameters, templates loaded from within the quest definition as well as from the files
+
+### 2022-11-13 Possibility to additionally add components on the existing entity with definition in the quest file
+  - This feature allows to add/rewrite components on one entity several times in the quest file(s)
+  - This is useful when the game is spread accross multiple files and in new level (new quest file) we need to add additional feature to our entity (and not create a new one).
+  - E.g. player entity is created in the first quest file and in the next quest file (level) we need to adjust starting position of the player. So we can simply add new position component to player01 that will override the original position.
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -481,15 +488,49 @@
   - [ ] implement Sokoban-like game - moving the boxes is ok, when box is landed to the correct spot, it changes??? How to implement that?
   - [ ] rewrite commands so that code in the package is not needed and commands register themselves with the command manager
   - [ ] implement that the processors are not running in every cycle - some nice implementation for all processors in esper probably would be nice
-  - [ ] BUG - on the map the second layer is not transparent but has black background
-  - [ ] Template not only from files but also from previous entities definition in the quest file - implement copy entity method, maybe on esper level. Then use it in quest definition.
+  - [X] BUG - on the map the second layer is not transparent but has black background - update pyTMX helped
+  - [x] Template not only from files but also from previous entities definition in the quest file - implement copy entity method, maybe on esper level. Then use it in quest definition.
   - [ ] optimize  `map.get_tile_images_by_rect(layer, camera.map_screen_rect)` function. there are unnecessary calculation being done every cycle - tiles to show
   - [x] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
   - [ ] Revise usage of `dict.get()` because it is always returning None if value is not found. Sometimes I want the `KeyError` when the key does not exist and not `None`.
   - [ ] Rewrite all event handling conditions in tests to JSON LOGIC.
   - [ ] Rename create_entity_ex to create_entity
+  - [ ] Implement smooth camera moves. When player stops the camera slowly slows down till centred on the player
+  - [ ] Implement ordering of displaying of entities based on their Y position. Entities with lower Y should be generated on the display before entities with higher Y
+  - [ ] How to implement that some map layer elements are displayed before entities and some behind entities
+  - [x] Fix the map layers that are not transparent - Upgrade to new pyTMX version helped
+  - [ ] AI kill them all game
+  - [x] Possibility to update entities in the quest definition - adding new components to already existing entities.
+  - [ ] Possibility to update entities in the quest definition - deleting components on existing entities.
+
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
+
+### Quest Manager
+  - It issues commands to the other managers - serves as an input for them telling them what to load/delete.
+  - From that perspecive QuestManager is not on the same level as the other managers. It is their boss.
+  - Maybe the whole content of QuestManager should be part of the engine
+  - QuestManager contains references to other managers even now
+
+### NEXT - Remove component from entity using quest file
+### NEXT - Implement copy of components from one entity to other entity in ecs_manager
+### NEXT - Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
+
+
+
+### Quest/Phase as description and no class/object/instance
+  *All is described in MIRO*
+  - [x] Create `EventManagerEx` that processes the event actions
+  - [ ] Transform `quest` module to `QuestManagerEx` + start filling `EventManagerEx` with handlers
+  - [ ] ensure `engine` module is updated
+
+### Processing templates
+  1/ Parse the quest file and store the templates there to the ecs_manager
+    - store the dict with template into following dict `self._template_definitions[template_name]`
+  2/ When creating entity and template is used:
+    a/ Check, if template is already loaded in ECS manager and hence was part of the quest. If yes, use this template and continue.
+    b/ If no such quest exists, try to load it from the `ENTITY_PATH`
+    c/ check if () are part of the template name. If yes, expect parameters vars in the template definition. If vars not found, error.
 
 ### Fade-in Fade-out effect POC
   - based on event - script

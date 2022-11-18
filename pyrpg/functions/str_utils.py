@@ -18,9 +18,53 @@ def parse_fnc_str(for_parse: str) -> tuple:
 		for_parse = 'sum(1, 2)'
 		returns ('sum', [1, 2])
 
+		for_parse = 'sum'
+		returns ('sum', [])
+
+		for parse = 'sum()'
+		returns ('sum', [])
+	'''
+
+	start_pos = None
+	end_pos = None
+	args = ''
+
+	for pos, c in enumerate(for_parse):
+		if c == '(':
+			start_pos = pos
+			assert end_pos is None, f'Closing bracket preceeds opening bracket'
+			assert start_pos > 0, f'Name cannot start with opening bracket'
+		elif c == ')':
+			end_pos = pos
+			assert start_pos is not None, f'Closing bracket preceeds opening bracket'
+			assert end_pos > 0, f'Name cannot start with closing bracket'
+			args = for_parse[start_pos+1:end_pos]
+			break
+	
+	vars = []
+
+	for v in args.split(","):
+
+		v = v.strip() # Get rid of wite-spaces
+		if len(v) == 0: continue # Skip empty strings
+		v = int(v) if v.isdigit() else v # Convert numbers if number
+		vars.append(v)
+
+	return (for_parse[:start_pos], vars)
+
+""" Obsolete function
+def parse_fnc_str(for_parse: str) -> tuple:
+	'''Parses function call defined as a string into 
+	function name and list of parameters.
+
+	Examples:
+		for_parse = 'sum(1, 2)'
+		returns ('sum', [1, 2])
+
 		for_parse = 'sum' ... ValueError
 
 		for parse = 'sum()'
+		returns ('sum', [])
 	'''
 
 	try:
@@ -39,6 +83,7 @@ def parse_fnc_str(for_parse: str) -> tuple:
 		vars.append(v)
 
 	return (for_parse[:start_var], vars)
+"""
 
 if __name__ == '__main__':
 
@@ -49,22 +94,11 @@ if __name__ == '__main__':
 	print(translate_str(for_trans=for_trans, trans_dict=trans_dict, prefix='%'))
 
 	# Test of parse_fnc_str
-	for_parse = 'sum(1,2)'
-	for_parse = 'sum(1,    2,    4)'
-	for_parse = 'sum()'
-	for_parse = 'sum'
-	for_parse = 'sum)('
-	for_parse = 'tmp_crate(4, 3)'
+	fnc_test_strings = [ 'sum', 'sum()', 'sum(1,2)', 'sum(1,    2,    4)', 'tmp_crate(4, 3)', 'dsfa()sdf']
+	
+	for fnc_str in fnc_test_strings:
+		fnc_name, fnc_vars = parse_fnc_str(fnc_str)
+		print(f'Orig: "{fnc_str} -> "fnc name: "{fnc_name}" fnc vars: "{fnc_vars}"')
 
-	fnc_name, fnc_vars = parse_fnc_str(for_parse)
-	print(f'Fnc name: {fnc_name}, fnc vars: {fnc_vars}')
 
-	'''
-	start_var = for_parse.index("(")
-	end_var = for_parse.index(")")
-	print(f'Name part: "{for_parse[:start_var]}", \
-		Variable part: "{for_parse[start_var+1:end_var]}" \
-		List of values: {for_parse[start_var+1:end_var].split(",")} \
-		Cleared values: {[ v.strip() for v in for_parse[start_var+1:end_var].split(",") if len(v) > 0]}')
-	'''
 

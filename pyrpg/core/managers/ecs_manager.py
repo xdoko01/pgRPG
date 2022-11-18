@@ -1,4 +1,5 @@
 import logging
+from copy import deepcopy # for creating copy of existing entity
 
 from pyrpg.core.ecs.esper import World, Processor
 from pyrpg.core.config.paths import Path, ENTITY_PATH
@@ -91,36 +92,49 @@ class ECSManager:
         '''
         return len(self._entity_to_alias) == len(self._alias_to_entity)
 
-    def _create_component(self, comp_path: str, comp_params: dict) -> Component:
-        ''' Returns new instance of component created.
+    def _get_component_class(self, comp_type: str, comp_package: str='pyrpg.core.ecs.components') -> Component:
+        '''Returns class object of the component based on component path.
+        Component class is used to create new component or delete component.
 
-        Parameters:
+        :param comp_path: Path to the component class in format of path.to.module:ComponentClass
+        :type comp_path: str
 
-            :param comp_path: Path to the component class in format of path.to.module:ComponentClass
-            :type comp_path: str
-
-            :param comp_params: Parameters for initiation of component instance.
-            :type comp_params: dict
-
-            :return: Returns reference to the new component instance.
-            :raises: ValueException, if component instance cannot be created
+        :return: Returns reference to the component class.
+        :raises: ValueException, if component class cannot be identified
         '''
-
         # Get the definition of the component class
         try:
             # Spit the module path and the class name
             # For example: comp_path = 'new.movement:Movable' results to
             # comp_module = 'new.movement'
             # comp_class = 'Movable'
-            comp_module, comp_class = comp_path.split(':')
-            new_class = get_class_object(None, 'pyrpg.core.ecs.components.' + comp_module, comp_class)
+            comp_module, comp_class = comp_type.split(':')
+            return get_class_object(None, comp_package + '.' + comp_module, comp_class)
 
         except ValueError:
             logger.error(f'Error during loading of component class "{comp_class}"')
             raise ValueError(f'Error during loading of component class "{comp_class}"')
 
+    def _create_component(self, component_def: dict) -> Component:
+        ''' Returns new instance of component created.
+
+        :param component_def: Dictionary specifying the component and its parameters
+        :type component_def: dict
+
+        :return: Returns reference to the new component instance.
+        :raises: ValueException, if component instance cannot be created
+        '''
+        # Get component type
+        comp_type = component_def.get("type")
+
+        # Get component params
+        comp_params = component_def.get("params", {})
+
         # Try to create instance of the component
         try:
+            # Get the definition of the component class
+            new_class = self._get_component_class(comp_type=comp_type)
+
             # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
             # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
             # integer from alias_dict values.
@@ -132,14 +146,17 @@ class ECSManager:
             return new_class(**comp_params_substituted)
 
         except ValueError:
-            logger.error(f'Incorrect parameters while creating component "{comp_class}"')
+            logger.error(f'Error while creating component "{comp_type}" with parameters "{comp_params}".')
             raise ValueError
 
     def store_template_definition(self, json_ent_obj: dict, template_id: str) -> None:
         '''Stores the template definition from which new templates can be created
         '''
+        """
         template_vars = json_ent_obj.pop("vars", []) # Store variables separatelly
         self._template_definitions.update({ template_id: { "definition": json_ent_obj, "vars": template_vars } })
+        """
+        self._template_definitions.update({ template_id: json_ent_obj })
 
     def store_entity_definition(self, json_ent_obj: dict, entity_id: int) -> None:
         '''Stores the up level definition of entity from the quest specification.
@@ -164,6 +181,90 @@ class ECSManager:
 
         return entity_id
 
+    def _get_template(self, template_id: str) -> dict:
+        ''' Takes template alias/id/path/variables and returns the dictionary containing
+        information for creation of entity from the template
+
+        Parameters:
+            :param template_id: Identification of the template. Template can 
+            :type template_id: str
+
+            :returns: Dictionary with entitiy data from given template
+        '''
+
+        # Parse the template to Name and parameters (if there are any)
+        template_name, template_values = parse_fnc_str(template_id)
+
+        # If template_id starts with #, we are referencing existing entity using entity alias
+        if template_name.startswith('#'):
+            template_entity_id = self.get_entity_id(entity_alias=template_id[1:])
+            try:
+                if template_entity_id:
+                    template_entity_data = self._entity_definitions[template_entity_id]
+                else:
+                    raise KeyError
+            except KeyError:
+                logger.error(f'Entity definition for entity "{template_id[1:]}" not found.')
+                raise ValueError
+        
+        # Otherwise, get the template definition either from quest or if not exist from file
+        else:
+
+            # Try to get the template from quest and if not found try to get them from file
+            template_from_quest = self._template_definitions.get(template_name, None)
+            
+            try:
+                template_entity_data = template_from_quest if template_from_quest else get_dict_from_json(template_path := Path(ENTITY_PATH / Path(template_name + '.json')))
+                
+            except FileNotFoundError:
+                logger.error(f'Entity file "{template_path}" not found.')
+                raise ValueError
+            
+            # Get the definition of variables from the template, empty list if no variables are defined
+            template_vars_defs = template_entity_data.get('vars', [])
+
+            # Fill the template with the variables
+            template_entity_data = translate(
+                dict(zip(template_vars_defs, template_values)), # Translation dictionary made from list of variables and their values
+                template_entity_data
+            )
+
+        return template_entity_data
+
+    def remove_component(self, component_def: dict, entity_id: int) -> None:
+        '''Removes given component on given entity
+        
+        :param component_def: Dictionary specifying the component type
+        :type component_def: dict
+
+        :raises: ValueException, if component cannot be removed
+        '''
+
+        try:
+            comp_cls = self._get_component_class(component_def["type"])
+            self._world.remove_component(entity_id, comp_cls)
+            logger.info(f'***{comp_cls} removed from entity {entity_id}.')
+        except ValueError:
+            logger.error(f'Error while removing of component "{component_def}" from entity "{entity_id}".')
+            raise ValueError
+
+    def update_component(self, component_def: dict, entity_id: int) -> None:
+        '''Takes the definition of the component (dictionary), creates 
+        the component in the world and adds it to the provided entity.
+        
+        :param component_def: Dictionary specifying the component and its parameters
+        :type component_def: dict
+        '''
+
+        # Create and add/overwrite component
+        try:
+            new_comp = self._create_component(component_def)
+            self._world.add_component(entity_id, new_comp)
+            logger.info(f'***{new_comp} for entity {entity_id} created.')
+        except ValueError:
+            logger.error(f'Error in creation of component "{component_def}".')
+            raise ValueError
+
     def update_entity(self, json_ent_obj: dict, entity_id: int):
         '''Add components/templates specified in json_ent_object on specified entity_id.
 
@@ -174,87 +275,50 @@ class ECSManager:
                 :param entity_id: Specifies entity id on which the update should be done
                 :type entity_id: int
         '''
+
         # Read the components from the templates - order matters! latter has priority and overwrites
         # the previous components.
-        for template in json_ent_obj.get("templates", []):
+        for template_id in json_ent_obj.get("templates", []):
 
-            # Template starts with &, i.e. creation from template, possibly using variables
-            if template[0] == '&':
-                # Get template name and variables as a list
-                template_name, template_values = parse_fnc_str(template[1:])
+            # Get the template data
+            logger.info(f'**Preparing entity data from template ""{template_id}"".')
+            try:
+                template_entity_data = self._get_template(template_id)
+            except ValueError:
+                logger.error(f'Error in preparation of template data for template "{template_id}".')
+                raise ValueError
 
-                # Substitute the variables in template definition for the actual passed data
-                
-                # Get variable names as a list
-                template_vars_defs = self._template_definitions[template_name]['vars']
-
-                # Return the definition where variables are substituted with the actual values
-                template_entity_data = translate(
-                    dict(zip(template_vars_defs, template_values)), # Translation dictionary made from list of variables and their values
-                    self._template_definitions[template_name]['definition']
-                )
-
-
-            # Template starts with #, i.e. copy of definition of other entity in quest def.
-            elif template[0] == '#':
-                template_entity_id = self.get_entity_id(entity_alias=template[1:])
-                try:
-                    if template_entity_id:
-                        template_entity_data = self._entity_definitions[template_entity_id]
-                    else:
-                        raise KeyError
-                except KeyError:
-                    logger.error(f'Entity definition for entity "{template[1:]}" not found.')
-            else:
-                try:
-                    template_path = Path(ENTITY_PATH / Path(template + '.json'))
-                    template_entity_data = get_dict_from_json(template_path)
-                except FileNotFoundError:
-                    logger.error(f'Entity file "{template_path}" not found.')
-                    raise
-
-            logger.info(f'**Creating components from template ""{template}"".')
-            self.update_entity(template_entity_data, entity_id=entity_id)
-            logger.info(f'**Creating components from template ""{template}"" done.')
+            # Create all entities from the template
+            logger.info(f'**Creating components from template ""{template_id}"".')
+            try:
+                self.update_entity(template_entity_data, entity_id=entity_id)
+            except ValueError:
+                logger.error(f'Error in creation of entity from template "{template_id}".')
+                raise ValueError
 
         # Initiate every component
         for component in json_ent_obj.get("components", []):
-
-            # Get component type
-            comp_type = component.get("type")
-
-            # Get component params
-            comp_params = component.get("params", {})
-
-            # Create and add/overwrite component
             try:
-                new_comp = self._create_component(comp_type, comp_params)
-
-                self._world.add_component(entity_id, new_comp)
-
-                logger.info(f'***{new_comp} for entity {entity_id} created.')
-
+                self.update_component(component_def=component, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
+                logger.error(f'Error in update of component from definition "{component}".')
                 raise ValueError
 
-    def create_entity_ex(self, json_ent_obj: dict, entity_alias: str=None) -> int:
-        '''Alternative create_entity function using update_entity function
+    def create_entity(self, json_ent_obj: dict, entity_alias: str=None) -> int:
+        '''Creates brand new entity with components - called from game logic to factory 
+        new entities during the game - projectiles etc.
+        Entities that are created from quest file are created using update_entity function.
 
-            Parameters:
-                :param json_ent_obj: Description of entity in JSON format (python dict).
-                :type json_ent_obj: dict
+        :param json_ent_obj: Description of entity in JSON format (python dict).
+        :type json_ent_obj: dict
 
-                :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
-                    key 'id'.
-                :type entity_alias: str
+        :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
+            key 'id'.
+        :type entity_alias: str
 
-                #:param register: Should the entity be globally registered with engine.
-                #:type register: bool
-                
-                :returns: Integer specifying entity id
+        :returns: Integer specifying entity id
 
-                :raise: ValueError - in case of problem with component creation
+        :raise: ValueError - in case of problem with component creation
         '''
 
         # Create empty entity
@@ -262,31 +326,33 @@ class ECSManager:
         # problem when prescription has id and factory generator is returning none
         entity_id = self.create_empty_entity(entity_alias=entity_alias if entity_alias else json_ent_obj.get("id", None))
 
-        '''
-        # Create new entity and get its id
-        entity_id = self._world.create_entity()
-
-        # Registration requires entity alias
-        if register:
-
-            # Decide on entity alias - either from json dict or from fction call
-            entity_alias = entity_alias if entity_alias else json_ent_obj["id"]
-
-            # Update the lookup dictionaries
-            self.register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
-
-        logger.info(f'*Creating new entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
-        '''
-
         # Now add components to this entity id empty envelope
         self.update_entity(json_ent_obj=json_ent_obj, entity_id=entity_id)
 
         return entity_id
 
-    def copy_entity(self, entity_id: int) -> int:
-        '''TBD - Copy entity from existing entity and return entity id 
-        of the new entity.'''
-        pass
+    def copy_entity_components(self, source_entity_id: int, dest_entity_id: int) -> None:
+        '''Deep copy entity components and add them to the entity_id
+
+        :param source_entity_id: Entity id from which we are copying components.
+        :type source_entity_id: int
+
+        :param dest_entity_id: Entity id to which we are copying components.
+        :type dest_entity_id: int
+
+        :raises: ValueError
+        '''
+        
+        try:
+            # Iterate through every component instance of the source entity
+            for comp_instance in self._world.components_for_entity(entity=source_entity_id):
+
+                # Create a deepcopy and assign it to the destination entity
+                self._world.add_component(entity=dest_entity_id, component_instance=deepcopy(comp_instance))
+        except KeyError:
+            logger.error(f'Source entity "{source_entity_id}" does not exist.')
+            raise ValueError
+
 
     def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
         ''' Delete and un-register entity from the world.'''

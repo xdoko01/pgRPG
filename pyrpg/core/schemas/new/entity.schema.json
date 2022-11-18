@@ -4,7 +4,7 @@
 	"description": "Schema validating entity",
 	"title": "Entity Schema",
 
-	"required": ["components"],
+	"required": ["id"],
 	"properties": {
 		"id": {
 			"description": "Entity unique id",

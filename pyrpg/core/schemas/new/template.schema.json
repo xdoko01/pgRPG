@@ -1,0 +1,43 @@
+{
+	"$id": "entity.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "Schema validating template",
+	"title": "Entity Schema",
+
+	"required": ["id"],
+	"properties": {
+		"id": {
+			"description": "Template unique id",
+			"type": "string"
+		},
+		
+		"vars": {
+			"description": "Definition of variables",
+			"type": "array",
+			"items": {
+			  "type": "string"
+			},
+			"minItems": 0,
+			"uniqueItems": true
+		},
+
+		"templates": {
+			"description": "Templates description",
+			"type": "array",
+			"items": {
+			  "type": "string"
+			},
+			"minItems": 0,
+			"uniqueItems": true
+		},
+		"components": {
+			"description": "Components list",
+			"type": "array",
+			"items":{
+				"$ref": "component.schema.json"
+			},
+			"minItems": 0,
+			"uniqueItems": true
+		}
+	}
+}

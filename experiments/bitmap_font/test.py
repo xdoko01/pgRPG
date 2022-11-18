@@ -240,7 +240,7 @@ if __name__ == '__main__':
         screen.blit(my_third_font.render_new(f'Rendertext\nthat is rendered\nonto multiple\nlines.', pygame.Color('yellow'), align='CENTER'), (260, 260))
 
         # Try different font
-        screen.blit(my_forth_font.render_new(f'RENDER TEXT\nTHAT IS RENDERED\nONTO MULTIPLE\nLINES', align='CENTER'), (260, 160))
+        #screen.blit(my_forth_font.render_new(f'RENDER TEXT\nTHAT IS RENDERED\nONTO MULTIPLE\nLINES', align='CENTER'), (260, 160))
 
 
         # Test printing of dictionaries

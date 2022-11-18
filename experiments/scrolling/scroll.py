@@ -6,7 +6,7 @@ class Player:
 	''' Sample player class storing players possition and image (Surface)
 	'''
 	def __init__(self, x, y):
-		self.image = pygame.image.load("experiments/scrolling/images/wall_tile.png")
+		self.image = pygame.image.load("experiments/scrolling/images/player1.png")
 		self.x = x
 		self.y = y
 
@@ -224,6 +224,7 @@ if __name__ == "__main__":
 	_maps.update({'map01' : sample_map})
 	
 	player = Player(20,30)
+	player.image.convert_alpha()
 
 	camera = Camera(400,400)
 

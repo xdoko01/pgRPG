@@ -56,6 +56,14 @@
 
 						"maps": true,
 
+						"templates": {
+							"type": "array",
+							"items": {
+								"$ref": "template.schema.json"
+							},
+							"uniqueItems": true
+						},
+
 						"entities": {
 							"type": "array",
 							"items": {
