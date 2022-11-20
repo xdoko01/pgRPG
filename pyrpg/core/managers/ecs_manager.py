@@ -158,12 +158,19 @@ class ECSManager:
         """
         self._template_definitions.update({ template_id: json_ent_obj })
 
+    """OBSOLETE - I do not want to store entity definitions that are used for creation of new entities
+    from existing entities as templates. I want to achieve clearer design and propone usage of templates
+    while creating new entities instead of using existing entities as a source
+    However, the possibility to use existing entity as a source still exists, but is implemented differently
+    without the need to store entity definitions.
+
     def store_entity_definition(self, json_ent_obj: dict, entity_id: int) -> None:
         '''Stores the up level definition of entity from the quest specification.
         Used for possibility to use existing entity definition as a template
         for creation of other entity.
         '''
         self._entity_definitions.update({ entity_id: json_ent_obj })
+    """
 
     def create_empty_entity(self, entity_alias: str=None) -> int:
         '''Create empty envelope for the entity where later components will be added'''
@@ -253,7 +260,7 @@ class ECSManager:
             raise ValueError
 
     def update_entity(self, json_ent_obj: dict, entity_id: int):
-        '''Add components/templates specified in json_ent_object on specified entity_id.
+        '''Add and remove components/templates specified in json_ent_object on specified entity_id.
 
             Parameters:
                 :param json_ent_obj: Description of entity in JSON format (python dict).
@@ -300,13 +307,22 @@ class ECSManager:
                     logger.error(f'Error in creation of entity from template "{template_id}".')
                     raise ValueError
 
-        # Initiate every component
+        # Add/update components
         for component in json_ent_obj.get("components", []):
             try:
                 self.update_component(component_def=component, entity_id=entity_id)
             except ValueError:
                 logger.error(f'Error in update of component from definition "{component}".')
                 raise ValueError
+
+        # Remove components
+        for component in json_ent_obj.get("remove", []):
+            try:
+                self.remove_component(component_def=component, entity_id=entity_id)
+            except ValueError:
+                logger.error(f'Error in removal of component from definition "{component}".')
+                raise ValueError
+
 
     def create_entity(self, json_ent_obj: dict, entity_alias: str=None) -> int:
         '''Creates brand new entity with components - called from game logic to factory 

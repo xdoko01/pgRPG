@@ -210,6 +210,7 @@ class QuestManager:
             logger.error(f'Problem during creating of empty entities.')
             raise ValueError(f'Problem during creating of empty entities.')
 
+    """OBSOLETE - delete"""
     def _store_entities_definitions(progress_fnc, entities_data: list, store_entity_definition_fnc, get_entity_id_fnc):
         '''Stores every entity definition in ecs_manager.
         '''
@@ -255,6 +256,7 @@ class QuestManager:
                 entity_exists_fnc=ecs.mng.get_entity_id
             )
 
+            """OBSoLETE - get rid of it """
             self._store_entities_definitions(
                 progress_fnc=progress_fnc,
                 entities_data=entities_data,

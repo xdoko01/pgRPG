@@ -455,6 +455,13 @@
   - This is useful when the game is spread accross multiple files and in new level (new quest file) we need to add additional feature to our entity (and not create a new one).
   - E.g. player entity is created in the first quest file and in the next quest file (level) we need to adjust starting position of the player. So we can simply add new position component to player01 that will override the original position.
 
+### 2022-11-20 Possibility to delete component from entity from within the definition in the quest file
+
+### 2022-11-20 Possibility to copy components from one entity to other entity within the definition in the quest file - EXPERIMENTAL
+  - Similarly to creating the entity from template it is now possible to create new entity from existing entity by copying its component from existing entity.
+  - This can be achieved by putting entity alias in `templates` list with `#` prefix. E.g. `"templates": ["#crate01"]`
+  - This feature is only experimental. It is using `copy.copy` method for creation of the components on the new entity. Later changes in source entity component can affect also the destination entity component (sharing the same memory location).
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -501,7 +508,8 @@
   - [x] Fix the map layers that are not transparent - Upgrade to new pyTMX version helped
   - [ ] AI kill them all game
   - [x] Possibility to update entities in the quest definition - adding new components to already existing entities.
-  - [ ] Possibility to update entities in the quest definition - deleting components on existing entities.
+  - [x] Possibility to update entities in the quest definition - deleting components on existing entities.
+  - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
@@ -510,13 +518,7 @@
   - It issues commands to the other managers - serves as an input for them telling them what to load/delete.
   - From that perspecive QuestManager is not on the same level as the other managers. It is their boss.
   - Maybe the whole content of QuestManager should be part of the engine
-  - QuestManager contains references to other managers even now
-
-### NEXT - Remove component from entity using quest file
-### NEXT - Implement copy of components from one entity to other entity in ecs_manager
-### NEXT - Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
-
-
+  - QuestManager contains references to other managers even now 
 
 ### Quest/Phase as description and no class/object/instance
   *All is described in MIRO*
