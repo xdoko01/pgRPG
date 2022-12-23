@@ -28,7 +28,8 @@ class MapManager:
 
         if self._maps.get(map_name, None):
             del self._maps[map_name]
-            logger.info(f'Map "{map_name}" deleted.')
+            logger.info(f'Map "{map_name}" successfully removed.')
+
 
     def clear_maps(self) -> None:
         '''Dereference and delete all maps.'''

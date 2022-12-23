@@ -75,7 +75,7 @@ class DialogManager():
 
         if self._dialogs.get(dialog_name, None):
             del self._dialogs[dialog_name]
-            logger.info(f'Dialog "{dialog_name}" deleted.')
+            logger.info(f'Dialog "{dialog_name}" successfully removed.')
 
     def clear_dialogs(self) -> None:
         '''Dereference and delete all dialogs.'''

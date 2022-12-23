@@ -5,7 +5,7 @@
 	"objective" : "Push all the boxes on the marked spots.",
 
 	// What quests need to be loaded before this one
-	"prereqs" : ["new/games/sokoban/sokoban_new_level01"],
+	"prereqs" : ["new/games/sokoban/sokoban_new_level01.json"],
 
 	"cleanup" : {
 		"processors": [],
@@ -13,7 +13,7 @@
 		"templates": ["t_crate"], // Clean the template from level01. In Level02 similar will be created with different target zone. Or maybe it would be cleaner to have t_crate in socoban_new and override it only with the HasTargetPosition component
 		"entities": ["crate01", "crate02", "crate03", "crate04", "crate05", "crate06", "crate07"], // Old crates are not needed
 		"dialogs": [],
-		"handlers": ["ALL"]
+		"handlers": ["ev_start_game", "ev_restart_confirmed", "ev_all_crates_in_place"]
 	},
 
 	"processors" : [],
@@ -94,13 +94,13 @@
 
 	],
 
-	"event_handling" : {
+	"event_handlers" : {
 
 		"QUEST_START" :[
 			{
 				"id": "ev_level02_start",
 				
-				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to next level <b>%phase_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to next level <b>%quest_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
 
 			}
 		],

@@ -169,6 +169,7 @@ class World:
         :param immediate: If True, delete the Entity immediately.
         """
         if immediate:
+
             for component_type in self._entities[entity]:
                 self._components[component_type].discard(entity)
 
@@ -485,6 +486,7 @@ class World:
         `delete_entity` method. If that method is changed, those changes should
         be duplicated here as well.
         """
+
         for entity in self._dead_entities:
 
             for component_type in self._entities[entity]:

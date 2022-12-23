@@ -7,11 +7,11 @@
 	"objective" : "Push all the boxes on the marked spots.",
 
 	"cleanup" : {
-		"processors": ["ALL"],
-		"maps": ["ALL"], 
-		"templates": ["ALL"], 
-		"entities": ["ALL"], 
-		"dialogs": ["ALL"]
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": []
 	},
 
 	"processors" : [
@@ -103,13 +103,13 @@
 
 	],
 
-	"event_handling" : {
+	"event_handlers" : {
 
 		"QUEST_START" :[
 			{
 				"id": "ev_start_game",
 				
-				"actions": 	["SCRIPT", "new.load_quest", {"quest_file" : "sokoban_new_level01.json"}]
+				"actions": 	["SCRIPT", "new.load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level01.json"}]
 
 			}
 		]

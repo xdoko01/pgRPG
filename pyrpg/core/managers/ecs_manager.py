@@ -1,4 +1,5 @@
 import logging
+
 from copy import copy # for creating copy of existing entity
 
 from pyrpg.core.ecs.esper import World, Processor
@@ -14,18 +15,30 @@ from pyrpg.functions import parse_fnc_str # for creation of entity from template
 logger = logging.getLogger(__name__)
 
 class ECSManager:
+    '''Encapsulates functionalities needed to create, maintain and remove components
+    entities and processors in the game world.'''
 
     def __init__(self) -> None:
+        '''Initiates key ECS variables'''
+
+        # Keeping reference to ECS world
         self._world = None
+
+        # Keeping dictionaries of IDs and aliases of entities
         self._entity_to_alias = {}
         self._alias_to_entity = {}
+        
+        # Keeping reference to external game functions that can be used in processors
         self._game_functions = {}
-        self._entity_definitions = {}
+
+        # Keeping template definitions in dictionary instead of file
         self._template_definitions = {}
 
         logger.info(f'ECSManager created.')
 
     def initialize(self, timed: bool, game_functions: dict) -> None:
+        '''Fill ECS variables with initial values'''
+
         self._world = World(timed=timed)
         self._game_functions = game_functions
         logger.info(f'ECSManager initiated.')
@@ -65,6 +78,8 @@ class ECSManager:
 
     def _unregister_entity_lookup(self, entity_id: int, entity_alias: str):
         '''Unregister entity from lookup dictionaries.'''
+
+        logger.debug(f'Deleting entity id {entity_id} / {entity_alias or "unknown"}. from lookup tables.')
 
         # Un-register the entity - ignore if not found
         try:
@@ -158,6 +173,8 @@ class ECSManager:
         """
         self._template_definitions.update({ template_id: json_ent_obj })
 
+        logger.info(f'Template "{template_id}" was successfully stored.')
+
     """OBSOLETE - I do not want to store entity definitions that are used for creation of new entities
     from existing entities as templates. I want to achieve clearer design and propone usage of templates
     while creating new entities instead of using existing entities as a source
@@ -171,6 +188,17 @@ class ECSManager:
         '''
         self._entity_definitions.update({ entity_id: json_ent_obj })
     """
+
+    def delete_template(self, template_id: str) -> None:
+        '''Deletes template from internal template storage _template_definitions'''
+        try:
+            del self._template_definitions[template_id]
+        except KeyError:
+            logger.error(f'Template "{template_id}" not found.')
+            raise ValueError
+
+        logger.info(f'Template "{template_id}" successfully removed.')
+
 
     def create_empty_entity(self, entity_alias: str=None) -> int:
         '''Create empty envelope for the entity where later components will be added'''
@@ -323,7 +351,6 @@ class ECSManager:
                 logger.error(f'Error in removal of component from definition "{component}".')
                 raise ValueError
 
-
     def create_entity(self, json_ent_obj: dict, entity_alias: str=None) -> int:
         '''Creates brand new entity with components - called from game logic to factory 
         new entities during the game - projectiles etc.
@@ -373,21 +400,24 @@ class ECSManager:
             logger.error(f'Source entity "{source_entity_id}" does not exist.')
             raise ValueError
 
-
     def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
         ''' Delete and un-register entity from the world.'''
+
+        logger.debug(f'About to delete entity id {entity_id} / {entity_alias or "unknown"}.')
 
         # Get alias and id
         entity_alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
         entity_id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
 
+        logger.debug(f'After lookup for delete entity id {entity_id} / {entity_alias or "unknown"}.')
+
         # Delete it from Esper world
-        self._world.delete_entity(entity_id)
+        self._world.delete_entity(entity=entity_id)
 
         # Un-register the entity - ignore if not found, can be unregistered entity
         self._unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
 
-        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} deleted.')
+        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} successfully removed.')
 
     def _clear_entities(self) -> None:
         '''Delete all entities and components from the world'''
@@ -560,6 +590,22 @@ class ECSManager:
             # Log the initiation of the processor
             logger.info(f'Processor "{class_name}" initiated.')
     """
+
+    def delete_processor(self, processor: str) -> None:
+        '''deletes the processor from the world'''
+        
+        proc_module_str, proc_class_str = processor.split(':')
+
+        # Get the definition of the processor class
+        try:
+            proc_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + proc_module_str, proc_class_str)
+        except ValueError:
+            logger.error(f'Error during loading of processor class "{proc_class_str}".')
+            raise ValueError(f'Error during loading of processor class "{proc_class_str}".')
+
+        # TODO - should not be here call of finalize function of the processor?
+        self._world.remove_processor(proc_class)
+        logger.info(f'Processor "{proc_class_str}" successfully removed.')
 
     def process(self, events, keys, dt: float, debug: bool) -> None:
         '''Calls process method on all loaded processors.'''

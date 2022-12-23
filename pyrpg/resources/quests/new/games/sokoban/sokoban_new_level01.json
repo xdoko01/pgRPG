@@ -12,7 +12,8 @@
 		"maps": [], 
 		"templates": [], 
 		"entities": [], 
-		"dialogs": []
+		"dialogs": [],
+		"handlers": []
 	},
 
 	"processors" : [],
@@ -149,14 +150,14 @@
 
 	],
 
-	"event_handling" : {
+	"event_handlers" : {
 
 		"QUEST_START" :[
 			{
 				"id": "ev_start_game",
 				
 				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
-
+	
 			}
 		],
 
@@ -167,7 +168,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "new.restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
+						["SCRIPT", "new.load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level02.json"}]
 				]
 			}
 		],

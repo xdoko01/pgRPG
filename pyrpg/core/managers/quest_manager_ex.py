@@ -4,6 +4,7 @@ import pyrpg.core.events.event as event # for creation of QUEST_START, QUEST_FIN
 from pyrpg.core.config.paths import QUEST_PATH
 from pyrpg.functions import get_dict_from_json, get_dict_from_yaml, get_dict_value
 
+from pathlib import Path
 
 # Create logger
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ class QuestManager:
         self._quests = {}
         logger.info(f'QuestManager initiated.')
 
-    def _get_quest_data(self, quest_filepath, quest_file_section=None) -> dict:
+    def _get_quest_data(self, quest_filepath: Path, quest_file_section=None) -> dict:
         '''Load quest data from the json/yaml file. One quest file can contain several quests. If this
         is the case, quest_id parameter defines the quest to load. Otherwise, it is assumed that the
         file contains only one quest.
@@ -64,6 +65,8 @@ class QuestManager:
 
         progress_fnc(text='Cleaning Processors', progress=0, total=len(processors_data))
 
+        logger.debug(f'No. of processors to clean: {len(processors_data)}')
+
         try:
             for n, processor in enumerate(processors_data):
                 clean_processor_fnc(processor)
@@ -76,6 +79,8 @@ class QuestManager:
         '''Deletes all templates from templates_data'''
 
         progress_fnc(text='Cleaning Templates', progress=0, total=len(templates_data))
+
+        logger.debug(f'No. of templates to clean: {len(templates_data)}')
 
         try:
             for n, template in enumerate(templates_data):
@@ -90,18 +95,22 @@ class QuestManager:
 
         progress_fnc(text='Cleaning Entities', progress=0, total=len(entities_data))
 
+        logger.debug(f'No. of entities to clean: {len(entities_data)}')
+
         try:
             for n, entity_name in enumerate(entities_data):
-                clean_entity_fnc(alias=entity_name)
+                clean_entity_fnc(entity_alias=entity_name)
                 progress_fnc(progress=n+1)
         except ValueError:
-            logger.error(f'Problem during cleaning of entities "{entity}".')
+            logger.error(f'Problem during cleaning of entities "{entity_name}".')
             raise ValueError(f'Problem during cleaning of entities.')
 
     def _clean_maps(self, progress_fnc, maps_data: list, clean_map_fnc):
         '''Deletes all maps from maps_data'''
 
         progress_fnc(text='Cleaning Maps', progress=0, total=len(maps_data))
+
+        logger.debug(f'No. of maps to clean: {len(maps_data)}')
 
         try:
             for n, map in enumerate(maps_data):
@@ -116,6 +125,8 @@ class QuestManager:
 
         progress_fnc(text='Cleaning Dialogs', progress=0, total=len(dialogs_data))
 
+        logger.debug(f'No. of dialogs to clean: {len(dialogs_data)}')
+
         try:
             for n, dialog in enumerate(dialogs_data):
                 clean_dialog_fnc(dialog)
@@ -128,6 +139,8 @@ class QuestManager:
         '''Deletes all handlers from handlers_data'''
 
         progress_fnc(text='Cleaning Handlers', progress=0, total=len(handlers_data))
+
+        logger.debug(f'No. of handlers to clean: {len(handlers_data)}')
 
         try:
             for n, handler in enumerate(handlers_data):
@@ -142,6 +155,8 @@ class QuestManager:
 
         progress_fnc(text='Loading Processors', progress=0, total=len(processors_data))
 
+        logger.debug(f'No. of processors to load: {len(processors_data)}')
+
         try:
             for n, processor in enumerate(processors_data):
                 load_processor_fnc(processor)
@@ -154,6 +169,8 @@ class QuestManager:
         '''Loads all maps from maps_data'''
 
         progress_fnc(text='Loading Maps', progress=0, total=len(maps_data))
+
+        logger.debug(f'No. of maps to load: {len(maps_data)}')
 
         try:
             for n, map in enumerate(maps_data):
@@ -168,6 +185,8 @@ class QuestManager:
 
         progress_fnc(text='Loading Dialogs', progress=0, total=len(dialogs_data))
 
+        logger.debug(f'No. of dialogs to load: {len(dialogs_data)}')
+
         try:
             for n, dialog in enumerate(dialogs_data):
                 load_dialog_fnc(dialog)
@@ -181,6 +200,8 @@ class QuestManager:
 
         progress_fnc(text='Loading Entity Templates', progress=0, total=len(templates_data))
 
+        logger.debug(f'No. of templates to load: {len(templates_data)}')
+
         try:
             for n, template in enumerate(templates_data):
                 load_template_fnc(template, template['id'])
@@ -191,7 +212,7 @@ class QuestManager:
             logger.error(f'Problem during loading of templates.')
             raise ValueError(f'Problem during loading of templates.')
 
-    def _create_empty_entities(progress_fnc, entities_data: list, create_empty_entity_fnc, entity_exists_fnc):
+    def _create_empty_entities(self, progress_fnc, entities_data: list, create_empty_entity_fnc, entity_exists_fnc):
         '''Extract all aliases for the entities and create them as an empty and
         registered in lookup tables in ecs_manager.
         '''
@@ -210,25 +231,7 @@ class QuestManager:
             logger.error(f'Problem during creating of empty entities.')
             raise ValueError(f'Problem during creating of empty entities.')
 
-    """OBSOLETE - delete"""
-    def _store_entities_definitions(progress_fnc, entities_data: list, store_entity_definition_fnc, get_entity_id_fnc):
-        '''Stores every entity definition in ecs_manager.
-        '''
-
-        progress_fnc(text='Loading Entities - Storing definitions', progress=0, total=len(entities_data))
-
-        try:
-            for n, entity in enumerate(entities_data):
-                entity_id = get_entity_id_fnc(entity_alias=entity['id'])
-                store_entity_definition_fnc(entity, entity_id)
-                progress_fnc(progress=n+1)
-        except KeyError:
-            raise ValueError(f'Entity definition is missing required parameter "id".')
-        except ValueError:
-            logger.error(f'Problem during storing of entities definitions.')
-            raise ValueError(f'Problem during storing of entities definitions.')
-
-    def _update_entities(progress_fnc, entities_data: list, update_entity_fnc, get_entity_id_fnc):
+    def _update_entities(self, progress_fnc, entities_data: list, update_entity_fnc, get_entity_id_fnc):
         '''Stores every entity definition in ecs_manager.
         '''
 
@@ -248,20 +251,14 @@ class QuestManager:
     def _load_entities(self, progress_fnc, entities_data: list, ecs_mng):
         '''Loads all entities from entities_data'''
 
+        logger.debug(f'No. of entities to load: {len(entities_data)}')
+
         try:
             self._create_empty_entities(
                 progress_fnc=progress_fnc,
                 entities_data=entities_data,
                 create_empty_entity_fnc=ecs_mng.create_empty_entity,
-                entity_exists_fnc=ecs.mng.get_entity_id
-            )
-
-            """OBSoLETE - get rid of it """
-            self._store_entities_definitions(
-                progress_fnc=progress_fnc,
-                entities_data=entities_data,
-                store_entity_definition_fnc=ecs_mng.store_entity_definition,
-                get_entity_id_fnc=ecs_mng.get_entity_id
+                entity_exists_fnc=ecs_mng.get_entity_id
             )
 
             self._update_entities(
@@ -270,19 +267,45 @@ class QuestManager:
                 update_entity_fnc=ecs_mng.update_entity,
                 get_entity_id_fnc=ecs_mng.get_entity_id
             )
+
         except ValueError:
             logger.error(f'Problem during loading of entities.')
             raise ValueError(f'Problem during loading of entities.')
 
-    def _load_handlers(self, progress_fnc, handlers_data: list, load_handler_fnc):
-        '''Loads all handlers from handlers_data'''
+    def _load_handlers(self, progress_fnc, handlers_data: dict, load_handler_fnc):
+        '''Loads all handlers from handlers_data. Example of handlers data is below.
 
-        progress_fnc(text='Loading Handlers', progress=0, total=len(handlers_data))
+            {
+                "QUEST_START" :[
+                    {
+                        "id": "ev_start_game",
+                        "actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+                    }
+                ],
+                "CUST_UI_CONFIRM" : [
+                    {
+                        "id": "ev_restart_confirmed",
+                        "actions": [
+                            "IF",
+                                ["==", ["VAR", "from"], "ev_all_crates_in_place"],
+                                ["SCRIPT", "new.restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
+                        ]
+                    }
+                ]
+            }
+        '''
 
-        pass
+        progress_fnc(text='Loading Handlers', progress=0, total=1)
 
+        logger.debug(f'No. of events that have defined handler: {len(handlers_data.values())}')
 
-    def _load_quest(self, quest_data, progress_fnc, map_mng, dialog_mng, event_mng, ecs_mng):
+        for event_type in handlers_data:
+            for handler_data in handlers_data[event_type]:
+                load_handler_fnc(event_type=event_type, handler_data=handler_data)
+
+        progress_fnc(progress=1)  
+
+    def _load_quest(self, progress_fnc, quest_data, map_mng, dialog_mng, event_mng, ecs_mng):
         '''Loads the quest data into the game data structures of individual managers'''
 
         quest_id = quest_data["id"]
@@ -290,25 +313,32 @@ class QuestManager:
         #####
         # PRE-LOAD prerequisity quests
         #####
+        logger.info(f'Starting load of prerequisities for quest "{quest_id}". Total {len(quest_data.get("prereqs", []))} prereqs.')
 
         # Load prerequisity quests
-        for prereq_quest in quest_data.get("prereq", []):
+        for prereq_quest in quest_data.get("prereqs", []):
+
+            logger.info(f'Start of processing prereq "{prereq_quest}".')
+
             # If only the filename is defined without the
             if isinstance(prereq_quest, str):
                 # Get the quest id from the file and decide if load or not
-                if self._get_quest_data(prereq_quest)["id"] not in self._quests.keys():
+                if self._get_quest_data(quest_filepath=Path(prereq_quest))["id"] not in self._quests.keys():
                     self.add_quest(progress_fnc, prereq_quest, map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
             elif isinstance(prereq_quest, list or tuple) and len(prereq_quest) == 2:
                 # Get the quest id from the file and decide if load or not
-                if self._get_quest_data(prereq_quest[0], prereq_quest[1])["id"] not in self._quests.keys():
+                if self._get_quest_data(quest_filepath=Path(prereq_quest[0]), quest_file_section=prereq_quest[1])["id"] not in self._quests.keys():
                     self.add_quest(progress_fnc, prereq_quest[0], prereq_quest[1], map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
             else:
                 raise ValueError(f'Not supported format of quest prerequisity.')
-
+        
+        logger.info(f'Load of prerequisities for quest "{quest_id}" has finished.')
 
         #####
         # PRE-LOAD cleanup
         #####
+
+        logger.info(f'Starting cleanup for quest "{quest_id}".')
 
         # Clean processors
         self._clean_processors(
@@ -352,9 +382,13 @@ class QuestManager:
             clean_handler_fnc=event_mng.delete_handler
         )
 
+        logger.info(f'Cleanup for quest "{quest_id}" has finished.')
+
         #####
         # LOAD
         #####
+
+        logger.info(f'Starting loading objects for quest "{quest_id}".')
 
         # Load processors
         self._load_processors(
@@ -398,27 +432,21 @@ class QuestManager:
             load_handler_fnc=event_mng.load_handler
         )
 
+        logger.info(f'Loading objects for quest "{quest_id}" has finished.')
 
         # Report that quest was loaded - generate event
         event_mng.add_event(event.Event('QUEST_START', self, None, params={'quest_id' : quest_id}))
 
         return quest_id
 
-    def add_quest(self, progress_fnc, quest_filepath, quest_file_section=None, map_mng=None, dialog_mng=None, event_mng=None, ecs_mng=None, script_mng=None) -> None:
+    def add_quest(self, progress_fnc, quest_filepath: str, quest_file_section=None, map_mng=None, dialog_mng=None, event_mng=None, ecs_mng=None) -> None:
         '''Adds new quest to the game'''
-        quest_data = self._get_quest_data(quest_filepath, quest_file_section)
+        quest_data = self._get_quest_data(Path(quest_filepath), quest_file_section)
         logger.info(f'Quest data for quest succesfully extracted from the file: "{quest_filepath}", section "{quest_file_section}".')
 
-        quest_id = self._load_quest(quest_data, progress_fnc, map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
+        quest_id = self._load_quest(progress_fnc, quest_data, map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
         self._quests.update({quest_id : quest_data})
         logger.info(f'Quest "{quest_id}" was added to the game.')
-
-    def handle_event(self, event: Event) -> None:
-        '''Send every event to every quest for handling'''
-
-        for quest_name, quest_object in self._quests.copy().items(): # the copy() is there due to restart_quest script that is deleting the quests and loading new ones. It was falling on Runtime error that the dictionary has changed during runtime. Problem is fixed by using copy
-            quest_object.event_handler_ex(event)
-            logger.info(f'Event "{event.event_type}" was passed to quest "{quest_name}" for handling.')
 
     def delete_quest(self, quest_name: str) -> None:
         '''Deletes quests from the game'''

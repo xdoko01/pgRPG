@@ -31,7 +31,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="3" name="Tile Layer 3" width="19" height="11">
+ <layer id="3" name="Tile Layer 3" width="19" height="11" visible="0">
   <properties>
    <property name="collisionLayer" type="bool" value="true"/>
   </properties>

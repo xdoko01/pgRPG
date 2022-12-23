@@ -510,6 +510,8 @@
   - [x] Possibility to update entities in the quest definition - adding new components to already existing entities.
   - [x] Possibility to update entities in the quest definition - deleting components on existing entities.
   - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
+  - [ ] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
+
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
@@ -523,8 +525,12 @@
 ### Quest/Phase as description and no class/object/instance
   *All is described in MIRO*
   - [x] Create `EventManagerEx` that processes the event actions
-  - [ ] Transform `quest` module to `QuestManagerEx` + start filling `EventManagerEx` with handlers
-  - [ ] ensure `engine` module is updated
+  - [x] Transform `quest` module to `QuestManagerEx` + start filling `EventManagerEx` with handlers
+  - [x] ensure `engine` module is updated
+  - [ ] `delete_processor` method should probably call finalize method of the processor
+  - [x] `delete_template` method not implemented
+  - [x] `delete_handler` not implemented in `EventManager`
+  - [ ] check that prereq quests are not loaded if those are already loaded
 
 ### Processing templates
   1/ Parse the quest file and store the templates there to the ecs_manager

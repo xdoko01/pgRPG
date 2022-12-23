@@ -130,8 +130,9 @@ class Main:
             from pyrpg.core.engine import Game
             self.engine = Game(self.gui_manager, self.sound_manager, progress_bar=self.progress_bar, timed=self.timed)
 
-        from pathlib import Path
-        self.engine.new_game(Path(filepath))
+        #from pathlib import Path
+        #self.engine.new_game(Path(filepath))
+        self.engine.new_game(filepath)
 
 
     def run(self):

@@ -19,10 +19,10 @@ from pyrpg.core.managers.map_manager import MapManager
 from pyrpg.core.managers.message_manager import MessageManager
 from pyrpg.core.managers.dialog_manager import DialogManager
 from pyrpg.core.managers.command_manager import CommandManager
-from pyrpg.core.managers.quest_manager import QuestManager
+from pyrpg.core.managers.quest_manager_ex import QuestManager #!!!!changed
 from pyrpg.core.managers.ecs_manager import ECSManager
-from pyrpg.core.managers.event_manager import EventManager
-from pyrpg.core.managers.script_manager import ScriptManager
+from pyrpg.core.managers.event_manager_ex import EventManager #!!!!changed
+from pyrpg.core.managers.script_manager_ex import ScriptManager #!!!!changed
 
 logger.info(f'Engine initiated')
 
@@ -39,7 +39,7 @@ class Game:
         self.command_manager = CommandManager() # command manager must have reference to Game in order commands can manipulate the game world
         self.quest_manager = QuestManager()
         self.ecs_manager = ECSManager()
-        self.script_manager = ScriptManager()
+        self.script_manager = ScriptManager(alias_to_entity_dict=self.ecs_manager._alias_to_entity) #!!! new parameter added
 
         # Class representing the progress bar
         self.progress_bar = progress_bar
@@ -48,7 +48,8 @@ class Game:
         # TODO - maybe it would be better to handle processing of events within processor that
         # would receive list of events and handle event function and using those would implement
         # event processing.
-        self.event_manager = EventManager(self.quest_manager.handle_event)
+        #self.event_manager = EventManager(self.quest_manager.handle_event)
+        self.event_manager = EventManager(self.script_manager.execute_event_actions)
 
         self.ecs_manager.initialize(timed=timed, game_functions={
             'window' : self.gui_manager.window,
@@ -119,31 +120,37 @@ class Game:
 
         logger.info(f'All game resources cleared.')
 
-    def new_game(self, quest_name: str) -> None:
+    def new_game(self, filepath: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
 
-        # Get the progress bar ready for new game
-        self.progress_bar.update(progress=0, total=0, header="LOADING", text='', finished=False)
-        
-        # Thread with displaying of the progress bar
-        t = Thread(target=self.progress_bar.run)
-        t.start()
+        if show_progress:
+            # Get the progress bar ready for new game
+            self.progress_bar.update(progress=0, total=0, header="LOADING", text='', finished=False)
+            
+            # Thread with displaying of the progress bar
+            t = Thread(target=self.progress_bar.run)
+            t.start()
 
-        # Clear everything
-        self._clear_game(progress=self.progress_bar.update)
+        if clear_before_load:
+            # Clear everything
+            self._clear_game(progress=self.progress_bar.update)
 
         #add new quest
-        self.quest_manager.add_quest(quest_name,
-            progress=self.progress_bar.update,
+        self.quest_manager.add_quest(
+            #quest_name, #!!! new cosmetic change
+            #progress=self.progress_bar.update,
+            progress_fnc=self.progress_bar.update, #!!!new cosmetic change
+            quest_filepath=filepath,
             map_mng=self.map_manager,
             dialog_mng=self.dialog_manager,
             event_mng=self.event_manager,
-            ecs_mng=self.ecs_manager,
-            script_mng=self.script_manager)
+            ecs_mng=self.ecs_manager)#,
+            #script_mng=self.script_manager) #!!! changed
 
-        # End the progress bar
-        self.progress_bar.update(finished=True)
+        if show_progress:
+            # End the progress bar
+            self.progress_bar.update(finished=True)
 
-        logger.info(f'Quest "{quest_name}" successfully loaded.')
+        logger.info(f'Quest "{filepath}" successfully loaded.')
 
     def exit_game(self) -> None:
         self._clear_game()
