@@ -19,10 +19,10 @@ from pyrpg.core.managers.map_manager import MapManager
 from pyrpg.core.managers.message_manager import MessageManager
 from pyrpg.core.managers.dialog_manager import DialogManager
 from pyrpg.core.managers.command_manager import CommandManager
-from pyrpg.core.managers.quest_manager_ex import QuestManager #!!!!changed
+from pyrpg.core.managers.quest_manager import QuestManager
 from pyrpg.core.managers.ecs_manager import ECSManager
-from pyrpg.core.managers.event_manager_ex import EventManager #!!!!changed
-from pyrpg.core.managers.script_manager_ex import ScriptManager #!!!!changed
+from pyrpg.core.managers.event_manager import EventManager
+from pyrpg.core.managers.script_manager import ScriptManager
 
 logger.info(f'Engine initiated')
 

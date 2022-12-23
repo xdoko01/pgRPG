@@ -2,12 +2,17 @@ import logging
 
 from importlib import import_module
 
+from pyrpg.core.events.event import Event
 from pyrpg.core.config.paths import SCRIPT_MODULE_PATH # Path to the modules containing scripts
+from pyrpg.functions import translate, json_logic
 
 # Create logger
 logger = logging.getLogger(__name__)
 
 class ScriptManager:
+    '''Newly, script manager evaluates json logic and actions + holds the reference to translation
+    of ECS manager.'''
+
     ''' Script Manager holds the dictionary of script names and real references to the modules
 
         register script function ... that registers script module in 
@@ -19,10 +24,11 @@ class ScriptManager:
                 that will register the script with the script manager
     '''
 
-    def __init__(self) -> None:
+    def __init__(self, alias_to_entity_dict) -> None:
         '''Initiate ScriptManager'''
         # Dictionary having script path/name as key and script module refs as value
         self._scripts = {}
+        self._alias_to_entity_dict = alias_to_entity_dict
         logger.info(f'ScriptManager created.')
 
     def register_script(self, fnc, alias) -> None:
@@ -31,6 +37,22 @@ class ScriptManager:
         '''
         self._scripts.update({alias: fnc})
         logger.info(f'Script function name: {alias} registered at ScriptManager.')
+
+    def execute_event_actions(self, event: Event, actions):
+        '''Translates expression using the ECSmanager alias_to_entity dictionary
+        and executes the script
+        '''
+
+        # Translate entity names for entity IDs before processing of the action
+        translated_actions = translate(self._alias_to_entity_dict, actions)
+
+        # Run the actions
+        json_logic(
+            expr=translated_actions, 
+            value_fnc=lambda x: x, 
+            script_fnc=lambda *args: self.execute_script(args[0], event, **args[1]), 
+            data=event.params
+        )
 
     def execute_script(self, script_module_name : str, *script_args, **script_kwargs):
         '''Runs the script function with given arguments.'''

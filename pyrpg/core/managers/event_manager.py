@@ -6,16 +6,52 @@ from pyrpg.core.events.event import Event
 logger = logging.getLogger(__name__)
 
 class EventManager:
+    '''New version that is ready to get rid of Quest as a class object and
+    introduces event handlers as a dictionary property of this manager.
+    '''
 
-    def __init__(self, quests_event_handler_fnc) -> None:
+    def __init__(self, exec_event_actions_fnc) -> None:
         self._event_queue = []
-        self._quest_event_handler_fnc = quests_event_handler_fnc
+        self._exec_event_actions_fnc = exec_event_actions_fnc
+        self._event_handlers = {}  # Stores all event handlers from quests and phases. Event is a dict key and value is list of handlers
         logger.info(f'EventManager initiated.')
+
+    def load_handler(self, event_type: str, handler_data: dict) -> None:
+        '''NEW - Get the handler description and store it in _event_handlers dictionary
+
+            Example of handler_data
+                    {
+                        "id": "ev_start_game",
+                        "actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+                    }
+        '''
+        # Check if the event type already exists
+        if self._event_handlers.get(event_type) is None:
+            # If not, create new record with handler id as a key and the rest as dict
+            self._event_handlers = {**self._event_handlers, **{event_type: {handler_data['id']: { k:v for (k,v) in handler_data.items() if k != 'id'}}}}
+        else:
+            self._event_handlers[event_type].update({handler_data['id']: { k:v for (k,v) in handler_data.items() if k != 'id'}})
+
+        logger.info(f'Handler id {handler_data["id"]} for event "{event_type}" was added/updated.')
+        logger.debug(f'Handler events dict: {self._event_handlers}')
+
+
+    def delete_handler(self, handler_id: str) -> None:
+        '''Deletes data for handler_id from handler storage _event_handlers'''
+
+        # Browse all event types, dind the handler_id key and delete the record
+        for event_type in self._event_handlers:
+            handler = self._event_handlers[event_type].get(handler_id, None)
+            if handler is not None:
+                del self._event_handlers[event_type][handler_id]
+                logger.info(f'Handler "{handler_id}" for event "{event_type}" successfully removed.')
+
 
     def create_event(self, type: str, params: dict) -> Event:
         '''Create an instance of new event from dictionary'''
+
         return Event(event_type=type, generator_obj=None, other_obj=None, params=params)
-    
+
     def get_events(self) -> list:
         '''Returns event queue.'''
 
@@ -34,11 +70,45 @@ class EventManager:
         logger.info(f'All events cleared.')
 
     def _process_event(self, event: Event) -> None:
-        '''Process particular game event by passing it to
-        quests event handlers'''
+        '''Process particular game event by working with JSON logic statements rather than
+        separate conditions and actions statements.'''
 
-        # Send every event to every quest for handling
-        self._quest_event_handler_fnc(event)
+        logger.debug(f'Looking for handler for event "{event.event_type}".')
+
+        # Get all event handlers related to the event
+        event_handlers = self._event_handlers.get(event.event_type, {}).values()
+
+        # Prepare empty list of actions to be filled in the below cycle and for execution later.
+        # This is done in order to avoid modification of _event_handlers dictionary when komplex
+        # actions modifying handlers dictionary happen.
+        _actions_for_execution = []
+
+        # Loop the event handlers and for each one process the action key
+        for event_handler in event_handlers:
+            '''Event handler action can modify the _event_handlers dictionary. For
+            example load_quest action tries to clead and add items into the _event_handlers.
+            One solution that will work is to iterate through the deep copy of dict.
+            
+            Here it is solved by adding internal list of actions that is filled and executed
+            later.
+            '''
+
+            # Perform the event handler action
+            actions = event_handler.get('actions', [])
+
+            logger.info(f'Adding event {event.event_type} with action {actions} for execution')
+
+            # Do not execute within the handlers loop but after it
+            #self._exec_event_actions_fnc(event, actions)
+            _actions_for_execution.append(actions)
+            
+        # Execute the actions - function from ScriptManager
+        logger.debug(f'List of actions for execution: {_actions_for_execution}')
+        for action in _actions_for_execution:
+
+            logger.info(f'Executing event "{event.event_type}" action "{actions}"')
+            self._exec_event_actions_fnc(event, action)
+
 
     def process_events(self, process: list(Event.EVENT_TYPES)=None, ignore: list(Event.EVENT_TYPES)=None) -> None:
         ''' Process particular game/quest event types that are specified on the input.

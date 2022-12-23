@@ -1,5 +1,3 @@
-import backup.core.engine as engine
-
 from pyrpg.core.config.config import MSG_EVENT_FORMAT # for the format of event messages
 
 class Event:
