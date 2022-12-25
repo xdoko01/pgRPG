@@ -28,11 +28,13 @@ def main(argv):
     #filepath = 'new/games/collect_coins/collect_coins.json'
     #filepath = 'new/tests/10_effects/test_fx_01.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.json'
+    #filepath = 'new/tests/09_projectiles/test_projectile_generation.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_damage.json'
-    #filepath = 'new/tests/05_pickup/test_pickup_01.json'
-    #filepath = 'new/tests/04_collisions/test_collisions_05.json'
+    #filepath = 'new/tests/09_projectiles/test_projectile_collision.json'
+    #filepath = 'new/tests/08_arm_ammo/test_arm_ammo_01.json'
+    #filepath = 'new/tests/04_collisions/test_map_collision_01.json'
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
-    #filepath = 'new/tests/01_movements/test_movement_01.json'
+    #filepath = 'new/tests/03_animations/test_weapon_animations.json'
 
     #filepath = None
 

@@ -1,10 +1,24 @@
 {
+	// Basic data
 	"id" : "new_test_teleportation_01",
-	"name" : "Teleportation Test",
+	"title" : "Teleportation Test",
 	"description" : "Test new teleportation processors",
 	"objective" : "POC of the new teleportation system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -20,8 +34,8 @@
 		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
 		// For teleportation
 		["new.teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
@@ -50,176 +64,143 @@
 
 	],
 
-	"phases" : {
-		"phase01" :{
-			"name" : "Teleportation Test", "objective" : "", "maps" : ["test_arena_sand"],
-			
-			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 
-			"dialogs" : [
+	// What dialogs to load
+	"dialogs" : [
+		{
+			"id" : "dlg_quest_start",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 24,
+				"color" : "#00FFFF",
+				"align" : "LEFT"
+				},
+		
+			"texts" : [
 				{
-					"id" : "dlg_quest_start",
-					"templates" : ["basic"],
-
-					"dimensions" : [630, 200],
-
+					"text" : "Teleportation test no.1 - Demonstration of teleportation, no keys",
+					"position" : [5, 20]
+				}
+			],
+			
+			"frames" : [
+				{
 					"font" : {
 						"path" : "small_font.json",
-						"size" : 24,
-						"color" : "#00FFFF",
+						"size" : 16,
+						"color" : "#FFFFFF",
 						"align" : "LEFT"
 						},
-				
+
 					"texts" : [
 						{
-							"text" : "Teleportation test no.1 - Demonstration of teleportation, no keys",
-							"position" : [5, 20]
-						}
-					],
-					
-					"frames" : [
-						{
-							"font" : {
-								"path" : "small_font.json",
-								"size" : 16,
-								"color" : "#FFFFFF",
-								"align" : "LEFT"
-								},
-		
-							"texts" : [
-								{
-									"text" : "Teleportable entity can be teleported\nby Teleport entity upon collision.\nNo keys supported in this demo.",
-									"position" : [5, 65]
-								}
-							]
-						},
-						{
-							"texts" : [
-								{
-									"text" : "Press Enter to continue ...",
-									"position" : [5, 165]
-								}
-							]
+							"text" : "Teleportable entity can be teleported\nby Teleport entity upon collision.\nNo keys supported in this demo.",
+							"position" : [5, 65]
 						}
 					]
-				}
-			],
-
-			"entities" : [
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/dark1"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_add", {"moves" : ["left"]}]],
-								"right": [["new_move_add", {"moves" : ["right"]}]],
-								"up" : [["new_move_add", {"moves" : ["up"]}]],
-								"down" : [["new_move_add", {"moves" : ["down"]}]],
-								"attack" : [["none", {}]]}
-							}
-						},
-
-						// New component for facilitating teleportation
-						{"type" : "new.teleportable:Teleportable", "params" :  {}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
 				},
 				{
-					"id" : "teleport01",
-					"templates" : ["new/model/ammo_pack/fireball_spell_pack"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						// New component for facilitationg teleportation
-						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 3, "tile_dest_y" : 18}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+					"texts" : [
+						{
+							"text" : "Press Enter to continue ...",
+							"position" : [5, 165]
+						}
 					]
-				},
-				{
-					"id" : "teleport02",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						// New component for facilitationg teleportation
-						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "teleport03",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						// New component for facilitationg teleportation
-						{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-					]
-				}
-
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" : [
-					{
-						"conditions" : {
-							"params" : {
-								"quest_id" : "new_test_teleportation_01"
-							}
-						},
-						"actions" : [
-							//["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
-						]
-					}
-				],
-
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
 				}
 			]
 		}
+	],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/dark1"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_add", {"moves" : ["left"]}]],
+						"right": [["new_move_add", {"moves" : ["right"]}]],
+						"up" : [["new_move_add", {"moves" : ["up"]}]],
+						"down" : [["new_move_add", {"moves" : ["down"]}]],
+						"attack" : [["none", {}]]}
+					}
+				},
+
+				// New component for facilitating teleportation
+				{"type" : "new.teleportable:Teleportable", "params" :  {}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "teleport01",
+			"templates" : ["new/model/ammo_pack/spellcast/fireball_spell_pack"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// New component for facilitationg teleportation
+				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 3, "tile_dest_y" : 18}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "teleport02",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// New component for facilitationg teleportation
+				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "teleport03",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// New component for facilitationg teleportation
+				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		}
+
+	],
+
+	// How to handle events
+	"event_handlers" : {
+
+		"QUEST_START" : [
+			{
+				"id" : "ev_quest_start",
+				"actions" : [
+					"SCRIPT",
+					"new.show_dlg_window", 
+					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
+				]
+			}
+		]
 	}
 }

@@ -1,10 +1,24 @@
 {
+	// Basic data
 	"id" : "new_test_projectile_generation",
-	"name" : "Test of Projectile Generation",
+	"title" : "Test of Projectile Generation",
 	"description" : "Test of Attack and Factory system - generation of projectile",
 	"objective" : "POC of the new Attack and Factory system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 
 		// For commands
@@ -46,130 +60,98 @@
 		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}] // NEW - for removing flag for generation of projectile
+		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}], // NEW - for removing flag for generation of projectile
 		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
 
 	],
 
-	"phases" : {
-		"phase01" :{
-			"name" : "Projectile Generation Test", "objective" : "","maps" : ["test_arena_sand"],
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 			
-			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+	// What dialogs to load
+	"dialogs": [],
 
-			"entities" : [
-				
-				// AmmoPack is Factory for generation of arrows
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		
+		// AmmoPack is Factory for generation of arrows
+		{
+			"id" : "wooden_arrows_pack",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
-					"id" : "wooden_arrows_pack",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
-						{
-							"type" : "new.factory:Factory", 
-							"params" : {
-								"prescription" : {
-									"id" : "wooden_arrow",
-									"templates" : ["new/model/ammo/wooden_arrow"],
-									"components" : [
-										{"type" : "new.debug:Debug", "params" : {}},
+					"type" : "new.factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"id" : "wooden_arrow",
+							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "new.debug:Debug", "params" : {}},
 
-										{"type" : "new.brain:Brain", "params" : {"commands" : [
-											[0, 	"new_move_auto", {"duration" : 3000}] // move for 3 seconds
-											]}},
-				
-										//{"type" : "LinearMotion", "params" : {"speed" : 200}},
-										//{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-										//{"type" : "Damaging", "params" : {"damage" : 5}},
-										//{"type" : "DeleteOnCollision", "params" : {}},
+								{"type" : "new.brain:Brain", "params" : {"commands" : [
+									[0, 	"new_move_auto", {"duration" : 3000}] // move for 3 seconds
+									]}},
+		
+								//{"type" : "LinearMotion", "params" : {"speed" : 200}},
+								//{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
+								//{"type" : "Damaging", "params" : {"damage" : 5}},
+								//{"type" : "DeleteOnCollision", "params" : {}},
 
-										{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8}}
-									]
-								} 
-							}
-						}
-					]
-				},
-
-				{
-					"id" : "wooden_bow",
-					"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
-					"components" : [
-						{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
-					]
-				},
-
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/white"],
-					"components" : [
-
-						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_add", {"moves" : ["left"]}]],
-								"right": [["new_move_add", {"moves" : ["right"]}]],
-								"up" : [["new_move_add", {"moves" : ["up"]}]],
-								"down" : [["new_move_add", {"moves" : ["down"]}]],
-								"attack" : [["new_attack", {}]]}
-							}
-						},
-
-						// Bow is armed and preselected as the active weapon
-						{"type" : "new.has_weapon:HasWeapon", "params" : {
-							"weapons" : {
-								"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
-							}
-						}},
-
-						{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				}
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" : [
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
+								{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8}}
+							]
+						} 
+					}
 				}
 			]
+		},
+
+		{
+			"id" : "wooden_bow",
+			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+			]
+		},
+
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/white"],
+			"components" : [
+
+				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_add", {"moves" : ["left"]}]],
+						"right": [["new_move_add", {"moves" : ["right"]}]],
+						"up" : [["new_move_add", {"moves" : ["up"]}]],
+						"down" : [["new_move_add", {"moves" : ["down"]}]],
+						"attack" : [["new_attack", {}]]}
+					}
+				},
+
+				// Bow is armed and preselected as the active weapon
+				{"type" : "new.has_weapon:HasWeapon", "params" : {
+					"weapons" : {
+						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
+					}
+				}},
+
+				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
 		}
-	}
+	],
+
+	// How to handle events
+	"event_handlers": {}
 }

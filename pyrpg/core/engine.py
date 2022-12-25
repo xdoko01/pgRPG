@@ -136,15 +136,12 @@ class Game:
 
         #add new quest
         self.quest_manager.add_quest(
-            #quest_name, #!!! new cosmetic change
-            #progress=self.progress_bar.update,
-            progress_fnc=self.progress_bar.update, #!!!new cosmetic change
+            progress_fnc=self.progress_bar.update,
             quest_filepath=filepath,
             map_mng=self.map_manager,
             dialog_mng=self.dialog_manager,
             event_mng=self.event_manager,
-            ecs_mng=self.ecs_manager)#,
-            #script_mng=self.script_manager) #!!! changed
+            ecs_mng=self.ecs_manager)
 
         if show_progress:
             # End the progress bar

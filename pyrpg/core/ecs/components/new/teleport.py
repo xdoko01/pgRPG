@@ -25,7 +25,7 @@ class Teleport(Component):
         >>> c = Teleport(**{"dest_x" : 0, "dest_y" : 0, "dest_map" : "test_map"})
     '''
 
-    __slots__ = ['dest_x', 'dest_y', 'tile_dest_x', 'tile_dest_y', 'dest_map', 'key']
+    __slots__ = ['dest_x', 'dest_y', 'dest_map', 'key']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new Teleport component.

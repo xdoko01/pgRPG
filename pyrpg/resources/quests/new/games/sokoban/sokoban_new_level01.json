@@ -152,7 +152,7 @@
 
 	"event_handlers" : {
 
-		"QUEST_START" :[
+		"QUEST_START": [
 			{
 				"id": "ev_start_game",
 				

@@ -1,10 +1,24 @@
 {
+	// Basic data
 	"id" : "new_test07_movement",
-	"name" : "Movement Test 07",
+	"title" : "Movement Test 07",
 	"description" : "Test Controllable, NewMoveable components and NewMove command",
 	"objective" : "POC of the improved movement system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -26,76 +40,44 @@
 		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
 	],
 
-	"phases" : {
-		"phase01" :{
-			"name" : "Movement Test 07", "objective" : "","maps" : ["test_arena_sand"],
-			
-			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 
-			"entities" : [
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/brown"],
-					"components" : [
-						
-						/////////////////////////////////////////////////////////
-						// TEST 7 - Movement command based on vector
-						// - adding of vectors not allowed, multiple keypresses not allowed
-						// - single command / single vector upon keypress
-						/////////////////////////////////////////////////////////
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_vect_noadd", {"vector" : [-1, 0]}]],
-								"right": [["new_move_vect_noadd", {"vector" : [1, 0]}]],
-								"up" : [["new_move_vect_noadd", {"vector" : [0, -2]}]],
-								"down" : [["new_move_vect_noadd", {"vector" : [0, 2]}]],
-								"attack" : [["none", {}]]}
-							}
-						},
+	// What dialogs to load
+	"dialogs": [],
 
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				}
-			],
+	// What templates to load
+	"templates": [],
 
-			"event_handling" : {
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/brown"],
+			"components" : [
+				
+				/////////////////////////////////////////////////////////
+				// TEST 7 - Movement command based on vector
+				// - adding of vectors not allowed, multiple keypresses not allowed
+				// - single command / single vector upon keypress
+				/////////////////////////////////////////////////////////
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_vect_noadd", {"vector" : [-1, 0]}]],
+						"right": [["new_move_vect_noadd", {"vector" : [1, 0]}]],
+						"up" : [["new_move_vect_noadd", {"vector" : [0, -2]}]],
+						"down" : [["new_move_vect_noadd", {"vector" : [0, 2]}]],
+						"attack" : [["none", {}]]}
+					}
+				},
 
-				"QUEST_START" : [
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
-				}
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
-	}
+	],
+
+	// How to handle events
+	"event_handlers": {}
 }

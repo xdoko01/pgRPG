@@ -1,12 +1,26 @@
 {
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
+	// Basic data
 	"id" : "new_test_projectile_damage",
 	"title" : "Test of Projectile Damage",
 	"description" : "Test of Attack and Factory and Effect system - damage of projectiles",
 	"objective" : "POC of the new Attack and Factory and Effect system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 
 		// For commands
@@ -97,314 +111,282 @@
 		//["new.debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]
 	],
 
-
-	"phases" : {
-		"phase01" :{
-			"name" : "Projectile Damage Test", "objective" : "","maps" : ["test_arena_sand"],
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 			
-			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+	// What dialogs to load
+	"dialogs": [],
 
-			"entities" : [
-				
-				// Spear
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		
+		// Spear
+		{
+			"id" : "spear_generator",
+			"templates" : [], // no model needed
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
 				{
-					"id" : "spear_generator",
-					"templates" : [], // no model needed
-					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
-						{
-							"type" : "new.factory:Factory", 
-							"params" : {
-								"prescription" : {
-									"templates" : [], // Only collision zone is created, no sprite.
-									"components" : [
-										{"type" : "new.debug:Debug", "params" : {}},
+					"type" : "new.factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"templates" : [], // Only collision zone is created, no sprite.
+							"components" : [
+								{"type" : "new.debug:Debug", "params" : {}},
 
-										{
-											"type" : "new.collidable:Collidable", 
-											"params" : {
-												"x" : 8, "y" : 8, 
-												"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
-												"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
-												}},
-										
-										{"type" : "new.damaging:Damaging", "params" : {"damage" : 10}},
+								{
+									"type" : "new.collidable:Collidable", 
+									"params" : {
+										"x" : 8, "y" : 8, 
+										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
+										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
+										}},
+								
+								{"type" : "new.damaging:Damaging", "params" : {"damage" : 10}},
 
-										//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-										{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
-									]
-								}
-							}
+							]
 						}
-					]
-				},
-
-				{
-					"id" : "long_spear",
-					"templates" : ["new/model/weapon/thrust/spear"],
-					"components" : [
-						{"type" : "new.weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
-					]
-				},
-
-
-				// Dagger
-				{
-					"id" : "sword_generator",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
-						{
-							"type" : "new.factory:Factory", 
-							"params" : {
-								"prescription" : {
-									"templates" : [], // Only collision zone is created, no sprite.
-									"components" : [
-										{"type" : "new.debug:Debug", "params" : {}},
-
-										{
-											"type" : "new.collidable:Collidable", 
-											"params" : {
-												"x" : 8, "y" : 8, 
-												"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
-												"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
-												}},
-										
-										{"type" : "new.damaging:Damaging", "params" : {"damage" : 20}},
-
-										//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-										{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
-
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
-
-
-									]
-								}
-							}
-						}
-					]
-				},
-
-				{
-					"id" : "long_sword",
-					"templates" : ["new/model/weapon/slash/dagger"],
-					"components" : [
-						{"type" : "new.weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
-					]
-				},
-
-
-				// wooden_arrows_pack AmmoPack is Factory for generation of arrows
-				{
-					"id" : "wooden_arrows_pack",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
-						{
-							"type" : "new.factory:Factory", 
-							"params" : {
-								"prescription" : {
-									"templates" : ["new/model/ammo/wooden_arrow"],
-									"components" : [
-										{"type" : "new.debug:Debug", "params" : {}},
-
-										{"type" : "new.brain:Brain", "params" : {"commands" : [
-											[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-											]}},
-
-										{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
-
-										{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-										{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-										{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
-										
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
-
-
-									]
-								}
-							}
-						}
-					]
-				},
-
-				{
-					"id" : "wooden_bow",
-					"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
-					"components" : [
-						{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
-					]
-				},
-
-				{
-					"id" : "spell_pack",
-					"templates" : [],
-					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
-						{
-							"type" : "new.factory:Factory", 
-							"params" : {
-								"prescription" : {
-									"templates" : ["new/model/ammo/wooden_arrow"],
-									"components" : [
-										{"type" : "new.debug:Debug", "params" : {}},
-
-										{"type" : "new.brain:Brain", "params" : {"commands" : [
-											[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-											]}},
-
-										{"type" : "new.damaging:Damaging", "params" : {"damage" : 50}},
-
-										{"type" : "new.movable:Movable", "params" :  {"velocity" : 500}},
-										{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-										{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-										
-										{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-										{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
-
-
-									]
-								}
-							}
-						}
-					]
-				},
-
-				{
-					"id" : "spell_ability",
-					"templates" : [],
-					"components" : [
-						{"type" : "new.weapon:Weapon", "params" : {"type" : "spell",	"max_projectiles" : 5}}
-					]
-				},
-
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/white"],
-					"components" : [
-
-						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-
-						{
-							"type" : "new.collidable:Collidable", 
-							"params" :  {
-								"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
-								//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
-							}
-						},
-
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_add", {"moves" : ["left"]}]],
-								"right": [["new_move_add", {"moves" : ["right"]}]],
-								"up" : [["new_move_add", {"moves" : ["up"]}]],
-								"down" : [["new_move_add", {"moves" : ["down"]}]],
-								"attack" : [["new_attack", {}]]}
-							}
-						},
-
-						// Bow is armed and preselected as the active weapon
-						{"type" : "new.has_weapon:HasWeapon", "params" : {
-							"weapons" : {
-								"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"},
-								"sword" : {"weapon" : "long_sword", "generator" : "sword_generator"},
-								"spear" : {"weapon" : "long_spear", "generator" : "spear_generator"},
-								"spell" : {"weapon" : "spell_ability", "generator" : "spell_pack"}
-
-							}
-						}},
-
-						//{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-						{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				},
-				{
-					"id" : "NPC01",
-					"templates" : ["new/model/body/special/minotaur"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						// Move right - left
-						{"type" : "new.brain:Brain", "params" : {"commands" : [
-							[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-							[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-							[0, 	"goto", {}]
-						]}},
-
-						{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-						{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
-
-
-						{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "NPC02",
-					"templates" : ["new/model/body/special/minotaur"],
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {}},
-
-						{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-						{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
-
-
-						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
-					]
-				}
-
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" : [
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
+					}
 				}
 			]
+		},
+
+		{
+			"id" : "long_spear",
+			"templates" : ["new/model/weapon/thrust/spear"],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
+			]
+		},
+
+
+		// Dagger
+		{
+			"id" : "sword_generator",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
+				{
+					"type" : "new.factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"templates" : [], // Only collision zone is created, no sprite.
+							"components" : [
+								{"type" : "new.debug:Debug", "params" : {}},
+
+								{
+									"type" : "new.collidable:Collidable", 
+									"params" : {
+										"x" : 8, "y" : 8, 
+										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
+										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
+										}},
+								
+								{"type" : "new.damaging:Damaging", "params" : {"damage" : 20}},
+
+								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+
+								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+
+
+							]
+						}
+					}
+				}
+			]
+		},
+
+		{
+			"id" : "long_sword",
+			"templates" : ["new/model/weapon/slash/dagger"],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
+			]
+		},
+
+
+		// wooden_arrows_pack AmmoPack is Factory for generation of arrows
+		{
+			"id" : "wooden_arrows_pack",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{
+					"type" : "new.factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "new.debug:Debug", "params" : {}},
+
+								{"type" : "new.brain:Brain", "params" : {"commands" : [
+									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
+									]}},
+
+								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
+
+								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
+								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
+								
+								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+
+
+							]
+						}
+					}
+				}
+			]
+		},
+
+		{
+			"id" : "wooden_bow",
+			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+			]
+		},
+
+		{
+			"id" : "spell_pack",
+			"templates" : [],
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
+				{
+					"type" : "new.factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "new.debug:Debug", "params" : {}},
+
+								{"type" : "new.brain:Brain", "params" : {"commands" : [
+									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
+									]}},
+
+								{"type" : "new.damaging:Damaging", "params" : {"damage" : 50}},
+
+								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500}},
+								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								
+								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+
+
+							]
+						}
+					}
+				}
+			]
+		},
+
+		{
+			"id" : "spell_ability",
+			"templates" : [],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "spell",	"max_projectiles" : 5}}
+			]
+		},
+
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/white"],
+			"components" : [
+
+				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+
+				{
+					"type" : "new.collidable:Collidable", 
+					"params" :  {
+						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
+						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
+					}
+				},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_add", {"moves" : ["left"]}]],
+						"right": [["new_move_add", {"moves" : ["right"]}]],
+						"up" : [["new_move_add", {"moves" : ["up"]}]],
+						"down" : [["new_move_add", {"moves" : ["down"]}]],
+						"attack" : [["new_attack", {}]]}
+					}
+				},
+
+				// Bow is armed and preselected as the active weapon
+				{"type" : "new.has_weapon:HasWeapon", "params" : {
+					"weapons" : {
+						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"},
+						"sword" : {"weapon" : "long_sword", "generator" : "sword_generator"},
+						"spear" : {"weapon" : "long_spear", "generator" : "spear_generator"},
+						"spell" : {"weapon" : "spell_ability", "generator" : "spell_pack"}
+
+					}
+				}},
+
+				//{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "NPC01",
+			"templates" : ["new/model/body/special/minotaur"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// Move right - left
+				{"type" : "new.brain:Brain", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
+					[1, 	"new_move_to", {"x" : 10, "y" : 450}],
+					[0, 	"goto", {}]
+				]}},
+
+				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+
+
+				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC02",
+			"templates" : ["new/model/body/special/minotaur"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+
+
+				{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
 		}
-	}
+
+	],
+
+	// How to handle events
+	"event_handlers": {}
+
 }

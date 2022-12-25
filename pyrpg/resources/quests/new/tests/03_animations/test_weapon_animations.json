@@ -1,10 +1,24 @@
 {
+	// Basic data
 	"id" : "new_test_weapon_animations",
-	"name" : "Movement and Weapon Animation Test",
+	"title" : "Movement and Weapon Animation Test",
 	"description" : "Test new animation processors and new render processors for movement and attack actions",
 	"objective" : "POC of the new animation and render system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -35,100 +49,69 @@
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}]
 	],
 
-	"phases" : {
-		"phase01" :{
-			"name" : "Movement and Weapon Animation Test", "objective" : "","maps" : ["test_arena_sand"],
-			
-			"cleanup" : {"maps" : [], "entities" : []}, "dialogs" : [],
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 
-			"entities" : [
-				
-				{
-					"id" : "wooden_arrows_pack",
-					"templates" : ["new/model/ammo_pack/wooden_arrows_pack"],
-					"components" : [
-						{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}}
-					]
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		
+		{
+			"id" : "wooden_arrows_pack",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}}
+			]
+		},
+
+		{
+			"id" : "wooden_bow",
+			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+			]
+		},
+
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/white"],
+			"components" : [
+
+				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_add", {"moves" : ["left"]}]],
+						"right": [["new_move_add", {"moves" : ["right"]}]],
+						"up" : [["new_move_add", {"moves" : ["up"]}]],
+						"down" : [["new_move_add", {"moves" : ["down"]}]],
+						"attack" : [["new_attack", {}]]}
+					}
 				},
 
-				{
-					"id" : "wooden_bow",
-					"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
-					"components" : [
-						{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
-					]
-				},
+				// In order to animate attack, some weapom must be in use
+				{"type" : "new.has_weapon:HasWeapon", "params" : {
+					"weapons" : {
+						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
+					}
+				}},
 
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/white"],
-					"components" : [
+				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 
-						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_add", {"moves" : ["left"]}]],
-								"right": [["new_move_add", {"moves" : ["right"]}]],
-								"up" : [["new_move_add", {"moves" : ["up"]}]],
-								"down" : [["new_move_add", {"moves" : ["down"]}]],
-								"attack" : [["new_attack", {}]]}
-							}
-						},
-
-						// In order to animate attack, some weapom must be in use
-						{"type" : "new.has_weapon:HasWeapon", "params" : {
-							"weapons" : {
-								"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
-							}
-						}},
-
-						{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				}
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" : [
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
-				}
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
-	}
+	],
+
+	// How to handle events
+	"event_handlers": {}
+
 }

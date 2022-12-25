@@ -1,10 +1,24 @@
 {
+	// Basic data
 	"id" : "new_test01_collisions",
-	"name" : "Collisions Test",
+	"title" : "Collisions Test",
 	"description" : "Test new collision processors",
 	"objective" : "POC of the new collision system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -21,7 +35,7 @@
 
 		// For collisions
 		["new.collision_system:GenerateCollisionsProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -41,339 +55,306 @@
 
 	],
 
-	"phases" : {
-		"phase01" :{
-			"name" : "Collisions Test", "objective" : "", "maps" : ["test_arena_sand"],
-			
-			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 
-			"dialogs" : [
+	// What dialogs to load
+	"dialogs" : [
+		{
+			"id" : "dlg_quest_start",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 24,
+				"color" : "#00FFFF",
+				"align" : "LEFT"
+				},
+		
+			"texts" : [
 				{
-					"id" : "dlg_quest_start",
-					"templates" : ["basic"],
-
-					"dimensions" : [630, 200],
-
+					"text" : "New Collision test no.1 - Demonstration of collision resolution",
+					"position" : [5, 20]
+				}
+			],
+			
+			"frames" : [
+				{
 					"font" : {
 						"path" : "small_font.json",
-						"size" : 24,
-						"color" : "#00FFFF",
+						"size" : 16,
+						"color" : "#FFFFFF",
 						"align" : "LEFT"
 						},
-				
+
 					"texts" : [
 						{
-							"text" : "New Collision test no.1 - Demonstration of collision resolution",
-							"position" : [5, 20]
-						}
-					],
-					
-					"frames" : [
-						{
-							"font" : {
-								"path" : "small_font.json",
-								"size" : 16,
-								"color" : "#FFFFFF",
-								"align" : "LEFT"
-								},
-		
-							"texts" : [
-								{
-									"text" : "Entities are moving in left-right, up-down direction\nwhile hitting each other.",
-									"position" : [5, 65]
-								}
-							]
-						},
-						{
-							"texts" : [
-								{
-									"text" : "Press Enter to continue ...",
-									"position" : [5, 165]
-								}
-							]
+							"text" : "Entities are moving in left-right, up-down direction\nwhile hitting each other.",
+							"position" : [5, 65]
 						}
 					]
-				}
-			],
-
-			"entities" : [
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/white"],
-					"components" : [
-						{
-							"type" : "new.debug:Debug", 
-							"params" : {
-								"info" : {
-									"name" : "PLAYER01",
-									"description" : "Player is not corrected by collision from anyone even not LAVA."
-								}
-							}
-						},
-
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_add", {"moves" : ["left"]}]],
-								"right": [["new_move_add", {"moves" : ["right"]}]],
-								"up" : [["new_move_add", {"moves" : ["up"]}]],
-								"down" : [["new_move_add", {"moves" : ["down"]}]],
-								"attack" : [["none", {}]]}
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{
-							"type" : "new.collidable:Collidable", 
-							"params" :  {
-								"x" : 15, 
-								"y" : 27, 
-								"dx" : 0, 
-								"dy" : 8,
-								"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player
-							}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 320, "screen_height" : 240}}
-					]
 				},
 				{
-					"id" : "stone",
-					"templates" : [],
-					"components" : [
+					"texts" : [
 						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "STONE",
-									"description" : "STONE that is moved only by PLAYER01, all other entities are corrected and not moving the stone"
-								}
-							}
-						},
-						//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 0, "screen_width" : 320, "screen_height" : 240}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 300, "y" : 10, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 15, 
-							"y" : 15, 
-							"dx" : 0, 
-							"dy" : 8,
-							"accept_pos_fix_from_allowlist" : ["player01"], // can be moved only by player
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}}
+							"text" : "Press Enter to continue ...",
+							"position" : [5, 165]
+						}
 					]
-				},
-				{
-					"id" : "LAVA",
-					"templates" : [],
-					"components" : [
-						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "LAVA"
-								}
-							}
-						},
-
-						{"type" : "new.position:Position", "params" : {"x" : 300, "y" : 300, "map" : "test_arena_sand"}},
-						//{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 100, 
-							"y" : 100, 
-							"dx" : 0, 
-							"dy" : 8
-
-							}}
-					]
-				},
-				{
-					"id" : "NPC01",
-					"templates" : ["new/model/body/male/skeleton/white"],
-					"components" : [
-						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "NPC01",
-									"description" : "NPC01 is not corrected by collision from anyone except the PLAYER01"
-								}
-							}
-						},
-
-						// Move right - left
-						{"type" : "new.brain:Brain", "params" : {"commands" : [
-							[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-							[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-							[0, 	"goto", {}]
-						]}},
-
-						//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 15, 
-							"y" : 27, 
-							"dx" : 0, 
-							"dy" : 8,
-							"accept_pos_fix_from_allowlist" : ["player01"] // only player01 can move me
-							}}
-					]
-				},
-				{
-					"id" : "NPC02",
-					"templates" : ["new/model/body/male/skeleton/green"],
-					"components" : [
-						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "NPC02"
-								}
-							}
-						},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
-
-						// Move up - down
-						{"type" : "new.brain:Brain", "params" : {"commands" : [
-							[0, 	"new_move_to", {"x" : 219, "y" : 10}],
-							[1, 	"new_move_to", {"x" : 219, "y" : 800}],
-							[0, 	"goto", {}]
-						]}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "NPC03",
-					"templates" : ["new/model/body/male/skeleton/grey"],
-					"components" : [
-						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "NPC03"
-								}
-							}
-						},
-
-						// Move down - up
-						{"type" : "new.brain:Brain", "params" : {"commands" : [
-							[0, 	"new_move_to", {"x" : 319, "y" : 1000}],
-							[1, 	"new_move_to", {"x" : 319, "y" : 10}],
-							[0, 	"goto", {}]
-						]}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "NPC04",
-					"templates" : ["new/model/body/male/zombie/green"],
-					"components" : [
-						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "NPC04"
-								}
-							}
-						},
-
-						// Move left - right
-						{"type" : "new.brain:Brain", "params" : {"commands" : [
-							[0, 	"new_move_to", {"x" : 50, "y" : 500}],
-							[1, 	"new_move_to", {"x" : 1000, "y" : 500}],
-							[0, 	"goto", {}]
-						]}},
-
-
-						{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
-					]
-				},
-				{
-					"id" : "NPC05",
-					"templates" : ["new/model/body/male/wolfman/gold"],
-					"components" : [
-						{
-							"type" : "new.debug:Debug",
-							"params" : {
-								"info" : { 
-									"name" : "NPC05"
-								}
-							}
-						},
-
-						// Move left - right
-						{"type" : "new.brain:Brain", "params" : {"commands" : [
-							[0, 	"new_move_to", {"x" : 300, "y" : 100}],
-							[1, 	"new_move_to", {"x" : 100, "y" : 100}],
-							[0, 	"goto", {}]
-						]}},
-						
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-						{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
-																"y" : 27,
-																"dx" : 0,
-																"dy" : 8}}
-					]
-				}
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" : [
-					{
-						"conditions" : {
-							"params" : {
-								"quest_id" : "new_test01_collisionss"
-							}
-						},
-						"actions" : [
-							["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [5, 5]}]
-						]
-					}
-				],
-
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
 				}
 			]
 		}
+	],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/white"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug", 
+					"params" : {
+						"info" : {
+							"name" : "PLAYER01",
+							"description" : "Player is not corrected by collision from anyone even not LAVA."
+						}
+					}
+				},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_add", {"moves" : ["left"]}]],
+						"right": [["new_move_add", {"moves" : ["right"]}]],
+						"up" : [["new_move_add", {"moves" : ["up"]}]],
+						"down" : [["new_move_add", {"moves" : ["down"]}]],
+						"attack" : [["none", {}]]}
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{
+					"type" : "new.collidable:Collidable", 
+					"params" :  {
+						"x" : 15, 
+						"y" : 27, 
+						"dx" : 0, 
+						"dy" : 8,
+						"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player
+					}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 320, "screen_height" : 240}}
+			]
+		},
+		{
+			"id" : "stone",
+			"templates" : [],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "STONE",
+							"description" : "STONE that is moved only by PLAYER01, all other entities are corrected and not moving the stone"
+						}
+					}
+				},
+				//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 0, "screen_width" : 320, "screen_height" : 240}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 300, "y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {
+					"x" : 15, 
+					"y" : 15, 
+					"dx" : 0, 
+					"dy" : 8,
+					"accept_pos_fix_from_allowlist" : ["player01"], // can be moved only by player
+					"position_fix_walkaround_mode" : false // can be pushed only straight
+					}}
+			]
+		},
+		{
+			"id" : "LAVA",
+			"templates" : [],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "LAVA"
+						}
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 300, "y" : 300, "map" : "test_arena_sand"}},
+				//{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {
+					"x" : 100, 
+					"y" : 100, 
+					"dx" : 0, 
+					"dy" : 8
+
+					}}
+			]
+		},
+		{
+			"id" : "NPC01",
+			"templates" : ["new/model/body/male/skeleton/white"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC01",
+							"description" : "NPC01 is not corrected by collision from anyone except the PLAYER01"
+						}
+					}
+				},
+
+				// Move right - left
+				{"type" : "new.brain:Brain", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
+					[1, 	"new_move_to", {"x" : 10, "y" : 450}],
+					[0, 	"goto", {}]
+				]}},
+
+				//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {
+					"x" : 15, 
+					"y" : 27, 
+					"dx" : 0, 
+					"dy" : 8,
+					"accept_pos_fix_from_allowlist" : ["player01"] // only player01 can move me
+					}}
+			]
+		},
+		{
+			"id" : "NPC02",
+			"templates" : ["new/model/body/male/skeleton/green"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC02"
+						}
+					}
+				},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
+
+				// Move up - down
+				{"type" : "new.brain:Brain", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 219, "y" : 10}],
+					[1, 	"new_move_to", {"x" : 219, "y" : 800}],
+					[0, 	"goto", {}]
+				]}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC03",
+			"templates" : ["new/model/body/male/skeleton/grey"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC03"
+						}
+					}
+				},
+
+				// Move down - up
+				{"type" : "new.brain:Brain", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 319, "y" : 1000}],
+					[1, 	"new_move_to", {"x" : 319, "y" : 10}],
+					[0, 	"goto", {}]
+				]}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC04",
+			"templates" : ["new/model/body/male/zombie/green"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC04"
+						}
+					}
+				},
+
+				// Move left - right
+				{"type" : "new.brain:Brain", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 50, "y" : 500}],
+					[1, 	"new_move_to", {"x" : 1000, "y" : 500}],
+					[0, 	"goto", {}]
+				]}},
+
+
+				{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC05",
+			"templates" : ["new/model/body/male/wolfman/gold"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC05"
+						}
+					}
+				},
+
+				// Move left - right
+				{"type" : "new.brain:Brain", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 300, "y" : 100}],
+					[1, 	"new_move_to", {"x" : 100, "y" : 100}],
+					[0, 	"goto", {}]
+				]}},
+				
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
+														"y" : 27,
+														"dx" : 0,
+														"dy" : 8}}
+			]
+		}
+	],
+
+	// How to handle events
+	"event_handlers": {
+
+		"QUEST_START" : [
+			{
+				"id" : "ev_quest_start",
+				"actions" : [
+					"SCRIPT",
+					"new.show_dlg_window",
+					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
+				]
+			}
+		]
 	}
 }

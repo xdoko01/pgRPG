@@ -1,12 +1,26 @@
 {
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
+	// Basid data
 	"id" : "collect_coins",
 	"title" : "Collect Coins Demo Game",
 	"description" : "Simple collect coins game, the aim is to collect all the coins and end.",
 	"objective" : "Collect all the points",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 
 		// For commands
@@ -79,359 +93,329 @@
 
 	],
 
-
-	"phases" : {
-		"phase01" :{
-			"name" : "Collect Coins Demo Game", "objective" : "","maps" : ["test_arena_sand"],
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 			
-			"cleanup" : {"maps" : [], "entities" : [], "dialogs" : []},
+	// What dialogs to load
+	"dialogs": [],
 
-			"dialogs" : [],
+	// What templates to load
+	"templates": [],
 
-			"entities" : [
-				{
-					"id": "golden_coin01",
-					"templates": ["new/thing/item/coin/golden_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "golden_coin02",
-					"templates": ["new/thing/item/coin/golden_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 2, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "golden_coin03",
-					"templates": ["new/thing/item/coin/golden_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 2, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "golden_coin04",
-					"templates": ["new/thing/item/coin/golden_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 2, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "golden_coin05",
-					"templates": ["new/thing/item/coin/golden_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 2, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "silver_coin01",
-					"templates": ["new/thing/item/coin/silver_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 4, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "silver_coin02",
-					"templates": ["new/thing/item/coin/silver_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 4, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "silver_coin03",
-					"templates": ["new/thing/item/coin/silver_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 4, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "silver_coin04",
-					"templates": ["new/thing/item/coin/silver_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 4, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "silver_coin05",
-					"templates": ["new/thing/item/coin/silver_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 4, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "copper_coin01",
-					"templates": ["new/thing/item/coin/copper_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 6, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "copper_coin02",
-					"templates": ["new/thing/item/coin/copper_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 6, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "copper_coin03",
-					"templates": ["new/thing/item/coin/copper_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 6, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "copper_coin04",
-					"templates": ["new/thing/item/coin/copper_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 6, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
-					]
-				},
-				{
-					"id": "copper_coin05",
-					"templates": ["new/thing/item/coin/copper_coin"],
-					"components": [
-						{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-						{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 6, "map" : "test_arena_sand"}},
-						{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-						{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
-					]
-				},
+	// What entities to load
+	"entities" : [
+		{
+			"id": "golden_coin01",
+			"templates": ["new/thing/item/coin/golden_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "golden_coin02",
+			"templates": ["new/thing/item/coin/golden_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "golden_coin03",
+			"templates": ["new/thing/item/coin/golden_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "golden_coin04",
+			"templates": ["new/thing/item/coin/golden_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "golden_coin05",
+			"templates": ["new/thing/item/coin/golden_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "silver_coin01",
+			"templates": ["new/thing/item/coin/silver_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "silver_coin02",
+			"templates": ["new/thing/item/coin/silver_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "silver_coin03",
+			"templates": ["new/thing/item/coin/silver_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "silver_coin04",
+			"templates": ["new/thing/item/coin/silver_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "silver_coin05",
+			"templates": ["new/thing/item/coin/silver_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "copper_coin01",
+			"templates": ["new/thing/item/coin/copper_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "copper_coin02",
+			"templates": ["new/thing/item/coin/copper_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "copper_coin03",
+			"templates": ["new/thing/item/coin/copper_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "copper_coin04",
+			"templates": ["new/thing/item/coin/copper_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 8, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+			]
+		},
+		{
+			"id": "copper_coin05",
+			"templates": ["new/thing/item/coin/copper_coin"],
+			"components": [
+				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+			]
+		},
 
 
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/white"],
+			"components" : [
+
+				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+
 				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/white"],
-					"components" : [
-
-						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-
-						{
-							"type" : "new.collidable:Collidable", 
-							"params" :  {
-								"x" : 15, "y" : 27, "dx" : 0, "dy" : 8
-							}
-						},
-
-						{
-							"type" : "new.controllable:Controllable", 
-							"params" :  {
-								"key_profile" : "default",
-								"control_cmds" : {
-									"left" : [["new_move_add", {"moves" : ["left"]}]],
-									"right": [["new_move_add", {"moves" : ["right"]}]],
-									"up" : [["new_move_add", {"moves" : ["up"]}]],
-									"down" : [["new_move_add", {"moves" : ["down"]}]],
-									"attack" : [["none", {}]]
-								}
-							}
-						},
-
-						{"type" : "new.has_inventory:HasInventory", "params" : {}},
-
-						{"type" : "new.has_score:HasScore", "params" : {}},
-
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				}
-
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" :[
-					{
-						"id": "ev_collect_coins",
-						
-						"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to %quest_id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
-
+					"type" : "new.collidable:Collidable", 
+					"params" :  {
+						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8
 					}
-				],
+				},
 
-				"SCORE": [
-
-					{
-						"id": "ev_scored_exactly_500_points",
-
-						"actions": [
-							"IF",
-								["==", ["VAR", "total"], 500],
-								["SEQ",
-									["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! You have just reached the score %total!<br/>WELL DONE!"}],
-									[
-										"SCRIPT", 
-										"new.show_confirm_dlg", 
-										{
-											"title": "Play again?",
-											"long_desc" : "Do you want to play again?",
-											"event_type": "CUST_UI_CONFIRM",
-											"event_params" : {
-												"from": "ev_scored_exactly_500_points"
-											}
-										}
-									]
-								]
-						]
-					},
-
-					{
-						"id": "ev_scored_more_than_500_points",
-
-						"actions": [
-							"IF",
-								[">", ["VAR", "total"], 500],
-								[
-									"SCRIPT", 
-									"new.show_confirm_dlg", 
-									{
-										"title": "Play again?",
-										"long_desc" : "Bad luck, you are over the limit. Your score %total is greater than 500. Do you want to try again?",
-										"event_type": "CUST_UI_CONFIRM",
-										"event_params" : {
-											"from": "ev_scored_more_than_500_points"
-										}
-									}
-								]
-						]
-					}
-
-				],
-
-				"CUST_UI_CONFIRM" : [
-					{
-						"id": "ev_restart_confirmed",
-
-						"actions": [
-							"IF",
-								["OR",
-									["==", ["VAR", "from"], "ev_scored_more_than_500_points"],
-									["==", ["VAR", "from"], "ev_scored_exactly_500_points"]
-								],
-								["SCRIPT", "new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
-						]
-					}
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-					{
-						"id": "ev_first_golden_coin_picked_up",
-
-						"actions": [
-							"IF",
-								["AND",
-									["==", ["VAR", "category"], "items.coin.golden"],
-									["==", ["VAR", "picker"], "player01"],
-									["==", ["VAR", "amount_in_category"], 1]
-								],
-								["SEQ",
-									["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first golden coin. It counts for 100 points!"}]
-								]
-						]
-					},
-					{
-						"id": "ev_first_silver_coin_picked_up",
-
-						"actions": [
-							"IF",
-								["AND",
-									["==", ["VAR", "category"], "items.coin.silver"],
-									["==", ["VAR", "picker"], "player01"],
-									["==", ["VAR", "amount_in_category"], 1]
-								],
-								["SEQ",
-									["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first silver coin. It counts for 20 points!"}]
-								]
-						]
-					},
-					{
-						"id": "ev_first_copper_coin_picked_up",
-
-						"actions": [
-							"IF",
-								["AND",
-									["==", ["VAR", "category"], "items.coin.copper"],
-									["==", ["VAR", "picker"], "player01"],
-									["==", ["VAR", "amount_in_category"], 1]
-								],
-								["SEQ",
-									["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first copper coin. It counts for 5 points!"}]
-								]
-						]
-					}
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
 				{
-					"erase" : ""
-				}
+					"type" : "new.controllable:Controllable", 
+					"params" :  {
+						"key_profile" : "default",
+						"control_cmds" : {
+							"left" : [["new_move_add", {"moves" : ["left"]}]],
+							"right": [["new_move_add", {"moves" : ["right"]}]],
+							"up" : [["new_move_add", {"moves" : ["up"]}]],
+							"down" : [["new_move_add", {"moves" : ["down"]}]],
+							"attack" : [["none", {}]]
+						}
+					}
+				},
+
+				{"type" : "new.has_inventory:HasInventory", "params" : {}},
+
+				{"type" : "new.has_score:HasScore", "params" : {}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
+
+	],
+
+	// How to handle events
+	"event_handlers" : {
+
+		"QUEST_START" :[
+			{
+				"id": "ev_collect_coins",
+				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to %quest_id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
+			}
+		],
+
+		"SCORE": [
+
+			{
+				"id": "ev_scored_exactly_500_points",
+
+				"actions": [
+					"IF",
+						["==", ["VAR", "total"], 500],
+						["SEQ",
+							["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! You have just reached the score %total!<br/>WELL DONE!"}],
+							[
+								"SCRIPT", 
+								"new.show_confirm_dlg", 
+								{
+									"title": "Play again?",
+									"long_desc" : "Do you want to play again?",
+									"event_type": "CUST_UI_CONFIRM",
+									"event_params" : {
+										"from": "ev_scored_exactly_500_points"
+									}
+								}
+							]
+						]
+				]
+			},
+
+			{
+				"id": "ev_scored_more_than_500_points",
+
+				"actions": [
+					"IF",
+						[">", ["VAR", "total"], 500],
+						[
+							"SCRIPT", 
+							"new.show_confirm_dlg", 
+							{
+								"title": "Play again?",
+								"long_desc" : "Bad luck, you are over the limit. Your score %total is greater than 500. Do you want to try again?",
+								"event_type": "CUST_UI_CONFIRM",
+								"event_params" : {
+									"from": "ev_scored_more_than_500_points"
+								}
+							}
+						]
+				]
+			}
+
+		],
+
+		"CUST_UI_CONFIRM" : [
+			{
+				"id": "ev_restart_confirmed",
+
+				"actions": [
+					"IF",
+						["OR",
+							["==", ["VAR", "from"], "ev_scored_more_than_500_points"],
+							["==", ["VAR", "from"], "ev_scored_exactly_500_points"]
+						],
+						["SCRIPT", "new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+				]
+			}
+		],
+
+		"ITEM_PICKUP" : [
+			{
+				"id": "ev_first_golden_coin_picked_up",
+
+				"actions": [
+					"IF",
+						["AND",
+							["==", ["VAR", "category"], "items.coin.golden"],
+							["==", ["VAR", "picker"], "player01"],
+							["==", ["VAR", "amount_in_category"], 1]
+						],
+						["SEQ",
+							["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first golden coin. It counts for 100 points!"}]
+						]
+				]
+			},
+			{
+				"id": "ev_first_silver_coin_picked_up",
+
+				"actions": [
+					"IF",
+						["AND",
+							["==", ["VAR", "category"], "items.coin.silver"],
+							["==", ["VAR", "picker"], "player01"],
+							["==", ["VAR", "amount_in_category"], 1]
+						],
+						["SEQ",
+							["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first silver coin. It counts for 20 points!"}]
+						]
+				]
+			},
+			{
+				"id": "ev_first_copper_coin_picked_up",
+
+				"actions": [
+					"IF",
+						["AND",
+							["==", ["VAR", "category"], "items.coin.copper"],
+							["==", ["VAR", "picker"], "player01"],
+							["==", ["VAR", "amount_in_category"], 1]
+						],
+						["SEQ",
+							["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first copper coin. It counts for 5 points!"}]
+						]
+				]
+			}
+		]
 	}
 }

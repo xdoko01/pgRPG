@@ -2,6 +2,6 @@
 	"id" : "fireball_spell_pack_model",
 	"templates" : ["new/model/ammo_pack"],
 	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/ammo_pack/shoot/weapon_spellcast_fireball_pack.json"}}
+		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/ammo_pack/spellcast/weapon_spellcast_fireball_pack.json"}}
 	]
 }

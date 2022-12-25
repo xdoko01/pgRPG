@@ -1,10 +1,23 @@
 {
+	// Basic data
 	"id" : "new_test02_movement",
-	"name" : "Movement Test 02",
+	"title" : "Movement Test 02",
 	"description" : "Test Controllable, NewMoveable components and NewMove command",
 	"objective" : "POC of the improved movement system",
-	"init_phase" : "phase01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+	
 	"processors" : [
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -26,76 +39,44 @@
 		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
 	],
 
-	"phases" : {
-		"phase01" :{
-			"name" : "Movement Test 02", "objective" : "","maps" : ["test_arena_sand"],
-			
-			"cleanup" : {"maps" : [],"entities" : []}, "dialogs" : [],
+	// What maps to load
+	"maps" : ["test_arena_sand"],
 
-			"entities" : [
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/brown"],
-					"components" : [
+	// What dialogs to load
+	"dialogs": [],
 
-						/////////////////////////////////////////////////////////
-						// TEST 2 - Movement command based on movement directions 
-						// - diagonal is supported but must be mapped on one key
-						// - single command / multiple direction upon keypress
-						/////////////////////////////////////////////////////////
-						{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-							"control_cmds" : {
-								"left" : [["new_move_noadd", {"moves" : ["left", "up"]}]],
-								"right": [["new_move_noadd", {"moves" : ["right", "down"]}]],
-								"up" : [["new_move_noadd", {"moves" : ["up", "right"]}]],
-								"down" : [["new_move_noadd", {"moves" : ["down", "left"]}]],
-								"attack" : [["none", {}]]}
-							}
-						},
+	// What templates to load
+	"templates": [],
 
-						{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				}
-			],
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/brown"],
+			"components" : [
 
-			"event_handling" : {
+				/////////////////////////////////////////////////////////
+				// TEST 2 - Movement command based on movement directions 
+				// - diagonal is supported but must be mapped on one key
+				// - single command / multiple direction upon keypress
+				/////////////////////////////////////////////////////////
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["new_move_noadd", {"moves" : ["left", "up"]}]],
+						"right": [["new_move_noadd", {"moves" : ["right", "down"]}]],
+						"up" : [["new_move_noadd", {"moves" : ["up", "right"]}]],
+						"down" : [["new_move_noadd", {"moves" : ["down", "left"]}]],
+						"attack" : [["none", {}]]}
+					}
+				},
 
-				"QUEST_START" : [
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"after_steps" : [
-				{
-					"erase" : ""
-				}
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
-	}
+	],
+
+	// How to handle events
+	"event_handlers": {}
 }

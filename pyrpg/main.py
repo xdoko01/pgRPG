@@ -1,4 +1,4 @@
-''' pyrpg/pyrpg/main_4ex.py
+''' pyrpg/pyrpg/main.py
 
     Called from:
     -> pyrpg/pyrpg.py
@@ -35,8 +35,6 @@ from pyrpg.core.config.config import DEBUG
 from pyrpg.core.config.display import DISPLAY_MAX_FPS
 
 from pyrpg.core.config.states import State
-
-from threading import Thread
 
 # Via this global variable, console can access all game properties
 main = None
@@ -130,8 +128,6 @@ class Main:
             from pyrpg.core.engine import Game
             self.engine = Game(self.gui_manager, self.sound_manager, progress_bar=self.progress_bar, timed=self.timed)
 
-        #from pathlib import Path
-        #self.engine.new_game(Path(filepath))
         self.engine.new_game(filepath)
 
 

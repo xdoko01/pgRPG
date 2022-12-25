@@ -175,19 +175,6 @@ class ECSManager:
 
         logger.info(f'Template "{template_id}" was successfully stored.')
 
-    """OBSOLETE - I do not want to store entity definitions that are used for creation of new entities
-    from existing entities as templates. I want to achieve clearer design and propone usage of templates
-    while creating new entities instead of using existing entities as a source
-    However, the possibility to use existing entity as a source still exists, but is implemented differently
-    without the need to store entity definitions.
-
-    def store_entity_definition(self, json_ent_obj: dict, entity_id: int) -> None:
-        '''Stores the up level definition of entity from the quest specification.
-        Used for possibility to use existing entity definition as a template
-        for creation of other entity.
-        '''
-        self._entity_definitions.update({ entity_id: json_ent_obj })
-    """
 
     def delete_template(self, template_id: str) -> None:
         '''Deletes template from internal template storage _template_definitions'''
@@ -571,26 +558,6 @@ class ECSManager:
         # Log the initiation of the processor
         logger.info(f'Processor "{class_name}" initiated.')
 
-    """Should be obsolete now. It was substituted by load_processor and iteration done on load quest/phase level
-    def load_processors(self, processors: list) -> None:
-        '''Imports and registers to the world processors specified by the quest definition.'''
-
-        for processor in processors:
-            class_path, params = processor
-            module_name, class_name = class_path.split(':')
-
-            logger.info(f'Preparing load of processor "{class_name}" .')
-
-            # Create instance of the processor
-            new_proc = self._load_processor(module_name, class_name, params)
-
-            # Registers processor at esper ECS World
-            new_proc.initialize(register=self._world.add_processor)
-
-            # Log the initiation of the processor
-            logger.info(f'Processor "{class_name}" initiated.')
-    """
-
     def delete_processor(self, processor: str) -> None:
         '''deletes the processor from the world'''
         
@@ -611,87 +578,3 @@ class ECSManager:
         '''Calls process method on all loaded processors.'''
 
         self._world.process(events=events, keys=keys, dt=dt, debug=debug)
-
-    """
-    def create_entity(self, json_ent_obj: dict, entity_alias: str=None, register: bool=True, child_ref: int=None) -> int:
-        ''' OBSOLETE - substituted by create_entity_ex
-        Create entity from json definition. See Quest for definitions 
-
-            Parameters:
-                :param json_ent_obj: Description of entity in JSON format (python dict).
-                :type json_ent_obj: dict
-
-                :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
-                    key 'id'.
-                :type entity_alias: str
-
-                :param register: Should the entity be globally registered with engine.
-                :type register: bool
-
-                :param child_ref: Used for recursive creation of entity from templates.
-                :type child_ref: world.entity Object
-
-                :returns: Integer specifying entity id
-
-                :raise: ValueError - in case of problem with component creation
-        '''
-
-        entity_id, entity_alias = None, None
-
-        # Create new entity obj for the root entity
-        if not child_ref:
-            entity_id = self._world.create_entity()
-
-            # Registration requires entity alias
-            if register:
-
-                # Decide on entity alias - either from json dict or from fction call
-                entity_alias = entity_alias if entity_alias else json_ent_obj["id"]
-
-                # Update the lookup dictionaries
-                self._alias_to_entity.update({entity_alias: entity_id})
-                self._entity_to_alias.update({entity_id: entity_alias})
-
-            logger.info(f'*Creating new entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
-
-
-        # Read the components from the templates - order matters! latter has priority and overwrites
-        # the previous components
-        for template in json_ent_obj.get("templates", []):
-
-            # Read the entity.json
-            try:
-                template_path = Path(ENTITY_PATH / Path(template + '.json'))
-                template_entity_data = get_dict_from_json(template_path)
-            except FileNotFoundError:
-                logger.error(f'Entity file "{template_path}" not found.')
-                raise
-
-            logger.info(f'**Creating components from template ""{template + ".json"}"" - entity_id: {entity_id} vs. child_ref: {child_ref}.')
-            self.create_entity(template_entity_data, child_ref=entity_id if not child_ref else child_ref)
-            logger.info(f'**Creating components from template ""{template + ".json"}"" done.')
-
-        # Initiate every component
-        for component in json_ent_obj.get("components", []):
-
-            # Get component type
-            comp_type = component.get("type")
-
-            # Get component params
-            comp_params = component.get("params", {})
-
-            # Create component
-            try:
-                new_comp = self._create_component(comp_type, comp_params)
-
-                # Add new component to the world
-                self._world.add_component(entity_id if not child_ref else child_ref, new_comp)
-
-                logger.info(f'***{new_comp} for entity {entity_id if not child_ref else child_ref} created.')
-
-            except ValueError:
-                logger.error(f'Error in creation of component "{comp_type}" with parameters "{comp_params}".')
-                raise ValueError
-
-        return entity_id
-    """

@@ -1,12 +1,26 @@
 {
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
+	// Basic data
 	"id" : "sokoban",
 	"title" : "Sokoban Demo Game",
 	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
 	"objective" : "Push all the boxes on the marked spots.",
-	"init_phase" : "level01",
 
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
 	"processors" : [
 
 		// For commands
@@ -83,430 +97,222 @@
 
 	],
 
-
-	"phases" : {
-		"level01" :{
-			"name" : "Level 1", "objective" : "", "maps" : ["game_sokoban_lvl01"],
+	// What maps to load
+	"maps" : ["game_sokoban_lvl01"],
 			
-			"pre-cleanup" : {
-				"maps" : [], 
-				"templates" : [], 
-				"entities" : [], 
-				"dialogs" : []
-			},
+	// What dialogs to load
+	"dialogs": [],
 
-			"dialogs" : [],
-
-			"templates": [
-				
-				// By using template with parameters it is easy to define position of any entity
-				{
-					"id": "t_tile_pos",
-					"vars": ["$tileX", "$tileY", "$map"],
-					"components": [
-						{"type" : "new.position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
-					]
-				},
-
-				// Following is template without variables
-				{
-					"id": "t_crate",
-
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl01", 2, 3, 10],
-									["game_sokoban_lvl01", 6, 4, 10],
-									["game_sokoban_lvl01", 2, 5, 10],
-									["game_sokoban_lvl01", 5, 6, 10],
-									["game_sokoban_lvl01", 4, 7, 10],
-									["game_sokoban_lvl01", 7, 7, 10],
-									["game_sokoban_lvl01", 5, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-
-					]
-				}
-			],
-
-			"entities" : [
-
-				// New entity created from one template without parameters and one template using parameters
-				{
-					"id": "crate01",
-					"templates": ["t_crate", "t_tile_pos(4, 3, game_sokoban_lvl01)"],  // Crate is created at tile position 4, 3
-					"components": []
-				},
-
-				// New entity created using already existing entity + template for defining the position
-				{
-					"id": "crate02",
-					"templates": ["t_crate", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
-					"components": []
-				},
-
-				// New entity created using template without parameters + adding the component manualy
-				{
-					"id": "crate03",
-					"templates": ["t_crate"],
-					"components": [
-						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
-					]
-				},
-				{
-					"id": "crate04",
-					"templates": ["t_crate"],
-					"components": [
-						{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
-					]
-				},
-				{
-					"id": "crate05",
-					"templates": ["t_crate"],
-					"components": [
-						{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
-					]
-				},
-				{
-					"id": "crate06",
-					"templates": ["t_crate"],
-					"components": [
-						{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
-					]
-				},
-				{
-					"id": "crate07",
-					"templates": ["t_crate"],
-					"components": [
-						{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
-					]
-				},
-				{
-					"id" : "player01",
-					"templates" : ["new/model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
-					"components" : [
-
-						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-
-						{
-							"type" : "new.collidable:Collidable", 
-							"params" :  {
-								"x" : 30, "y" : 30,
-								"position_fix_walkaround_mode" : false // can pushed only straight
-							}
-						},
-
-						{
-							"type" : "new.controllable:Controllable", 
-							"params" :  {
-								"key_profile" : "default",
-								"control_cmds" : {
-									"left" : [["new_move_noadd", {"moves" : ["left"]}]],
-									"right": [["new_move_noadd", {"moves" : ["right"]}]],
-									"up" : [["new_move_noadd", {"moves" : ["up"]}]],
-									"down" : [["new_move_noadd", {"moves" : ["down"]}]],
-									"attack" : [["none", {}]]
-								}
-							}
-						},
-
-						{"type" : "new.has_score:HasScore", "params" : {}},
-
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-						{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
-					]
-				},
-
-				// What will happen if i use the same player01 entity id? It should update the existing entity and not create a new one
-				{
-					"id" : "player01",
-					"components" : [
-						{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}}
-					]
-				},
-
-				// Remove debug component on one of the crate entities
-				{
-					"id": "crate07",
-					"remove": [
-						{"type": "new.debug:Debug"}
-					]
-				}
-
-
-			],
-
-			"event_handling" : {
-
-				"QUEST_START" :[
-					{
-						"id": "ev_start_game",
-						
-						"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
-
-					}
-				],
-
-				"CUST_UI_CONFIRM" : [
-					{
-						"id": "ev_restart_confirmed",
-
-						"actions": [
-							"IF",
-								["==", ["VAR", "from"], "ev_all_crates_in_place"],
-								["SCRIPT", "new.restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
-						]
-					}
-				],
-
-				"ON_POS_TARGET": [
-					{
-						"id": "ev_all_crates_in_place",
-						
-						"actions": [
-							"IF", 
-								["AND",
-									["IN", "crate01", ["VAR", "on_target"]], 
-									["IN", "crate02", ["VAR", "on_target"]], 
-									["IN", "crate03", ["VAR", "on_target"]],
-									["IN", "crate04", ["VAR", "on_target"]],
-									["IN", "crate05", ["VAR", "on_target"]],
-									["IN", "crate06", ["VAR", "on_target"]],
-									["IN", "crate07", ["VAR", "on_target"]]
-								],
-								["SEQ",
-									["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
-									[
-										"SCRIPT", 
-										"new.show_confirm_dlg", 
-										{
-											"title": "Play again?",
-											"long_desc" : "Do you want to play again?",
-											"event_type": "CUST_UI_CONFIRM",
-											"event_params" : {
-												"from": "ev_all_crates_in_place"
-											}
-										}
-									]
-								]
-						]
-					}
-				],
-
-				"SCORE": [
-				],
-
-				"PHASE_START" : [
-				],
-
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"post-cleanup" : {
-				"maps" : [], 
-				"templates" : [], 
-				"entities" : [], 
-				"dialogs" : []
-			}
+	// What templates to load
+	"templates": [
+		
+		// By using template with parameters it is easy to define position of any entity
+		{
+			"id": "t_tile_pos",
+			"vars": ["$tileX", "$tileY", "$map"],
+			"components": [
+				{"type" : "new.position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
+			]
 		},
 
-		"level02" :{
-			"name" : "Level 2", "objective" : "", "maps" : ["game_sokoban_lvl02"],
+		// Following is template without variables
+		{
+			"id": "t_crate",
+
+			"templates": ["new/thing/item/crate/wooden_crate"],
 			
-			"pre-cleanup" : {
-				"maps" : ["game_sokoban_lvl01"], // We dont need the old map
-				"templates" : ["t_crate"], // I want to define the t_crate again to have new target points for the new map
-				"entities" : ["crate01", "crate02", "crate03", "crate04", "crate05", "crate06", "crate07"], // Old crates are not needed
-				"dialogs" : [],
-				"handlers" :[]
-			},
-
-			"dialogs" : [],
-
-			"templates": [
-
-				// Following is template without variables
+			"components": [
+				{"type" : "new.debug:Debug", "params" : {}},
+				
 				{
-					"id": "t_crate",
-
-					"templates": ["new/thing/item/crate/wooden_crate"],
-					
-					"components": [
-						{"type" : "new.debug:Debug", "params" : {}},
-						
-						{
-							"type" : "new.has_target_position:HasTargetPosition", 
-							"params" : {
-								"targets": [
-									["game_sokoban_lvl02", 16, 6, 10],
-									["game_sokoban_lvl02", 17, 6, 10],
-									["game_sokoban_lvl02", 16, 7, 10],
-									["game_sokoban_lvl02", 17, 7, 10],
-									["game_sokoban_lvl02", 16, 8, 10],
-									["game_sokoban_lvl02", 17, 8, 10]
-								]
-							}
-						},
-
-						{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-						{"type" : "new.collidable:Collidable", "params" :  {
-							"x" : 30, 
-							"y" : 30, 
-							"position_fix_walkaround_mode" : false // can be pushed only straight
-							}
-						}
-
-					]
-				}
-			],
-
-			"entities" : [
-
-				// New entity created from one template without parameters and one template using parameters
-				{
-					"id": "crate01",
-					"templates": ["t_crate", "t_tile_pos(5, 2, game_sokoban_lvl02)"] // Crate is created at tile position 5, 2
-				},
-				{
-					"id": "crate02",
-					"templates": ["t_crate", "t_tile_pos(5, 4, game_sokoban_lvl02)"]
-				},
-				{
-					"id": "crate03",
-					"templates": ["t_crate", "t_tile_pos(7, 3, game_sokoban_lvl02)"]
-				},
-				{
-					"id": "crate04",
-					"templates": ["t_crate", "t_tile_pos(7, 4, game_sokoban_lvl02)"]
-				},
-				{
-					"id": "crate05",
-					"templates": ["t_crate", "t_tile_pos(5, 7, game_sokoban_lvl02)"]
-				},
-				{
-					"id": "crate06",
-					"templates": ["t_crate", "t_tile_pos(2, 7, game_sokoban_lvl02)"]
-				},
-
-				{	// Take existing player01 entity from level01 and override the position and store it under the same entity id
-					"id" : "player01",
-					"templates" : ["#player01", "t_tile_pos(11, 8, game_sokoban_lvl02)"]
-				}
-
-			],
-
-			"event_handling" : {
-
-				"PHASE_START" :[
-					{
-						"id": "ev_level02_start",
-						
-						"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to next level <b>%phase_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
-
-					}
-				],
-
-				"ON_POS_TARGET": [
-					{
-						"id": "ev_all_crates_in_place",
-						
-						"actions": [
-							"IF", 
-								["AND",
-									["IN", "crate01", ["VAR", "on_target"]], 
-									["IN", "crate02", ["VAR", "on_target"]], 
-									["IN", "crate03", ["VAR", "on_target"]],
-									["IN", "crate04", ["VAR", "on_target"]],
-									["IN", "crate05", ["VAR", "on_target"]],
-									["IN", "crate06", ["VAR", "on_target"]]
-								],
-								["SEQ",
-									["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
-									[
-										"SCRIPT", 
-										"new.show_confirm_dlg", 
-										{
-											"title": "Play again?",
-											"long_desc" : "Do you want to play again?",
-											"event_type": "CUST_UI_CONFIRM",
-											"event_params" : {
-												"from": "ev_all_crates_in_place"
-											}
-										}
-									]
-								]
+					"type" : "new.has_target_position:HasTargetPosition", 
+					"params" : {
+						"targets": [
+							["game_sokoban_lvl01", 2, 3, 10],
+							["game_sokoban_lvl01", 6, 4, 10],
+							["game_sokoban_lvl01", 2, 5, 10],
+							["game_sokoban_lvl01", 5, 6, 10],
+							["game_sokoban_lvl01", 4, 7, 10],
+							["game_sokoban_lvl01", 7, 7, 10],
+							["game_sokoban_lvl01", 5, 8, 10]
 						]
 					}
-				],
+				},
 
-				"SCORE": [
-				],
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {
+					"x" : 30, 
+					"y" : 30, 
+					"position_fix_walkaround_mode" : false // can be pushed only straight
+					}
+				}
 
-				"KILL" : [
-				],
-
-				"DAMAGE" : [
-				],
-
-				"COLLISION" : [
-				],
-	
-				"TELEPORTATION" : [
-				],
-
-				"ITEM_PICKUP" : [
-				],
-
-				"WEARABLE_WEARED" : [
-				],
-
-				"WEAPON_ARMED" : [
-				]
-
-			},
-
-			"post-cleanup" : {
-				"maps" : [], 
-				"templates" : [], 
-				"entities" : [], 
-				"dialogs" : []
-			}
+			]
 		}
+	],
 
+	// What entities to load
+	"entities" : [
+
+		// New entity created from one template without parameters and one template using parameters
+		{
+			"id": "crate01",
+			"templates": ["t_crate", "t_tile_pos(4, 3, game_sokoban_lvl01)"],  // Crate is created at tile position 4, 3
+			"components": []
+		},
+
+		// New entity created using already existing entity + template for defining the position
+		{
+			"id": "crate02",
+			"templates": ["t_crate", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
+			"components": []
+		},
+
+		// New entity created using template without parameters + adding the component manualy
+		{
+			"id": "crate03",
+			"templates": ["t_crate"],
+			"components": [
+				{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate04",
+			"templates": ["t_crate"],
+			"components": [
+				{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate05",
+			"templates": ["t_crate"],
+			"components": [
+				{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate06",
+			"templates": ["t_crate"],
+			"components": [
+				{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate07",
+			"templates": ["t_crate"],
+			"components": [
+				{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
+			"components" : [
+
+				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+
+				{
+					"type" : "new.collidable:Collidable", 
+					"params" :  {
+						"x" : 30, "y" : 30,
+						"position_fix_walkaround_mode" : false // can pushed only straight
+					}
+				},
+
+				{
+					"type" : "new.controllable:Controllable", 
+					"params" :  {
+						"key_profile" : "default",
+						"control_cmds" : {
+							"left" : [["new_move_noadd", {"moves" : ["left"]}]],
+							"right": [["new_move_noadd", {"moves" : ["right"]}]],
+							"up" : [["new_move_noadd", {"moves" : ["up"]}]],
+							"down" : [["new_move_noadd", {"moves" : ["down"]}]],
+							"attack" : [["none", {}]]
+						}
+					}
+				},
+
+				{"type" : "new.has_score:HasScore", "params" : {}},
+
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+
+		// What will happen if i use the same player01 entity id? It should update the existing entity and not create a new one
+		{
+			"id" : "player01",
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}}
+			]
+		},
+
+		// Remove debug component on one of the crate entities
+		{
+			"id": "crate07",
+			"remove": [
+				{"type": "new.debug:Debug"}
+			]
+		}
+	],
+
+	// How to handle events
+	"event_handlers" : {
+
+		"QUEST_START" :[
+			{
+				"id": "ev_start_game",
+				
+				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+
+			}
+		],
+
+		"CUST_UI_CONFIRM" : [
+			{
+				"id": "ev_restart_confirmed",
+
+				"actions": [
+					"IF",
+						["==", ["VAR", "from"], "ev_all_crates_in_place"],
+						["SCRIPT", "new.restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
+				]
+			}
+		],
+
+		"ON_POS_TARGET": [
+			{
+				"id": "ev_all_crates_in_place",
+				
+				"actions": [
+					"IF", 
+						["AND",
+							["IN", "crate01", ["VAR", "on_target"]], 
+							["IN", "crate02", ["VAR", "on_target"]], 
+							["IN", "crate03", ["VAR", "on_target"]],
+							["IN", "crate04", ["VAR", "on_target"]],
+							["IN", "crate05", ["VAR", "on_target"]],
+							["IN", "crate06", ["VAR", "on_target"]],
+							["IN", "crate07", ["VAR", "on_target"]]
+						],
+						["SEQ",
+							["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
+							[
+								"SCRIPT", 
+								"new.show_confirm_dlg", 
+								{
+									"title": "Play again?",
+									"long_desc" : "Do you want to play again?",
+									"event_type": "CUST_UI_CONFIRM",
+									"event_params" : {
+										"from": "ev_all_crates_in_place"
+									}
+								}
+							]
+						]
+				]
+			}
+		]
 	}
 }
