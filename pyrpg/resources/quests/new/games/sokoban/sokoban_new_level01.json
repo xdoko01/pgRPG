@@ -4,7 +4,7 @@
 	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
 	"objective" : "Push all the boxes on the marked spots.",
 
-	// What quests need to be loaded before this one
+	// What quests need to be loaded before this one 
 	"prereqs" : ["new/games/sokoban/sokoban_new.json"],
 
 	"cleanup" : {

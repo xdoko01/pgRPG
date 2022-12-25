@@ -6,7 +6,7 @@
 	"description": "Schema validating the Game Quest specification.",
 
 
-	"required": [ "id", "title", "description", "objective", "init_phase", "processors", "phases"],
+	"required": [ "id", "title", "description", "objective"],
 	"properties": {
 		"id": {
 			"title": "Quest ID",
@@ -29,55 +29,110 @@
 			"description" : "The Quest objective to be shown on different game screens.",
 			"type": "string"
 		},
-		"init_phase": {
-			"title": "The First Phase of the Quest",
-			"description" : "The First Phase of the Quest to be loaded first with the quest.",
-			"type": "string"
+		"prereqs": {
+			"title": "Prerequisities",
+			"description" : "List of quests that will be uploaded prior to quest load.",
+			"type": "array",
+			"minLength": 0
+		},
+		"cleanup": {
+			"title": "Cleanups",
+			"description" : "Cleanups to be done before quest upload",
+			"type": "object",
+			"properties": {
+				"processors": {
+					"description": "List of processors to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"maps": {
+					"description": "List of maps to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"templates": {
+					"description": "List of templates to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"entities": {
+					"description": "List of entities to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"dialogs": {
+					"description": "List of dialogs to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"handlers": {
+					"description": "List of handlers to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				}
+			}
 		},
 		"processors": {
 			"title": "Quest Processors",
 			"description" : "List of processors used for processing the game logic.",
 			"type": "array"
 		},
-		"phases": {
-			"title": "Quest Phases",
-			"description" : "Dictionary of phases used within the quest.",
-			"type": "object",
-			"patternProperties": {
-				"^phase": {
-					"title": "Quest Phase",
-					"description": "Definition of particular Quest Phase.",
-					"type": "object",
-					"properties": {
-						"title": true,
-						"description": true,
-						"objective": true,
-						"cleanup": true,
-
-						"maps": true,
-
-						"templates": {
-							"type": "array",
-							"items": {
-								"$ref": "template.schema.json"
-							},
-							"uniqueItems": true
-						},
-
-						"entities": {
-							"type": "array",
-							"items": {
-								"$ref": "entity.schema.json"
-							},
-							"uniqueItems": true
-						},
-
-						"event_handling": true,
-						"after_steps": true
-					}
-				}
-			}
+		"maps": {
+			"title": "Quest Maps",
+			"description" : "List of maps used for quest.",
+			"type": "array"
+		},
+		"dialogs": {
+			"title": "Quest Dialogs",
+			"description" : "List of dialogs used for quest.",
+			"type": "array"
+		},
+		"templates": {
+			"title": "Quest Templates",
+			"description" : "List of templates used in the quest.",
+			"type": "array",
+			"items": {
+				"$ref": "template.schema.json"
+			},
+			"uniqueItems": true
+		},
+		"entities": {
+			"title": "Quest Entities",
+			"description" : "List of entities used in the quest.",
+			"type": "array",
+			"items": {
+				"$ref": "entity.schema.json"
+			},
+			"uniqueItems": true
+		},
+		"event_handlers": {
+			"title": "Quest Event Handlers",
+			"description" : "List of entities used in the quest.",
+			"type": "object"
 		}
 	}
-	
 }
