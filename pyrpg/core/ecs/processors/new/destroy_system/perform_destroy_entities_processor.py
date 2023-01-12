@@ -9,6 +9,9 @@ from pyrpg.core.ecs.esper import Processor
 # Used components
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 
+# For creation of events
+from pyrpg.core.events.event import Event 
+
 # Logger init
 logger = logging.getLogger(__name__)
 
@@ -37,10 +40,13 @@ class PerformDestroyEntitiesProcessor(Processor):
 
     __slots__ = []
 
-    def __init__(self):
+    def __init__(self, add_event_fnc, remove_entity_fnc):
         ''' Init the processor.
         '''
         super().__init__()
+
+        self.add_event_fnc = add_event_fnc
+        self.remove_entity_fnc = remove_entity_fnc
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -60,7 +66,14 @@ class PerformDestroyEntitiesProcessor(Processor):
             logger.debug(f'({self.cycle}) - Entity {ent} - remaining ttl {remaining_ttl} ms, original ttl {is_destroyed.ttl} ms')
 
             if remaining_ttl <= 0:
-                self.world.delete_entity(ent)
+                
+                # Generate the event
+                destroy_event = Event('DESTROYED', ent, ent, params={'destroyed' : ent})
+                self.add_event_fnc(destroy_event)
+
+                # Remove entity from world and lookup directories
+                self.remove_entity_fnc(entity_id=ent)
+
                 # Log information about successful removal
                 logger.debug(f'({self.cycle}) - Entity {ent} was deleted from the world.')
 

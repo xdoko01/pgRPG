@@ -68,7 +68,7 @@ class PerformFrameUpdateProcessor(Processor):
 
                 # Update to the next proper animation frame
                 renderable_model.update_frame(position.dir_name)
-                logger.debug(f'({self.cycle}) - Entity {ent} animation frame updated to {renderable_model.last_frame}.')
+                logger.debug(f'({self.cycle}) - Entity {ent} animation frame updated to {renderable_model.last_frame} for direction {position.dir_name}.')
 
                 # Set Flag in case that the new frame is action frame (and hence some projectile might be generated)
                 if renderable_model.is_action_frame:

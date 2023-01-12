@@ -1,0 +1,24 @@
+{
+    "type": "Sequence",
+    "name": "Chase Player",
+    "vars": ["$target"],
+    "children": [
+        {
+            "type": "Behavior",
+            "name": "Rotate to face BB entry",
+            "script": ["some_script_name_and_path", {"face_entity": "$target"}],
+            "returns": "SUCCESS"
+        },
+        {
+            "type": "Behavior",
+            "name": "BTT_ChasePlayer",
+            "returns": "SUCCESS"
+        },
+        {
+            "type": "Behavior",
+            "name": "Move To",
+            "script": ["some_move_to_script", {"position": "$target"}],
+            "returns": "SUCCESS"
+        }
+    ]
+}

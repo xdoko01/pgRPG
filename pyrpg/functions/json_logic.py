@@ -122,5 +122,6 @@ if __name__ == '__main__':
 	]
 	expression = ["IN", 5, ["VAR", "param_list"]]
 
+
 	print(f'Evaluating expression {expression} \n')
 	print(f'Final result is {json_logic(expr=expression, value_fnc=lambda x: x, script_fnc=lambda *args: print(*args), data=data)}')

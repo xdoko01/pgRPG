@@ -12,6 +12,8 @@ from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 from pyrpg.core.ecs.components.new.brain import Brain
 from pyrpg.core.ecs.components.new.collidable import Collidable
 
+# For creation of events
+from pyrpg.core.events.event import Event 
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -41,10 +43,11 @@ class GenerateDestroyOnNoHealthProcessor(Processor):
         'new.damage_system:PerformDamageProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, add_event_fnc):
         ''' Init the processor.
         '''
         super().__init__()
+        self.add_event_fnc = add_event_fnc
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -58,7 +61,11 @@ class GenerateDestroyOnNoHealthProcessor(Processor):
         for ent, (flag_has_no_health, destroy_on_no_health) in self.world.get_components(FlagHasNoHealth, DestroyOnNoHealth):
 
             self.world.add_component(ent, IsDestroyed(ttl=destroy_on_no_health.ttl))
-            
+
+            # Generate the event
+            killed_event = Event('KILLED', ent, ent, params={'killed' : ent})
+            self.add_event_fnc(killed_event)
+
             # Kill the brain and collisions on the entity, if those exist
             self.world.remove_component_force(ent, Brain)
             self.world.remove_component_force(ent, Collidable)

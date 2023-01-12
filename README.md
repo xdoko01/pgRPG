@@ -473,7 +473,7 @@
   - [x] BUG - Dialogs stopped working - because engine.py imports QuestManager and QuestManager imports Quest quest.py imports scripts  (for get_script_fnc) and there are all scripts imported - we need to have script same as processor - define it at JSON string
   - [x] Prepare all weapons in some test quest - to test the factory functionality
   - [x] JSON schema - every component can have one 
-  - [ ] JSON Scheme for the whole quest
+  - [x] JSON Schema for the whole quest
   - [x] BUG - NPC is destroyed but the brain still works - as a result it is lying dead and moving forward
   - [ ] Make universal loader that takes full path, partial path, with or without suffix - all possible options - RenderableModel path, templates path, SOund path, vfx path
   - [ ] Extend sound effects - SoundFXOnGeneration - generator produces sound - shooted arrow
@@ -484,8 +484,8 @@
   - [x] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button - None command must be assigned in Controllable component
   - [x] **Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler**
   - [x] Prepare script that restarts the quest - clear all quest and loads specific quest
-  - [ ] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
-  - [ ] *Also reimplement EventManager to manage all the handlers loaded from the quests*.
+  - [x] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
+  - [x] *Also reimplement EventManager to manage all the handlers loaded from the quests*.
   - [x] rewrite conditions and actions upon events into JSON logic format
   - [x] loading game on GUI using threading library
   - [ ] there is many managers - what about having list of managers and every manager inherits from some abstract class things like `clear()` or `register()` methods. By doing that clearing will be easier done by iterating the list and also can be part of the progress bar.
@@ -512,6 +512,8 @@
   - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
   - [ ] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
 
+## Behavior Trees for AI implementation
+  - 
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

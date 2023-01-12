@@ -207,6 +207,13 @@ LOGGING = {
             "mode": "w",
             "encoding": "utf-8"
         },
+        "file_handler_btrees": {
+            "class": "logging.FileHandler",
+            "formatter": "short",
+            "filename": "pyrpg/logs/btrees.log",
+            "mode": "w",
+            "encoding": "utf-8"
+        },
         "null": {
             "class": "logging.NullHandler"
         }
@@ -219,6 +226,15 @@ LOGGING = {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
             #"handlers" : ["file_handler_proc"], # uncomment to log all the processors
             "handlers" : ["null"],  # do not log to file for speed
+            "propagate" : False # Do not send messages from these loggers to parent (root) logger
+        },
+
+        # Save all the logs from behavior tree classes to the file
+        "pyrpg.core.btrees" : {
+            "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+            #"handlers" : ["file_handler_btrees"], # uncomment to log to the file
+            "handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
 

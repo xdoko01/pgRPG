@@ -87,7 +87,9 @@ class GenerateCommandFromBrainProcessor(Processor):
                 # remember the self.unit_first_call_time
                 if brain.next_cmd_idx != brain.last_cmd_idx:
                     brain.cmd_first_call_time = pygame.time.get_ticks()
-                    #print(f'Setting up first call cmd time: {cmd_fnc}')
+                    brain.cmd_first_call = True
+                else:
+                    brain.cmd_first_call = False
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

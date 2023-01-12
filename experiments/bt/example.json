@@ -1,0 +1,62 @@
+{
+	"type": "new.behavior_tree:BehaviorTree", 
+	"params": {
+
+		"blackboard": {
+			"target": "player01",
+			"range": 500,
+			"upddate_time_ms": 750,
+			"attack_time_ms": 750
+		},
+
+		"tree": {
+			"type": "selector",
+			"name": "AI Root",
+			"children": [
+				{
+					"type": "sequence",
+					"name": "Chase Player",
+					"children": [
+						{
+							"type": "leaf",
+							"name": "Rotate to face BB entry",
+							"script": ["some_script_name_and_path", {"face_entity": "$target"}]
+						},
+						{
+							"type": "leaf",
+							"name": "BTT_ChasePlayer"
+						},
+						{
+							"type": "leaf",
+							"name": "Move To",
+							"script": ["some_move_to_script", {"position": "$targetPosition"}]
+						}
+					]
+				},
+				{
+					"type": "sequence",
+					"name": "Patrol",
+					"children": [
+						{
+							"type": "leaf",
+							"name": "BTT_FindRandomPatrol"
+						},
+						{
+							"type": "leaf",
+							"name": "Move To"
+						},
+						{
+							"type": "leaf",
+							"name": "Wait",
+							"script": ["wait_script", {"time_ms": 1000}]
+						}
+					]
+				},
+				{
+					"type": "leaf",
+					"name": "Wait"
+				}
+			]
+		}
+	}
+}

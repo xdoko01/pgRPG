@@ -21,10 +21,11 @@ def main(argv):
 
     console = True
 
-    filepath = 'new/games/sokoban/sokoban_new_level02.json' # using new managers event_manager_ex, quest_manager_ex, script_manager_ex
-    #filepath = 'new/games/sokoban/sokoban_new_level01.json' # using new managers event_manager_ex, quest_manager_ex, script_manager_ex
-    #filepath = 'new/games/sokoban/sokoban_new.json' # using new managers event_manager_ex, quest_manager_ex, script_manager_ex
-    #filepath = 'new/games/sokoban/sokoban.json' # old stable solution 
+    filepath = 'new/games/kill_all/kill_all.json'
+    #filepath = 'new/games/sokoban/sokoban_new_level02.json'
+    #filepath = 'new/games/sokoban/sokoban_new_level01.json'
+    #filepath = 'new/games/sokoban/sokoban_new.json'
+    #filepath = 'new/games/sokoban/sokoban.json'
     #filepath = 'new/games/collect_coins/collect_coins.json'
     #filepath = 'new/tests/10_effects/test_fx_01.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.json'

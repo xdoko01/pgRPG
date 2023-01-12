@@ -19,11 +19,17 @@ from .new_move_noadd import *
 from .new_move_vect_noadd import *
 from .new_move_auto import *
 from .new_move_to import *
+from .new_move_to_target import *
+from .new_move_to_target_range import *
+
 from .new_attack import *
+from .new_attack_full import *
+from .new_guard import *
 
 
 from .new_modify_brain import *
 
+from .btree.move_to import cmd_move_to as cmd_btree_move_to
 
 __all__ = [
     'cmd_loop',
@@ -37,9 +43,16 @@ __all__ = [
     'cmd_new_move_vect_noadd',
     'cmd_new_move_auto',
     'cmd_new_move_to',
-    'cmd_new_attack',
+    'cmd_new_move_to_target',
+    'cmd_new_move_to_target_range',
 
-    'cmd_new_modify_brain'
+    'cmd_new_attack',
+    'cmd_new_attack_full',
+    'cmd_new_guard',
+
+    'cmd_new_modify_brain',
+
+    'cmd_btree_move_to'
 ]
 
 CMD_DICT = {
@@ -54,9 +67,16 @@ CMD_DICT = {
     'new_move_vect_noadd' : cmd_new_move_vect_noadd,
     'new_move_auto' : cmd_new_move_auto,
     'new_move_to' : cmd_new_move_to,
-    'new_attack' : cmd_new_attack,
+    'new_move_to_target' : cmd_new_move_to_target,
+    'new_move_to_target_range' : cmd_new_move_to_target_range,
 
-    'new_modify_brain' : cmd_new_modify_brain
+    'new_attack' : cmd_new_attack,
+    'new_attack_full' : cmd_new_attack_full,
+    'new_guard' : cmd_new_guard,
+
+    'new_modify_brain' : cmd_new_modify_brain,
+
+    'btree.move_to': cmd_btree_move_to
 }
 
 def get_cmd_fnc(cmd_str):

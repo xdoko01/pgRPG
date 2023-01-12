@@ -2,13 +2,13 @@
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
 	// Basic data
-	"id" : "new_test_projectile_damage",
-	"title" : "Test of Projectile Damage",
-	"description" : "Test of Attack and Factory and Effect system - damage of projectiles",
-	"objective" : "POC of the new Attack and Factory and Effect system",
+	"id" : "q_kill_all_level01",
+	"title" : "Kill All Game Demo - Level 01",
+	"description" : "Kill all the enemies in this level",
+	"objective" : "Kill all your enemies",
 
 	// What quests need to be loaded before this one
-	"prereqs" : [],
+	"prereqs" : ["new/games/kill_all/kill_all.json"],
 
 	// What objects need to be cleaned first
 	"cleanup" : {
@@ -17,98 +17,11 @@
 		"templates": [], 
 		"entities": [], 
 		"dialogs": [],
-		"handlers": []
+		"handlers": ["h_start_game"]
 	},
 
 	// What processors to load
 	"processors" : [
-
-		// For commands
-		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
-		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
-
-		// For movement - projectile must have FlagDoMove in order to move and not fail to idle
-		// ideally if some command can be in place to tell him to move in his brain - new_move_auto command
-		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
-
-		// For animation
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
-
-		// NEW - For projectile data generation
-		["new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
-
-		// NEW - For generation of projectile from factory and projectile data
-		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
-
-		// NEW - adjust collision component of the entity - mainly for factory generated entities
-		["new.collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}],
-
-		// NEW - adjust movable component of the entity - mainly for factory generated entities
-		["new.movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}],
-
-		// NEW - adjust damaging component of the entity - mainly for factory generated entities
-		["new.damage_system.perform_adjust_damaging_processor:PerformAdjustDamagingProcessor", {}],
-
-		// For collisions
-		["new.collision_system:GenerateCollisionsProcessor", {}],
-		["new.collision_system:ResolveCollisionsProcessor", {}],
-		
-		// NEW - For damages
-		["new.damage_system:GenerateDamageProcessor", {}],
-		["new.damage_system:PerformDamageProcessor", {}],
-
-		// For destroy
-		["new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
-		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
-		["new.destroy_system.generate_destroy_on_no_health_processor:GenerateDestroyOnNoHealthProcessor", {}],
-
-		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
-
-		// For visual and sound effects
-		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
-		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
-
-		// For displaying on screen
-		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["new.render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
-		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["new.render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
-		["new.render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
-		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
-
-
-		// For processing input and movements and attacks
-		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.movement_system.remove_flag_adjust_movement_processor:RemoveFlagAdjustMovementProcessor", {}],
-		["new.movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}],
-
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
-		["new.collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
-		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
-		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
-		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
-
-
-		["new.damage_system.remove_flag_is_about_to_be_damaged_by_processor:RemoveFlagIsAboutToBeDamagedByProcessor", {}],
-		["new.damage_system.remove_flag_was_damaged_by_processor:RemoveFlagWasDamagedByProcessor", {}],
-		["new.damage_system.remove_flag_has_damaged_processor:RemoveFlagHasDamagedProcessor", {}],
-		["new.damage_system.remove_flag_adjust_damaging_processor:RemoveFlagAdjustDamagingProcessor", {}],
-		["new.damage_system.remove_flag_has_no_health_processor:RemoveFlagHasNoHealthProcessor", {}]
-
-
-		// For logging performance of processors - timed must be True for this processor to work
-		//["new.debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]
 	],
 
 	// What maps to load
@@ -118,8 +31,9 @@
 	"dialogs": [],
 
 	// What templates to load
-	"templates": [],
-
+	"templates": [
+	],
+	
 	// What entities to load
 	"entities" : [
 		
@@ -304,7 +218,7 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : ["new/model/body/male/human/white", "t_tile_pos(10, 10, test_arena_sand)"],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -342,7 +256,9 @@
 				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
 
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+
+				//{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
 				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
@@ -394,20 +310,16 @@
 
 		{
 			"id" : "NPC01",
-			"templates" : ["new/model/body/special/minotaur"],
+			"templates" : ["new/model/body/special/minotaur",  "t_tile_pos(3, 20, test_arena_sand)"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 
-				// Move right - left
-				//{"type" : "new.brain:Brain", "params" : {"commands" : [
-				//	[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-				//	[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-				//	[0, 	"goto", {}]
-				//]}},
+				// Guard, Seek and destroy the player
 				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to_target", {"target" : "player01", "radius": 50, "update_time_ms": 500}], // the lower update time the more difficult to run away
-					[1, 	"new_attack_full", {"attack_time_ms": 1200}],
-					[0, 	"goto", {}]
+					[0, 	"new_guard", {"enemy": "player01", "radius": 200, "update_time_ms": 2000}], // when player01 approaches, continue and destroy him
+					[1, 	"new_move_to_target", {"target" : "player01", "radius": 50, "update_time_ms": 500}], // the lower update time the more difficult to run away
+					[2, 	"new_attack_full", {"attack_time_ms": 500}],
+					[1, 	"goto", {}]
 				]}},
 
 				// Sword
@@ -424,23 +336,118 @@
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 
 
-				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
+			"id" : "wooden_arrows_pack_npc02",
+			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{
+					"type" : "new.factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "new.debug:Debug", "params" : {}},
+
+								{"type" : "new.brain:Brain", "params" : {"commands" : [
+									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
+									]}},
+
+								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
+
+								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
+								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
+								
+								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+
+
+							]
+						}
+					}
+				}
+			]
+		},
+
+		{
+			"id" : "wooden_bow_npc02",
+			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"components" : [
+				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+			]
+		},
+		{
 			"id" : "NPC02",
-			"templates" : ["new/model/body/special/minotaur"],
+			"templates" : ["new/model/body/male/human/white",  "t_tile_pos(5, 5, test_arena_sand)"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
+
+				// Seek and destroy the player
+				// 1/ move around
+				// 2/ check if you see anyone with controllable or targets before you (parameters can be visibility)
+				// 3/ when you see - save the target that you are following and its components
+				// 4/ start following the target
+				// 5/ when in range, attack
+				// 6/ check if the target is alive - if no, move to original position and start over
+				// 7/ check if my health is low - if yes, run away from the target
+				
+				//{"type" : "new.brain:Brain", "params" : {"commands" : [
+				//	[0, 	"new_move_to_target_range", {"target" : "player01", "range": 500, "update_time_ms": 750}], // the lower update time the more difficult to run away
+				//	[1, 	"new_attack_full", {"attack_time_ms": 750}],
+				//	[0, 	"goto", {}]
+				//]}},
+
+				{
+					"type" : "new.btree:BTree", 
+					"params" : {
+						"blackboard": {},
+						"tree": {
+							"type": "Sequence",
+							"name": "Movement",
+							"children": [
+								{
+									"type": "Behavior",
+									"name": "Move To One Side",
+									"command": ["btree.move_to", {"x": 100, "y": 100}]
+								},
+								{
+									"type": "Behavior",
+									"name": "Return Back",
+									"command": ["btree.move_to", {"x": 500, "y": 100}]
+								},
+								{
+									"type": "Behavior",
+									"name": "Move To One Side",
+									"command": ["btree.move_to", {"x": 100, "y": 100}]
+								},
+								{
+									"type": "Behavior",
+									"name": "Return Back",
+									"command": ["btree.move_to", {"x": 500, "y": 100}]
+								}
+							]
+						}
+					}
+				},
+				{"type" : "new.has_weapon:HasWeapon", "params" : {
+					"weapons" : {
+						"bow" : {"weapon" : "wooden_bow_npc02", "generator" : "wooden_arrows_pack_npc02"}
+					}
+				}},
+
+				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 
 
-				{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 50}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		}
@@ -448,6 +455,41 @@
 	],
 
 	// How to handle events
-	"event_handlers": {}
+	"event_handlers" : {
+		"DESTROYED": [
+			{
+				"id": "h_all_npcs_destroyed",
+				"actions": [
+					"IF",
+					["AND",
+						["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "NPC01"}], false],
+						["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "NPC02"}], false]
+					],
+					["SCRIPT", "new.show_msg_window", {"html_text" : " NPC01 and NPC02 destroyed"}]
+				]
+			},
+			{
+				"id": "h_player01_destroyed",
+				"actions": [
+					"IF",
+					["==", ["VAR", "destroyed"], "player01"],
+					["SCRIPT", "new.show_msg_window", {"html_text" : "Player destroyed."}]
+				]
+			}
+		],
+		"KILLED": [
+			{
+				"id": "h_npc_killed",
+				"actions": [
+					"IF",
+					["OR",
+						["==", ["VAR", "killed"], "NPC01"],
+						["==", ["VAR", "killed"], "NPC02"]
+					],
+					["SCRIPT", "new.show_msg_window", {"html_text" : "NPC killed"}]
+				]
+			}
+		]
+	}
 
 }

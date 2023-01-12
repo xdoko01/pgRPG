@@ -52,39 +52,6 @@ def parse_fnc_str(for_parse: str) -> tuple:
 
 	return (for_parse[:start_pos], vars)
 
-""" Obsolete function
-def parse_fnc_str(for_parse: str) -> tuple:
-	'''Parses function call defined as a string into 
-	function name and list of parameters.
-
-	Examples:
-		for_parse = 'sum(1, 2)'
-		returns ('sum', [1, 2])
-
-		for_parse = 'sum' ... ValueError
-
-		for parse = 'sum()'
-		returns ('sum', [])
-	'''
-
-	try:
-		start_var = for_parse.index("(")
-		end_var = for_parse.index(")")
-	except ValueError:
-		raise ValueError(f'Function string "{for_parse}" has incorrect format.')
-
-	vars = []
-
-	for v in for_parse[start_var+1:end_var].split(","):
-
-		v = v.strip() # Get rid of wite-spaces
-		if len(v) == 0: continue # Skip empty strings
-		v = int(v) if v.isdigit() else v # Convert numbers if number
-		vars.append(v)
-
-	return (for_parse[:start_var], vars)
-"""
-
 if __name__ == '__main__':
 
 	# Test of translate_str

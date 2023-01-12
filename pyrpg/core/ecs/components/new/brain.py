@@ -50,7 +50,8 @@ class Brain(Component):
     '''
 
     __slots__ = ['commands', 'enabled', 'next_cmd_idx', 'current_cmd_idx', 'last_cmd_idx',\
-                'cmd_first_call_time', 'loop_counter']
+                'cmd_first_call_time', 'cmd_first_call', 'loop_counter',
+                'var_1', 'var_2', 'var_3', 'var_4', 'var_5']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new Brain component.
@@ -88,9 +89,15 @@ class Brain(Component):
         # Necessary for commands that work with time delays (cmd_wait)
         self.cmd_first_call_time = None
 
+        # If the unit was invoked for the first time (in case repetidly called units using exception)
+        self.cmd_first_call = True
+
         # Init the Loop counter
         # Necessary for loop commands (cmd_loop)
         self.loop_counter = 0
+
+        # Couple of variables that can be used in the command units
+        self.var_1, self.var_2, self.var_3, self.var_4, self.var_5 = None, None, None, None, None
 
     def process_result(self, exception):
         ''' Processes the result of processed command and moves the brain indexes
@@ -157,9 +164,13 @@ class Brain(Component):
 
         # When the current cmd unit was first invoked
         self.cmd_first_call_time = None
+        self.cmd_first_call = True
 
         # Init the Loop counter
         self.loop_counter = 0
+
+        # Couple of variables that can be used in the command units
+        self.var_1, self.var_2, self.var_3, self.var_4, self.var_5 = None, None, None, None, None
 
 
 if __name__ == '__main__':
