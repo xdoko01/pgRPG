@@ -47,7 +47,7 @@ class BTree(Component):
         >>> c = BTree(tree={"type": "Behavior", "name": "Wait"})
     '''
 
-    __slots__ = ['blackboard', 'root']
+    __slots__ = ['blackboard', 'root', 'running_behavior']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new BTree component.
@@ -63,8 +63,10 @@ class BTree(Component):
         super().__init__()
 
         try:
-            self.blackboard = Blackboard(blackboard=kwargs.get('blackboard', {}))
+            self.blackboard = Blackboard(bb=kwargs.get('blackboard', {}))
+            self.running_behavior = self.blackboard.running_behavior
             self.root = create_tree(parent=None, json_tree=kwargs['tree'], blackboard=self.blackboard)
+            print_tree(self.root)
         except ValueError:
             # Notify component factory that initiation has failed
             raise ValueError

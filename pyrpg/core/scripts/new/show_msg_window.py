@@ -23,7 +23,6 @@ def initialize(register, module_name):
 def script_show_msg_window(event, *args, **kwargs):
     ''' Script that displays pygame_gui dialog window and freezes the game.
     '''
-
     html_text = kwargs.get('html_text', '')
 
     # Substitute words starting by % with values from event.params dict

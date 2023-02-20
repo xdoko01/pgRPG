@@ -16,6 +16,7 @@ from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.damageable import Damageable
 from pyrpg.core.ecs.components.new.has_score import HasScore
+from pyrpg.core.ecs.components.new.btree import BTree
 
 
 from ..functions import filter_only_visible # for filtering only entities with position on the cameras
@@ -84,6 +85,10 @@ class PerformRenderDebugInfoProcessor(Processor):
                 debug.info.update({'position' : (int(position.x), int(position.y), position.dir_name)})
                 debug.info.update({'action' : renderable.action})
 
+            # Get BTree info
+            for _, (position, debug, btree) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, BTree)):
+                debug.info.update({'Action' : str(btree.running_behavior.node)})
+
             # Get inventory info
             for _, (position, debug, inventory) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, HasInventory)):
                 debug.info.update({'inventory' : inventory.inventory})
@@ -95,6 +100,7 @@ class PerformRenderDebugInfoProcessor(Processor):
             # Get score info
             for _, (position, debug, has_score) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, HasScore)):
                 debug.info.update({'Score' : has_score.score})
+            
 
             # Show COLLISION information
             # Show debug information to all entities with Position and Debug and Collidable component

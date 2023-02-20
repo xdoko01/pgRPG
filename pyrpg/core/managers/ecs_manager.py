@@ -10,9 +10,33 @@ from pyrpg.functions import translate # for creation of the component
 from pyrpg.functions import get_dict_from_json # for loading of json without C-style comments
 from pyrpg.functions import json_logic # for evaluating conditions for processor prerequisites
 from pyrpg.functions import parse_fnc_str # for creation of entity from template with parameters
+from pyrpg.functions import get_dict_params # for filling of template with variables
 
 # Create logger
 logger = logging.getLogger(__name__)
+
+def get_component_class(comp_type: str, comp_package: str='pyrpg.core.ecs.components') -> Component:
+    '''Returns class object of the component based on component path.
+    Component class is used to create new component or delete component.
+
+    :param comp_path: Path to the component class in format of path.to.module:ComponentClass
+    :type comp_path: str
+
+    :return: Returns reference to the component class.
+    :raises: ValueException, if component class cannot be identified
+    '''
+    # Get the definition of the component class
+    try:
+        # Spit the module path and the class name
+        # For example: comp_path = 'new.movement:Movable' results to
+        # comp_module = 'new.movement'
+        # comp_class = 'Movable'
+        comp_module, comp_class = comp_type.split(':')
+        return get_class_object(None, comp_package + '.' + comp_module, comp_class)
+
+    except ValueError:
+        logger.error(f'Error during loading of component class "{comp_class}"')
+        raise ValueError(f'Error during loading of component class "{comp_class}"')
 
 class ECSManager:
     '''Encapsulates functionalities needed to create, maintain and remove components
@@ -203,6 +227,7 @@ class ECSManager:
 
         return entity_id
 
+    """
     def _get_template(self, template_id: str) -> dict:
         ''' Takes template id/path/variables and returns the dictionary containing
         information for creation of entity from the template
@@ -223,7 +248,8 @@ class ECSManager:
         template_from_quest = self._template_definitions.get(template_name, None)
         
         try:
-            template_entity_data = template_from_quest if template_from_quest else get_dict_from_json(template_path := Path(ENTITY_PATH / Path(template_name + '.json')))
+            template_path = Path(ENTITY_PATH / Path(template_name + '.json'))
+            template_entity_data = template_from_quest if template_from_quest else get_dict_from_json(template_path)
             
         except FileNotFoundError:
             logger.error(f'Entity file "{template_path}" not found.')
@@ -239,6 +265,7 @@ class ECSManager:
         )
 
         return template_entity_data
+    """
 
     def remove_component(self, component_def: dict, entity_id: int) -> None:
         '''Removes given component on given entity
@@ -309,7 +336,8 @@ class ECSManager:
                 # Get the template data
                 logger.info(f'**Preparing entity data from template ""{template_id}"".')
                 try:
-                    template_entity_data = self._get_template(template_id)
+                    #template_entity_data = self._get_template(template_id)
+                    template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
                 except ValueError:
                     logger.error(f'Error in preparation of template data for template "{template_id}".')
                     raise ValueError

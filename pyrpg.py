@@ -20,6 +20,7 @@ def main(argv):
     '''Run the game using the CLI arguments'''
 
     console = True
+    filepath = None
 
     filepath = 'new/games/kill_all/kill_all.json'
     #filepath = 'new/games/sokoban/sokoban_new_level02.json'
@@ -37,7 +38,6 @@ def main(argv):
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
     #filepath = 'new/tests/03_animations/test_weapon_animations.json'
 
-    #filepath = None
 
     usage_info = '''
 DESCRIPTION

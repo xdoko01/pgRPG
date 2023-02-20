@@ -256,7 +256,7 @@
 				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
 
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 5000}},
 
 				//{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
@@ -384,7 +384,12 @@
 		},
 		{
 			"id" : "NPC02",
-			"templates" : ["new/model/body/male/human/white",  "t_tile_pos(5, 5, test_arena_sand)"],
+			"templates" : [
+				"new/model/body/male/human/white",	// template for the model
+				"t_tile_pos(5, 5, test_arena_sand)",	// template for the position
+				"new/_special/hunter(player01, 150, 1200, 100)"	// template for the btree behavior
+			],
+			
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 
@@ -397,39 +402,47 @@
 				// 6/ check if the target is alive - if no, move to original position and start over
 				// 7/ check if my health is low - if yes, run away from the target
 				
-				//{"type" : "new.brain:Brain", "params" : {"commands" : [
-				//	[0, 	"new_move_to_target_range", {"target" : "player01", "range": 500, "update_time_ms": 750}], // the lower update time the more difficult to run away
-				//	[1, 	"new_attack_full", {"attack_time_ms": 750}],
-				//	[0, 	"goto", {}]
-				//]}},
 
 				{
 					"type" : "new.btree:BTree", 
 					"params" : {
-						"blackboard": {},
+						"blackboard": {
+						},
 						"tree": {
+							// Find and attack target
 							"type": "Sequence",
-							"name": "Movement",
+							"name": "Hunter",
 							"children": [
 								{
-									"type": "Behavior",
-									"name": "Move To One Side",
-									"command": ["btree.move_to", {"x": 100, "y": 100}]
+									// Find target
+									"type": "Sequence",
+									"name": "Find Target",
+									"children": [
+										{
+											// Find target and save it on the bb
+											"type": "Behavior",
+											"name": "Set Target",
+											"cmd_process": ["bb_set_globals", {"bb_target_entity": "player01"}]
+										}
+									]
 								},
 								{
-									"type": "Behavior",
-									"name": "Return Back",
-									"command": ["btree.move_to", {"x": 500, "y": 100}]
-								},
-								{
-									"type": "Behavior",
-									"name": "Move To One Side",
-									"command": ["btree.move_to", {"x": 100, "y": 100}]
-								},
-								{
-									"type": "Behavior",
-									"name": "Return Back",
-									"command": ["btree.move_to", {"x": 500, "y": 100}]
+									"type": "TemplateTree",
+									"name": "Destroy Target",
+									///
+									// Different options how to fill template with the data - all valid
+									///
+
+									//"template": ["destroy_target", {"$target": "player01", "$range": 150, "$get_target_pos_ms": 1200, "$hunt_time": 5}]
+									//"template": "destroy_target(player01, 150, 1200, 5)"
+									//"template": "destroy_target($target=player01, $range=150, $get_target_pos_ms=1200, $hunt_time=5)"
+									//"template": "destroy_target(player01, 150, 1200, $hunt_time=5)"
+									//"template": ["destroy_target", ["player01", 150, 1200, 5]]
+									//"template": ["destroy_target", ["player01", 150,1200], {"$hunt_time": 5}]
+									//"template": ["destroy_target", ["player01", 150], {"$hunt_time": 5}]
+									"template": "destroy_target(player01)"
+
+
 								}
 							]
 						}
@@ -472,21 +485,33 @@
 				"id": "h_player01_destroyed",
 				"actions": [
 					"IF",
-					["==", ["VAR", "destroyed"], "player01"],
-					["SCRIPT", "new.show_msg_window", {"html_text" : "Player destroyed."}]
+					["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "player01"}], false],
+					["SEQ",
+							["SCRIPT", "new.show_msg_window", {"html_text" : "You died"}],
+							[
+								"SCRIPT", 
+								"new.show_confirm_dlg", 
+								{
+									"title": "Play again?",
+									"long_desc" : "Do you want to play again?",
+									"event_type": "CUST_UI_CONFIRM",
+									"event_params" : {
+										"from": "h_player01_destroyed"
+									}
+								}
+							]
+					]
 				]
 			}
 		],
-		"KILLED": [
+		"CUST_UI_CONFIRM" : [
 			{
-				"id": "h_npc_killed",
+				"id": "h_restart_confirmed",
+
 				"actions": [
 					"IF",
-					["OR",
-						["==", ["VAR", "killed"], "NPC01"],
-						["==", ["VAR", "killed"], "NPC02"]
-					],
-					["SCRIPT", "new.show_msg_window", {"html_text" : "NPC killed"}]
+						["==", ["VAR", "from"], "h_player01_destroyed"],
+						["SCRIPT", "new.restart_quest", {"quest_file" : "new/games/kill_all/kill_all.json"}]
 				]
 			}
 		]

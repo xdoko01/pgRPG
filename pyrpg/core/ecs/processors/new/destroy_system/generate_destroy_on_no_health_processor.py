@@ -10,7 +10,11 @@ from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
 from pyrpg.core.ecs.components.new.destroy_on_no_health import DestroyOnNoHealth
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 from pyrpg.core.ecs.components.new.brain import Brain
+from pyrpg.core.ecs.components.new.btree import BTree
 from pyrpg.core.ecs.components.new.collidable import Collidable
+from pyrpg.core.ecs.components.new.movable import Movable
+from pyrpg.core.ecs.components.new.controllable import Controllable
+
 
 # For creation of events
 from pyrpg.core.events.event import Event 
@@ -66,9 +70,12 @@ class GenerateDestroyOnNoHealthProcessor(Processor):
             killed_event = Event('KILLED', ent, ent, params={'killed' : ent})
             self.add_event_fnc(killed_event)
 
-            # Kill the brain and collisions on the entity, if those exist
+            # Kill the brain, btree, movemens and collisions on the entity, if those exist
+            self.world.remove_component_force(ent, BTree)
+            self.world.remove_component_force(ent, Movable)
             self.world.remove_component_force(ent, Brain)
             self.world.remove_component_force(ent, Collidable)
+            self.world.remove_component_force(ent, Controllable)
 
             logger.debug(f'({self.cycle}) - Entity {ent} - flag "IsDestroyed" was added.')
 

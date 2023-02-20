@@ -46,6 +46,8 @@ class ScriptManager:
         # Translate entity names for entity IDs before processing of the action
         translated_actions = translate(self._alias_to_entity_dict, actions)
 
+        logger.info(f'Executing actions {translated_actions} for event {event}')
+
         # Run the actions
         json_logic(
             expr=translated_actions, 

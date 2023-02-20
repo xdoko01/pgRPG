@@ -106,7 +106,7 @@ class EventManager:
         logger.debug(f'List of actions for execution: {_actions_for_execution}')
         for action in _actions_for_execution:
 
-            logger.info(f'Executing event "{event.event_type}" action "{actions}"')
+            logger.info(f'Executing event type" {event.event_type}" - {event} - action "{actions}"')
             self._exec_event_actions_fnc(event, action)
 
 

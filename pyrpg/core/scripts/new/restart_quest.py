@@ -18,7 +18,7 @@ def script_restart_quest(event, *args, **kwargs):
     ''' Script that clears all quests and loads new one again.
     '''
 
-    quest = kwargs.get('quest')
+    quest = kwargs.get('quest_file')
 
     main.engine.new_game(Path(quest))
 

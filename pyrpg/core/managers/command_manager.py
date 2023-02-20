@@ -1,3 +1,4 @@
+import pygame # for passing current time as parameter of command
 import logging
 import pyrpg.core.commands as commands
 
@@ -5,6 +6,9 @@ from pyrpg.core.ecs.esper import World
 
 # Create logger
 logger = logging.getLogger(__name__)
+
+# Keys that are used to pass information to every command
+CMD_GLOBAL_KEYS = ['current_time', 'keys', 'events', 'world', 'entity', 'brain']
 
 class CommandManager:
 
@@ -51,6 +55,9 @@ class CommandManager:
             command = self._command_queue.pop(0)
 
             (cmd_fnc, cmd_params) = command
+
+            # Add current time to the parameters
+            cmd_params.update({'current_time' : pygame.time.get_ticks()})
 
             # Add reference to pressed keys and keyboard/mouse events to the parameters of md
             cmd_params.update({'keys' : keys})

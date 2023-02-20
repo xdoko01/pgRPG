@@ -462,6 +462,12 @@
   - This can be achieved by putting entity alias in `templates` list with `#` prefix. E.g. `"templates": ["#crate01"]`
   - This feature is only experimental. It is using `copy.copy` method for creation of the components on the new entity. Later changes in source entity component can affect also the destination entity component (sharing the same memory location).
 
+### 2023-01-12 Initial implementation for usage of behavioral trees for AI logic
+  - New component `BTree` created - analogous to `Brain` component
+  - New processor `generate_command_from_btree_processor` created - analogous to `generate_command_from_brain_processor`
+  - New core package `pyrpg.core.btrees` created. Contains classes for individual btree nodes and functions
+  - Behavior tree in pyRPG implementation contains in the leaf behavior nodes actions and conditions represented by command name and command parameters as a strings/dict. The logic which behavior leaf node is selected is guided by the other parent nodes in the btree. The command is then passed to the command manager which changes it to function call and returns the result back to the behavior tree.
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -492,7 +498,7 @@
   - [ ] maybe the ProgressBar might be created in the Game class only and not in the Main class. By doing that, I will pass one less argument to the engine.
   - [ ] BUG - when restarting quest in the `collect_coins` game, there is loading screen in the background
   - [ ] option not to scale-up the render models to 64x64
-  - [ ] implement Sokoban-like game - moving the boxes is ok, when box is landed to the correct spot, it changes??? How to implement that?
+  - [x] implement Sokoban-like game - moving the boxes is ok, when box is landed to the correct spot, it changes??? How to implement that?
   - [ ] rewrite commands so that code in the package is not needed and commands register themselves with the command manager
   - [ ] implement that the processors are not running in every cycle - some nice implementation for all processors in esper probably would be nice
   - [X] BUG - on the map the second layer is not transparent but has black background - update pyTMX helped
@@ -511,9 +517,86 @@
   - [x] Possibility to update entities in the quest definition - deleting components on existing entities.
   - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
   - [ ] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
+  - [ ] find all places where we are loading a dictionary and use functions.get_dict and functions.get_dict_params functions
 
-## Behavior Trees for AI implementation
-  - 
+## TODOs - Behavior Trees for AI implementation, commands and brain
+  - special commands for init and for complete functions are problematic, because they return SUCCESS or FAILURE and by doing so, closing the whole node. Hence added result parameter for selected commands that would forcefully return RUNNING
+  - rewrite commands so that no need of `__init__.py` - registration of the new command (same as scripts)
+  - rethink using world variable within commands - better to use command_manager -> ecs manager for any manipulation with the world
+  - think about commands to be available for usage in both Brain and BTree structures
+  - change Brain so that it uses blackboard similarly to BTree
+  - think about BTree as a template with variables
+  - map manager to return path and to return visibility
+
+## TODO
+  - restart_quest does not work. Probably it is not clearing all the resources as needed ...
+## HUNTER behavior 
+
+### FindTarget command/tree
+  *Goal*
+    - Returns target entity and stores it to the bb as target_entity.
+  *Results*
+    - `SUCCESS` - target was found and saved on the bb
+    - `RUNNING` - searching for target in progress
+    - `FAILURE` - target not found
+
+### Blackboard
+  - ma scope urceny pro vsechny nody stromu
+  - ma scope urceny pouze pro jeden konkretni behavior
+  - bylo by super to nejak odlisit a ten prostor pro jeden konkretni behavior (running behavior jako samostatna trida?) automaticky cistit, v ON_COMPLETION
+  
+### MoveToTargetRange tree command
+  *Goal*
+    - Moves entity close to the target (defined by range) and faces the target
+  *Results*
+    - `SUCCESS` - target is in range
+    - `RUNNING` - on the way to the target
+    - `FAILURE` - cannot reach the target
+  *Params*
+    - `range` - how close to get to the target
+    - `update_target_position_ms` - how often to ask about the targets new position, the shorter the time is the harder the opponent is.
+    - `max_hunt_time` - how long to hunt the target, if longer, finish with the failure
+  *Steps*
+   - Save target position component
+   - Save entity position component
+   - Save the time of first call
+   - Save the time of last update of the target position
+
+   - Check if the `MoveToTargetRange` is running too long or target ceise to exist
+     - if YES,
+       - finish with `FAILURE`
+
+   - Check if the distance is closed (you are in range)
+     - if YES, 
+       - `execute command` face the target
+       - finish with `SUCCESS`
+     - if NO, continue hunting the target
+       - `execute command` move command
+       - finish with `RUNNING`
+
+### Attack command/tree
+  *Goal*
+    - Use weapon on the current position/direction for given time period
+  *Results*
+    - `SUCCESS` - time `attack_time_ms` is over
+    - `RUNNING` - attack in progress
+    - `FAILURE` - no more ammo or entity destroyed or target destroyed
+  *Params*
+    - `attack_time_ms` - how long to generate the attack commands
+  *Steps*
+    Save target health component
+    Save entity health component
+
+    Check, if entity/target destroyed
+      - if YES,
+        - finish with `FAILURE`
+
+    Check, if within `attack_duration_ms`
+      - if YES,
+        - assign `FlagHasAttacked` component to entity
+        - finish with `RUNNING`
+      - if NO,
+        - finish with `SUCCESS`
 
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?

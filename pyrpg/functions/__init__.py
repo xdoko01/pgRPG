@@ -9,4 +9,7 @@ from .sign import *
 from .json_logic import *
 from .dict_utils import *
 from .str_utils import *
+from .get_dict_from_file import *
+from .get_dict import *
+from .get_dict_params import *
 

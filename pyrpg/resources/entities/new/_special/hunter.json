@@ -1,0 +1,39 @@
+{
+    "id": "t_hunter",
+    "vars": ["$target", "$range", "$get_target_pos_ms", "$hunt_time"],
+    "components": [
+        {
+            "type" : "new.btree:BTree", 
+            "params" : {
+                "blackboard": {
+                },
+                "tree": {
+                    // Find and attack target
+                    "type": "Sequence",
+                    "name": "Hunter",
+                    "children": [
+                        {
+                            // Find target
+                            "type": "Sequence",
+                            "name": "Find Target",
+                            "children": [
+                                {
+                                    // Find target and save it on the bb
+                                    "type": "Behavior",
+                                    "name": "Set Target",
+                                    "cmd_process": ["bb_set_globals", {"bb_target_entity": "$target"}]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "TemplateTree",
+                            "name": "Destroy Target",
+                            "template": "destroy_target($target, $range, $get_target_pos_ms, $hunt_time)" //"vars": ["$target", "$range", "$get_target_pos_ms", "$hunt_time"],
+
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

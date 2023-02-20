@@ -20,7 +20,7 @@ class Event:
 		self.params = params
 
 	def __str__(self):
-		return f'*Event type:\t{self.event_type}\nSource entity:\t{self.generator_obj}\nDestination entity:\t{self.other_obj}\nParams:\t{self.params}\n'
+		return f'*Event type: "{self.event_type}", Source entity: "{self.generator_obj}", Other entity: "{self.other_obj}", Params: "{self.params}"'
 
 	def to_string(self):
 		''' If format of the event message is not present in json config file

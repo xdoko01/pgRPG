@@ -66,13 +66,14 @@ class GenerateCommandFromBTreeProcessor(Processor):
                 return
 
             # if some node is RUNNING, execute him directly
-            if btree.blackboard.running_behavior is not None:
+            if btree.blackboard.running_behavior.is_running():
                 cmd = btree.blackboard.running_behavior.process()
+                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" returned from the btree (running_behavior.process())')
+
             # else search for some next behavior leaf node to run and execute process function on it
             else:
                 cmd = btree.root.process()
-
-            logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" returned from the btree.')
+                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" returned from the btree (root.process()).')
 
             cmd_fnc, cmd_params = cmd
 

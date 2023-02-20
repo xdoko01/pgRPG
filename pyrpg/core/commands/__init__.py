@@ -30,6 +30,13 @@ from .new_guard import *
 from .new_modify_brain import *
 
 from .btree.move_to import cmd_move_to as cmd_btree_move_to
+from .btree.dummy import cmd_dummy
+from .btree.bb_set_globals import cmd_bb_set_globals
+from .btree.bb_set_comp_globals import cmd_bb_set_comp_globals
+from .btree.bb_set_locals import cmd_bb_set_locals
+from .btree.move_to_target_range import cmd_move_to_target_range
+from .btree.attack_full import cmd_attack_full
+
 
 __all__ = [
     'cmd_loop',
@@ -52,7 +59,14 @@ __all__ = [
 
     'cmd_new_modify_brain',
 
-    'cmd_btree_move_to'
+    'cmd_btree_move_to',
+    'cmd_dummy',
+    'cmd_bb_set_globals',
+    'cmd_bb_set_comp_globals',
+    'cmd_bb_set_locals',
+    'cmd_move_to_target_range',
+    'cmd_attack_full'
+
 ]
 
 CMD_DICT = {
@@ -76,7 +90,14 @@ CMD_DICT = {
 
     'new_modify_brain' : cmd_new_modify_brain,
 
-    'btree.move_to': cmd_btree_move_to
+    'btree.move_to': cmd_btree_move_to,
+    'dummy': cmd_dummy,
+    'bb_set_globals': cmd_bb_set_globals,
+    'bb_set_comp_globals': cmd_bb_set_comp_globals,
+    'bb_set_locals': cmd_bb_set_locals,
+    'btree.move_to_target_range': cmd_move_to_target_range,
+    'btree.attack_full': cmd_attack_full
+
 }
 
 def get_cmd_fnc(cmd_str):

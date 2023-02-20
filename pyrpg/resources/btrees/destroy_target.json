@@ -1,0 +1,80 @@
+{
+    "type": "RepeatUntilFail",
+    "name": "Repeat Seak and Attack Until Possible",
+    "vars": ["$target", "$range=150", "$get_target_pos_ms=1200", "$hunt_time=999"],
+    "children": [
+        {
+            // Attack till death
+            "type": "Sequence",
+            "name": "Seek and Attack",
+            "children": [
+                {
+                    // Get close to the target in order to be able to attack
+                    "type": "Sequence",
+                    "name": "Move To Target",
+                    "children": [
+                        {
+                            // Save my position component ref on bb
+                            "type": "Behavior",
+                            "name": "Save My Position Component",
+                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "new.position:Position"}]
+                        },
+                        {
+                            // Save target position component ref on bb
+                            "type": "Behavior",
+                            "name": "Save Target Position Component",
+                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "entity": "$target", "component": "new.position:Position"}]
+                        },
+                        {
+                            // Move to the close range to the target
+                            "type": "Behavior",
+                            "name": "Move to the target",
+                            "cmd_process": [
+                                "btree.move_to_target_range", 
+                                {
+                                    "target_pos_comp": "bb_target_pos_comp", 
+                                    "entity_pos_comp": "bb_entity_pos_comp",
+                                    "range": "$range",
+                                    "get_target_position_ms": "$get_target_pos_ms", // the shorter the time the better opponent
+                                    "max_hunt_time_s": "$hunt_time"	// stop the hunt if not reached in those sec duration
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    // Attack the target
+                    "type": "Sequence",
+                    "name": "Attack Target",
+                    "children": [
+                        {
+                            // Save entity damagable component
+                            "type": "Behavior",
+                            "name": "Save My Damagable Component",
+                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "new.damageable:Damageable"}]
+                        },
+                        {
+                            // Save target damagable component
+                            "type": "Behavior",
+                            "name": "Save Target Damageable Component",
+                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "entity": "player01", "component": "new.damageable:Damageable"}]
+                        },
+                        {
+                            // Attack
+                            "type": "Behavior",
+                            "name": "Attack the target",
+                            "cmd_process": [
+                                "btree.attack_full", 
+                                {
+                                    "target_damageable_comp": "bb_target_damageable_comp", 
+                                    "entity_damageable_comp": "bb_entity_damageable_comp",
+                                    "attack_time_ms": 750
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

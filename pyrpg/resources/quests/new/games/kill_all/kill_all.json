@@ -24,7 +24,7 @@
 	"processors" : [
 
 		// For events processing
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START","KILLED", "DESTROYED"]}],
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "DESTROYED", "CUST_UI_CONFIRM"]}],
 
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],

@@ -37,9 +37,14 @@ def cmd_move_to(*args, **kwargs):
     # Who (entity) needs to move
     entity = kwargs.get("entity")
 
+    # BTree reference
+    btree = kwargs.get("brain")
+
     # Get the target coordinates
-    tx = kwargs.get("x", None)
-    ty = kwargs.get("y", None)
+    target = kwargs.get("bb_target")
+
+    # Read the target from the bb
+    tx, ty = btree.blackboard.get_value(key=target)
 
     # Get the coordinate of the entity and the target 
     position = world.component_for_entity(entity, Position)
