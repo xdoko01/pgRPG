@@ -70,6 +70,11 @@ class ECSManager:
     def get_game_world(self) -> World:
         return self._world
 
+    def get_alias_to_entity_dict(self) -> dict:
+        '''FOr some reason it is necessary to pass the dictionary
+        using this call to ScriptManager rather than passing reference to the dictionary directly'''
+        return self._alias_to_entity
+
     def get_entity_id(self, entity_alias: str) -> int:
         ''' Translate entity alias (string) to entity id (integer)
         based on _alias_to_entity dictionary.
@@ -316,6 +321,7 @@ class ECSManager:
         # the previous components.
         for template_id in json_ent_obj.get("templates", []):
 
+            """
             # If template is existing entity (starts with #) - EXPERIMENTAL
             if template_id.startswith('#'):
 
@@ -333,22 +339,23 @@ class ECSManager:
 
             # If template is real template
             else:
-                # Get the template data
-                logger.info(f'**Preparing entity data from template ""{template_id}"".')
-                try:
-                    #template_entity_data = self._get_template(template_id)
-                    template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
-                except ValueError:
-                    logger.error(f'Error in preparation of template data for template "{template_id}".')
-                    raise ValueError
+            """
+            # Get the template data
+            logger.info(f'**Preparing entity data from template ""{template_id}"".')
+            try:
+                #template_entity_data = self._get_template(template_id)
+                template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
+            except ValueError:
+                logger.error(f'Error in preparation of template data for template "{template_id}".')
+                raise ValueError
 
-                # Create all entities from the template
-                logger.info(f'**Creating components from template ""{template_id}"".')
-                try:
-                    self.update_entity(template_entity_data, entity_id=entity_id)
-                except ValueError:
-                    logger.error(f'Error in creation of entity from template "{template_id}".')
-                    raise ValueError
+            # Create all entities from the template
+            logger.info(f'**Creating components from template ""{template_id}"".')
+            try:
+                self.update_entity(template_entity_data, entity_id=entity_id)
+            except ValueError:
+                logger.error(f'Error in creation of entity from template "{template_id}".')
+                raise ValueError
 
         # Add/update components
         for component in json_ent_obj.get("components", []):
@@ -434,9 +441,17 @@ class ECSManager:
 
         logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} successfully removed.')
 
-    def _clear_entities(self) -> None:
+    def _clear_entity_alias_lookup(self) -> None:
+        '''Clear the dictionaries holding mapping between entity alias
+        and entity id.'''
+        self._entity_to_alias = {}
+        self._alias_to_entity = {}
+        logger.info(f'All entity alias lookup dictionaries were cleared.')
+
+    def _clear_entities_and_components(self) -> None:
         '''Delete all entities and components from the world'''
 
+        self._clear_entity_alias_lookup()  # ADDING THIS IS CAUSING THAT no translation dictionary is passed to the ScriptManager!!!
         self._world.clear_database()
         logger.info(f'All entities and components cleared.')
 
@@ -453,7 +468,7 @@ class ECSManager:
         logger.info(f'All processors removed.')
 
     def clear_ecs(self) -> None:
-        self._clear_entities()
+        self._clear_entities_and_components()
         self._clear_processors()
 
     def _check_proc_in_world(self, proc: str) -> bool:
@@ -606,3 +621,25 @@ class ECSManager:
         '''Calls process method on all loaded processors.'''
 
         self._world.process(events=events, keys=keys, dt=dt, debug=debug)
+
+    def __str__(self):
+        '''Print the state of the entities, components and processors at any given
+        time.
+        '''
+        import pprint
+        return pprint.pformat({ 
+            "ECSManagerParams": {
+                "_world": self._world,
+                "_alias_to_entity": self._alias_to_entity,
+                "_entity_to_alias": self._entity_to_alias,
+                "_game_functions": self._game_functions
+            },
+            "EsperWorldParams": {
+                "_entities": self._world._entities,
+                "_next_entity_id": self._world._next_entity_id,
+                "_dead_entities": self._world._dead_entities,
+                "_components": self._world._components,
+                "_processors": self._world._processors
+            }
+        })
+

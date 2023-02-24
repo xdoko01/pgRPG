@@ -60,7 +60,7 @@ class QuestManager:
         else:
             return quest_data
 
-    def _clean_processors(self, progress_fnc, processors_data: list, clean_processor_fnc):
+    def _cleanup_processors(self, progress_fnc, processors_data: list, clean_processor_fnc):
         '''Deletes all processors from processors_data'''
 
         progress_fnc(text='Cleaning Processors', progress=0, total=len(processors_data))
@@ -75,7 +75,7 @@ class QuestManager:
             logger.error(f'Problem during cleaning of processors "{processor}".')
             raise ValueError(f'Problem during cleaning of processors.')
 
-    def _clean_templates(self, progress_fnc, templates_data: list, clean_template_fnc):
+    def _cleanup_templates(self, progress_fnc, templates_data: list, clean_template_fnc):
         '''Deletes all templates from templates_data'''
 
         progress_fnc(text='Cleaning Templates', progress=0, total=len(templates_data))
@@ -90,7 +90,7 @@ class QuestManager:
             logger.error(f'Problem during cleaning of templates "{template}".')
             raise ValueError(f'Problem during cleaning of templates.')
 
-    def _clean_entities(self, progress_fnc, entities_data: list, clean_entity_fnc):
+    def _cleanup_entities(self, progress_fnc, entities_data: list, clean_entity_fnc):
         '''Deletes all entities from entities_data'''
 
         progress_fnc(text='Cleaning Entities', progress=0, total=len(entities_data))
@@ -105,7 +105,7 @@ class QuestManager:
             logger.error(f'Problem during cleaning of entities "{entity_name}".')
             raise ValueError(f'Problem during cleaning of entities.')
 
-    def _clean_maps(self, progress_fnc, maps_data: list, clean_map_fnc):
+    def _cleanup_maps(self, progress_fnc, maps_data: list, clean_map_fnc):
         '''Deletes all maps from maps_data'''
 
         progress_fnc(text='Cleaning Maps', progress=0, total=len(maps_data))
@@ -120,7 +120,7 @@ class QuestManager:
             logger.error(f'Problem during cleaning of maps "{map}".')
             raise ValueError(f'Problem during cleaning of maps.')
 
-    def _clean_dialogs(self, progress_fnc, dialogs_data: list, clean_dialog_fnc):
+    def _cleanup_dialogs(self, progress_fnc, dialogs_data: list, clean_dialog_fnc):
         '''Deletes all dialogs from dialogs_data'''
 
         progress_fnc(text='Cleaning Dialogs', progress=0, total=len(dialogs_data))
@@ -135,7 +135,7 @@ class QuestManager:
             logger.error(f'Problem during cleaning of dialog "{dialog}".')
             raise ValueError(f'Problem during cleaning of dialogs.')
 
-    def _clean_handlers(self, progress_fnc, handlers_data: list, clean_handler_fnc):
+    def _cleanup_handlers(self, progress_fnc, handlers_data: list, clean_handler_fnc):
         '''Deletes all handlers from handlers_data'''
 
         progress_fnc(text='Cleaning Handlers', progress=0, total=len(handlers_data))
@@ -305,6 +305,50 @@ class QuestManager:
 
         progress_fnc(progress=1)  
 
+    """
+    def _is_quest_already_loaded(self, quest_id: str) -> bool:
+        return quest_id in self._quests.keys()
+
+    def _load_prereq(self, progress_fnc, prereq_quest):
+        # If only the filename is defined without the
+
+        # Check if quest is already loaded
+        if not self._is_quest_already_loaded(quest_id=self._get_quest_data(quest_filepath=Path(prereq_quest))["id"]):
+            # add quest
+            self.add_quest(progress_fnc, prereq_quest, map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
+
+        if isinstance(prereq_quest, str):
+            # Get the quest id from the file and decide if load or not
+            if self._get_quest_data(quest_filepath=Path(prereq_quest))["id"] not in self._quests.keys():
+                self.add_quest(progress_fnc, prereq_quest, map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
+        elif isinstance(prereq_quest, list or tuple) and len(prereq_quest) == 2:
+            # Get the quest id from the file and decide if load or not
+            if self._get_quest_data(quest_filepath=Path(prereq_quest[0]), quest_file_section=prereq_quest[1])["id"] not in self._quests.keys():
+                self.add_quest(progress_fnc, prereq_quest[0], prereq_quest[1], map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
+        else:
+            raise ValueError(f'Not supported format of quest prerequisity.')
+
+    def _load_prereqs(self, progress_fnc, prereqs_data: dict, load_prereq_fnc):
+
+        # Load prerequisity quests
+        for prereq_quest in prereqs_data:
+
+            logger.info(f'Start of processing prereq "{prereq_quest}".')
+
+            # If only the filename is defined without the
+            if isinstance(prereq_quest, str):
+                # Get the quest id from the file and decide if load or not
+                if self._get_quest_data(quest_filepath=Path(prereq_quest))["id"] not in self._quests.keys():
+                    self.add_quest(progress_fnc, prereq_quest, map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
+            elif isinstance(prereq_quest, list or tuple) and len(prereq_quest) == 2:
+                # Get the quest id from the file and decide if load or not
+                if self._get_quest_data(quest_filepath=Path(prereq_quest[0]), quest_file_section=prereq_quest[1])["id"] not in self._quests.keys():
+                    self.add_quest(progress_fnc, prereq_quest[0], prereq_quest[1], map_mng=map_mng, dialog_mng=dialog_mng, event_mng=event_mng, ecs_mng=ecs_mng)
+            else:
+                raise ValueError(f'Not supported format of quest prerequisity.')
+        
+        logger.info(f'Load of prerequisities for quest "{quest_id}" has finished.')
+    """
     def _load_quest(self, progress_fnc, quest_data, map_mng, dialog_mng, event_mng, ecs_mng):
         '''Loads the quest data into the game data structures of individual managers'''
 
@@ -341,42 +385,42 @@ class QuestManager:
         logger.info(f'Starting cleanup for quest "{quest_id}".')
 
         # Clean processors
-        self._clean_processors(
+        self._cleanup_processors(
             progress_fnc=progress_fnc,
             processors_data=quest_data.get("cleanup", {}).get("processors", []),
             clean_processor_fnc=ecs_mng.delete_processor
         )
 
         # Clean templates
-        self._clean_templates(
+        self._cleanup_templates(
             progress_fnc=progress_fnc,
             templates_data=quest_data.get("cleanup", {}).get("templates", []),
             clean_template_fnc=ecs_mng.delete_template
         )
 
         # Clean entities
-        self._clean_entities(
+        self._cleanup_entities(
             progress_fnc=progress_fnc,
             entities_data=quest_data.get("cleanup", {}).get("entities", []),
             clean_entity_fnc=ecs_mng.delete_entity
         )
 
         # Clean maps
-        self._clean_maps(
+        self._cleanup_maps(
             progress_fnc=progress_fnc,
             maps_data=quest_data.get("cleanup", {}).get("maps", []),
             clean_map_fnc=map_mng.delete_map
         )
 
         # Clean dialogs
-        self._clean_dialogs(
+        self._cleanup_dialogs(
             progress_fnc=progress_fnc,
             dialogs_data=quest_data.get("cleanup", {}).get("dialogs", []),
             clean_dialog_fnc=dialog_mng.delete_dialog
         )
 
         # Clean handlers
-        self._clean_handlers(
+        self._cleanup_handlers(
             progress_fnc=progress_fnc,
             handlers_data=quest_data.get("cleanup", {}).get("handlers", []),
             clean_handler_fnc=event_mng.delete_handler

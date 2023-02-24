@@ -24,11 +24,11 @@ class ScriptManager:
                 that will register the script with the script manager
     '''
 
-    def __init__(self, alias_to_entity_dict) -> None:
+    def __init__(self, alias_to_entity_dict_fnc) -> None:
         '''Initiate ScriptManager'''
         # Dictionary having script path/name as key and script module refs as value
         self._scripts = {}
-        self._alias_to_entity_dict = alias_to_entity_dict
+        self._alias_to_entity_dict_fnc = alias_to_entity_dict_fnc
         logger.info(f'ScriptManager created.')
 
     def register_script(self, fnc, alias) -> None:
@@ -44,8 +44,9 @@ class ScriptManager:
         '''
 
         # Translate entity names for entity IDs before processing of the action
-        translated_actions = translate(self._alias_to_entity_dict, actions)
-
+        translated_actions = translate(self._alias_to_entity_dict_fnc(), actions)
+        
+        logger.debug(f'Using following translation dictionary for translation of aliases in action definition {self._alias_to_entity_dict_fnc()}')
         logger.info(f'Executing actions {translated_actions} for event {event}')
 
         # Run the actions

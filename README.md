@@ -468,6 +468,9 @@
   - New core package `pyrpg.core.btrees` created. Contains classes for individual btree nodes and functions
   - Behavior tree in pyRPG implementation contains in the leaf behavior nodes actions and conditions represented by command name and command parameters as a strings/dict. The logic which behavior leaf node is selected is guided by the other parent nodes in the btree. The command is then passed to the command manager which changes it to function call and returns the result back to the behavior tree.
 
+### 2023-02-20 Behavioral trees support templates
+  - Sub-tree of behavior tree can be stored in a file or in the `template` section of the quest and loaded from there. Those templates can be called with parameters that are dynamically added to the template definition upon the load (similar to entity templates).
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -518,6 +521,9 @@
   - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
   - [ ] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
   - [ ] find all places where we are loading a dictionary and use functions.get_dict and functions.get_dict_params functions
+  - [ ] Implement `ALL`, `` into the cleanup at the beginning of the quest definition - ideally some pre_processing that will substitute keyword ALL with all the processors in the
+  game. By doing it this way it will not be necessary to modify the logic of ecs_manager's delete_processor.
+  - [ ] Redo prereqs in the quest manager - the load is ugly
 
 ## TODOs - Behavior Trees for AI implementation, commands and brain
   - special commands for init and for complete functions are problematic, because they return SUCCESS or FAILURE and by doing so, closing the whole node. Hence added result parameter for selected commands that would forcefully return RUNNING
@@ -529,7 +535,7 @@
   - map manager to return path and to return visibility
 
 ## TODO
-  - restart_quest does not work. Probably it is not clearing all the resources as needed ...
+
 ## HUNTER behavior 
 
 ### FindTarget command/tree

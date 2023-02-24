@@ -385,8 +385,15 @@
 		{
 			"id" : "NPC02",
 			"templates" : [
-				"new/model/body/male/human/white",	// template for the model
-				"t_tile_pos(5, 5, test_arena_sand)",	// template for the position
+				"new/model/body/male/human/white()",	// template for the model
+				//"t_tile_pos(5, 5, test_arena_sand)",	// template for the position - valid form
+				//["t_tile_pos", [5, 5, "test_arena_sand"]], // other syntax for template - valid form
+				//["t_tile_pos", {"$tileX": 5, "$tileY": 5, "$map": "test_arena_sand"}],
+				//["t_tile_pos", [5, 5], {"$map": "test_arena_sand"}],
+				//"t_tile_pos($tileX=5, $tileY=5, test_arena_sand)",	// template for the position - valid form
+				//"t_tile_pos(5, 5, $map=test_arena_sand)",	// template for the position - valid form
+				"t_tile_pos($map=test_arena_sand, $tileY=5, $tileX=5)",	// template for the position - valid form
+
 				"new/_special/hunter(player01, 150, 1200, 100)"	// template for the btree behavior
 			],
 			
@@ -478,7 +485,22 @@
 						["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "NPC01"}], false],
 						["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "NPC02"}], false]
 					],
-					["SCRIPT", "new.show_msg_window", {"html_text" : " NPC01 and NPC02 destroyed"}]
+					["SEQ",
+
+						["SCRIPT", "new.show_msg_window", {"html_text" : " NPC01 and NPC02 destroyed"}],
+						[
+							"SCRIPT", 
+							"new.show_confirm_dlg", 
+							{
+								"title": "Play again?",
+								"long_desc" : "Do you want to play again?",
+								"event_type": "CUST_UI_CONFIRM",
+								"event_params" : {
+									"from": "h_player01_destroyed"
+								}
+							}
+						]
+					]
 				]
 			},
 			{
@@ -511,7 +533,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "h_player01_destroyed"],
-						["SCRIPT", "new.restart_quest", {"quest_file" : "new/games/kill_all/kill_all.json"}]
+						["SCRIPT", "new.restart_quest", {"quest_file" : "new/games/kill_all/kill_all_level01.json"}]
 				]
 			}
 		]

@@ -39,8 +39,9 @@ class Game:
         self.command_manager = CommandManager() # command manager must have reference to Game in order commands can manipulate the game world
         self.quest_manager = QuestManager()
         self.ecs_manager = ECSManager()
-        self.script_manager = ScriptManager(alias_to_entity_dict=self.ecs_manager._alias_to_entity) #!!! new parameter added
-
+        #self.script_manager = ScriptManager(alias_to_entity_dict=self.ecs_manager._alias_to_entity) #!!! new parameter added
+        self.script_manager = ScriptManager(alias_to_entity_dict_fnc=self.ecs_manager.get_alias_to_entity_dict)
+        
         # Class representing the progress bar
         self.progress_bar = progress_bar
         
@@ -122,6 +123,10 @@ class Game:
 
     def new_game(self, filepath: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
 
+        logger.debug(f'Loading quest "{filepath}".')
+
+        logger.debug(f'ECSManager Info Dump - BEFORE LOAD\n{self.ecs_manager}')
+
         if show_progress:
             # Get the progress bar ready for new game
             self.progress_bar.update(progress=0, total=0, header="LOADING", text='', finished=False)
@@ -133,6 +138,8 @@ class Game:
         if clear_before_load:
             # Clear everything
             self._clear_game(progress=self.progress_bar.update)
+            logger.debug(f'ECSManager Info Dump - AFTER CLEARING\n{self.ecs_manager}')
+
 
         #add new quest
         self.quest_manager.add_quest(
@@ -146,6 +153,8 @@ class Game:
         if show_progress:
             # End the progress bar
             self.progress_bar.update(finished=True)
+
+        logger.debug(f'ECSManager Info Dump - AFTER LOAD\n{self.ecs_manager}')
 
         logger.info(f'Quest "{filepath}" successfully loaded.')
 
