@@ -39,7 +39,7 @@ class Game:
         self.command_manager = CommandManager() # command manager must have reference to Game in order commands can manipulate the game world
         self.quest_manager = QuestManager()
         self.ecs_manager = ECSManager()
-        #self.script_manager = ScriptManager(alias_to_entity_dict=self.ecs_manager._alias_to_entity) #!!! new parameter added
+        #self.script_manager = ScriptManager(alias_to_entity_dict=self.ecs_manager._alias_to_entity) #!!! new parameter added TEST
         self.script_manager = ScriptManager(alias_to_entity_dict_fnc=self.ecs_manager.get_alias_to_entity_dict)
         
         # Class representing the progress bar
