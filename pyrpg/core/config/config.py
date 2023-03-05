@@ -199,7 +199,7 @@ LOGGING = {
         },
         "file_handler_mng": {
             "class": "logging.FileHandler",
-            "formatter": "short",
+            "formatter": "short_with_func",
             "filename": "pyrpg/logs/managers.log",
             "mode": "w",
             "encoding": "utf-8"

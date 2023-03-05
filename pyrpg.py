@@ -22,7 +22,7 @@ def main(argv):
     console = True
     filepath = None
 
-    filepath = 'new/games/kill_all/kill_all.json'
+    filepath = 'new/games/kill_all/kill_all_level01.json'
     #filepath = 'new/games/sokoban/sokoban_new_level02.json'
     #filepath = 'new/games/sokoban/sokoban_new_level01.json'
     #filepath = 'new/games/sokoban/sokoban_new.json'

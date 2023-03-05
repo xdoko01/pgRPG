@@ -95,8 +95,8 @@ class Main:
         self.main_menu = MainMenu(gui_manager=self.gui_manager, state_manager=self.state_manager)
 
         # Class representing progress bar
-        from pyrpg.core.menus.progress_bar import ProgressBar
-        self.progress_bar = ProgressBar(gui_manager=self.gui_manager)
+        #from pyrpg.core.menus.progress_bar import ProgressBar
+        #self.progress_bar = ProgressBar(gui_manager=self.gui_manager)
 
         # Class representing the load quest menu
         from pyrpg.core.menus.load_quest_menu import LoadQuestMenu
@@ -126,7 +126,7 @@ class Main:
 
         if self.engine is None:
             from pyrpg.core.engine import Game
-            self.engine = Game(self.gui_manager, self.sound_manager, progress_bar=self.progress_bar, timed=self.timed)
+            self.engine = Game(self.gui_manager, self.sound_manager, timed=self.timed)
 
         self.engine.new_game(filepath)
 

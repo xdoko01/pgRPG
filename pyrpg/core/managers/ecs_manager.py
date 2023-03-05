@@ -193,6 +193,14 @@ class ECSManager:
             logger.error(f'Error while creating component "{comp_type}" with parameters "{comp_params}".')
             raise ValueError
 
+    def load_template(self, json_ent_obj: dict) -> None:
+        '''Stores the template definition from which new templates can be created
+        '''
+        self._template_definitions.update({json_ent_obj["id"]: json_ent_obj})
+
+        logger.info(f'Template "{json_ent_obj["id"]}" was successfully stored.')
+
+
     def store_template_definition(self, json_ent_obj: dict, template_id: str) -> None:
         '''Stores the template definition from which new templates can be created
         '''
@@ -214,7 +222,6 @@ class ECSManager:
             raise ValueError
 
         logger.info(f'Template "{template_id}" successfully removed.')
-
 
     def create_empty_entity(self, entity_alias: str=None) -> int:
         '''Create empty envelope for the entity where later components will be added'''
@@ -305,6 +312,9 @@ class ECSManager:
         except ValueError:
             logger.error(f'Error in creation of component "{component_def}".')
             raise ValueError
+
+
+
 
     def update_entity(self, json_ent_obj: dict, entity_id: int):
         '''Add and remove components/templates specified in json_ent_object on specified entity_id.
