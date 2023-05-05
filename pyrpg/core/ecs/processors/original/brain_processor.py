@@ -3,15 +3,15 @@ __all__ = ['BrainProcessor']
 import pygame	# for pygame.time.get_ticks()
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.brain import Brain
 
 class BrainProcessor(Processor):
 
-    def __init__(self, input_command_queue):
-        super().__init__()
+    def __init__(self, input_command_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
         self.input_command_queue = input_command_queue
 
@@ -20,6 +20,8 @@ class BrainProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        super().__process__(*args, **kwargs)
+
         for ent, (brain) in self.world.get_component(Brain):
             
             # Only continue processing if the brain is enabled

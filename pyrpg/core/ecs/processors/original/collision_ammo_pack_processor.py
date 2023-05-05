@@ -1,7 +1,7 @@
 __all__ = ['CollisionAmmoPackProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.ammo_pack import AmmoPack
@@ -17,8 +17,8 @@ from pyrpg.core.ecs.components.original.flag_factory_depleted import FlagFactory
 from pyrpg.core.events.event import Event
 
 class CollisionAmmoPackProcessor(Processor):
-    def __init__(self, ammo_pack_event_queue):
-        super().__init__()
+    def __init__(self, ammo_pack_event_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.ammo_pack_event_queue = ammo_pack_event_queue
 
     def initialize(self, register):
@@ -26,6 +26,11 @@ class CollisionAmmoPackProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         for ent, (ammo_pack, collision, factory) in self.world.get_components(AmmoPack, Collidable, Factory):
 
             # Process everything that collided with AmmoPack entity

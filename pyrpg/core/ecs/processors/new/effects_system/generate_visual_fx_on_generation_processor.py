@@ -4,7 +4,7 @@ import logging
 import copy
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.render_data_from_parent import RenderDataFromParent
@@ -38,10 +38,10 @@ class GenerateVisualFXOnGenerationProcessor(Processor):
 
     __slots__ = ['create_entity_fnc']
 
-    def __init__(self, create_entity_fnc):
+    def __init__(self, create_entity_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.create_entity_fnc = create_entity_fnc
 
     def initialize(self, register):
@@ -51,7 +51,10 @@ class GenerateVisualFXOnGenerationProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Creates new entity containing visual fx on the generation spot.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (render_data_from_parent, flag_create_from_factory, vfx_on_generation) in self.world.get_components(RenderDataFromParent, FlagCreateFromFactory, VisualFXOnGeneration):
 

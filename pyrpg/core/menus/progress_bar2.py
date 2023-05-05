@@ -49,10 +49,10 @@ class ProgressBar2():
 
     def run(self):
         '''Displays progress screen (running in separate thread)'''
-
         while not self.finished:
 
             self.gui_manager.blit_background_animation()
+            #self.gui_manager.blit_background()
 
             self.gui_manager.blit_text(f'{self.header} - {self.text} ... {self.progress} / {self.total}')
 

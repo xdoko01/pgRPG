@@ -3,7 +3,7 @@ __all__ = ['CalculateScoreProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
@@ -40,10 +40,10 @@ class CalculateScoreProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self, FNC_ADD_EVENT):
+    def __init__(self, FNC_ADD_EVENT, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.add_event_fnc = FNC_ADD_EVENT
 
 
@@ -55,7 +55,10 @@ class CalculateScoreProcessor(Processor):
         '''  Detects entities that can have score and that earned 
         some score in this cycle.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Damaging and FlagHasCollided - those are candidates for causing damage
         for ent_with_score, (has_score, flag_has_scored) in self.world.get_components(HasScore, FlagHasScored):

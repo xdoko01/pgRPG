@@ -1,15 +1,15 @@
 __all__ = ['RenderBackgroundProcessor', 'RenderCameraBackgroundProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.camera import Camera
 
 class RenderCameraBackgroundProcessor(Processor):
-    def __init__(self, clear_color=(0, 0, 0), debug=False):
+    def __init__(self, *args, clear_color=(0, 0, 0), debug=False, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.clear_color = clear_color
         self.debug = debug
 
@@ -18,7 +18,10 @@ class RenderCameraBackgroundProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Clear the game camera window surfaces
         for _, (camera) in self.world.get_component(Camera):
             camera.screen.fill(self.clear_color)
@@ -37,9 +40,9 @@ class RenderCameraBackgroundProcessor(Processor):
 
 
 class RenderBackgroundProcessor(Processor):
-    def __init__(self, window, clear_color=(0, 0, 0), debug=False):
+    def __init__(self, window, *args, clear_color=(0, 0, 0), debug=False, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.window = window
         self.clear_color = clear_color
         self.debug = debug
@@ -49,6 +52,10 @@ class RenderBackgroundProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Clear the main game window surface
         self.window.fill(self.clear_color)
     

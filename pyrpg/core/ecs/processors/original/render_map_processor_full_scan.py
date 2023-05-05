@@ -15,10 +15,10 @@ class RenderMapProcessorFullScan(Processor):
     Hence this is not optimal version of the RenderMapProcessor.
     '''
 
-    def __init__(self, window, maps, tile_res=64, debug=False):
+    def __init__(self, window, maps, *args, tile_res=64, debug=False, **kwargs):
         '''
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.window = window
         self.maps = maps
         self.tile_res = tile_res
@@ -31,7 +31,7 @@ class RenderMapProcessorFullScan(Processor):
     def process(self, *args, **kwargs):
         ''' 
         '''
-        
+        super().process(*args, **kwargs)
         # Find the entity with Camera and use its position
         # cam_pos - position and map of the object that is in camera's focus
         # cam_cam - camera component itself

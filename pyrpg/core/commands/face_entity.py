@@ -3,6 +3,11 @@
 
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_face_entity, alias=module_name)
+
 def cmd_face_entity(*args, **kwargs):
     ''' Change the direction of the entity so that it faces other entity.
     '''

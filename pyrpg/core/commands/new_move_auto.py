@@ -6,6 +6,11 @@ from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with
 
 import pygame.time
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_new_move_auto, alias=module_name)
+
 def cmd_new_move_auto(*args, **kwargs):
     ''' Move in the current direction of the entity. Can be used for 
     movements of projectiles.

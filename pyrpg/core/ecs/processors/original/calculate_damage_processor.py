@@ -1,7 +1,7 @@
 __all__ = ['CalculateDamageProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.damageable import Damageable
@@ -12,8 +12,8 @@ from pyrpg.core.ecs.components.original.flag_no_health import FlagNoHealth
 from pyrpg.core.events.event import Event
 
 class CalculateDamageProcessor(Processor):
-    def __init__(self, damage_event_queue):
-        super().__init__()
+    def __init__(self, damage_event_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.damage_event_queue = damage_event_queue
 
     def initialize(self, register):
@@ -21,6 +21,10 @@ class CalculateDamageProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have can take damage and were damaged
         for ent, (damageble, flag_add_damage) in self.world.get_components(Damageable, FlagAddDamage):

@@ -3,7 +3,7 @@ __all__ = ['PerformActionAnimationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -47,10 +47,10 @@ class PerformActionAnimationProcessor(Processor):
                 'new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor'
             ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -60,7 +60,10 @@ class PerformActionAnimationProcessor(Processor):
         ''' Get all components with renderable model that have attacked and have some weapon in use 
         and update their action.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Iterate all cameras
         for _, (camera) in self.world.get_component(Camera):

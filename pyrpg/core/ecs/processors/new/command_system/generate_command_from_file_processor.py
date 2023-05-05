@@ -4,7 +4,7 @@ import logging
 import json
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class GenerateCommandFromFileProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self, FNC_ADD_COMMAND, FNC_CLEAR_COMMANDS, file, mode='append'):
+    def __init__(self, FNC_ADD_COMMAND, FNC_CLEAR_COMMANDS, file, *args, mode='append', **kwargs):
         ''' Init the processor.
 
         Parameters:
@@ -50,7 +50,7 @@ class GenerateCommandFromFileProcessor(Processor):
             :param type: str
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Reference to function for adding to command queue
         self.add_command_fnc = FNC_ADD_COMMAND
@@ -85,7 +85,10 @@ class GenerateCommandFromFileProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Insert commands from the file to the queue based on the cycle number.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         logger.debug(f'({self.cycle}) - Processing Cycle: {self.cycle_counter}')
 

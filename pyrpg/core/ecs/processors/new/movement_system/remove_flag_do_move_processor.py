@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagDoMoveProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
@@ -13,15 +13,18 @@ logger =  logging.getLogger(__name__)
 
 class RemoveFlagDoMoveProcessor(Processor):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagDoMove):
 

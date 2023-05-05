@@ -1,42 +1,18 @@
 import logging
 
-from copy import copy # for creating copy of existing entity
-
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config.paths import Path, ENTITY_PATH
+from pyrpg.core.config.paths import ENTITY_PATH
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.functions import get_class_object # for dynamic creation of components and processors from json definition
+from pyrpg.functions import get_class_from_def
 from pyrpg.functions import translate # for creation of the component
-from pyrpg.functions import get_dict_from_json # for loading of json without C-style comments
 from pyrpg.functions import json_logic # for evaluating conditions for processor prerequisites
-from pyrpg.functions import parse_fnc_str # for creation of entity from template with parameters
 from pyrpg.functions import get_dict_params # for filling of template with variables
 
 # Create logger
 logger = logging.getLogger(__name__)
 
-def get_component_class(comp_type: str, comp_package: str='pyrpg.core.ecs.components') -> Component:
-    '''Returns class object of the component based on component path.
-    Component class is used to create new component or delete component.
-
-    :param comp_path: Path to the component class in format of path.to.module:ComponentClass
-    :type comp_path: str
-
-    :return: Returns reference to the component class.
-    :raises: ValueException, if component class cannot be identified
-    '''
-    # Get the definition of the component class
-    try:
-        # Spit the module path and the class name
-        # For example: comp_path = 'new.movement:Movable' results to
-        # comp_module = 'new.movement'
-        # comp_class = 'Movable'
-        comp_module, comp_class = comp_type.split(':')
-        return get_class_object(None, comp_package + '.' + comp_module, comp_class)
-
-    except ValueError:
-        logger.error(f'Error during loading of component class "{comp_class}"')
-        raise ValueError(f'Error during loading of component class "{comp_class}"')
+COMPONENTS_PCKG = 'pyrpg.core.ecs.components'
+PROCESSORSS_PCKG = 'pyrpg.core.ecs.processors'
 
 class ECSManager:
     '''Encapsulates functionalities needed to create, maintain and remove components
@@ -67,8 +43,340 @@ class ECSManager:
         self._game_functions = game_functions
         logger.info(f'ECSManager initiated.')
 
-    def get_game_world(self) -> World:
-        return self._world
+    #####################
+    ## PROCESSORS - START
+    #####################
+    def get_proc_class_from_def(self, proc_class_def):
+        return get_class_from_def(proc_class_def, PROCESSORSS_PCKG)
+
+    def load_processor(self, processor_def: list) -> None:
+        '''Takes processor definition and registers
+        it into the game world'''
+
+        logger.info(f'Preparing load of processor "{processor_def}" .')
+
+        # Create instance of the processor
+        new_proc = self.create_processor(processor_def)
+
+        # Registers processor at esper ECS World
+        new_proc.initialize(register=self._world.add_processor)
+
+        # Log the initiation of the processor
+        logger.info(f'Processor "{processor_def}" initiated.')
+
+    def create_processor(self, processor_def: list) -> Processor:
+        '''Imports the processor class and registers it into the world'''
+
+        class_def, cust_proc_class_attrs = processor_def
+
+        # Get the definition of the processor class
+        new_class = self.get_proc_class_from_def(class_def)
+
+        # Check that processor has everything that it needs to work in the game
+        try:
+            if not self.check_processor(new_class):
+                logger.warning(f'Processor "{new_class.__name__}" did not pass all the checks. Game might work incorrectly!')
+            else:
+                logger.info(f'Processor "{new_class.__name__}" has passed all the checks successfully!')
+        except ValueError:
+            logger.error(f'Error during checking of the of processor "{new_class.__name__}".')
+            raise ValueError(f'Error during checking of the of processor "{new_class.__name__}".')
+
+        # Get all attributes of the processor class
+        proc_attrs = new_class.__init__.__code__.co_varnames[1:]
+
+        # Substitute the attributes with reference to specifice engine functions
+        proc_attrs = { arg : self._game_functions.get(arg) for arg in proc_attrs if self._game_functions.get(arg) is not None}
+
+        # Overwrite the attributes with custom attributes from the json definition of the quest
+        proc_attrs = {**proc_attrs, **cust_proc_class_attrs}
+
+        # Initiate and return the processor class
+        return new_class(**proc_attrs)
+
+    def check_processor(self, proc_class: Processor) -> bool:
+        '''Checks if the processor has all necessary prerequisities for
+        other processors in the game fulfilled.
+        '''
+        try:
+            prereqs = proc_class.PREREQ
+            if not prereqs: return True
+        except AttributeError:
+            return True    # no prerequisities hence the check is ok
+
+        if json_logic(expr=prereqs, value_fnc=self.check_proc_in_world):
+            logger.info(f'Processor "{proc_class.__name__}": Prerequisities are ok!')
+            return True
+        else:
+            logger.warning(f'Processor "{proc_class.__name__}": Problem with prerequisities. Game might work incorrectly!')
+            return False
+
+    def check_proc_in_world(self, proc_class_def: str) -> bool:
+        ''' Checks, if the class represented by string exists and is already initiated in the
+        game world. Returns True in case the prerequisit processor is present inthe game world.
+        Else, returns False.
+        '''
+        check_class = self.get_proc_class_from_def(proc_class_def)
+
+        # Verify that the processor class has been already instantiated in the game world
+        if self._world.get_processor(check_class):
+            logger.info(f'Processor "{proc_class_def}" is instantiated in the game world.')
+            return True
+        else:
+            logger.warning(f'Processor "{proc_class_def}" is not instantiated in the game world.')
+            return False
+
+    def clear_processors(self) -> None:
+        '''Finalize and remove all processors from the game'''
+        try:
+            self._world.finalize()
+        except ValueError as e:
+            logger.warn(f'Processor "{e.args[0]}" does not have "finalize" method implemented.')
+
+        logger.info(f'All processors finalized.')
+
+        self._world.clear_processors()
+        logger.info(f'All processors removed.')
+
+    def delete_processor(self, proc_class_def: str) -> None:
+        '''Deletes the processor from the world'''
+
+        proc_class = self.get_proc_class_from_def(proc_class_def)
+        proc_class.finalize()
+        self._world.remove_processor(proc_class)
+        logger.info(f'Processor "{proc_class_def}" successfully removed.')
+
+    #####################
+    ## PROCESSORS - END
+    #####################
+
+    #####################
+    ## COMPONENTS - START
+    #####################
+
+    def get_comp_class_from_def(self, comp_class_def: str) -> Component:
+        '''Returns class object of the component based on component path.
+        Component class is used to create new component or delete component.
+
+        :param comp_class_def: Path to the component class in format of path.to.module:ComponentClass
+        :type comp_class_def: str
+
+        :return: Returns reference to the component class.
+        :raises: ValueException, if component class cannot be identified
+        '''
+        return get_class_from_def(comp_class_def, COMPONENTS_PCKG)
+
+    def create_component_from_def(self, component_def: dict) -> Component:
+        '''Returns new instance of component created.
+
+        :param component_def: Dictionary specifying the component and its parameters
+        :type component_def: dict
+
+        :return: Returns reference to the new component instance.
+        :raises: ValueException, if component instance cannot be created
+        '''
+        # Get component type
+        comp_class_def = component_def.get("type")
+
+        # Get component params
+        comp_params = component_def.get("params", {})
+
+        # Try to create instance of the component
+        try:
+            # Get the definition of the component class
+            new_class = self.get_comp_class_from_def(comp_class_def=comp_class_def)
+
+            # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
+            # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
+            # integer from alias_dict values.
+
+            # New dictionary containing aliases substituted with integer entity IDs
+            comp_params_substituted = translate(self._alias_to_entity, comp_params)
+
+            # Return the instance of the component
+            return new_class(**comp_params_substituted)
+
+        except ValueError:
+            logger.error(f'Error while creating component "{comp_class_def}" with parameters "{comp_params}".')
+            raise ValueError
+
+    def update_component(self, component_def: dict, entity_id: int) -> None:
+        '''Takes the definition of the component (dictionary), creates 
+        the component in the world and adds it to the provided entity.
+        
+        :param component_def: Dictionary specifying the component and its parameters
+        :type component_def: dict
+        '''
+
+        # Create and add/overwrite component
+        try:
+            new_comp = self.create_component_from_def(component_def)
+            self._world.add_component(entity_id, new_comp)
+            logger.info(f'***{new_comp} for entity {entity_id} created.')
+        except ValueError:
+            logger.error(f'Error in creation of component "{component_def}".')
+            raise ValueError
+
+    def remove_component(self, component_def: dict, entity_id: int) -> None:
+        '''Removes given component on given entity
+        
+        :param component_def: Dictionary specifying the component type
+        :type component_def: dict
+
+        :raises: ValueException, if component cannot be removed
+        '''
+        try:
+            comp_cls = self.get_comp_class_from_def(comp_class_def=component_def["type"])
+            self._world.remove_component(entity_id, comp_cls)
+            logger.info(f'***{comp_cls} removed from entity {entity_id}.')
+        except ValueError:
+            logger.error(f'Error while removing of component "{component_def}" from entity "{entity_id}".')
+            raise ValueError
+
+    #####################
+    ## COMPONENTS - END
+    #####################
+
+    #####################
+    ## TEMPLATES - START
+    #####################
+
+    def load_template(self, template_def: dict) -> None:
+        '''Stores the template definition from which new templates can be created
+        '''
+        self._template_definitions.update({template_def["id"]: template_def})
+
+        logger.info(f'Template "{template_def["id"]}" was successfully stored.')
+
+    def delete_template(self, template_id: str) -> None:
+        '''Deletes template from internal template storage _template_definitions'''
+        try:
+            del self._template_definitions[template_id]
+        except KeyError:
+            logger.error(f'Template "{template_id}" not found.')
+            raise ValueError
+
+        logger.info(f'Template "{template_id}" successfully removed.')
+
+    #####################
+    ## TEMPLATES - END
+    #####################
+
+    #####################
+    ## ENTITIES - START
+    #####################
+
+    def load_entity(self, entity_def: dict) -> None:
+        '''Creates brand new entity based on entity definition in a form of dictionary.'''
+        self.create_entity(entity_def)
+
+    def create_entity(self, entity_def: dict, entity_alias: str=None) -> int:
+        '''Creates brand new entity with components - called from game logic to factory 
+        new entities during the game - projectiles etc.
+        Entities that are created from quest file are created using load_entity function.
+
+        :param entity_def: Description of entity in JSON format (python dict).
+        :type entity_def: dict
+
+        :param entity_alias: Parameter overrides entity alias that is present in entity_def definition under
+            key 'id'.
+        :type entity_alias: str
+
+        :returns: Integer specifying entity id
+
+        :raise: ValueError - in case of problem with component creation
+        '''
+        # Create empty entity
+        # First check for explicit alias then for id in json and if nothing found, do not register
+        # problem when prescription has id and factory generator is returning none
+        entity_id = self._create_empty_entity(entity_alias=entity_alias if entity_alias else entity_def.get("id", None))
+
+        # Now add components to this entity id empty envelope
+        self.update_entity(entity_def=entity_def, entity_id=entity_id)
+
+        return entity_id
+
+    def _create_empty_entity(self, entity_alias: str=None) -> int:
+        '''Create empty envelope for the entity where later components will be added'''
+        
+        # Create new entity and get its id
+        entity_id = self._world.create_entity()
+
+        # Registration requires entity alias
+        if entity_alias:
+
+            # Update the lookup dictionaries
+            self._register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+
+        logger.info(f'*Creating new empty entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
+
+        return entity_id
+
+    def update_entity(self, entity_def: dict, entity_id: int):
+        '''Add and remove components/templates specified in entity_def on specified entity_id.
+
+            Parameters:
+                :param entity_def: Description of entity in JSON format (python dict).
+                :type entity_def: dict
+
+                :param entity_id: Specifies entity id on which the update should be done
+                :type entity_id: int
+        '''
+
+        # Read the components from the templates - order matters! latter has priority and overwrites
+        # the previous components.
+        for template_id in entity_def.get("templates", []):
+
+            # Get the template data
+            logger.info(f'**Preparing entity data from template ""{template_id}"".')
+            template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
+
+            # Create all entities from the template
+            logger.info(f'**Creating components from template ""{template_id}"".')
+            try:
+                self.update_entity(template_entity_data, entity_id=entity_id)
+            except ValueError:
+                logger.error(f'Error in creation of entity from template "{template_id}".')
+                raise ValueError
+
+        # Add/update components
+        for component in entity_def.get("components", []):
+            try:
+                self.update_component(component_def=component, entity_id=entity_id)
+            except ValueError:
+                logger.error(f'Error in update of component from definition "{component}".')
+                raise ValueError
+
+        # Remove components
+        for component in entity_def.get("remove", []):
+            try:
+                self.remove_component(component_def=component, entity_id=entity_id)
+            except ValueError:
+                logger.error(f'Error in removal of component from definition "{component}".')
+                raise ValueError
+
+    def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
+        ''' Delete and un-register entity from the world.'''
+
+        logger.debug(f'About to delete entity id {entity_id} / {entity_alias or "unknown"}.')
+
+        # Get alias and id
+        entity_alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
+        entity_id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
+
+        logger.debug(f'After lookup for delete entity id {entity_id} / {entity_alias or "unknown"}.')
+
+        # Delete it from Esper world
+        self._world.delete_entity(entity=entity_id)
+
+        # Un-register the entity - ignore if not found, can be unregistered entity
+        self._unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
+
+        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} successfully removed.')
+
+    #####################
+    ## ENTITIES - END
+    #####################
 
     def get_alias_to_entity_dict(self) -> dict:
         '''FOr some reason it is necessary to pass the dictionary
@@ -79,7 +387,6 @@ class ECSManager:
         ''' Translate entity alias (string) to entity id (integer)
         based on _alias_to_entity dictionary.
         '''
-
         try:
             return self._alias_to_entity.get(entity_alias, None)
         except TypeError:
@@ -90,7 +397,6 @@ class ECSManager:
         ''' Translate entity id (integer) to entity alias (str)
         based on _entity_to_alias dictionary.
         '''
-
         try:
             return self._entity_to_alias.get(entity_id, None)
         except TypeError:
@@ -127,7 +433,7 @@ class ECSManager:
         '''Return list of entity ids having alias'''
         return list(self._entity_to_alias.keys())
 
-    def get_entities_no_alias(self) -> list:
+    def get_entities_wo_alias(self) -> list:
         '''Return list of entity ids without alias'''
         return [e for e in self.get_all_entities() if e not in self.get_entities_with_alias()]
     
@@ -135,321 +441,6 @@ class ECSManager:
         ''' Returns true if lookup tables are consistent among each other.
         '''
         return len(self._entity_to_alias) == len(self._alias_to_entity)
-
-    def _get_component_class(self, comp_type: str, comp_package: str='pyrpg.core.ecs.components') -> Component:
-        '''Returns class object of the component based on component path.
-        Component class is used to create new component or delete component.
-
-        :param comp_path: Path to the component class in format of path.to.module:ComponentClass
-        :type comp_path: str
-
-        :return: Returns reference to the component class.
-        :raises: ValueException, if component class cannot be identified
-        '''
-        # Get the definition of the component class
-        try:
-            # Spit the module path and the class name
-            # For example: comp_path = 'new.movement:Movable' results to
-            # comp_module = 'new.movement'
-            # comp_class = 'Movable'
-            comp_module, comp_class = comp_type.split(':')
-            return get_class_object(None, comp_package + '.' + comp_module, comp_class)
-
-        except ValueError:
-            logger.error(f'Error during loading of component class "{comp_class}"')
-            raise ValueError(f'Error during loading of component class "{comp_class}"')
-
-    def _create_component(self, component_def: dict) -> Component:
-        ''' Returns new instance of component created.
-
-        :param component_def: Dictionary specifying the component and its parameters
-        :type component_def: dict
-
-        :return: Returns reference to the new component instance.
-        :raises: ValueException, if component instance cannot be created
-        '''
-        # Get component type
-        comp_type = component_def.get("type")
-
-        # Get component params
-        comp_params = component_def.get("params", {})
-
-        # Try to create instance of the component
-        try:
-            # Get the definition of the component class
-            new_class = self._get_component_class(comp_type=comp_type)
-
-            # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
-            # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
-            # integer from alias_dict values.
-
-            # New dictionary containing aliases substituted with integer entity IDs
-            comp_params_substituted = translate(self._alias_to_entity, comp_params)
-
-            # Return the instance of the component
-            return new_class(**comp_params_substituted)
-
-        except ValueError:
-            logger.error(f'Error while creating component "{comp_type}" with parameters "{comp_params}".')
-            raise ValueError
-
-    def load_template(self, json_ent_obj: dict) -> None:
-        '''Stores the template definition from which new templates can be created
-        '''
-        self._template_definitions.update({json_ent_obj["id"]: json_ent_obj})
-
-        logger.info(f'Template "{json_ent_obj["id"]}" was successfully stored.')
-
-
-    def store_template_definition(self, json_ent_obj: dict, template_id: str) -> None:
-        '''Stores the template definition from which new templates can be created
-        '''
-        """
-        template_vars = json_ent_obj.pop("vars", []) # Store variables separatelly
-        self._template_definitions.update({ template_id: { "definition": json_ent_obj, "vars": template_vars } })
-        """
-        self._template_definitions.update({ template_id: json_ent_obj })
-
-        logger.info(f'Template "{template_id}" was successfully stored.')
-
-
-    def delete_template(self, template_id: str) -> None:
-        '''Deletes template from internal template storage _template_definitions'''
-        try:
-            del self._template_definitions[template_id]
-        except KeyError:
-            logger.error(f'Template "{template_id}" not found.')
-            raise ValueError
-
-        logger.info(f'Template "{template_id}" successfully removed.')
-
-    def create_empty_entity(self, entity_alias: str=None) -> int:
-        '''Create empty envelope for the entity where later components will be added'''
-        
-        # Create new entity and get its id
-        entity_id = self._world.create_entity()
-
-        # Registration requires entity alias
-        if entity_alias:
-
-            # Update the lookup dictionaries
-            self._register_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
-
-        logger.info(f'*Creating new empty entity id: "{entity_id}", entity alias: {entity_alias or "unknown"}')
-
-        return entity_id
-
-    """
-    def _get_template(self, template_id: str) -> dict:
-        ''' Takes template id/path/variables and returns the dictionary containing
-        information for creation of entity from the template
-
-        Parameters:
-            :param template_id: Identification of the template. Template can 
-            :type template_id: str
-
-            :returns: Dictionary with entitiy data from given template
-        '''
-
-        # Parse the template to Name and parameters (if there are any)
-        template_name, template_values = parse_fnc_str(template_id)
-
-        
-        # Get the template definition either from quest or if not exist from file
-        # Try to get the template from quest and if not found try to get them from file
-        template_from_quest = self._template_definitions.get(template_name, None)
-        
-        try:
-            template_path = Path(ENTITY_PATH / Path(template_name + '.json'))
-            template_entity_data = template_from_quest if template_from_quest else get_dict_from_json(template_path)
-            
-        except FileNotFoundError:
-            logger.error(f'Entity file "{template_path}" not found.')
-            raise ValueError
-        
-        # Get the definition of variables from the template, empty list if no variables are defined
-        template_vars_defs = template_entity_data.get('vars', [])
-
-        # Fill the template with the variables
-        template_entity_data = translate(
-            dict(zip(template_vars_defs, template_values)), # Translation dictionary made from list of variables and their values
-            template_entity_data
-        )
-
-        return template_entity_data
-    """
-
-    def remove_component(self, component_def: dict, entity_id: int) -> None:
-        '''Removes given component on given entity
-        
-        :param component_def: Dictionary specifying the component type
-        :type component_def: dict
-
-        :raises: ValueException, if component cannot be removed
-        '''
-
-        try:
-            comp_cls = self._get_component_class(component_def["type"])
-            self._world.remove_component(entity_id, comp_cls)
-            logger.info(f'***{comp_cls} removed from entity {entity_id}.')
-        except ValueError:
-            logger.error(f'Error while removing of component "{component_def}" from entity "{entity_id}".')
-            raise ValueError
-
-    def update_component(self, component_def: dict, entity_id: int) -> None:
-        '''Takes the definition of the component (dictionary), creates 
-        the component in the world and adds it to the provided entity.
-        
-        :param component_def: Dictionary specifying the component and its parameters
-        :type component_def: dict
-        '''
-
-        # Create and add/overwrite component
-        try:
-            new_comp = self._create_component(component_def)
-            self._world.add_component(entity_id, new_comp)
-            logger.info(f'***{new_comp} for entity {entity_id} created.')
-        except ValueError:
-            logger.error(f'Error in creation of component "{component_def}".')
-            raise ValueError
-
-
-
-
-    def update_entity(self, json_ent_obj: dict, entity_id: int):
-        '''Add and remove components/templates specified in json_ent_object on specified entity_id.
-
-            Parameters:
-                :param json_ent_obj: Description of entity in JSON format (python dict).
-                :type json_ent_obj: dict
-
-                :param entity_id: Specifies entity id on which the update should be done
-                :type entity_id: int
-        '''
-
-        # Read the components from the templates - order matters! latter has priority and overwrites
-        # the previous components.
-        for template_id in json_ent_obj.get("templates", []):
-
-            """
-            # If template is existing entity (starts with #) - EXPERIMENTAL
-            if template_id.startswith('#'):
-
-                logger.info(f'**Preparing entity data from existing entity ""{template_id[1:]}"".')
-                template_entity_id = self.get_entity_id(entity_alias=template_id[1:])
-                try:
-                    # If the source entity exists, copy its components
-                    if template_entity_id:                
-                        self.copy_entity_components(source_entity_id=template_entity_id, dest_entity_id=entity_id)
-                    else:
-                        raise KeyError
-                except KeyError:
-                    logger.error(f'Template entity "{template_id[1:]}" not found.')
-                    raise ValueError
-
-            # If template is real template
-            else:
-            """
-            # Get the template data
-            logger.info(f'**Preparing entity data from template ""{template_id}"".')
-            try:
-                #template_entity_data = self._get_template(template_id)
-                template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
-            except ValueError:
-                logger.error(f'Error in preparation of template data for template "{template_id}".')
-                raise ValueError
-
-            # Create all entities from the template
-            logger.info(f'**Creating components from template ""{template_id}"".')
-            try:
-                self.update_entity(template_entity_data, entity_id=entity_id)
-            except ValueError:
-                logger.error(f'Error in creation of entity from template "{template_id}".')
-                raise ValueError
-
-        # Add/update components
-        for component in json_ent_obj.get("components", []):
-            try:
-                self.update_component(component_def=component, entity_id=entity_id)
-            except ValueError:
-                logger.error(f'Error in update of component from definition "{component}".')
-                raise ValueError
-
-        # Remove components
-        for component in json_ent_obj.get("remove", []):
-            try:
-                self.remove_component(component_def=component, entity_id=entity_id)
-            except ValueError:
-                logger.error(f'Error in removal of component from definition "{component}".')
-                raise ValueError
-
-    def create_entity(self, json_ent_obj: dict, entity_alias: str=None) -> int:
-        '''Creates brand new entity with components - called from game logic to factory 
-        new entities during the game - projectiles etc.
-        Entities that are created from quest file are created using update_entity function.
-
-        :param json_ent_obj: Description of entity in JSON format (python dict).
-        :type json_ent_obj: dict
-
-        :param entity_alias: Parameter overrides entity alias that is present in json_ent_obj definition under
-            key 'id'.
-        :type entity_alias: str
-
-        :returns: Integer specifying entity id
-
-        :raise: ValueError - in case of problem with component creation
-        '''
-
-        # Create empty entity
-        # First check for explicit alias then for id in json and if nothing found, do not register
-        # problem when prescription has id and factory generator is returning none
-        entity_id = self.create_empty_entity(entity_alias=entity_alias if entity_alias else json_ent_obj.get("id", None))
-
-        # Now add components to this entity id empty envelope
-        self.update_entity(json_ent_obj=json_ent_obj, entity_id=entity_id)
-
-        return entity_id
-
-    def copy_entity_components(self, source_entity_id: int, dest_entity_id: int) -> None:
-        '''Deep copy entity components and add them to the entity_id
-
-        :param source_entity_id: Entity id from which we are copying components.
-        :type source_entity_id: int
-
-        :param dest_entity_id: Entity id to which we are copying components.
-        :type dest_entity_id: int
-
-        :raises: ValueError
-        '''
-        
-        try:
-            # Iterate through every component instance of the source entity
-            for comp_instance in self._world.components_for_entity(entity=source_entity_id):
-
-                # Create a deepcopy and assign it to the destination entity
-                self._world.add_component(entity=dest_entity_id, component_instance=copy(comp_instance))
-        except KeyError:
-            logger.error(f'Source entity "{source_entity_id}" does not exist.')
-            raise ValueError
-
-    def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
-        ''' Delete and un-register entity from the world.'''
-
-        logger.debug(f'About to delete entity id {entity_id} / {entity_alias or "unknown"}.')
-
-        # Get alias and id
-        entity_alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
-        entity_id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
-
-        logger.debug(f'After lookup for delete entity id {entity_id} / {entity_alias or "unknown"}.')
-
-        # Delete it from Esper world
-        self._world.delete_entity(entity=entity_id)
-
-        # Un-register the entity - ignore if not found, can be unregistered entity
-        self._unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
-
-        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} successfully removed.')
 
     def _clear_entity_alias_lookup(self) -> None:
         '''Clear the dictionaries holding mapping between entity alias
@@ -460,176 +451,16 @@ class ECSManager:
 
     def _clear_entities_and_components(self) -> None:
         '''Delete all entities and components from the world'''
-
         self._clear_entity_alias_lookup()  # ADDING THIS IS CAUSING THAT no translation dictionary is passed to the ScriptManager!!!
         self._world.clear_database()
         logger.info(f'All entities and components cleared.')
 
-    def _clear_processors(self) -> None:
-
-        try:
-            self._world.finalize()
-        except ValueError as e:
-            logger.warn(f'Processor "{e.args[0]}" does not have "finalize" method implemented.')
-
-        logger.info(f'All processors finalized.')
-
-        self._world.clear_processors()
-        logger.info(f'All processors removed.')
-
     def clear_ecs(self) -> None:
         self._clear_entities_and_components()
-        self._clear_processors()
-
-    def _check_proc_in_world(self, proc: str) -> bool:
-        ''' Checks, if the class represented by string exists and is already initiated in the
-        game world. Returns True in case the prerequisit processor is present inthe game world.
-        Else, returns False.
-        '''
-
-        # Unpack the prerequisity processor information
-        proc_module, proc_class = proc.split(':')
-
-        # Get the processor class
-        try:
-            check_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + proc_module, proc_class)
-        except ValueError:
-            logger.warning(f'Processor class "{proc_module}.{proc_class}" cannot be checked.')
-            return False
-
-        # Verify that the processor class has been already instantiated in the game world
-        if self._world.get_processor(check_class):
-            logger.info(f'Processor "{proc_module}.{proc_class}" is instantiated in the game world.')
-            return True
-        else:
-            logger.warning(f'Processor "{proc_module}.{proc_class}" is not instantiated in the game world.')
-            return False
-
-    def _check_proc_prereq(self, proc_class: Processor) -> bool:
-        '''Checks if the processor has all necessary prerequisities for
-        other processors in the game fulfilled.
-        '''
-
-        try:
-            prereqs = proc_class.PREREQ
-            if not prereqs: return True
-        except AttributeError:
-            return True    # no prerequisities hence the check is ok
-
-        if json_logic(expr=prereqs, value_fnc=self._check_proc_in_world):
-            logger.info(f'Processor "{proc_class.__name__}": Prerequisities are ok!')
-            return True
-        else:
-            logger.warning(f'Processor "{proc_class.__name__}": Problem with prerequisities. Game might work incorrectly!')
-            return False
-            #raise ValueError(f'Processor "{proc_class.__name__}": Problem with prerequisities. Game might work incorrectly!')
-
-        '''
-        for prereq in prereqs:
-
-            # Unpack the prerequisity processor information
-            prereq_module, prereq_class = prereq.split(':')
-
-            # Get the prerequisity processor class
-            try:
-                check_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + prereq_module, prereq_class)
-            except ValueError:
-                logger.warning(f'Prerequisite class "{prereq_module}.{prereq_class}" cannot be loaded from definition of processor "{proc_class.__name__}".')
-                raise ValueError(f'Prerequisite class "{prereq_module}.{prereq_class}" cannot be loaded from definition of processor "{proc_class.__name__}".')
-
-            # Verify that the prerequisite processor class has been already instantiated
-            if not self._world.get_processor(check_class):
-                logger.warning(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
-                raise ValueError(f'Processor "{proc_class.__name__}" is missing prereq. processor {prereq_class}. Game might work incorrectly!')
-        '''
-
-    def _check_processor(self, proc_class: Processor) -> bool:
-        '''Checks if the class representing the processors contains all necessary
-        parts in order to successfully work in the game.
-
-        Checks are following:
-            - Existence of prerequisited classes in the game world
-        '''
-        try:
-            # Check the prerequisities
-            if not self._check_proc_prereq(proc_class):
-                return False
-            else:
-                return True
-        except ValueError:
-            logger.error(f'Error during checking or prerequisities of the processor class "{proc_class.__name__}".')
-            raise ValueError(f'Error during checking or prerequisities of the processor class "{proc_class.__name__}".')
-
-    def _load_processor(self, proc_module : str, proc_class : str, cust_proc_class_attrs : dict) -> Processor:
-        '''Imports the processor class and registers it into the world'''
-
-        # Get the definition of the processor class
-        try:
-            new_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + proc_module, proc_class)
-        except ValueError:
-            logger.error(f'Error during loading of processor class "{proc_class}".')
-            raise ValueError(f'Error during loading of processor class "{proc_class}".')
-
-        # Check that processor has everything that it needs to work in the game
-        try:
-            if not self._check_processor(new_class):
-                logger.warning(f'Processor "{new_class.__name__}" did not pass all the checks. Game might work incorrectly!')
-            else:
-                logger.info(f'Processor "{new_class.__name__}" has passed all the checks successfully!')
-        except ValueError:
-            logger.error(f'Error during checking of the of processor "{new_class.__name__}".')
-            raise ValueError(f'Error during checking of the of processor "{new_class.__name__}".')
-
-        # Get all attributes of the processor class
-        proc_attrs = new_class.__init__.__code__.co_varnames[1:]
-
-        # Substitute the attributes with reference to specifice engine functions
-        proc_attrs = { arg : self._game_functions.get(arg) for arg in proc_attrs if self._game_functions.get(arg) is not None}
-
-        # Overwrite the attributes with custom attributes from the json definition of the quest
-        proc_attrs = {**proc_attrs, **cust_proc_class_attrs}
-
-        # Initiate and return the processor class
-        return new_class(**proc_attrs)
-
-    def load_processor(self, processor: list) -> None:
-        '''Takes processor definition from the JSON and registers
-        it into the game world'''
-
-        # Parse the JSON definition of the processor
-        class_path, params = processor
-        module_name, class_name = class_path.split(':')
-
-        logger.info(f'Preparing load of processor "{class_name}" .')
-
-        # Create instance of the processor
-        new_proc = self._load_processor(module_name, class_name, params)
-
-        # Registers processor at esper ECS World
-        new_proc.initialize(register=self._world.add_processor)
-
-        # Log the initiation of the processor
-        logger.info(f'Processor "{class_name}" initiated.')
-
-    def delete_processor(self, processor: str) -> None:
-        '''deletes the processor from the world'''
-        
-        proc_module_str, proc_class_str = processor.split(':')
-
-        # Get the definition of the processor class
-        try:
-            proc_class = get_class_object(None, 'pyrpg.core.ecs.processors.' + proc_module_str, proc_class_str)
-        except ValueError:
-            logger.error(f'Error during loading of processor class "{proc_class_str}".')
-            raise ValueError(f'Error during loading of processor class "{proc_class_str}".')
-
-        # TODO - should not be here call of finalize function of the processor?
-        self._world.remove_processor(proc_class)
-        logger.info(f'Processor "{proc_class_str}" successfully removed.')
+        self.clear_processors()
 
     def process(self, events, keys, dt: float, debug: bool) -> None:
         '''Calls process method on all loaded processors.'''
-
         self._world.process(events=events, keys=keys, dt=dt, debug=debug)
 
     def __str__(self):

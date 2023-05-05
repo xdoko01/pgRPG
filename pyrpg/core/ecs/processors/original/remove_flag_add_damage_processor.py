@@ -1,7 +1,7 @@
 __all__ = ['RemoveFlagAddDamageProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.flag_add_damage import FlagAddDamage
@@ -9,16 +9,19 @@ from pyrpg.core.ecs.components.original.flag_add_damage import FlagAddDamage
 class RemoveFlagAddDamageProcessor(Processor):
 
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         for ent, (_) in self.world.get_components(FlagAddDamage):
 
             self.world.remove_component(ent, FlagAddDamage)

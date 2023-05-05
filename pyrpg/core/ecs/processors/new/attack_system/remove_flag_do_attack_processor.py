@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagDoAttackProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack
@@ -32,10 +32,10 @@ class RemoveFlagDoAttackProcessor(Processor):
         'new.command_system.perform_command_processor:PerformCommandProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -44,7 +44,10 @@ class RemoveFlagDoAttackProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the flag that the entity has attacked.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagDoAttack):
 

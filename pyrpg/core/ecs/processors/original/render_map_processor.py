@@ -1,7 +1,7 @@
 __all__ = ['RenderMapProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -35,7 +35,7 @@ class RenderMapProcessor(Processor):
 
     __slots__ = ['window', 'maps', 'debug']
 
-    def __init__(self, window, maps, debug=False):
+    def __init__(self, window, maps, *args, debug=False, **kwargs):
         ''' Initiation of RenderMapProcessor processor.
 
         Parameters:
@@ -49,7 +49,7 @@ class RenderMapProcessor(Processor):
             :type debug: bool
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
         self.maps = maps
@@ -63,7 +63,10 @@ class RenderMapProcessor(Processor):
         ''' Process entities having Position and Camera components. Basically,
         blit the relevant part of the map on camera screen surface.
         '''
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Find the entity with Camera and use its position
         # position - position and map of the object that is in camera's focus
         # camera - camera component itself

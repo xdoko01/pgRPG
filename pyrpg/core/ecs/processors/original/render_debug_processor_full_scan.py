@@ -19,9 +19,9 @@ class RenderDebugProcessorFullScan(Processor):
     using the filter_only_visible function.
     '''
 
-    def __init__(self, window):
+    def __init__(self, window, *args, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.window = window
         self.font = pygame.font.Font(None, 14)
 
@@ -30,7 +30,7 @@ class RenderDebugProcessorFullScan(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-
+        super().process(*args, **kwargs)
         # Get information about required debug information
         debug = kwargs.get('debug', {})
 

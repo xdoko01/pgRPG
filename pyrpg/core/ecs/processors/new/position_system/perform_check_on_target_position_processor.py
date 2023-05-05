@@ -3,7 +3,7 @@ __all__ = ['PerformCheckOnTargetPositionProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -38,12 +38,11 @@ class PerformCheckOnTargetPositionProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self, FNC_ADD_EVENT, step=1):
+    def __init__(self, FNC_ADD_EVENT, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.add_event_fnc = FNC_ADD_EVENT
-        self.step = step
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -53,8 +52,10 @@ class PerformCheckOnTargetPositionProcessor(Processor):
         '''  Detects entities that are pickable + have collided and assigns
         the FlagIsAboutToPickEntity to their pickers
         '''
-        self.cycle += 1
-        if self.cycle % self.step != 0: return
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # List of entities that reached their target
         on_target = set()

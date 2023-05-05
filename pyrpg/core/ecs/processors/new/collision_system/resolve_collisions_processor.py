@@ -5,7 +5,7 @@ __all__ = [
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -43,10 +43,10 @@ class ResolveCollisionsOptimizedProcessor(Processor):
         'new.collision_system:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -55,7 +55,10 @@ class ResolveCollisionsOptimizedProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Moves entities to omit the collision.
         '''
-        self.cycle +=1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have collided with something and are moveable and are not to be ignored for collision resolution position fix
         for ent, (position, flag_has_collided, collidable, _) in self.world.get_components(Position, FlagHasCollided, Collidable, Movable):
@@ -140,10 +143,10 @@ class ResolveCollisionsOldProcessor(Processor):
         'new.collision_system:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -152,7 +155,10 @@ class ResolveCollisionsOldProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Moves entities to omit the collision.
         '''
-        self.cycle +=1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have collided with something and are moveable and are not to be ignored for collision resolution position fix
         for ent, (position, flag_has_collided, collidable, _) in self.world.get_components(Position, FlagHasCollided, Collidable, Movable):

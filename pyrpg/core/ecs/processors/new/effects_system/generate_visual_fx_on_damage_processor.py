@@ -4,7 +4,7 @@ import logging
 import copy
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -38,10 +38,10 @@ class GenerateVisualFXOnDamageProcessor(Processor):
 
     __slots__ = ['create_entity_fnc']
 
-    def __init__(self, create_entity_fnc):
+    def __init__(self, create_entity_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.create_entity_fnc = create_entity_fnc
 
     def initialize(self, register):
@@ -51,7 +51,10 @@ class GenerateVisualFXOnDamageProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Creates new entity containing visual fx on the damage spot.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (position, flag_was_damaged_by, vfx_on_damage) in self.world.get_components(Position, FlagWasDamagedBy, VisualFXOnDamage):
 

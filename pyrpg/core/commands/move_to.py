@@ -6,6 +6,10 @@ from pyrpg.core.ecs.components.original.motion import Motion
 from .move import cmd_move
 import math # for calculation of square root move_to
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_move_to, alias=module_name)
 
 def cmd_move_to(*args, **kwargs):
     ''' Move to certain x,y position on the current map.

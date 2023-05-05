@@ -5,6 +5,11 @@ import logging
 # Logger init
 logger = logging.getLogger(__name__)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_bb_set_globals, alias=module_name)
+
 def cmd_bb_set_globals(*args, **kwargs):
     ''' Set/overwrite the value on the behavior tree global blackboard
     '''

@@ -3,7 +3,7 @@ __all__ = ['PerformTeleportationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -49,10 +49,10 @@ class PerformTeleportationProcessor(Processor):
         'new.teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
@@ -65,7 +65,10 @@ class PerformTeleportationProcessor(Processor):
         '''  Detects entities that are about to be teleported and performs
         the actual teleportation, if the picker is capable.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Teleportable and FlagIsAboutToBeTeleportedBy - those are candidates for successful teleportation
         for ent_teleportee, (position, teleportable, flag_is_about_to_be_teleported_by) in self.world.get_components(Position, Teleportable, FlagIsAboutToBeTeleportedBy):

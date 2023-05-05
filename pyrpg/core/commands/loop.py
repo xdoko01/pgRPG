@@ -1,6 +1,11 @@
 ''' Module implementing loop command
 '''
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_loop, alias=module_name)
+
 def cmd_loop(*args, **kwargs):
     ''' Loop command - uses information stored in brain about actual number of loops
     '''

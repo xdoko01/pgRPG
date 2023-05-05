@@ -3,7 +3,7 @@ __all__ = ['PerformPickupProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -53,10 +53,10 @@ class PerformPickupProcessor(Processor):
         'new.pickup_system.generate_pickup_processor:GeneratePickupProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
@@ -69,7 +69,10 @@ class PerformPickupProcessor(Processor):
         '''  Detects entities that are about to be picked and performs
         the actual pickup if the picker is capable.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Inventory and FlagIsAboutToPickEntity - those are candidates for successful pickers
         for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(HasInventory, FlagIsAboutToPickEntity):

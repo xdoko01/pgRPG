@@ -1,7 +1,7 @@
 __all__ = ['InputProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.controllable import Controllable
@@ -30,10 +30,10 @@ class InputProcessor(Processor):
         -	as first of the processors - user input should have priority over AI (Brain)
     '''
 
-    def __init__(self, input_command_queue, debug=False):
+    def __init__(self, input_command_queue, *args, debug=False, **kwargs):
         ''' Initiation of InputProcessor processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.input_command_queue = input_command_queue
         self.debug = debug
 
@@ -45,7 +45,10 @@ class InputProcessor(Processor):
         ''' Process entities having Controllable and Motion components. Read user
         input and generate corresponding commands and add them to the command queue.
         '''
-        
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Extract events and keys from parameter kwargs
         # currently only keys are used but events might be usefull as well for mouse later
         #events = kwargs.get('events', [])

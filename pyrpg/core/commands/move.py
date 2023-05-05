@@ -5,6 +5,10 @@ import backup.core.engine as engine # To reference the world
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
 from pyrpg.core.ecs.components.original.motion import Motion
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_move, alias=module_name)
 
 def cmd_move(*args, **kwargs):
     ''' Pass whatever information you think are necessary for the command

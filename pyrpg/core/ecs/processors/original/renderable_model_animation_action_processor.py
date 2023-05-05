@@ -1,7 +1,7 @@
 __all__ = ['RenderableModelAnimationActionProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
@@ -29,15 +29,19 @@ class RenderableModelAnimationActionProcessor2(Processor):
             - for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
                 - update_frame() ... bez argumentu
     '''
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
-        
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         changed_ent = set()
         
         for ent, (renderable_model, motion) in self.world.get_components(RenderableModel, Motion):
@@ -80,14 +84,18 @@ class RenderableModelAnimationActionProcessor(Processor):
             - for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
                 - update_frame() ... bez argumentu
     '''
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Remember updated entities - to prevent several updates on simgle entity
         already_updated = set()

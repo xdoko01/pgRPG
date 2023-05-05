@@ -3,7 +3,7 @@ __all__ = ['RenderDebugProcessor']
 import pygame	# for pygame.time, pygame.font and pygame.Color
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -30,9 +30,9 @@ class RenderDebugProcessor(Processor):
 
     '''
 
-    def __init__(self, window):
+    def __init__(self, window, *args, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
 
@@ -46,7 +46,10 @@ class RenderDebugProcessor(Processor):
         loaded on init). In order to change the debug information
         dynamically while the game runs.
         '''
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Get information about required debug information
         debug = kwargs.get('debug', {})
 

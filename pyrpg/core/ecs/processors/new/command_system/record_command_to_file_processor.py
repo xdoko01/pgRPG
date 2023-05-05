@@ -4,7 +4,7 @@ import logging
 import json
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -17,8 +17,8 @@ class RecordCommandToFileProcessor(Processor):
         'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 
-    def __init__(self, get_commands_fnc, file):
-        super().__init__()
+    def __init__(self, get_commands_fnc, file, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # Reference to command queue
         self.get_commands_fnc = get_commands_fnc
@@ -36,7 +36,10 @@ class RecordCommandToFileProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Store the whole queue to the file - every cycle on every line
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Increase cycle counter
         self.cycle_counter += 1

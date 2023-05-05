@@ -1,7 +1,7 @@
 __all__ = ['UpdateCameraOffsetProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.camera import Camera
@@ -34,7 +34,7 @@ class UpdateCameraOffsetProcessor(Processor):
 
     __slots__ = ['maps', 'debug']
 
-    def __init__(self, maps, debug=False):
+    def __init__(self, maps, *args, debug=False, **kwargs):
         ''' Initiation of UpdateCameraOffsetProcessor processor.
         
         Parameters:
@@ -45,7 +45,7 @@ class UpdateCameraOffsetProcessor(Processor):
             :type debug: bool
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.debug = debug
         self.maps = maps
@@ -59,6 +59,10 @@ class UpdateCameraOffsetProcessor(Processor):
         the following video for more details about camera implementation
         https://youtu.be/3zV2ewk-IGU.
         '''
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for _, (position, camera) in self.world.get_components(Position, Camera):
 

@@ -3,7 +3,7 @@ __all__ = ['GenerateSoundFXOnDamageProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.sound_fx_on_damage import SoundFXOnDamage
@@ -36,10 +36,10 @@ class GenerateSoundFXOnDamageProcessor(Processor):
 
     __slots__ = ['play_sound_fnc']
 
-    def __init__(self, FNC_PLAY_SOUND):
+    def __init__(self, FNC_PLAY_SOUND, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.play_sound_fnc = FNC_PLAY_SOUND
 
     def initialize(self, register):
@@ -49,7 +49,10 @@ class GenerateSoundFXOnDamageProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Plays sound upon entity being damaged.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (flag_was_damaged_by, sfx_on_damage) in self.world.get_components_ex(FlagWasDamagedBy, SoundFXOnDamage):
 

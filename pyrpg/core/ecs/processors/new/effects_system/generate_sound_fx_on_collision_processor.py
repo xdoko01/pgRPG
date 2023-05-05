@@ -3,7 +3,7 @@ __all__ = ['GenerateSoundFXOnCollisionProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.sound_fx_on_collision import SoundFXOnCollision
@@ -36,10 +36,10 @@ class GenerateSoundFXOnCollisionProcessor(Processor):
 
     __slots__ = ['play_sound_fnc']
 
-    def __init__(self, FNC_PLAY_SOUND):
+    def __init__(self, FNC_PLAY_SOUND, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.play_sound_fnc = FNC_PLAY_SOUND
 
     def initialize(self, register):
@@ -49,7 +49,10 @@ class GenerateSoundFXOnCollisionProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the FlagHasCollided flag.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (flag_has_collided, sfx_on_collision) in self.world.get_components(FlagHasCollided, SoundFXOnCollision):
 

@@ -3,7 +3,7 @@ __all__ = ['GenerateSoundFXOnGenerationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.sound_fx_on_generation import SoundFXOnGeneration
@@ -36,10 +36,10 @@ class GenerateSoundFXOnGenerationProcessor(Processor):
 
     __slots__ = ['play_sound_fnc']
 
-    def __init__(self, FNC_PLAY_SOUND):
+    def __init__(self, FNC_PLAY_SOUND, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.play_sound_fnc = FNC_PLAY_SOUND
 
     def initialize(self, register):
@@ -49,7 +49,10 @@ class GenerateSoundFXOnGenerationProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Generates sound effect when factory generates the entity.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (flag_create_from_factory, sfx_on_generation) in self.world.get_components(FlagCreateFromFactory, SoundFXOnGeneration):
 

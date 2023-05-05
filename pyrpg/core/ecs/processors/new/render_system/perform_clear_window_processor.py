@@ -3,7 +3,7 @@ __all__ = ['PerformClearWindowProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class PerformClearWindowProcessor(Processor):
 
     __slots__ = ['window', 'clear_color']
 
-    def __init__(self, window, clear_color=(0, 0, 0)):
+    def __init__(self, window, *args, clear_color=(0, 0, 0), **kwargs):
         ''' Initiation of PerformClearWindowProcessor processor.
 
         Parameters:
@@ -43,7 +43,7 @@ class PerformClearWindowProcessor(Processor):
             :param clear_color: Solid color used for clearing.
             :type clear_color: tuple
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
         self.clear_color = clear_color
@@ -55,7 +55,10 @@ class PerformClearWindowProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Fill the game window with one solid color.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         self.window.fill(self.clear_color)
 
     def pre_save(self):

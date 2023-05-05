@@ -3,7 +3,7 @@ __all__ = ['PerformFrameUpdateProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -39,10 +39,10 @@ class PerformFrameUpdateProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -51,7 +51,10 @@ class PerformFrameUpdateProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Get all components with renderable model and update their animation by one frame.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Remember updated entities - to prevent several updates on single entity in case same entity is on more cameras
         already_updated = set()

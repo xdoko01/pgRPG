@@ -14,6 +14,7 @@ version = '1.3'
 C = _TypeVar('C')
 P = _TypeVar('P')
 
+class SkipProcessorExecution(Exception): ...
 
 class Processor:
     """Base class for all Processors to inherit from.
@@ -27,13 +28,22 @@ class Processor:
     """
     world = None
     cycle = None # Added by xdoko01 to note the cycle of processor for debug reasons
+    exec_cycle_step = None # Added by xdoko01 to note that the process fnc should be called every exec_cycle, ie. not every cycle
+
+    def __init__(self, *args, **kwargs):
+        """Init the processor values - added by xdoko01"""
+        self.cycle = 0
+        self.exec_cycle_step = kwargs.get('step', 1)
 
     def initialize(self, register):
         """Register the processor at the esper World"""
         raise NotImplementedError
 
     def process(self, *args, **kwargs):
-        raise NotImplementedError
+        # increase cycle count
+        self.cycle += 1
+        # do not process if it is not the right time
+        if self.cycle % self.exec_cycle_step != 0: raise SkipProcessorExecution
 
     def __str__(self):
         return f"Processor '{self.__class__.__name__}' at {hex(id(self))}: {self.__dict__}"
@@ -100,7 +110,8 @@ class World:
         processor_instance.priority = priority
         processor_instance.world = self
 
-        processor_instance.cycle = 0 # Added by xdoko01
+        #processor_instance.cycle = 0 # Added by xdoko01
+        #processor_instance.exec_cycle = 1 # Added by xdoko01 (execute every cycle by default)
 
         self._processors.append(processor_instance)
         self._processors.sort(key=lambda proc: proc.priority, reverse=True)

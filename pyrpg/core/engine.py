@@ -21,13 +21,20 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.managers.event_manager import EventManager
 from pyrpg.core.managers.script_manager import ScriptManager
 
-from pyrpg.core.managers.quest_loader import QuestLoader
+from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
 from pathlib import Path
 from pyrpg.core.config.paths import QUEST_PATH
 from pyrpg.core.events.event import Event
+from pyrpg.functions import get_dict_from_file, get_dict_value
+
 
 logger.info(f'Engine initiated')
+
+class Quest:
+    def __init__(self, alias: str, quest_def: dict):
+        self.alias = alias
+        dict_def = quest_def
 
 class Game:
 
@@ -83,6 +90,7 @@ class Game:
             'get_events_fnc' : self.event_manager.get_events,
             # ECS
             'FNC_GET_ENTITY_ID' : self.ecs_manager.get_entity_id,
+            'REF_ECS_MNG': self.ecs_manager,
             # Sound and Music
             'FNC_PLAY_SOUND' : self.sound_manager.play_sound
         })
@@ -91,27 +99,96 @@ class Game:
 
         # Quest loader managing creting of new quest from json/yaml file and creation
         # of the game objects
-        self.quest_loader = QuestLoader(
-            gui_manager=self.gui_manager,
-            process_fncs=[
-                ['prereqs', None],
-                ['cleanup/processors', self.ecs_manager.delete_processor],
-                ['cleanup/maps', self.map_manager.delete_map],
-                ['cleanup/templates', self.ecs_manager.delete_template],
-                ['cleanup/entities', self.ecs_manager.delete_entity],
-                ['cleanup/dialogs', self.dialog_manager.delete_dialog],
-                ['cleanup/handlers', self.event_manager.delete_handler],
-                ['processors', self.ecs_manager.load_processor],
-                ['maps', self.map_manager.add_map],
-                ['dialogs', self.dialog_manager.add_dialog],
-                ['templates', self.ecs_manager.load_template],
-                ['entities', self.ecs_manager.create_entity],
-                ['handlers', self.event_manager.load_handler]
-            ]
-        )
+        self.load_quest_def_fncs = [
+            ['prereqs', self.load_quest_from_file],
+            ['cleanup/processors', self.ecs_manager.delete_processor],
+            ['cleanup/maps', self.map_manager.delete_map],
+            ['cleanup/templates', self.ecs_manager.delete_template],
+            ['cleanup/entities', self.ecs_manager.delete_entity],
+            ['cleanup/dialogs', self.dialog_manager.delete_dialog],
+            ['cleanup/handlers', self.event_manager.delete_handler],
+            ['processors', self.ecs_manager.load_processor],
+            ['maps', self.map_manager.load_map],
+            ['dialogs', self.dialog_manager.load_dialog],
+            ['templates', self.ecs_manager.load_template],
+            ['entities', self.ecs_manager.load_entity],
+            ['handlers', self.event_manager.load_handler]
+        ]
 
         logger.info(f'Game initiated')
 
+    def load_quest_from_file(self, filepath: str) -> Quest:
+        '''Reads file with the quest, translates it to quest definition
+        and processes quest definition into game world objects.
+        
+        Parameters:
+            :param filepath: Absolute or relative path to the file containing
+                             quest definition (JSON/YAML/other).
+            :type filepath: str
+
+            :returns: Quest object with basic quest information
+        '''
+
+        # Read the quest definition from a file
+        quest_def = get_dict_from_file(filepath=Path(filepath), dir=QUEST_PATH)
+
+        # Translate quest definition into the game objects
+        quest = self.load_quest_from_def(quest_def)
+        
+        # Return the quest objects containing usefull information
+        return quest
+
+    def load_quest_from_def(self, quest_def: dict) -> Quest:
+        '''Translates the quest definition into the objects representing the
+        game world - entities, components, maps, dialogs, handlers, etc.
+
+        Parameters:
+            :param quest_def: Dictionary containing all information about the
+                              quest.
+            :type quest_def: dict
+
+            :returns: Quest object with basic quest information
+        '''
+
+        quest = Quest(alias=quest_def["id"], quest_def=quest_def)
+
+        logger.info(f'Loading objects for quest "{quest.alias}" has started.')
+
+        # Search every defined location in the quest_def and try to process
+        # it using the given functions for processing.
+        for data_path, process_fnc in self.load_quest_def_fncs:
+
+            # Get the data on the path to be processed
+            data_to_process = get_dict_value(quest_def, path=data_path, sep='/', not_found=[])
+
+            logger.info(f'Start of processing of "{data_path}" for quest "{quest.alias}". Total "{len(data_to_process)} definitions".')
+
+            # Cycle this data and process them using progress bar
+            with ProgressBar2(gui_manager=self.gui_manager, header='Loading', text=data_path) as progress:
+                for item in progress(data_to_process):
+                    logger.debug(f'About to process following item "{item}" using function "{process_fnc}".')
+                    process_fnc(item)
+
+            logger.info(f'End of processing of "{data_path}" for quest "{quest.alias}".')
+        
+        logger.info(f'Loading objects for quest "{quest.alias}" has finished.')
+
+        return quest
+
+    def new_game(self, filepath: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
+        '''Loads new game from the quest'''
+
+        logger.debug(f'Loading quest "{filepath}".')
+
+        # Delete every game object
+        if clear_before_load: self._clear_game()
+
+        # Load the quest, register it and create QUEST_START event
+        quest = self.load_quest_from_file(filepath=filepath)
+        self._quests[quest.alias] = quest
+        self.event_manager.add_event(Event('QUEST_START', self, None, params={'quest_id': quest.alias}))
+
+        logger.info(f'Quest "{filepath}" successfully loaded.')
 
     def _clear_game(self) -> None:
         '''Clear all game related resources'''
@@ -127,23 +204,6 @@ class Game:
         self.clear_quests()
 
         logger.info(f'All game resources cleared.')
-
-    def new_game(self, filepath: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
-
-        logger.debug(f'Loading quest "{filepath}".')
-
-        if clear_before_load:
-            # Clear everything
-            self._clear_game()
-
-        # Add new quest
-        quest = self.quest_loader.load_quest_from_file(filepath=filepath)
-        self._quests.update({quest.alias : quest})
-
-        # Trigger the event
-        self.event_manager.add_event(Event('QUEST_START', self, None, params={'quest_id': quest.alias}))
-
-        logger.info(f'Quest "{filepath}" successfully loaded.')
 
     def delete_quest(self, quest_name: str) -> None:
         '''Deletes quests from the game'''

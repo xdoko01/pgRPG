@@ -471,6 +471,11 @@
 ### 2023-02-20 Behavioral trees support templates
   - Sub-tree of behavior tree can be stored in a file or in the `template` section of the quest and loaded from there. Those templates can be called with parameters that are dynamically added to the template definition upon the load (similar to entity templates).
 
+### 2023-05-05 New Argument for Processors - step
+  - Newly, the processor does not need to run every time. There is new optional parameter `step` (by default set to `1`) that marks the frequency of processor execution. (1 means every cycle, 2 means every second cycle, 5 means every 5th cycle).
+  - This might become handy, if the processor is resource heavy and does not need to run real-time. For example, processor for checking if the entity has reached the destination position
+  - Example of processor definition: `["new.position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}]`
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -491,7 +496,7 @@
   - [x] Prereq extension so that it supports `and`, `or`, `oneOf`, `anyOf`
   - [ ] Implement post-requisities on processor and change the process of processor loads - 1st load all processors without checks, 2nd check prerequisities for all proc 3rd check post-requisities for all proc
   - [x] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button - None command must be assigned in Controllable component
-  - [x] **Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler**
+  - [x] Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler
   - [x] Prepare script that restarts the quest - clear all quest and loads specific quest
   - [x] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
   - [x] *Also reimplement EventManager to manage all the handlers loaded from the quests*.
@@ -502,8 +507,8 @@
   - [ ] BUG - when restarting quest in the `collect_coins` game, there is loading screen in the background
   - [ ] option not to scale-up the render models to 64x64
   - [x] implement Sokoban-like game - moving the boxes is ok, when box is landed to the correct spot, it changes??? How to implement that?
-  - [ ] rewrite commands so that code in the package is not needed and commands register themselves with the command manager
-  - [ ] implement that the processors are not running in every cycle - some nice implementation for all processors in esper probably would be nice
+  - [x] rewrite commands so that code in the package is not needed and commands register themselves with the command manager
+  - [x] implement that the processors are not running in every cycle - some nice implementation for all processors in esper probably would be nice
   - [X] BUG - on the map the second layer is not transparent but has black background - update pyTMX helped
   - [x] Template not only from files but also from previous entities definition in the quest file - implement copy entity method, maybe on esper level. Then use it in quest definition.
   - [ ] optimize  `map.get_tile_images_by_rect(layer, camera.map_screen_rect)` function. there are unnecessary calculation being done every cycle - tiles to show
@@ -519,11 +524,14 @@
   - [x] Possibility to update entities in the quest definition - adding new components to already existing entities.
   - [x] Possibility to update entities in the quest definition - deleting components on existing entities.
   - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
-  - [ ] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
+  - [x] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
   - [ ] find all places where we are loading a dictionary and use functions.get_dict and functions.get_dict_params functions
   - [ ] Implement `ALL`, `` into the cleanup at the beginning of the quest definition - ideally some pre_processing that will substitute keyword ALL with all the processors in the
   game. By doing it this way it will not be necessary to modify the logic of ecs_manager's delete_processor.
-  - [ ] Redo prereqs in the quest manager - the load is ugly
+  - [x] Redo prereqs in the quest manager - the load is ugly
+  - [ ] Implement new component `Vision` that will specify what the entity can see and will hold list of entities that are being seen.
+  - [ ] Implement new component `Hearing` that will specify what the entity can hear and will hold list of entities that are being heard.
+
 
 ## TODOs - Behavior Trees for AI implementation, commands and brain
   - special commands for init and for complete functions are problematic, because they return SUCCESS or FAILURE and by doing so, closing the whole node. Hence added result parameter for selected commands that would forcefully return RUNNING
@@ -535,6 +543,30 @@
   - map manager to return path and to return visibility
 
 ## TODO
+
+## GUARD behavior
+
+### MoveAlongThePathUntilEnemySpoted tree command
+  *Goal*
+    - Moves entity along the path specified by points until enemy is spoted
+  *Results*
+    - `SUCCESS` - enemy has been spotted
+    - `RUNNING` - moving along the path
+    - `FAILURE` -
+  *Params*
+    - `enemy` - who should be considered as an enemy
+    - `range` - how close must enemy get to be spotted
+  *Steps*
+   - Save enemy position component
+   - Save entity position component
+
+
+   - Check if the distance to enemy is short and facing the enemy
+     - if YES, 
+       - finish with `SUCCESS`
+     - if NO,
+       - finish with `RUNNING`
+
 
 ## HUNTER behavior 
 

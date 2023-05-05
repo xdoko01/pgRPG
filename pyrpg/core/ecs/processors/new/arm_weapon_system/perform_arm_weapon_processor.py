@@ -3,7 +3,7 @@ __all__ = ['PerformArmWeaponProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
@@ -48,10 +48,10 @@ class PerformArmWeaponProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf', 'new.arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor']
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
@@ -64,7 +64,10 @@ class PerformArmWeaponProcessor(Processor):
         '''  Detects fighters that are about to arme the weapon and performs
         the actual arming, if the fighter is capable.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have HasWeapon and FlagIsAboutToArmWeapon - those are candidates for successful arming
         for ent_fighter, (has_weapon, flag_is_about_to_arm_weapon) in self.world.get_components(HasWeapon, FlagIsAboutToArmWeapon):

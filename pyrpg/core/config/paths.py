@@ -17,3 +17,4 @@ CONSOLE_SCRIPT_PATH = Path(PATHS.get('console_script_path'))
 MENU_BACKGROUND_PATH = Path(PATHS.get('menu_background_path'))
 
 SCRIPT_MODULE_PATH = PATHS.get('script_module_path')
+COMMAND_MODULE_PATH = PATHS.get('command_module_path')

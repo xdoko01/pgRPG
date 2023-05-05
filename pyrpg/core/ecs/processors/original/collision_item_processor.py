@@ -1,7 +1,7 @@
 __all__ = ['CollisionItemProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -14,8 +14,8 @@ from pyrpg.core.ecs.components.original.has_inventory import HasInventory
 from pyrpg.core.events.event import Event
 
 class CollisionItemProcessor(Processor):
-    def __init__(self, item_pickup_event_queue):
-        super().__init__()
+    def __init__(self, item_pickup_event_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.item_pickup_event_queue = item_pickup_event_queue
 
     def initialize(self, register):
@@ -23,6 +23,11 @@ class CollisionItemProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         for ent, (item, collision) in self.world.get_components(Pickable, Collidable):
 
             # Process everything that collided with item

@@ -5,6 +5,10 @@ from pyrpg.core.ecs.components.new.position import Position # To work with compo
 from .new_move_add import cmd_new_move_add
 import math # for calculation of square root move_to
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_new_move_to_target_range, alias=module_name)
 
 def cmd_new_move_to_target_range(*args, **kwargs):
     ''' Move to the position where the enemy entity is in the range of the projectile

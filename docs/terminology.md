@@ -20,7 +20,7 @@ Unique string representing the entity. One entity alias belongs to max one entit
  - Short form - `proc`
  - Long form - `processor`
 
-  - Processor alias
+  - Processor alias, processor class def
     - `"original.game_events_processor:GameEventsExProcessor"`
   - Processor definition
     - `["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "DESTROYED", "CUST_UI_CONFIRM"]}]`
@@ -33,3 +33,9 @@ Unique string representing the entity. One entity alias belongs to max one entit
 # ID versus ALIAS
  - id is a number or UUID assigned to some game object without any semantic meaning
  - alias is human readable word representing the game object in definitions
+
+# delete / clear / remove ???
+
+# load / create
+ - load 
+ - create when returning some real object instance as result

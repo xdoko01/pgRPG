@@ -25,7 +25,7 @@
 			"description": "Templates description",
 			"type": "array",
 			"items": {
-			  "type": "string"
+				"$ref": "#/basics/template_def"
 			},
 			"minItems": 0,
 			"uniqueItems": true

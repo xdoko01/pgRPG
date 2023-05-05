@@ -1,7 +1,7 @@
 __all__ = ['CollisionEntityProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -19,8 +19,8 @@ class CollisionEntityProcessor(Processor):
     on collisions
     '''
 
-    def __init__(self, entity_coll_event_queue, input_command_queue):
-        super().__init__()
+    def __init__(self, entity_coll_event_queue, input_command_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.entity_coll_event_queue = entity_coll_event_queue
         self.input_command_queue = input_command_queue
 
@@ -29,6 +29,10 @@ class CollisionEntityProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (position, collision) in self.world.get_components(Position, Collidable):
 

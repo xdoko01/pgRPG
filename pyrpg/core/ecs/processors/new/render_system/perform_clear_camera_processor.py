@@ -3,7 +3,7 @@ __all__ = ['PerformClearCameraProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -36,7 +36,7 @@ class PerformClearCameraProcessor(Processor):
 
     __slots__ = ['clear_color']
 
-    def __init__(self, clear_color=(0, 0, 0)):
+    def __init__(self, *args, clear_color=(0, 0, 0),  **kwargs):
         ''' Initiation of PerformClearCameraProcessor processor.
 
         Parameters:
@@ -44,7 +44,7 @@ class PerformClearCameraProcessor(Processor):
             :param clear_color: Solid color used for clearing.
             :type clear_color: tuple
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.clear_color = clear_color
 
@@ -55,7 +55,10 @@ class PerformClearCameraProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Fill the cameras with one solid color.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Clear the game camera window surfaces
         for _, (camera) in self.world.get_component(Camera):

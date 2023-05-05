@@ -3,6 +3,11 @@
 
 import backup.core.engine as engine # To reference the world
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_set_quest_phase, alias=module_name)
+
 def cmd_set_quest_phase(*args, **kwargs):
     ''' In the game cinematics processor, it may come to the point when I want to proceed
     to the next phase of the game.

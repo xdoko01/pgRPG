@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagWasTeleportedByProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_was_teleported_by import FlagWasTeleportedBy
@@ -35,10 +35,10 @@ class RemoveFlagWasTeleportedByProcessor(Processor):
         'new.teleport_system.perform_teleportation_processor:PerformTeleportationProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -47,7 +47,10 @@ class RemoveFlagWasTeleportedByProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the flag that the entity was teleported.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagWasTeleportedBy):
             self.world.remove_component(ent, FlagWasTeleportedBy)

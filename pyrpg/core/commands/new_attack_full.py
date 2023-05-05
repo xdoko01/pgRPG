@@ -3,6 +3,11 @@
 import pygame
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack # To work with components in commands (remove search add ...)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_new_attack_full, alias=module_name)
+
 def cmd_new_attack_full(*args, **kwargs):
     ''' Add FlagDoAttack to the entity so long to fill the full attack animation cycle
     '''

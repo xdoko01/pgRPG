@@ -4,6 +4,10 @@ import pygame
 from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 import math # for calculation of square root move_to
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_new_guard, alias=module_name)
 
 def cmd_new_guard(*args, **kwargs):
     ''' Stay at the guarded position. Once enemy spotted, guard ends.

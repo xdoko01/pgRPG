@@ -122,7 +122,9 @@ PATHS = {
     "save_path" : "pyrpg/save/",
     "console_script_path" : "pyrpg/utils/scripts/",
     "menu_background_path" : "pyrpg/resources/images/menu_background/waterfall/",
-    "script_module_path" : "pyrpg.core.scripts."
+    "script_module_path" : "pyrpg.core.scripts.",
+    "command_module_path" : "pyrpg.core.commands."
+
 }
 
 CONSOLE = {
@@ -233,7 +235,7 @@ LOGGING = {
     "loggers" : {
 
         # Save all the logs from processor classes to the file
-        "pyrpg.core.ecs.processors.new.destroy_system" : {
+        "pyrpg.core.ecs.processors" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
             "handlers" : ["file_handler_proc"], # uncomment to log all the processors
             #"handlers" : ["null"],  # do not log to file for speed
@@ -243,8 +245,8 @@ LOGGING = {
         # Save all the logs from engine
         "pyrpg.core.engine" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_engine"], # uncomment to log to the file
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_engine"], # uncomment to log to the file
+            "handlers" : ["null"],  # do not log to file for speed
             #"handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
@@ -252,8 +254,8 @@ LOGGING = {
         # Save all the logs from behavior tree classes to the file
         "pyrpg.core.btrees" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_btrees"], # uncomment to log to the file
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_btrees"], # uncomment to log to the file
+            "handlers" : ["null"],  # do not log to file for speed
             #"handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
@@ -261,8 +263,8 @@ LOGGING = {
         # Save all the logs from manager classes to the file
         "pyrpg.core.managers" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_mng"], # uncomment to log all the managers
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_mng"], # uncomment to log all the managers
+            "handlers" : ["null"],  # do not log to file for speed
             #"handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
@@ -270,8 +272,8 @@ LOGGING = {
         # Save all the logs from command functions to the file
         "pyrpg.core.commands" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_cmd"], # uncomment to log all the commands
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_cmd"], # uncomment to log all the commands
+            "handlers" : ["null"],  # do not log to file for speed
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
 

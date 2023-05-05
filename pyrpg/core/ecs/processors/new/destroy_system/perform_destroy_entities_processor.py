@@ -4,7 +4,7 @@ import logging
 from pygame.time import get_ticks
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
@@ -40,10 +40,10 @@ class PerformDestroyEntitiesProcessor(Processor):
 
     __slots__ = []
 
-    def __init__(self, add_event_fnc, remove_entity_fnc):
+    def __init__(self, add_event_fnc, remove_entity_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.add_event_fnc = add_event_fnc
         self.remove_entity_fnc = remove_entity_fnc
@@ -56,7 +56,10 @@ class PerformDestroyEntitiesProcessor(Processor):
         ''' Get all IsDestroyed components and based on ttl remove
         corresponding entities from the world.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Select all entities that have been destroyed in this cycle
         for ent, (is_destroyed) in self.world.get_component(IsDestroyed):

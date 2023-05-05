@@ -3,7 +3,7 @@ __all__ = ['GenerateDestroyOnCollisionProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.destroy_on_collision import DestroyOnCollision
@@ -38,10 +38,10 @@ class GenerateDestroyOnCollisionProcessor(Processor):
         'new.collision_system:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -50,7 +50,10 @@ class GenerateDestroyOnCollisionProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Generates the IsDestroyed component.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (flag_has_collided, destroy_on_collision) in self.world.get_components(FlagHasCollided, DestroyOnCollision):
 

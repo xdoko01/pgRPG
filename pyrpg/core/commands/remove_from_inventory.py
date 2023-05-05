@@ -4,6 +4,11 @@
 import backup.core.engine as engine # To reference the world 
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_remove_from_inventory, alias=module_name)
+
 def cmd_remove_from_inventory(*args, **kwargs):
     ''' Input
         - giver's entity

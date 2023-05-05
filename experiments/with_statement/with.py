@@ -1,4 +1,5 @@
 from threading import Thread
+import pygame
 
 class ProgressBar():
     '''Class implementing the progress bar'''

@@ -3,7 +3,7 @@ __all__ = ['PerformDamageSingleProcessor', 'PerformDamageFullProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.damageable import Damageable
@@ -54,10 +54,10 @@ class PerformDamageSingleProcessor(Processor):
         'new.damage_system:GenerateDamageProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
@@ -70,7 +70,10 @@ class PerformDamageSingleProcessor(Processor):
         ''' Detects entities that are about to be damaged and performs
         the actual damage if those are damageable.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Damageable and FlagIsAboutToBeDamagedBy - those are candidates for successful damage
         for ent_damageable, (damageable, flag_is_about_to_be_damaged_by) in self.world.get_components(Damageable, FlagIsAboutToBeDamagedBy):
@@ -149,10 +152,10 @@ class PerformDamageFullProcessor(Processor):
         'new.damage_system:GenerateDamageProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
@@ -165,7 +168,10 @@ class PerformDamageFullProcessor(Processor):
         '''  Detects entities that are about to be teleported and performs
         the actual teleportation, if the picker is capable.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Damageable and FlagIsAboutToBeDamagedBy - those are candidates for successful damage
         for ent_damageable, (damageable, flag_is_about_to_be_damaged_by) in self.world.get_components(Damageable, FlagIsAboutToBeDamagedBy):

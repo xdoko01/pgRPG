@@ -15,6 +15,11 @@ from pyrpg.core.config.frames import PLAYER_TALK_FRAME
 
 from pyrpg.core.config.keys import K_SUBMIT
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_show_dialog_dynamic, alias=module_name)
+
 def cmd_show_dialog_dynamic(*args, **kwargs):
     ''' Show text dialog - dynamic
     Speed of text displaying is managed by CanTalk parameter speed

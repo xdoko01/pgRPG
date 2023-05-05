@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagIsAboutToPickEntityProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_is_about_to_pick_entity import FlagIsAboutToPickEntity
@@ -36,10 +36,10 @@ class RemoveFlagIsAboutToPickEntityProcessor(Processor):
         'new.pickup_system.perform_pickup_processor:PerformPickupProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -49,7 +49,10 @@ class RemoveFlagIsAboutToPickEntityProcessor(Processor):
         ''' Removes the flag that the item has been considered for picking
         at the end of the cycle.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagIsAboutToPickEntity):
 

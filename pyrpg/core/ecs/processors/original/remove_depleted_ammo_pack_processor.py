@@ -1,7 +1,7 @@
 __all__ = ['RemoveDepletedAmmoPackProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.ammo_pack import AmmoPack
@@ -12,9 +12,9 @@ class RemoveDepletedAmmoPackProcessor(Processor):
 
     __slots__ = ['remove_entity_fnc']
 
-    def __init__(self, remove_entity_fnc):
+    def __init__(self, remove_entity_fnc, *args, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.remove_entity_fnc = remove_entity_fnc
 
@@ -23,6 +23,10 @@ class RemoveDepletedAmmoPackProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (ammo_pack, factory, flag_factory_depleted) in self.world.get_components(AmmoPack, Factory, FlagFactoryDepleted):
 

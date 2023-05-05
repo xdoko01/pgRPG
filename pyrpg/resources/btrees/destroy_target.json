@@ -1,7 +1,7 @@
 {
     "type": "RepeatUntilFail",
     "name": "Repeat Seak and Attack Until Possible",
-    "vars": ["$target", "$range=150", "$get_target_pos_ms=1200", "$hunt_time=999"],
+    "vars": ["$bb_entity_pos_comp_in", "$target_in", "$range_in=150", "$get_target_pos_ms_in=1200", "$hunt_time_in=999", "$attack_time_ms_in"],
     "children": [
         {
             // Attack till death
@@ -14,16 +14,10 @@
                     "name": "Move To Target",
                     "children": [
                         {
-                            // Save my position component ref on bb
-                            "type": "Behavior",
-                            "name": "Save My Position Component",
-                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "new.position:Position"}]
-                        },
-                        {
                             // Save target position component ref on bb
                             "type": "Behavior",
                             "name": "Save Target Position Component",
-                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "entity": "$target", "component": "new.position:Position"}]
+                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "new.position:Position"}]
                         },
                         {
                             // Move to the close range to the target
@@ -33,10 +27,10 @@
                                 "btree.move_to_target_range", 
                                 {
                                     "target_pos_comp": "bb_target_pos_comp", 
-                                    "entity_pos_comp": "bb_entity_pos_comp",
-                                    "range": "$range",
-                                    "get_target_position_ms": "$get_target_pos_ms", // the shorter the time the better opponent
-                                    "max_hunt_time_s": "$hunt_time"	// stop the hunt if not reached in those sec duration
+                                    "entity_pos_comp": "$bb_entity_pos_comp_in",
+                                    "range": "$range_in",
+                                    "get_target_position_ms": "$get_target_pos_ms_in", // the shorter the time the better opponent
+                                    "max_hunt_time_s": "$hunt_time_in"	// stop the hunt if not reached in those sec duration
                                 }
                             ]
                         }
@@ -51,13 +45,13 @@
                             // Save entity damagable component
                             "type": "Behavior",
                             "name": "Save My Damagable Component",
-                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "new.damageable:Damageable"}]
+                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "new.damageable:Damageable"}]
                         },
                         {
                             // Save target damagable component
                             "type": "Behavior",
                             "name": "Save Target Damageable Component",
-                            "cmd_process": ["bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "entity": "player01", "component": "new.damageable:Damageable"}]
+                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "bb_entity": "$target", "component": "new.damageable:Damageable"}]
                         },
                         {
                             // Attack
@@ -68,7 +62,7 @@
                                 {
                                     "target_damageable_comp": "bb_target_damageable_comp", 
                                     "entity_damageable_comp": "bb_entity_damageable_comp",
-                                    "attack_time_ms": 750
+                                    "attack_time_ms": "$attack_time_ms_in"
                                 }
                             ]
                         }

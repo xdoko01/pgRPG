@@ -3,7 +3,7 @@ __all__ = ['GenerateProjectileProcessor', 'PrepareProjectileProcessor', 'CreateE
 import pygame
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
@@ -20,14 +20,18 @@ from pyrpg.core.ecs.components.original.container import Container
 
 class PrepareProjectileProcessor(Processor):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get entities capable of producing projectiles - HasWeapon, on the last attack frame RenderableModel
         for ent, (has_weapon, renderable_model, position) in self.world.get_components(HasWeapon, RenderableModel, Position):
@@ -63,8 +67,8 @@ class CreateEntityOnPositionProcessor(Processor):
 
     __slots__ = ['create_entity_fnc']
 
-    def __init__(self, create_entity_fnc=None):
-        super().__init__()
+    def __init__(self, *args, create_entity_fnc=None, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.create_entity_fnc = create_entity_fnc
 
@@ -73,7 +77,10 @@ class CreateEntityOnPositionProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         for ent, (factory, flag_create_from_factory) in self.world.get_components(Factory, FlagCreateFromFactory):
 
             # Prepare ID for the new entity
@@ -144,8 +151,8 @@ class GenerateProjectileProcessor(Processor):
 
     __slots__ = ['create_entity_fnc']
 
-    def __init__(self, create_entity_fnc=None):
-        super().__init__()
+    def __init__(self, *args, create_entity_fnc=None, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.create_entity_fnc = create_entity_fnc
 
@@ -156,6 +163,10 @@ class GenerateProjectileProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' TODO - is there any variable from the global world that we want to use here?
         '''
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get entities capable of producing projectiles - HasWeapon, on the last attack frame RenderableModel
         for ent, (has_weapon, renderable_model, position) in self.world.get_components(HasWeapon, RenderableModel, Position):

@@ -4,6 +4,51 @@
 
 	"description": "File with definitions",
 
+	"basics": {
+		"class_def": {
+			"title": "Class definition",
+			"description": "String representation of a class in given package and module",
+			"examples": "new.movable:Movable",
+
+			"type": "string",
+			"pattern": "^\\([a-z]+\\.\\)*[a-z]+:[A-Z][a-z]+$"
+		},
+		"template_str_def": {
+			"title": "Template String definition",
+			"description": "String representation of a template with or without parameters",
+			"examples": [
+				"new/model/body/special/minotaur",  
+				"t_tile_pos(0, 0, test_arena_sand)"
+			],
+
+			"type": "string",
+			"pattern": "^\\([a-zA-Z0-9]+\\/\\)*[a-zA-Z0-9]+\\(( *.*)\\)$"
+		},
+		"template_list_def": {
+			"title": "Template List definition",
+			"description": "List representation of a template with or without parameters",
+			"examples": [
+				["new/_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in":[]}]
+			],
+
+			"type": "array",
+			"prefixItems": [
+				{"type": "string", "pattern": "^\\([a-zA-Z0-9]+\\/\\)*[a-zA-Z0-9]+$"},
+				{"type": "object"}
+			],
+			"items": false
+		},
+		"template_def": {
+			"title": "Template Definition",
+			"description": "Representation of a template with or without parameters",
+
+			"oneOf": [
+				{"$ref": "#/basics/template_str_def"},
+				{"$ref": "#/basics/template_list_def"}
+			]
+		}
+	},
+
 	"definitions" : {
 
 		"list_of_position_targets": {

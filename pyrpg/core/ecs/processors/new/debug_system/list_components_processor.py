@@ -3,7 +3,7 @@ __all__ = ['ListComponentsProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -16,10 +16,10 @@ class ListComponentsProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self, comp_name):
+    def __init__(self, comp_name, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.comp_name = comp_name
         self.comp_class = eval(f'components.{comp_name}')
@@ -31,7 +31,10 @@ class ListComponentsProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Get all components comp_name and list their values
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Iterate all interesting components
         for ent, (component) in self.world.get_component(self.comp_class):

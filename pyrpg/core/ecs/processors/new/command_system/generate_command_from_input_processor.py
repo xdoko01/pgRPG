@@ -3,7 +3,7 @@ __all__ = ['GenerateCommandFromInputProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.controllable import Controllable
@@ -34,14 +34,14 @@ class GenerateCommandFromInputProcessor(Processor):
 
     PREREQ = []
 
-    def __init__(self, FNC_ADD_COMMAND):
+    def __init__(self, FNC_ADD_COMMAND, *args, **kwargs):
         ''' Initiation of NewInputProcessor processor.
 
         Parameters:
             :param add_command_fnc: Reference to the function that adds command to the command queue.
             :param add_command_fnc: reference
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Reference to function for adding to command queue
         self.add_command_fnc = FNC_ADD_COMMAND
@@ -54,7 +54,10 @@ class GenerateCommandFromInputProcessor(Processor):
         ''' Process entities having Controllable component. Read user
         input and generate corresponding commands.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         def _add_cmds_to_queue(cmd_list, ent, cmd_add_fnc):
             ''' Checks if entity is already part of the command. If not, fills owner of Controllable entity.

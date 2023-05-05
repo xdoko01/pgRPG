@@ -6,6 +6,11 @@ import logging
 # Logger init
 logger = logging.getLogger(__name__)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_bb_set_locals, alias=module_name)
+
 def cmd_bb_set_locals(*args, **kwargs):
     ''' Set/overwrite the values of the local blackboard for currenty
     running behavior.

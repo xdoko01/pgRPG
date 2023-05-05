@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagCreateFromFactoryProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_create_from_factory import FlagCreateFromFactory
@@ -32,10 +32,10 @@ class RemoveFlagCreateFromFactoryProcessor(Processor):
         'new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -44,7 +44,10 @@ class RemoveFlagCreateFromFactoryProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the flag with data for generation from the factory.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagCreateFromFactory):
 

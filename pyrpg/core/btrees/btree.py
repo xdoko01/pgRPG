@@ -357,7 +357,7 @@ class Sequence(Composite):
             self.on_completion(result)
 
 class Selector(Composite): 
-    '''Selector will return a success if any of its children succeed and not process 
+    '''Selector will return a success if any of its children succeeds and not process 
     any further children. It will fail if all children fail. This means a selector is 
     analagous with an OR gate.'''
 
@@ -456,11 +456,47 @@ class Decorator(TreeNode):
 
 
 class Inverter(Decorator):
-	'''A commonly used example of a decorator is the Inverter, which will 
-	simply invert the result of the child. A child fails and it will return 
-	success to its parent, or a child succeeds and it will return failure to 
-	the parent.'''
-	pass
+    '''A commonly used example of a decorator is the Inverter, which will 
+    simply invert the result of the child. A child fails and it will return 
+    success to its parent, or a child succeeds and it will return failure to 
+    the parent.'''
+
+    def __init__(self, name, parent=None, blackboard=None, **kwargs):
+        '''Create instance of Inverter node'''
+
+        # Call Decorator constructor
+        super().__init__(name, parent=parent, blackboard=blackboard)
+
+    def process(self) -> None:
+        '''Top-down process of searching the leaf node to execute and to have the RUNNING status.'''
+
+        # Call the super-class method - calls on_init function if it is the first tick
+        super().process()
+
+        # Call process() on the proper child - eventually trying to reach the Behavior leaf node
+        logger.debug(f'{self.depth * ">>> "}{self.__class__.__name__} - {self.name} - {self.status}: Calling process() on child "{self.children[0].name}"')
+        return self.children[0].process()
+
+    def notify_from_child(self, result: TreeNode.Status) -> None:
+        '''Callback from child to parent to notify the parent about the final 
+        status (SUCCESS, FAILURE).
+        If child returns success, return FAILURE.
+        If child returns failure, return SUCCESS.
+        '''
+
+        # Call the super-class method - just logs the child and status
+        super().notify_from_child(result)
+
+        # In case child reports FAILURE, return SUCCESS
+        if result == TreeNode.Status.FAILURE:
+            logger.debug(f'{self.depth * ">>> "}{self.__class__.__name__} - {self.name} - {self.status}: Received FAILURE from child, returning SUCCESS to the parent.')
+            self.on_completion(TreeNode.Status.SUCCESS)
+
+        # IN case child returns SUCCESS, return FAILURE
+        else:
+            logger.debug(f'{self.depth * ">>> "}{self.__class__.__name__} - {self.name} - {self.status}: Received SUCCESS from child, returning FAILURE to the parent.')
+            self.on_completion(TreeNode.Status.FAILURE)
+
 
 class Succeeder(Decorator):
 	'''A succeeder will always return success, irrespective of what the child 

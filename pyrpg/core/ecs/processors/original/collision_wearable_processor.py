@@ -1,7 +1,7 @@
 __all__ = ['CollisionWearableProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -14,8 +14,8 @@ from pyrpg.core.ecs.components.original.can_wear import CanWear
 from pyrpg.core.events.event import Event
 
 class CollisionWearableProcessor(Processor):
-    def __init__(self, wearable_event_queue):
-        super().__init__()
+    def __init__(self, wearable_event_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.wearable_event_queue = wearable_event_queue
 
     def initialize(self, register):
@@ -23,6 +23,11 @@ class CollisionWearableProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         for ent, (item, collision) in self.world.get_components(Wearable, Collidable):
 
             # Process everything that collided with wearable entity

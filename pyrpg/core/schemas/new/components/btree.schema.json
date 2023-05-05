@@ -1,0 +1,62 @@
+{
+	"$id": "btree.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "BTree Component",
+	"description": "Schema validating the BTree component.",
+
+	"examples" : [
+        {
+            "type" : "new.btree:BTree", 
+            "params" : {
+                "blackboard": {
+                },
+                "tree": {
+                    "type": "Sequence",
+                    "name": "Guard",
+                    "children": [
+                        {
+                            "type": "Behavior",
+                            "name": "Save My Position Component",
+                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "new.position:Position"}]
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.btree:BTree" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the BTree component class - 'blackboard', 'tree'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"blackboard": {
+					"title": "Blackboard",
+					"description": "Values stored on the blackboard",
+					"type": "object"
+                },
+                "tree": {
+					"title": "BTree",
+					"description": "Behavior Tree",
+					"type": "object"
+                }
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

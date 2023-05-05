@@ -3,7 +3,7 @@ __all__ = ['ResolveMapCollisionsProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -35,7 +35,7 @@ class ResolveMapCollisionsProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self, maps):
+    def __init__(self, maps, *args, **kwargs):
         ''' Init the processor.
 
         Parameters:
@@ -43,7 +43,7 @@ class ResolveMapCollisionsProcessor(Processor):
             :param maps: reference
 
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.maps = maps
 
@@ -54,7 +54,10 @@ class ResolveMapCollisionsProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' On collision, return the entity on its original position.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Do collision against the map 
         for ent_moved, (coll_moved, pos_moved) in self.world.get_components(Collidable, Position):

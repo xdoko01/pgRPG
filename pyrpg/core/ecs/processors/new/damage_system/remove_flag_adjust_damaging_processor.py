@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagAdjustDamagingdProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_adjust_damaging import FlagAdjustDamaging
@@ -31,10 +31,10 @@ class RemoveFlagAdjustDamagingProcessor(Processor):
         'new.damage_system:PerformAdjustDamagingProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -43,7 +43,10 @@ class RemoveFlagAdjustDamagingProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the FlagAdjustDamaging flag.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagAdjustDamaging):
 
