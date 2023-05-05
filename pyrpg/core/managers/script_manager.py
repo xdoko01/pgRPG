@@ -57,7 +57,7 @@ class ScriptManager:
             data=event.params
         )
 
-    def execute_script(self, script_module_name : str, *script_args, **script_kwargs):
+    def execute_script(self, script_module_name: str, *script_args, **script_kwargs):
         '''Runs the script function with given arguments.'''
 
         # Check if script module is already registered

@@ -1,5 +1,5 @@
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.camera import Camera
@@ -39,7 +39,7 @@ class RenderTalkProcessor2(Processor):
 
     __slots__ = ['window', 'debug', 'font']
 
-    def __init__(self, window, debug=False):
+    def __init__(self, window, *args, debug=False, **kwargs):
         ''' Initiation of RenderProcessor processor.
         
         Parameters:
@@ -50,7 +50,7 @@ class RenderTalkProcessor2(Processor):
             :type debug: bool
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
         self.debug = debug
@@ -64,7 +64,10 @@ class RenderTalkProcessor2(Processor):
         and dialog texts. Check the following video for more details about camera
         implementation of scrolling https://youtu.be/3zV2ewk-IGU.
         '''
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
 
@@ -138,7 +141,7 @@ class RenderTalkProcessor(Processor):
 
     __slots__ = ['window', 'debug']
 
-    def __init__(self, window, debug=False):
+    def __init__(self, window, *args, debug=False, **kwargs):
         ''' Initiation of RenderProcessor processor.
         
         Parameters:
@@ -149,7 +152,7 @@ class RenderTalkProcessor(Processor):
             :type debug: bool
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
         self.debug = debug
@@ -163,6 +166,11 @@ class RenderTalkProcessor(Processor):
         and dialog texts. Check the following video for more details about camera 
         implementation of scrolling https://youtu.be/3zV2ewk-IGU.
         '''
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
 

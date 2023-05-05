@@ -3,6 +3,10 @@
 
 from pyrpg.core.ecs.components.new.brain import Brain
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_new_modify_brain, alias=module_name)
 
 def cmd_new_modify_brain(*args, **kwargs):
     ''' Resets and Adds new commands to the entity's brain.

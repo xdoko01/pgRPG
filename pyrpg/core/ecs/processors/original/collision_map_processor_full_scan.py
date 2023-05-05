@@ -16,10 +16,10 @@ class CollisionMapProcessorFullScan(Processor):
 
     '''
 
-    def __init__(self, maps):
+    def __init__(self, maps, *args, **kwargs):
         ''' maps is link to global dict of maps
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.maps = maps
 
@@ -28,7 +28,8 @@ class CollisionMapProcessorFullScan(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        
+        super().process(*args, **kwargs)
+
         # Do collision against the map
         for ent_moved, (coll_moved, pos_moved) in self.world.get_components(Collidable, Position):
             

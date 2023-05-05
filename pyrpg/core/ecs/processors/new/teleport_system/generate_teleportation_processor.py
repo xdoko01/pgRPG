@@ -3,7 +3,7 @@ __all__ = ['GenerateTeleportationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.teleport import Teleport
@@ -40,10 +40,10 @@ class GenerateTeleportationProcessor(Processor):
         'new.collision_system.generate_collisions_processor:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -53,7 +53,10 @@ class GenerateTeleportationProcessor(Processor):
         '''  Detects entities that are pickable + have collided and assignes
         the FlagIsAboutToPickEntity to their pickers
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Pickable and FlagHasCollided - those are candidates for pickup
         for ent_teleport, (teleport, flag_has_collided) in self.world.get_components(Teleport, FlagHasCollided):

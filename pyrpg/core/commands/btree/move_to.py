@@ -11,6 +11,11 @@ from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 from pyrpg.core.btrees.btree import TreeNode
 status = TreeNode.Status
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_move_to, alias=module_name)
+
 def perform_movement(world, entity, moves: list) -> None:
     '''Get existing or create new FlagDoMove component
     and append the required moves to it.'''

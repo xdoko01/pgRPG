@@ -3,7 +3,7 @@ __all__ = ['PerformExpireAnimationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -42,10 +42,10 @@ class PerformExpireAnimationProcessor(Processor):
                 'new.command_system.perform_command_processor:PerformCommandProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -54,7 +54,10 @@ class PerformExpireAnimationProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Get all entities with renderable model that has not perform any action and update their action to idle.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Iterate all cameras
         for _, (camera) in self.world.get_component(Camera):

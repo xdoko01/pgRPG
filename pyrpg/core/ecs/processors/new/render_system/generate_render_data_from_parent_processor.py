@@ -3,7 +3,7 @@ __all__ = ['GenerateRenderDataFromParentProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -40,10 +40,10 @@ class GenerateRenderDataFromParentProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -53,7 +53,10 @@ class GenerateRenderDataFromParentProcessor(Processor):
         '''  Detects entities that need to be rendered but do not have their own Position 
         component.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that are parents of WeaponInUse
         for ent_parent, (position, renderable_model, has_weapon, weapon_in_use) in self.world.get_components(Position, RenderableModel, HasWeapon, WeaponInUse):

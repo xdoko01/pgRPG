@@ -1,7 +1,7 @@
 __all__ = ['CollisionTeleportProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.teleport import Teleport
@@ -14,8 +14,8 @@ from pyrpg.core.ecs.components.original.has_inventory import HasInventory
 from pyrpg.core.events.event import Event
 
 class CollisionTeleportProcessor(Processor):
-    def __init__(self, teleport_event_queue):
-        super().__init__()
+    def __init__(self, teleport_event_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.teleport_event_queue = teleport_event_queue
 
@@ -24,6 +24,11 @@ class CollisionTeleportProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         for ent, (teleport, collision) in self.world.get_components(Teleport, Collidable):
 
             # Process everything that collided with teleport

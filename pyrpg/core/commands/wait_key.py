@@ -3,6 +3,11 @@
 
 import pygame
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_wait_key, alias=module_name)
+
 def cmd_wait_key(*args, **kwargs):
     ''' Wait until key specified in parameter is pressed. Then continue.
     '''

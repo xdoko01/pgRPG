@@ -1,7 +1,7 @@
 __all__ = ['CollisionDamageProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.damaging import Damaging
@@ -12,14 +12,18 @@ from pyrpg.core.ecs.components.original.flag_add_damage import FlagAddDamage
 from pyrpg.core.events.event import Event
 
 class CollisionDamageProcessor(Processor):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Iterate all entities that are generating damage and can be collided
         for ent, (damaging, collision) in self.world.get_components(Damaging, Collidable):

@@ -3,6 +3,11 @@
 
 import pygame.time # pygame.ime
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_wait, alias=module_name)
+
 def cmd_wait(*args, **kwargs):
     ''' Wait command used for example to slow done the motion
     '''

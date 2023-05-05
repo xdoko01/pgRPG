@@ -8,6 +8,11 @@ from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 # Logger init
 logger = logging.getLogger(__name__)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_move_to_target_range, alias=module_name)
+
 def perform_movement(world, entity, moves: list) -> None:
     '''Get existing or create new FlagDoMove component
     and append the required moves to it.'''

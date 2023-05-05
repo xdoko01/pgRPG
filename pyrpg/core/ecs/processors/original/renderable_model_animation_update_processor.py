@@ -1,7 +1,7 @@
 __all__ = ['RenderableModelAnimationUpdateProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.camera import Camera
@@ -14,15 +14,18 @@ class RenderableModelAnimationUpdateProcessor(Processor):
     ''' Shift the animation
         - only once on every displayed entity
     '''
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Remember updated entities - to prevent several updates on simgle entity
         already_updated = set()
 

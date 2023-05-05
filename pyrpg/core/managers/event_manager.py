@@ -16,15 +16,20 @@ class EventManager:
         self._event_handlers = {}  # Stores all event handlers from quests and phases. Event is a dict key and value is list of handlers
         logger.info(f'EventManager initiated.')
 
-    def load_handler(self, event_type: str, handler_data: dict) -> None:
-        '''NEW - Get the handler description and store it in _event_handlers dictionary
+    def load_handler(self, handler_def: list) -> None:
+        '''Reads the definition of the handler on the input and registers it to the _event_handlers dictionary.
 
-            Example of handler_data
-                    {
-                        "id": "ev_start_game",
-                        "actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
-                    }
+            Example of handler_def
+                    [ 
+                        "QUEST_START",
+                        {
+                            "id": "ev_start_game",
+                            "actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+                        }
+                    ]
         '''
+        event_type, handler_data = handler_def
+
         # Check if the event type already exists
         if self._event_handlers.get(event_type) is None:
             # If not, create new record with handler id as a key and the rest as dict

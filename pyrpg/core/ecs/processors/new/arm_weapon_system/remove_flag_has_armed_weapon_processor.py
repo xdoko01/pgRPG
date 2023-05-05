@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagHasArmedWeaponProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_has_armed_weapon import FlagHasArmedWeapon
@@ -35,10 +35,10 @@ class RemoveFlagHasArmedWeaponProcessor(Processor):
         'new.arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -47,7 +47,10 @@ class RemoveFlagHasArmedWeaponProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the flag that the item was picked.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagHasArmedWeapon):
 

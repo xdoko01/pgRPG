@@ -15,15 +15,16 @@ class CollisionEntityGeneratorProcessorFullScan(Processor):
             -	COLLISION + POSITION - Above entities are checked against Collision and Position.
     '''
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
-            
+        super().process(*args, **kwargs)
+
         # Get all entities that have Motion and Collidable (only those can activelly hit something) - i.e. that could have moved and iterate those
         for ent_moved, (coll_moved, pos_moved) in self.world.get_components(Collidable, Position):
             # Compare that all collision + position entities - DUMMY WAY

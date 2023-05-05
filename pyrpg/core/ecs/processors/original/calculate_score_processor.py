@@ -1,7 +1,7 @@
 __all__ = ['CalculateScoreProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.has_score import HasScore
@@ -11,8 +11,8 @@ from pyrpg.core.ecs.components.original.flag_add_score import FlagAddScore
 from pyrpg.core.events.event import Event
 
 class CalculateScoreProcessor(Processor):
-    def __init__(self, score_event_queue):
-        super().__init__()
+    def __init__(self, score_event_queue, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.score_event_queue = score_event_queue
 
     def initialize(self, register):
@@ -20,6 +20,10 @@ class CalculateScoreProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Score comp and there is some score to be added
         for ent, (has_score, flag_add_score) in self.world.get_components(HasScore, FlagAddScore):

@@ -1,7 +1,7 @@
 __all__ = ['HandleDestroyedEntitiesProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.is_destroyed import IsDestroyed
@@ -19,16 +19,19 @@ import pyrpg.core.config.config as config # for the time before dead body disapp
 
 class HandleDestroyedEntitiesProcessor(Processor):
 
-    def __init__(self, destroy_event_queue):
+    def __init__(self, destroy_event_queue, *args, **kwargs):
         self.destroy_event_queue = destroy_event_queue
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
-
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
         # Select all entities that have been destroyed in this cycle
         for ent, (destroyed) in self.world.get_component(FlagNoHealth):
 

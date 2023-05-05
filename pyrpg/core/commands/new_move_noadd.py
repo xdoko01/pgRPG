@@ -9,6 +9,10 @@ from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with
 # Init logger
 logger = logging.getLogger(__name__)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_new_move_noadd, alias=module_name)
 
 def cmd_new_move_noadd(*args, **kwargs):
     ''' Move command that does not support adding moves to already existing

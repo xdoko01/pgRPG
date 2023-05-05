@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagIsAboutToBeDamagedByProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_is_about_to_be_damaged_by import FlagIsAboutToBeDamagedBy
@@ -33,10 +33,10 @@ class RemoveFlagIsAboutToBeDamagedByProcessor(Processor):
         'new.damage_system:GenerateDamageProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -45,7 +45,10 @@ class RemoveFlagIsAboutToBeDamagedByProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Removes the FlagHasCollided flag.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (_) in self.world.get_components(FlagIsAboutToBeDamagedBy):
 

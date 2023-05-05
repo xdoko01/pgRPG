@@ -4,6 +4,11 @@
 import backup.core.engine as engine # To reference the world 
 import pyrpg.core.ecs.components as components # To work with components in commands (remove search add ...)
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_toggle_control, alias=module_name)
+
 def cmd_toggle_control(*args, **kwargs):
     ''' Disable/enable any user input for given entity - used in cinematics so that 
     the user cannot break it with movements.

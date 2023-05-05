@@ -3,7 +3,7 @@ __all__ = ['GenerateProjectileFactoryDataProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.position import Position
@@ -44,10 +44,10 @@ class GenerateProjectileFactoryDataProcessor(Processor):
         'new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -58,7 +58,10 @@ class GenerateProjectileFactoryDataProcessor(Processor):
         and add FlagCreateFromFactory to them containing all the data necessary
         for correct generation.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get entities that in this cycle have all what it needs to generate projectile
         # Return also Collidable component if the entity has it, otherwise return None

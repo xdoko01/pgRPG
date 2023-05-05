@@ -1,7 +1,7 @@
 __all__ = ['GenerateScoreDamageProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.scorable_on_damage import ScorableOnDamage
@@ -10,14 +10,18 @@ from pyrpg.core.ecs.components.original.collidable import Collidable
 from pyrpg.core.ecs.components.original.flag_add_score import FlagAddScore
 
 class GenerateScoreDamageProcessor(Processor):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have collided and are damagable and are capable of points generation upon damage
         for _, (scorable_on_damage, flag_add_damage, collidable) in self.world.get_components(ScorableOnDamage, FlagAddDamage, Collidable):

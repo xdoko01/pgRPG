@@ -60,7 +60,7 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(Processor):
 
     __slots__ = ['window', 'debug']
 
-    def __init__(self, window, debug=False):
+    def __init__(self, window, *args, debug=False, **kwargs):
         ''' Initiation of RenderProcessor processor.
         
         Parameters:
@@ -71,7 +71,7 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(Processor):
             :type debug: bool
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
         self.debug = debug
@@ -85,6 +85,8 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(Processor):
         and dialog texts. Check the following video for more details about camera 
         implementation of scrolling https://youtu.be/3zV2ewk-IGU.
         '''
+        super().process(*args, **kwargs)
+
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
 

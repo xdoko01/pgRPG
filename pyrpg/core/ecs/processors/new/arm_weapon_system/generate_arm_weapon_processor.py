@@ -3,7 +3,7 @@ __all__ = ['GenerateArmWeaponProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.weapon import Weapon
@@ -38,10 +38,10 @@ class GenerateArmWeaponProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf', 'new.pickup_system.perform_pickup_processor:PerformPickupProcessor']
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -51,7 +51,10 @@ class GenerateArmWeaponProcessor(Processor):
         '''  Detects entities that are weapons + have been picked  and assigns
         the FlagIsAboutToArmWeapon to their pickers
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Weapon and FlagWasPickedBy - those are candidates for arming
         for ent_weapon, (weapon, flag_was_picked_by) in self.world.get_components(Weapon, FlagWasPickedBy):

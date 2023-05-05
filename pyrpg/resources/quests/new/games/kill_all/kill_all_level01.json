@@ -255,7 +255,7 @@
 				//{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
 
-				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "new.damageable:Damageable", "params" : {"health" : 10000}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 5000}},
 
 				//{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
@@ -386,97 +386,45 @@
 			"id" : "NPC02",
 			"templates" : [
 				"new/model/body/male/human/white()",	// template for the model
-				//"t_tile_pos(5, 5, test_arena_sand)",	// template for the position - valid form
-				//["t_tile_pos", [5, 5, "test_arena_sand"]], // other syntax for template - valid form
-				//["t_tile_pos", {"$tileX": 5, "$tileY": 5, "$map": "test_arena_sand"}],
-				//["t_tile_pos", [5, 5], {"$map": "test_arena_sand"}],
-				//"t_tile_pos($tileX=5, $tileY=5, test_arena_sand)",	// template for the position - valid form
-				//"t_tile_pos(5, 5, $map=test_arena_sand)",	// template for the position - valid form
 				"t_tile_pos($map=test_arena_sand, $tileY=5, $tileX=5)",	// template for the position - valid form
-
-				"new/_special/hunter(player01, 150, 1200, 100)"	// template for the btree behavior
+				"new/_special/hunter($target_in=player01)"	// template for the btree behavior
 			],
 			
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				// Seek and destroy the player
-				// 1/ move around
-				// 2/ check if you see anyone with controllable or targets before you (parameters can be visibility)
-				// 3/ when you see - save the target that you are following and its components
-				// 4/ start following the target
-				// 5/ when in range, attack
-				// 6/ check if the target is alive - if no, move to original position and start over
-				// 7/ check if my health is low - if yes, run away from the target
-				
-
-				{
-					"type" : "new.btree:BTree", 
-					"params" : {
-						"blackboard": {
-						},
-						"tree": {
-							// Find and attack target
-							"type": "Sequence",
-							"name": "Hunter",
-							"children": [
-								{
-									// Find target
-									"type": "Sequence",
-									"name": "Find Target",
-									"children": [
-										{
-											// Find target and save it on the bb
-											"type": "Behavior",
-											"name": "Set Target",
-											"cmd_process": ["bb_set_globals", {"bb_target_entity": "player01"}]
-										}
-									]
-								},
-								{
-									"type": "TemplateTree",
-									"name": "Destroy Target",
-									///
-									// Different options how to fill template with the data - all valid
-									///
-
-									//"template": ["destroy_target", {"$target": "player01", "$range": 150, "$get_target_pos_ms": 1200, "$hunt_time": 5}]
-									//"template": "destroy_target(player01, 150, 1200, 5)"
-									//"template": "destroy_target($target=player01, $range=150, $get_target_pos_ms=1200, $hunt_time=5)"
-									//"template": "destroy_target(player01, 150, 1200, $hunt_time=5)"
-									//"template": ["destroy_target", ["player01", 150, 1200, 5]]
-									//"template": ["destroy_target", ["player01", 150,1200], {"$hunt_time": 5}]
-									//"template": ["destroy_target", ["player01", 150], {"$hunt_time": 5}]
-									"template": "destroy_target(player01)"
-
-
-								}
-							]
-						}
-					}
-				},
 				{"type" : "new.has_weapon:HasWeapon", "params" : {
 					"weapons" : {
 						"bow" : {"weapon" : "wooden_bow_npc02", "generator" : "wooden_arrows_pack_npc02"}
 					}
 				}},
-
 				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
-
-
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 50}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
+		},
+		{
+			"id" : "NPC03",
+			"templates" : [
+				"new/model/body/special/minotaur",  
+				"t_tile_pos(0, 0, test_arena_sand)",
+				["new/_special/guard", {"$path_in": [[0,0],[50,0],[100,0],[150,0],[200,0],[150,0],[100,0],[50,0]], "$list_of_enemies_in":[]}]
+			],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
 		}
-
 	],
 
 	// How to handle events
-	"event_handlers" : {
-		"DESTROYED": [
+	"handlers" : [
+		[
+			"DESTROYED",
 			{
 				"id": "h_all_npcs_destroyed",
 				"actions": [
@@ -502,7 +450,10 @@
 						]
 					]
 				]
-			},
+			}
+		],
+		[
+			"DESTROYED",
 			{
 				"id": "h_player01_destroyed",
 				"actions": [
@@ -526,10 +477,10 @@
 				]
 			}
 		],
-		"CUST_UI_CONFIRM" : [
+		[
+			"CUST_UI_CONFIRM",
 			{
 				"id": "h_restart_confirmed",
-
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "h_player01_destroyed"],
@@ -537,6 +488,5 @@
 				]
 			}
 		]
-	}
-
+	]
 }

@@ -3,7 +3,7 @@ __all__ = ['DebugProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class DebugProcessor(Processor):
             :param caption: String that will be printed at the beginning of debug output - to differentiate in case planned on many places
             :param entities: List of entities that we want to see in the debug output. If empty, all are listed.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.caption = kwargs.get('caption', '')
         self.list_of_entities = kwargs.get('entities', [])
@@ -43,6 +43,11 @@ class DebugProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Print all the information about entities and components
         '''
+
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         print(f'*** DebugProcessor - START - {self.caption}')
 

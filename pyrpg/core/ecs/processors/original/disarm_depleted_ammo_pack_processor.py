@@ -1,7 +1,7 @@
 __all__ = ['DisarmDepletedAmmoPackProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.ammo_pack import AmmoPack
@@ -20,9 +20,9 @@ class DisarmDepletedAmmoPackProcessor(Processor):
     leave reference to the AmmoPack entity in HasWeapon component.
     '''
 
-    def __init__(self, ammo_pack_event_queue):
+    def __init__(self, ammo_pack_event_queue, *args, **kwargs):
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.ammo_pack_event_queue = ammo_pack_event_queue
 
@@ -31,6 +31,10 @@ class DisarmDepletedAmmoPackProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (ammo_pack, factory, flag_factory_depleted, flag_ammo_pack_armed) in self.world.get_components(AmmoPack, Factory, FlagFactoryDepleted, FlagAmmoPackArmed):
             

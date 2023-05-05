@@ -1,12 +1,12 @@
 __all__ = ['CommandProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 class CommandProcessor(Processor):
 
-    def __init__(self, game_commands_handler, debug=False):
-        super().__init__()
+    def __init__(self, game_commands_handler, *args, debug=False, **kwargs):
+        super().__init__(*args, **kwargs)
 
         self.game_commands_handler = game_commands_handler
         self.debug = debug
@@ -18,6 +18,10 @@ class CommandProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Call external function that processes all commands
         '''
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # In order to pass pressed keys to commands (such as ENTER is pressed)
         keys = kwargs.get('keys', [])

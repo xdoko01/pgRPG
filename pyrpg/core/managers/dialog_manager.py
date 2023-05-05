@@ -13,11 +13,11 @@ class DialogManager():
         self._dialogs = {}
         logger.info(f'DialogManager initiated.')
 
-    def add_dialog(self, dlg_data: dict) -> None:
+    def load_dialog(self, dialog_def: dict) -> None:
         ''' Create dialog from dictionary definition contained in dictionary
-        json_dlg_obj and stores it in global engine.dialogs dictionary
+        dialog_def and stores it in _dialogs dictionary
 
-        - dlg_data - original data from the quest
+        - dialog_def - original data from the quest
         - new_dlg_data - data after taking into account all templates
         - new_dlg_obj - dictionary with surface objects generated from the data
         '''
@@ -52,16 +52,16 @@ class DialogManager():
         new_dlg_data = {}
 
         # Decode dialog's id (name) - mandatory
-        new_dlg_id = dlg_data.get('id')
+        new_dlg_id = dialog_def.get('id')
 
         # Create the final dictionary definition using existing templates
-        for template in dlg_data.get("templates", []):
+        for template in dialog_def.get("templates", []):
 
             # Get the json definition of the template and merge it
             new_dlg_data = { **prepare_dlg_data_from_template(template), **new_dlg_data }
 
         # Now the final dialog description is stored here
-        new_dlg_data = { **new_dlg_data, **dlg_data }
+        new_dlg_data = { **new_dlg_data, **dialog_def }
 
         # Now there is time to make surfaces and register the data object
         new_dlg_obj = dialog.prepare_dlg_obj_from_data(new_dlg_data, img_path=IMAGE_PATH, font_path=FONT_PATH)

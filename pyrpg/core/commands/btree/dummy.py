@@ -2,6 +2,11 @@
 '''
 from pyrpg.core.btrees.btree import TreeNode
 
+def initialize(register, module_name):
+    '''Command registers itself at CommandManager'''
+    # Mandatory line
+    register(fnc=cmd_dummy, alias=module_name)
+
 def cmd_dummy(*args, **kwargs):
     ''' Dummy testing command, returning the required result
     and printing msg on the terminal

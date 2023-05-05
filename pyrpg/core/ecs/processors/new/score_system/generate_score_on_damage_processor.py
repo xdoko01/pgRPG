@@ -3,7 +3,7 @@ __all__ = ['GenerateScoreOnDamageProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
@@ -39,10 +39,10 @@ class GenerateScoreOnDamageProcessor(Processor):
         'new.damage_system:PerformDamageProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -52,7 +52,10 @@ class GenerateScoreOnDamageProcessor(Processor):
         '''  Detects entities that are damaged + have the ability to
         generate score and assign FlagHasScored to respective entity.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Damaging and FlagHasCollided - those are candidates for causing damage
         for ent_damaged, (flag_was_damaged_by, scorable_on_damage) in self.world.get_components(FlagWasDamagedBy, ScorableOnDamage):

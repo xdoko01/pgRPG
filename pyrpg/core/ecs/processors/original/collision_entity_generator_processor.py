@@ -1,7 +1,7 @@
 __all__ = ['CollisionEntityGeneratorProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -22,8 +22,8 @@ class CollisionEntityGeneratorProcessor(Processor):
             -	COLLISION + POSITION - Above entities are checked against Collision and Position.
     '''
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         
 
     def initialize(self, register):
@@ -31,6 +31,10 @@ class CollisionEntityGeneratorProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Reset  has_collided flag to False on all valid entities - it is used for deleting entities on collision
         for _, (coll) in self.world.get_component(Collidable):

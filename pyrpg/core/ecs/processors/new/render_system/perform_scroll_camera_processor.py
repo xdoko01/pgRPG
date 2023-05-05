@@ -3,7 +3,7 @@ __all__ = ['PerformScrollCameraProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -41,14 +41,14 @@ class PerformScrollCameraProcessor(Processor):
 
     __slots__ = ['maps']
 
-    def __init__(self, maps, debug=False):
+    def __init__(self, maps, *args, debug=False, **kwargs):
         ''' Initiation of PerformScrollCameraProcessor processor.
 
         Parameters:
             :param maps: Reference to the global dict with maps
             :type maps: reference
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.maps = maps
 
@@ -61,6 +61,10 @@ class PerformScrollCameraProcessor(Processor):
         the following video for more details about camera implementation
         https://youtu.be/3zV2ewk-IGU.
         '''
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for _, (position, camera) in self.world.get_components(Position, Camera):
 

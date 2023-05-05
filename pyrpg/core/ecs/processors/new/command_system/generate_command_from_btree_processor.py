@@ -4,7 +4,7 @@ import logging
 import pygame	# for pygame.time.get_ticks()
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.btree import BTree
@@ -37,14 +37,14 @@ class GenerateCommandFromBTreeProcessor(Processor):
         'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 
-    def __init__(self, FNC_ADD_COMMAND):
+    def __init__(self, FNC_ADD_COMMAND, *args, **kwargs):
         ''' Init the processor.
 
         Parameters:
             :param add_command_fnc: Reference to the function that adds command to the command queue.
             :param add_command_fnc: reference to fnc
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         # Reference to function for adding to command queue
         self.add_command_fnc = FNC_ADD_COMMAND
@@ -56,14 +56,17 @@ class GenerateCommandFromBTreeProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Puts the proper command to the command queue.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (btree) in self.world.get_component(BTree):
 
             # If the root node is in status SUCCESS or FAILURE, do not
             # continue as the behavior has finished.
             if btree.root.is_finished(): 
-                return
+                continue
 
             # if some node is RUNNING, execute him directly
             if btree.blackboard.running_behavior.is_running():

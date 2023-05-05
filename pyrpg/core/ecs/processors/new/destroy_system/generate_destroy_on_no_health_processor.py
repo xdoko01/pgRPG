@@ -3,7 +3,7 @@ __all__ = ['GenerateDestroyOnNoHealthProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
@@ -47,10 +47,10 @@ class GenerateDestroyOnNoHealthProcessor(Processor):
         'new.damage_system:PerformDamageProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.add_event_fnc = add_event_fnc
 
     def initialize(self, register):
@@ -60,7 +60,10 @@ class GenerateDestroyOnNoHealthProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Generates the IsDestroyed component.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (flag_has_no_health, destroy_on_no_health) in self.world.get_components(FlagHasNoHealth, DestroyOnNoHealth):
 

@@ -8,7 +8,7 @@ __all__ = [
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -73,10 +73,10 @@ class GenerateCollisionsOptimizedProcessor(Processor):
         'new.movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.add_event_fnc = add_event_fnc
 
@@ -88,7 +88,10 @@ class GenerateCollisionsOptimizedProcessor(Processor):
         ''' Detect all collisions between visible entities and record them into 
         the new component FlagHasCollided.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
@@ -234,10 +237,10 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
         'new.movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.add_event_fnc = add_event_fnc
 
@@ -249,7 +252,10 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
         ''' Detect all collisions between visible entities and record them into 
         the new component FlagHasCollided.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get the list of entities together with components on the camera - exclude those whose collisions has been already calculated
         collision_candidates = list(self.world.get_components_ex(Position, Collidable, exclude=FlagHasCollided))
@@ -388,10 +394,10 @@ class GenerateCollisionsNotOptimizedProcessor(Processor):
         'new.movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.add_event_fnc = add_event_fnc
 
@@ -403,7 +409,10 @@ class GenerateCollisionsNotOptimizedProcessor(Processor):
         ''' Detect all collisions between visible entities and record them into 
         the new component FlagHasCollided.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
@@ -539,10 +548,10 @@ class GenerateCollisionsNotOptimizedFullProcessor(Processor):
         'new.movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
-    def __init__(self, add_event_fnc):
+    def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.add_event_fnc = add_event_fnc
 
@@ -554,7 +563,10 @@ class GenerateCollisionsNotOptimizedFullProcessor(Processor):
         ''' Detect all collisions between ALL entities and record them into
         the new component FlagHasCollided.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Position + Collidable regardless if visible or not
         for ent_moved, (pos_moved, coll_moved) in self.world.get_components(Position, Collidable):

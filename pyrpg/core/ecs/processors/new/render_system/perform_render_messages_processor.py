@@ -3,7 +3,7 @@ __all__ = ['PerformRenderMessagesProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 from pyrpg.core.config.fonts import GAME_MSG_FONT # used font
 from pyrpg.core.config.config import MSG_DEFAULT_TTL # default TTL
@@ -37,7 +37,7 @@ class PerformRenderMessagesProcessor(Processor):
 
     __slots__ = ['window', 'game_messages', 'pos', 'align']
 
-    def __init__(self, window, game_messages, pos=[0, 0], align='LEFT'):
+    def __init__(self, window, game_messages, *args, pos=[0, 0], align='LEFT', **kwargs):
         ''' Initiation of PerformRenderMessagesProcessor processor.
 
         Parameters:
@@ -54,7 +54,7 @@ class PerformRenderMessagesProcessor(Processor):
             :param align: Message text alignment - LEFT, RIGHT, CENTER
             :type align: str
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
         self.game_messages_fnc = game_messages
@@ -67,7 +67,10 @@ class PerformRenderMessagesProcessor(Processor):
 
     def process(self, *args, **kwargs):
         '''Display game messages on game window'''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get list of game messages to display
         messages = self.game_messages_fnc()

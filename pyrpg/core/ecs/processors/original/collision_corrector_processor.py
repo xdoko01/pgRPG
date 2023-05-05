@@ -1,21 +1,26 @@
 __all__ = ['CollisionCorrectorProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.collidable import Collidable
 from pyrpg.core.ecs.components.original.position import Position
 
 class CollisionCorrectorProcessor(Processor):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
+
         for ent, (collision, position) in self.world.get_components(Collidable, Position):
             
             # If some collision occured, the collision_event set is not empty

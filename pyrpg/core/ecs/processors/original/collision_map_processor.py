@@ -1,7 +1,7 @@
 __all__ = ['CollisionMapProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.collidable import Collidable
@@ -11,10 +11,10 @@ class CollisionMapProcessor(Processor):
     ''' Checks for collisions with the titles on the map.
     '''
 
-    def __init__(self, maps):
+    def __init__(self, maps, *args, **kwargs):
         ''' maps is link to global dict of maps
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.maps = maps
 
@@ -23,6 +23,10 @@ class CollisionMapProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Do collision against the map 
         for ent_moved, (coll_moved, pos_moved) in self.world.get_components(Collidable, Position):

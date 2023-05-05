@@ -3,7 +3,7 @@ __all__ = ['GenerateSoundFXOnNoHealthProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.sound_fx_on_no_health import SoundFXOnNoHealth
@@ -36,10 +36,10 @@ class GenerateSoundFXOnNoHealthProcessor(Processor):
 
     __slots__ = ['play_sound_fnc']
 
-    def __init__(self, FNC_PLAY_SOUND):
+    def __init__(self, FNC_PLAY_SOUND, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.play_sound_fnc = FNC_PLAY_SOUND
 
     def initialize(self, register):
@@ -49,7 +49,10 @@ class GenerateSoundFXOnNoHealthProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Plays sound upon entity having no health.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for ent, (flag_has_no_health, sfx_on_no_health) in self.world.get_components(FlagHasNoHealth, SoundFXOnNoHealth):
 

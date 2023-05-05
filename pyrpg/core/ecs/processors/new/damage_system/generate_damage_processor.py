@@ -3,7 +3,7 @@ __all__ = ['GenerateDamageSingleProcessor', 'GenerateDamageFullProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.damaging import Damaging
@@ -47,10 +47,10 @@ class GenerateDamageSingleProcessor(Processor):
         'new.collision_system:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -60,7 +60,10 @@ class GenerateDamageSingleProcessor(Processor):
         '''  Detects entities that are pickable + have collided and assigns
         the FlagIsAboutToPickEntity to their pickers
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Damaging and FlagHasCollided - those are candidates for causing damage
         for ent_damaging, (damaging, flag_has_collided) in self.world.get_components(Damaging, FlagHasCollided):
@@ -123,10 +126,10 @@ class GenerateDamageFullProcessor(Processor):
         'new.collision_system:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -136,7 +139,10 @@ class GenerateDamageFullProcessor(Processor):
         '''  Detects entities that are pickable + have collided and assigns
         the FlagIsAboutToPickEntity to their pickers
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Damaging and FlagHasCollided - those are candidates for causing damage
         for ent_damaging, (damaging, flag_has_collided) in self.world.get_components(Damaging, FlagHasCollided):

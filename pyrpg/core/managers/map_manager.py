@@ -13,15 +13,14 @@ class MapManager:
     def get_map(self, map_name) -> Map:
         return self._maps.get(map_name, None)
 
-    def add_map(self, map_name: str) -> None:
+    def load_map(self, map_def: str) -> None:
         ''' Register and create new map if not already created
-        Called from Quest/Phase class
         '''
 
         # Create map, if not exists
-        if not self._maps.get(map_name, None):
-            self._maps.update({map_name : Map(map_name)})
-            logger.info(f'Map "{map_name}" added.')
+        if not self._maps.get(map_def, None):
+            self._maps.update({map_def : Map(map_def)})
+            logger.info(f'Map "{map_def}" added.')
 
     def delete_map(self, map_name: str) -> None:
         ''' Unregister and delete the map object.'''

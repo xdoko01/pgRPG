@@ -3,7 +3,7 @@ __all__ = ['GenerateArmAmmoProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.ammo_pack import AmmoPack
@@ -41,10 +41,10 @@ class GenerateArmAmmoProcessor(Processor):
         'new.pickup_system.perform_pickup_processor:PerformPickupProcessor'
     ]
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -54,7 +54,10 @@ class GenerateArmAmmoProcessor(Processor):
         '''  Detects entities that are ammo packs + have been picked, and assigns
         the FlagIsAboutToArmAmmo to their pickers
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have AmmoPack, Factory and FlagWasPickedBy - those are candidates for arming the ammo
         # AmmoPack is nothing without the Factory component, AmmoPack component only marks that the factory can be armed to some weapon

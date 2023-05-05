@@ -3,7 +3,7 @@ __all__ = ['PerformAdjustCollidableProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.collidable import Collidable
@@ -34,10 +34,10 @@ class PerformAdjustCollidableProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         ''' Init the processor.
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -46,7 +46,10 @@ class PerformAdjustCollidableProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' On collision, return the entity on its original position.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get all entities that have Collidable component and flag to ignore some more entities
         for ent, (collidable, flag_adjust_collision) in self.world.get_components(Collidable, FlagAdjustCollidable):

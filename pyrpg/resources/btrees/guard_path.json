@@ -1,0 +1,85 @@
+{
+    // Guard Path
+    "type": "Sequence",
+    "name": "Guard Path",
+    "vars": ["$bb_entity_pos_comp_in", "$path_in", "$repeat_path_in", "$list_of_enemies_in", "$guard_radius_in=250", "$bb_enemy_out"],
+    "children": [
+        {
+            // Set the path and position on the blackboard
+            "type": "Sequence",
+            "name": "Set Path To Guard and Position",
+            "children": [
+                {
+                    // Save path and related variables on blackboard
+                    "type": "Behavior",
+                    "name": "Save Path on the Blackboard",
+                    "cmd_process": [
+                        "btree.bb_set_globals", 
+                        {
+                            "bb_path_next_point": null,
+                            "bb_path_points": "$path_in",
+                            "bb_path_index": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            // Go to the next point on the path as long some next point exists
+            "type": "RepeatUntilFail",
+            "name": "Go to the next point on the path if exists",
+            "children": [
+                {
+                    // Get close to the target in order to be able to attack
+                    "type": "Sequence",
+                    "name": "Move To the next point on the path",
+                    "children": [
+                        {
+                            "type": "Behavior",
+                            "name": "Set Next point on path",
+                            "cmd_process": [
+                                "btree.set_next_point_on_path", 
+                                {
+                                    "bb_path_points": "bb_path_points",
+                                    "bb_path_index": "bb_path_index",
+                                    "bb_path_next_point": "bb_path_next_point",
+                                    "cycle": "$repeat_path_in"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Behavior",
+                            "name": "Move to the next point on path",
+                            "cmd_process": [
+                                "btree.move_to_bb_position", 
+                                {
+                                    "bb_point": "bb_path_next_point",
+                                    "bb_entity_pos_comp": "$bb_entity_pos_comp_in"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Inverter",
+                            "name": "Return success if enemy was not found around",
+                            "children": [
+                                {
+                                    "type": "Behavior",
+                                    "name": "Check enemies around",
+                                    "cmd_process": [
+                                        "btree.check_enemies_around", 
+                                        {
+                                            "list_of_enemies": "$list_of_enemies_in", 
+                                            "radius": "$guard_radius_in",
+                                            "bb_entity_pos_comp": "$bb_entity_pos_comp_in",
+                                            "bb_enemy": "$bb_enemy_out" // Store the enemy entity ID on the tree blackboard under the key specified by $bb_enemy_out
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

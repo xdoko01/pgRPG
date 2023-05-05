@@ -3,7 +3,7 @@ __all__ = ['PerformBlitCameraProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.new.camera import Camera
@@ -35,7 +35,7 @@ class PerformBlitCameraProcessor(Processor):
 
     __slots__ = []
 
-    def __init__(self, window):
+    def __init__(self, window, *args, **kwargs):
         ''' Initiation of PerformBlitCameraProcessor processor.
 
         Parameters:
@@ -43,7 +43,7 @@ class PerformBlitCameraProcessor(Processor):
             :type window: pygame.Surface
 
         '''
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.window = window
 
@@ -54,7 +54,10 @@ class PerformBlitCameraProcessor(Processor):
     def process(self, *args, **kwargs):
         ''' Blit Camera onto the screen.
         '''
-        self.cycle += 1
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # For all camera screens - blit all in the game window
         for _, (camera) in self.world.get_component(Camera):

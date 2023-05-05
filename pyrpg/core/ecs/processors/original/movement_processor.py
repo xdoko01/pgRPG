@@ -3,7 +3,7 @@ __all__ = ['MovementProcessor', 'LinearMovementProcessor']
 import pygame	# for pygame.time.get_ticks()
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor
+from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
 from pyrpg.core.ecs.components.original.position import Position
@@ -18,11 +18,11 @@ class LinearMovementProcessor(Processor):
 
     __slots__ = ['debug']
 
-    def __init__(self, debug=False):
+    def __init__(self, *args, debug=False, **kwargs):
         '''
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.debug = debug
 
@@ -34,6 +34,11 @@ class LinearMovementProcessor(Processor):
     def process(self, *args, **kwargs):
         '''
         '''
+
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         for _, (position, linear_motion, motion) in self.world.get_components(Position, LinearMotion, Motion):
 
@@ -69,7 +74,7 @@ class MovementProcessor(Processor):
 
     __slots__ = ['stand_delay_ms', 'debug']
 
-    def __init__(self, stand_delay_ms=1500, debug=False):
+    def __init__(self, *args, stand_delay_ms=1500, debug=False, **kwargs):
         ''' Initiation of MovementProcessor processor.
 
         Parameters:
@@ -80,7 +85,7 @@ class MovementProcessor(Processor):
             :type debug: bool
         '''
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
 
         self.debug = debug
 
@@ -95,6 +100,10 @@ class MovementProcessor(Processor):
         ''' Process entities having Motion and Position components. Basically,
         add motion diffs to the position represented by Position component.
         '''
+        try:
+            super().process(*args, **kwargs)
+        except SkipProcessorExecution:
+            return
 
         # Get the time of processing of the frame from the game main loop in seconds
         dt = kwargs.get('dt') / 1000
