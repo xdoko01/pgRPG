@@ -254,9 +254,9 @@
 	],
 
 	// How to handle events
-	"event_handlers" : {
-
-		"QUEST_START" : [
+	"handlers": [
+		[
+			"QUEST_START",
 			{
 				"id": "ev_quest_start",
 				"actions" : [
@@ -266,8 +266,8 @@
 				]
 			}
 		],
-
-		"WEAPON_ARMED" : [
+		[
+			"WEAPON_ARMED",
 			{
 				"id": "ev_weapon_armed",
 				"actions" : [
@@ -277,8 +277,8 @@
 				]
 			}
 		],
-
-		"AMMO_PACK_ARMED" : [
+		[
+			"AMMO_PACK_ARMED",
 			{
 				"id": "ev_ammo_pack_armed",
 				"actions" : [
@@ -288,5 +288,5 @@
 				]
 			}
 		]
-	}
+	]
 }

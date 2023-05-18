@@ -190,9 +190,9 @@
 	],
 
 	// How to handle events
-	"event_handlers" : {
-
-		"QUEST_START" : [
+	"handlers": [
+		[
+			"QUEST_START",
 			{
 				"id" : "ev_quest_start",
 				"actions" : [
@@ -202,5 +202,5 @@
 				]
 			}
 		]
-	}
+	]
 }

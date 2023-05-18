@@ -1,4 +1,6 @@
 {
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
 	// Basic data
 	"id" : "new_test_render_01",
 	"title" : "Render Map Test",
@@ -59,6 +61,6 @@
 	],
 
 	// How to handle events
-	"event_handlers": {}
+	"handlers": []
 
 }

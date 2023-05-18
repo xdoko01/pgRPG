@@ -297,20 +297,18 @@
 	],
 
 	// How to handle events
-	"event_handlers" : {
-
-		"QUEST_START" :[
+	"handlers": [
+		[
+			"QUEST_START",
 			{
 				"id": "ev_collect_coins",
 				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to %quest_id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
 			}
 		],
-
-		"SCORE": [
-
+		[
+			"SCORE",
 			{
 				"id": "ev_scored_exactly_500_points",
-
 				"actions": [
 					"IF",
 						["==", ["VAR", "total"], 500],
@@ -330,11 +328,12 @@
 							]
 						]
 				]
-			},
-
+			}
+		],
+		[
+			"SCORE",
 			{
 				"id": "ev_scored_more_than_500_points",
-
 				"actions": [
 					"IF",
 						[">", ["VAR", "total"], 500],
@@ -352,13 +351,11 @@
 						]
 				]
 			}
-
 		],
-
-		"CUST_UI_CONFIRM" : [
+		[
+			"CUST_UI_CONFIRM",
 			{
 				"id": "ev_restart_confirmed",
-
 				"actions": [
 					"IF",
 						["OR",
@@ -369,11 +366,10 @@
 				]
 			}
 		],
-
-		"ITEM_PICKUP" : [
+		[
+			"ITEM_PICKUP",
 			{
 				"id": "ev_first_golden_coin_picked_up",
-
 				"actions": [
 					"IF",
 						["AND",
@@ -385,10 +381,12 @@
 							["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first golden coin. It counts for 100 points!"}]
 						]
 				]
-			},
+			}
+		],
+		[
+			"ITEM_PICKUP",
 			{
 				"id": "ev_first_silver_coin_picked_up",
-
 				"actions": [
 					"IF",
 						["AND",
@@ -400,10 +398,12 @@
 							["SCRIPT", "new.show_msg_window", {"html_text" : "You have picked your first silver coin. It counts for 20 points!"}]
 						]
 				]
-			},
+			}
+		],
+		[
+			"ITEM_PICKUP",
 			{
 				"id": "ev_first_copper_coin_picked_up",
-
 				"actions": [
 					"IF",
 						["AND",
@@ -417,5 +417,5 @@
 				]
 			}
 		]
-	}
+	]
 }

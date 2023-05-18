@@ -150,21 +150,18 @@
 
 	],
 
-	"event_handlers" : {
-
-		"QUEST_START": [
+	"handlers": [
+		[
+			"QUEST_START",
 			{
 				"id": "ev_start_game",
-				
 				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
-	
 			}
 		],
-
-		"CUST_UI_CONFIRM" : [
+		[
+			"CUST_UI_CONFIRM",
 			{
 				"id": "ev_restart_confirmed",
-
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
@@ -172,11 +169,10 @@
 				]
 			}
 		],
-
-		"ON_POS_TARGET": [
+		[
+			"ON_POS_TARGET",
 			{
 				"id": "ev_all_crates_in_place",
-				
 				"actions": [
 					"IF", 
 						["AND",
@@ -205,34 +201,6 @@
 						]
 				]
 			}
-		],
-
-		"SCORE": [
-		],
-
-		"PHASE_START" : [
-		],
-
-		"KILL" : [
-		],
-
-		"DAMAGE" : [
-		],
-
-		"COLLISION" : [
-		],
-
-		"TELEPORTATION" : [
-		],
-
-		"ITEM_PICKUP" : [
-		],
-
-		"WEARABLE_WEARED" : [
-		],
-
-		"WEAPON_ARMED" : [
 		]
-
-	}
+	]
 }

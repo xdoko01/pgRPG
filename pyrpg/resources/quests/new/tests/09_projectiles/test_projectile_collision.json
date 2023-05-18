@@ -356,6 +356,6 @@
 	],
 
 	// How to handle events
-	"event_handlers": {}
+	"handlers": []
 
 }

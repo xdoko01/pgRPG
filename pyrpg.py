@@ -22,21 +22,71 @@ def main(argv):
     console = True
     filepath = None
 
-    filepath = 'new/games/kill_all/kill_all_level01.json'
-    #filepath = 'new/games/sokoban/sokoban_new_level02.json'
-    #filepath = 'new/games/sokoban/sokoban_new_level01.json'
-    #filepath = 'new/games/sokoban/sokoban_new.json'
-    #filepath = 'new/games/sokoban/sokoban.json'
+    # Games
+    #filepath = 'new/games/kill_all/kill_all_level01.json'
+    #filepath = 'new/games/sokoban/sokoban_new_level02.json'    NOT WORKING
+    #filepath = 'new/games/sokoban/sokoban_new_level01.json'    NOT WORKING
+    #filepath = 'new/games/sokoban/sokoban_new.json'            NOT WORKING
+    #filepath = 'new/games/sokoban/sokoban.json'                NOT WORKING
     #filepath = 'new/games/collect_coins/collect_coins.json'
+
+    # 12_sensors
+
+    # 11_btrees
+
+    # 10_effects
     #filepath = 'new/tests/10_effects/test_fx_01.json'
+
+    # 09_projectiles
     #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_generation.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_damage.json'
     #filepath = 'new/tests/09_projectiles/test_projectile_collision.json'
+
+    # 08_arm_ammo
     #filepath = 'new/tests/08_arm_ammo/test_arm_ammo_01.json'
-    #filepath = 'new/tests/04_collisions/test_map_collision_01.json'
+
+    # 07_arm_weapon
+    #filepath = 'new/tests/07_arm_weapon/test_arm_weapon_01.json'
+
+    # 06_teleportation
+    #filepath = 'new/tests/06_teleportation/test_teleportation_02.json'
+    #filepath = 'new/tests/06_teleportation/test_teleportation_01.json'
+
+    # 05_pickup
+    #filepath = 'new/tests/05_pickup/test_pickup_01.json'
+
+    # 04_collisions
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
+    #filepath = 'new/tests/04_collisions/test_collisions_05.json'
+    #filepath = 'new/tests/04_collisions/test_collisions_04.json'
+    #filepath = 'new/tests/04_collisions/test_collisions_03.json'
+    #filepath = 'new/tests/04_collisions/test_collisions_02.json'
+    #filepath = 'new/tests/04_collisions/test_collisions_01.json'
+
+    # 03_animations
     #filepath = 'new/tests/03_animations/test_weapon_animations.json'
+    #filepath = 'new/tests/03_animations/test_animations_01.json'
+
+    # 02_commands
+    #filepath = 'new/tests/02_commands/test_commands_02.json'
+    #filepath = 'new/tests/02_commands/test_commands_01.json'
+
+    # 01_movements
+    #filepath = 'new/tests/01_movements/test_movement_10.json'
+    #filepath = 'new/tests/01_movements/test_movement_09.json'
+    #filepath = 'new/tests/01_movements/test_movement_08.json'
+    #filepath = 'new/tests/01_movements/test_movement_07.json'
+    #filepath = 'new/tests/01_movements/test_movement_06.json'
+    #filepath = 'new/tests/01_movements/test_movement_05.json'
+    #filepath = 'new/tests/01_movements/test_movement_04.json'
+    #filepath = 'new/tests/01_movements/test_movement_03.json'
+    #filepath = 'new/tests/01_movements/test_movement_02.json'
+    #filepath = 'new/tests/01_movements/test_movement_01.json'
+
+    # 00_render
+    #filepath = 'new/tests/00_render/test_render_02.json'
+    #filepath = 'new/tests/00_render/test_render_01.json'
 
 
     usage_info = '''

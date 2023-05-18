@@ -94,21 +94,18 @@
 
 	],
 
-	"event_handlers" : {
-
-		"QUEST_START" :[
+	"handlers": [
+		[
+			"QUEST_START",
 			{
 				"id": "ev_level02_start",
-				
 				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to next level <b>%quest_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
-
 			}
 		],
-
-		"ON_POS_TARGET": [
+		[
+			"ON_POS_TARGET",
 			{
 				"id": "ev_all_crates_in_place",
-				
 				"actions": [
 					"IF", 
 						["AND",
@@ -137,6 +134,6 @@
 				]
 			}
 		]
-	}
+	]
 }
 
