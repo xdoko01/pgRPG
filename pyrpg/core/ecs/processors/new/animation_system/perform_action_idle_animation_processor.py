@@ -16,7 +16,7 @@ from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 
 
 # Support functions
-from ..functions import filter_only_visible
+from ..functions import filter_only_visible_on_camera
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -69,7 +69,7 @@ class PerformActionIdleAnimationProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities with Position, RenderableModel + are armed and did not move nor attack nor are dying
-            for ent, (_, renderable_model, weapon_in_use) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(Position, RenderableModel, WeaponInUse), exclude=(FlagDoAttack, FlagDoMove, IsDestroyed))):
+            for ent, (_, renderable_model, weapon_in_use) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components_exs(include=(Position, RenderableModel, WeaponInUse), exclude=(FlagDoAttack, FlagDoMove, IsDestroyed))):
 
                 # Update to proper animation
                 renderable_model.set_action(weapon_in_use.idle_action)

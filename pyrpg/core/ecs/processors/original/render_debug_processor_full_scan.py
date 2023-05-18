@@ -16,7 +16,7 @@ from pyrpg.core.ecs.components.original.collidable import Collidable
 
 class RenderDebugProcessorFullScan(Processor):
     ''' Information displayed only on visible entities
-    using the filter_only_visible function.
+    using the filter_only_visible_on_camera function.
     '''
 
     def __init__(self, window, *args, **kwargs):

@@ -82,7 +82,7 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(esper.Processor):
 			#####
 
 			# Blit all the Entities that have Renderable and Position components - only visible entities
-			for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+			for ent, (position, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 				camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
 
 				#####
@@ -128,7 +128,7 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(esper.Processor):
 			#####
 
 			# Blit all Texts that are entities saying (CanSpeak + Position component)
-			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
+			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
 
 				# If there is something to say
 				if can_talk.text:

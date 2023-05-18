@@ -1,7 +1,7 @@
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 
-from .functions import filter_only_visible # for filtering only entities with position on the cameras
+from .functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 
 class RenderTalkProcessor2(esper.Processor):
 	''' Draws the text bubbles for the entites usning Bitmap font
@@ -59,7 +59,7 @@ class RenderTalkProcessor2(esper.Processor):
 		for _, (camera) in self.world.get_component(components.Camera):
 
 			# Blit all Texts that are entities saying (CanTalk + Position component)
-			for _, (position, can_talk) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk)):
+			for _, (position, can_talk) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.CanTalk)):
 
 				# If there is something to say
 				if can_talk.text:
@@ -158,7 +158,7 @@ class RenderTalkProcessor(esper.Processor):
 			#####
 
 			# Blit all Texts that are entities saying (CanTalk + Position component)
-			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
+			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
 
 				# If there is something to say
 				if can_talk.text:

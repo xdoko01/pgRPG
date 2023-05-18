@@ -12,7 +12,7 @@ from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 
 # Support functions
-from ..functions import filter_only_visible
+from ..functions import filter_only_visible_on_camera
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class PerformExpireAnimationProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Search for entities that contain Position + RenderableModel and at the same time do not have FlagDoMove and FlagDoAttack component
-            for ent, (_, renderable_model, is_destroyed) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel, IsDestroyed)):
+            for ent, (_, renderable_model, is_destroyed) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, RenderableModel, IsDestroyed)):
 
                 # Update to proper animation - if not specified in IsDestroyed it is 'expire'
                 renderable_model.set_action(is_destroyed.action)

@@ -29,7 +29,7 @@ import core.events.event as event # for creation of events
 
 sign = lambda x: -1 if x < 0 else (1 if x > 0 else 0)
 
-def filter_only_visible(camera, comp_tuple, corr=32):
+def filter_only_visible_on_camera(camera, comp_tuple, corr=32):
 	''' Filter that is used for selection of only those entities
 	that are within visible scope of the camera screen.
 
@@ -121,7 +121,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 			- for RenderableModel, HasWeapon -> ACTION ANIM, IDLE ANIM
 			- for RenderableModel, Motion -> WALK
 		- potom aktualizovat frame
-			- for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
+			- for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible_on_camera(all_cameras, x)
 				- update_frame() ... bez argumentu
 	'''
 	def __init__(self):
@@ -220,7 +220,7 @@ class RenderModelWorldProcessor(esper.Processor):
 			#####
 
 			# Blit all the Entities that have Renderable and Position components - only visible entities
-			for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+			for ent, (position, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 				camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
 
 				#####
@@ -266,7 +266,7 @@ class RenderModelWorldProcessor(esper.Processor):
 			#####
 
 			# Blit all Texts that are entities saying (CanSpeak + Position component)
-			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
+			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
 
 				# If there is something to say
 				if can_talk.text:
@@ -630,7 +630,7 @@ class RenderMapProcessor(esper.Processor):
 # TODO - Continue Here
 class RenderDebugProcessor(esper.Processor):
 	''' Information displayed only on visible entities
-	using the filter_only_visible function.
+	using the filter_only_visible_on_camera function.
 
 	'''
 
@@ -648,7 +648,7 @@ class RenderDebugProcessor(esper.Processor):
 		# Show debug information on all cameras
 		for _, (cam_cam) in self.world.get_component(components.Camera):
 
-			for debug_entity, (pos_comp, deb_comp, coll_debug) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.Collidable)):
+			for debug_entity, (pos_comp, deb_comp, coll_debug) in filter(lambda x: filter_only_visible_on_camera(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.Collidable)):
 				# Print collision area
 				if debug.get('show_collision', False):
 					try:
@@ -657,7 +657,7 @@ class RenderDebugProcessor(esper.Processor):
 						pass
 
 			# Show debug information only for displayable entities with Debug flag - only for visible entities
-			for debug_entity, (pos_comp, deb_comp, render_comp) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.RenderableModel)):
+			for debug_entity, (pos_comp, deb_comp, render_comp) in filter(lambda x: filter_only_visible_on_camera(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.RenderableModel)):
 
 				# Print health
 				if debug.get('show_health', False):
@@ -970,9 +970,9 @@ class CollisionEntityGeneratorProcessor(esper.Processor):
 		for _, (camera) in self.world.get_component(components.Camera):
 
 			# Get all entities that have Motion and Collidable (only those can activelly hit something) - i.e. that could have moved and iterate those
-			for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.Collidable)):
+			for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.Collidable)):
 				# Compare that all collision + position entities - DUMMY WAY
-				for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.Collidable)):
+				for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.Collidable)):
 					
 					# Heuristic no.-1 - Test only those that have Motion component
 					#if not self.world.has_component(ent_moved, Motion): continue
@@ -1540,7 +1540,7 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(esper.Processor):
 			#####
 
 			# Blit all the Entities that have Renderable and Position components - only visible entities
-			for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+			for ent, (position, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 				camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
 
 				#####
@@ -1586,7 +1586,7 @@ class RenderModelWorldProcessorDifferentFramesOnCameras(esper.Processor):
 			#####
 
 			# Blit all Texts that are entities saying (CanSpeak + Position component)
-			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
+			for _, (position, can_talk, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.CanTalk, components.RenderableModel)):
 
 				# If there is something to say
 				if can_talk.text:
@@ -1952,7 +1952,7 @@ class CollisionCorrectorProcessor(esper.Processor):
 
 class RenderDebugProcessorFullScan(esper.Processor):
 	''' Information displayed only on visible entities
-	using the filter_only_visible function.
+	using the filter_only_visible_on_camera function.
 
 	'''
 

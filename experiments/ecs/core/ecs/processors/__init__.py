@@ -87,5 +87,5 @@ __all__ = [
 	#'CollisionCorrectorProcessor',
 	#'RenderDebugProcessorFullScan',
 	
-	'filter_only_visible'
+	'filter_only_visible_on_camera'
 	]

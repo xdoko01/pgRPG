@@ -3,7 +3,7 @@ __all__ = ['RenderModelWorldProcessor']
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 
-from .functions import filter_only_visible # for filtering only entities with position on the cameras
+from .functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 
 class RenderModelWorldProcessor(esper.Processor):
 	''' Draws the entities in the world. Unlike RenderWorldProcessor
@@ -66,7 +66,7 @@ class RenderModelWorldProcessor(esper.Processor):
 			#####
 
 			# Blit all the Entities that have Renderable and Position components - only visible entities
-			for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+			for ent, (position, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 				#camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
 				camera.screen.blit(renderable.get_current_frame(position.dir_name), camera.apply(renderable.topleft((position.x, position.y))))
 

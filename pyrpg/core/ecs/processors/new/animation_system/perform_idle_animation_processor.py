@@ -15,7 +15,7 @@ from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
 
 # Support functions
-from ..functions import filter_only_visible
+from ..functions import filter_only_visible_on_camera
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class PerformIdleAnimationProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Search for entities that contain Position + RenderableModel and at the same time do not have FlagDoMove and FlagDoAttack component
-            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_exs(include=(Position, RenderableModel), exclude=(FlagDoMove, FlagDoAttack, WeaponInUse, IsDestroyed))):
+            for ent, (_, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components_exs(include=(Position, RenderableModel), exclude=(FlagDoMove, FlagDoAttack, WeaponInUse, IsDestroyed))):
 
                 # Update to proper animation
                 renderable_model.set_action('idle')

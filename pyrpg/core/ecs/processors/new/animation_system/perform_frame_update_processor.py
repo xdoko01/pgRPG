@@ -12,7 +12,7 @@ from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.flag_is_animation_action_frame import FlagIsAnimationActionFrame
 
 # Support functions
-from ..functions import filter_only_visible
+from ..functions import filter_only_visible_on_camera
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -63,7 +63,7 @@ class PerformFrameUpdateProcessor(Processor):
         for cam, (camera) in self.world.get_component(Camera):
 
             # Get all entities with Position, RenderableModel
-            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
+            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, RenderableModel)):
 
                 # If already updated skip
                 if ent in already_updated:

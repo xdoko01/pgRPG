@@ -9,7 +9,7 @@ from pyrpg.core.ecs.components.original.camera import Camera
 from pyrpg.core.ecs.components.original.collidable import Collidable
 
 # For filtering only entities with position on the cameras
-from .functions import filter_only_visible 
+from .functions import filter_only_visible_on_camera 
 
 class CollisionEntityGeneratorProcessor(Processor):
     ''' Unlike CollisionEntityGeneratorProcessorFullScan, this processor
@@ -44,11 +44,11 @@ class CollisionEntityGeneratorProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities that have Motion and Collidable (only those can activelly hit something) - i.e. that could have moved and iterate those
-            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
+            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
                 
 
                 # Compare that all collision + position entities - DUMMY WAY
-                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
+                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
                     
                     # Heuristic no.-1 - Test only those that have Motion component
                     #if not self.world.has_component(ent_moved, Motion): continue

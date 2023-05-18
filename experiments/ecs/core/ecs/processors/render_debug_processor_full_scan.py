@@ -5,7 +5,7 @@ import core.ecs.components as components # for definition of components
 
 class RenderDebugProcessorFullScan(esper.Processor):
 	''' Information displayed only on visible entities
-	using the filter_only_visible function.
+	using the filter_only_visible_on_camera function.
 
 	'''
 

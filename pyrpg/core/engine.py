@@ -78,6 +78,8 @@ class Game:
             'damage_event_queue' : self.event_manager.add_event,
             'destroy_event_queue' : self.event_manager.add_event,
             'score_event_queue' : self.event_manager.add_event,
+            # Maps
+            'FNC_GET_MAP': self.map_manager.get_map,
             # Commands
             'FNC_ADD_COMMAND' : self.command_manager.add_command,
             'FNC_CLEAR_COMMANDS' : self.command_manager.clear_commands,

@@ -14,7 +14,7 @@ from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 
 # Support functions
-from ..functions import filter_only_visible
+from ..functions import filter_only_visible_on_camera
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class PerformMovementAnimationProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities with Position, RenderableModel and FlagDoMove
-            for ent, (_, renderable_model, _) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(Position, RenderableModel, FlagDoMove, exclude=FlagDoAttack)):
+            for ent, (_, renderable_model, _) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components_ex(Position, RenderableModel, FlagDoMove, exclude=FlagDoAttack)):
 
                 # Update to proper animation
                 renderable_model.set_action('move')

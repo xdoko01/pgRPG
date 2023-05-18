@@ -17,10 +17,13 @@ from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.damageable import Damageable
 from pyrpg.core.ecs.components.new.has_score import HasScore
 from pyrpg.core.ecs.components.new.btree import BTree
+from pyrpg.core.ecs.components.new.can_see import CanSee
 
 
-from ..functions import filter_only_visible # for filtering only entities with position on the cameras
+from ..functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
+from ..functions import get_view_points # for drawing of arrows
+
 
 from pyrpg.core.config.fonts import GAME_DEBUG_FONT # for the debug font
 from pyrpg.core.config.frames import GAME_DEBUG_FRAME # for the debug frame
@@ -84,30 +87,60 @@ class PerformRenderDebugInfoProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get position and model status info
-            for _, (position, debug, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, RenderableModel)):
+            for _, (position, debug, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, RenderableModel)):
                 debug.info.update({'position' : (int(position.x), int(position.y), position.dir_name)})
                 debug.info.update({'action' : renderable.action})
 
             # Get BTree info
-            for _, (position, debug, btree) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, BTree)):
+            for _, (position, debug, btree) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, BTree)):
                 debug.info.update({'Action' : str(btree.running_behavior.node)})
 
             # Get inventory info
-            for _, (position, debug, inventory) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, HasInventory)):
+            for _, (position, debug, inventory) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, HasInventory)):
                 debug.info.update({'inventory' : inventory.inventory})
 
             # Get health info
-            for _, (position, debug, damageable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, Damageable)):
+            for _, (position, debug, damageable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, Damageable)):
                 debug.info.update({'Health' : damageable.health})
 
             # Get score info
-            for _, (position, debug, has_score) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, HasScore)):
+            for _, (position, debug, has_score) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, HasScore)):
                 debug.info.update({'Score' : has_score.score})
-            
+
+            # Get info about entities in sight
+            for _, (position, debug, can_see) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanSee)):
+                debug.info.update({'Ent in Sight' : can_see.ent_in_sight})
+
+            # Show CAN SEE information about the view area
+            for _, (position, debug, can_see) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanSee)):
+
+                pygame.draw.lines(
+                    camera.screen,
+                    debug.sight['color'], # Color taken from Debug component
+                    False,
+                    tuple(map(camera.apply, get_view_points(position.dir_name, can_see.distance, can_see.angle_rad_div2, (position.x, position.y)))),
+                    debug.sight['width'] # Thickness of line taken from Debug component
+                )
+
+                # Make line between all seen entities and the CanSee comp entity
+                for in_sight_ent in can_see.ent_in_sight:
+                    try:
+                        in_sight_ent_pos = self.world.component_for_entity(in_sight_ent, Position)
+
+                        pygame.draw.line(
+                            camera.screen,
+                            debug.sight['color'], # Color taken from Debug component
+                            camera.apply((position.x, position.y)),
+                            camera.apply((in_sight_ent_pos.x, in_sight_ent_pos.y)),
+                            debug.sight['width'] # Thickness of line taken from Debug component
+                        )
+                    except KeyError:
+                        pass
+
 
             # Show COLLISION information
             # Show debug information to all entities with Position and Debug and Collidable component
-            for _, (position, debug, collidable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, Collidable)):
+            for _, (position, debug, collidable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, Collidable)):
 
                 pygame.draw.rect(
                     camera.screen,
@@ -121,7 +154,7 @@ class PerformRenderDebugInfoProcessor(Processor):
 
             # Show MOVEMENT information
             # Show debug information to all entities with Position, Debug and NewMoveable components
-            for _, (position, debug, moveable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug, Movable)):
+            for _, (position, debug, moveable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, Movable)):
 
                 pygame.draw.lines(
                     camera.screen,
@@ -134,7 +167,7 @@ class PerformRenderDebugInfoProcessor(Processor):
 
             # Experiment with mouse hoover
             # Show debug information to all entities with Position, Debug and NewMoveable components
-            for _, (position, debug) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Debug)):
+            for _, (position, debug) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug)):
 
                 # Mouse coordinates within the displayable game window
                 x, y = pygame.mouse.get_pos()

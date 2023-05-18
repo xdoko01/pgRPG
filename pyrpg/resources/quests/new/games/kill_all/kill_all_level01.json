@@ -222,6 +222,7 @@
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "new.can_see:CanSee", "params" : {"angle": 60, "distance_px": 300}},
 
 				{
 					"type" : "new.collidable:Collidable", 

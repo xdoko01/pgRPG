@@ -13,7 +13,7 @@ from pyrpg.core.ecs.components.original.camera import Camera
 from pyrpg.core.ecs.components.original.is_destroyed import IsDestroyed
 
 
-from .functions import filter_only_visible
+from .functions import filter_only_visible_on_camera
 
 class RenderableModelAnimationActionProcessor2(Processor):
     ''' Change the action of renderable model in order to display
@@ -26,7 +26,7 @@ class RenderableModelAnimationActionProcessor2(Processor):
             - for RenderableModel, HasWeapon -> ACTION ANIM, IDLE ANIM
             - for RenderableModel, Motion -> WALK
         - potom aktualizovat frame
-            - for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
+            - for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible_on_camera(all_cameras, x)
                 - update_frame() ... bez argumentu
     '''
     def __init__(self, *args, **kwargs):
@@ -81,7 +81,7 @@ class RenderableModelAnimationActionProcessor(Processor):
             - for RenderableModel, HasWeapon -> ACTION ANIM, IDLE ANIM
             - for RenderableModel, Motion -> WALK
         - potom aktualizovat frame
-            - for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
+            - for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible_on_camera(all_cameras, x)
                 - update_frame() ... bez argumentu
     '''
     def __init__(self, *args, **kwargs):
@@ -104,7 +104,7 @@ class RenderableModelAnimationActionProcessor(Processor):
         for cam, (camera) in self.world.get_component(Camera):
 
             # Get all states
-            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
+            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, RenderableModel)):
 
                 if ent not in already_updated:
 

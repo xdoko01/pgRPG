@@ -107,7 +107,7 @@
 
 ### Processing only entities that are visible on the screen implemented
 
-  - New filter function filter_only_visible implemented.
+  - New filter function filter_only_visible_on_camera implemented.
   - Function is filtering based on *Position* component x, y vars and camera screen rectancle. Entities that have position out of this camera rectancle are not being drawn.
 
 ### Picking up and Wearing clothes implemented

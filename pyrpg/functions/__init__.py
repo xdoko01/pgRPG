@@ -12,4 +12,7 @@ from .str_utils import *
 from .get_dict_from_file import *
 from .get_dict import *
 from .get_dict_params import *
+from .get_tiles_in_line import *
+
+
 

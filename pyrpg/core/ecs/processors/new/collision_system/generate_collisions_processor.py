@@ -20,7 +20,7 @@ from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
 from pyrpg.core.events.event import Event
 
 from collections import namedtuple # for representation of vectors
-from ..functions import filter_only_visible # for filtering only entities with position on the cameras
+from ..functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 from pyrpg.functions import sign
 from pyrpg.functions import allow_deny_list_filter, allow_deny_item_filter
 
@@ -97,7 +97,7 @@ class GenerateCollisionsOptimizedProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get the list of entities together with components on the camera - exclude those whose collisions has been already calculated
-            collision_candidates = list(filter(lambda x: filter_only_visible(camera, x), self.world.get_components_ex(Position, Collidable, exclude=FlagHasCollided)))
+            collision_candidates = list(filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components_ex(Position, Collidable, exclude=FlagHasCollided)))
 
             # Get only set of involved entities
             collision_candidates_entities = set([ent for ent, [*_] in collision_candidates])
@@ -115,7 +115,7 @@ class GenerateCollisionsOptimizedProcessor(Processor):
             position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.accept_pos_fix_from_allowlist, denylist=coll_comp.accept_pos_fix_from_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
             # Get all entities that have Position, Collidable + are on some camera
-            #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
+            #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
             #for ent_moved, (pos_moved, coll_moved) in collision_candidates:
             # NEW
             for ent_moved_idx, ent_moved in enumerate(collision_candidates):
@@ -276,7 +276,7 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
         position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.accept_pos_fix_from_allowlist, denylist=coll_comp.accept_pos_fix_from_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
         # Get all entities that have Position, Collidable + are on some camera
-        #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
+        #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
         #for ent_moved, (pos_moved, coll_moved) in collision_candidates:
         # NEW
         for ent_moved_idx, ent_moved in enumerate(collision_candidates):
@@ -418,13 +418,13 @@ class GenerateCollisionsNotOptimizedProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Get all entities that have Position, Collidable + are on some camera
-            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
+            for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
 
                 # Store the collisions
                 collisions = set()
 
                 # Get all the entities again
-                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, Collidable)):
+                for ent_other, (pos_other, coll_other) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
 
                     # If entity is to ignore
                     #if ent_other in coll_moved.ignore_collision_with: continue

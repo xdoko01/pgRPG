@@ -4,6 +4,7 @@ CanSee component implemented as a CanSee class.
 Use 'python -m pyrpg.core.ecs.components.new.can_see -v' to run
 module tests.
 '''
+from math import radians, sin, cos
 
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.core.config.config import TILE_RES # in order to re-calculate tile distance to px
@@ -23,7 +24,7 @@ class CanSee(Component):
         >>> c = CanSee(**{"angle": 90, "distance_tiles": 10})
     '''
 
-    __slots__ = ['angle', 'distance_px', 'distance_tiles', 'ent_in_sight']
+    __slots__ = ['angle', 'angle_deg', 'angle_rad', 'angle_rad_div2', 'distance', 'ent_in_sight']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the CanSee component.
@@ -46,17 +47,24 @@ class CanSee(Component):
         # Get the angle - mandatory
         self.angle = kwargs['angle']
 
+        # Supporting variables for calculations
+        self.angle_deg = self.angle
+        self.angle_rad = radians(self.angle_deg)
+        self.angle_rad_div2 = radians(self.angle_deg // 2)
+        self.sin_angle = sin(self.angle_rad_div2)
+        self.cos_angle = cos(self.angle_rad_div2)
+
         # Get the distance in px - mandatory
-        self.distance = kwargs.get('distance_px', kwargs['distance_tiles'] * TILE_RES)
+        self.distance = kwargs.get('distance_px', kwargs.get('distance_tiles', 10) * TILE_RES)
 
         # Get the list of entities in sight - optional
-        self.ent_in_sight = kwargs.get('ent_in_sight', [])
+        self.ent_in_sight = set(kwargs.get('ent_in_sight', []))
 
         # Check the validity of input parameters
         try:
-            assert isinstance(self.angle, int) and self.angle in (0,360), f'Incorrect angle value on input.'
+            assert isinstance(self.angle, int) and self.angle in range(360), f'Incorrect angle value on input.'
             assert isinstance(self.distance, int) and self.distance > 0, f'Incorrect distance value on input.'
-            assert isinstance(self.ent_in_sight, list), f'Incorrect ent_in_sight value on input.'
+            assert isinstance(self.ent_in_sight, set), f'Incorrect ent_in_sight value on input.'
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError

@@ -6,14 +6,14 @@ import core.ecs.components as components # for definition of components
 
 from core.config.fonts import GAME_DEBUG_FONT # for the debug font
 
-from .functions import filter_only_visible # for filtering only entities with position on the cameras
+from .functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 
 
 class RenderDebugProcessor(esper.Processor):
 	''' Information displayed only on visible entities
-	using the filter_only_visible function.
+	using the filter_only_visible_on_camera function.
 
 	'''
 
@@ -37,8 +37,8 @@ class RenderDebugProcessor(esper.Processor):
 		for _, (cam_cam) in self.world.get_component(components.Camera):
 
 			# Show debug information to all entities with Position and Debug component
-			#for debug_entity, (pos_comp, deb_comp, coll_debug) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.Collidable)):
-			for debug_entity, (pos_comp, deb_comp) in filter(lambda x: filter_only_visible(cam_cam, x), self.world.get_components(components.Position, components.Debug)):
+			#for debug_entity, (pos_comp, deb_comp, coll_debug) in filter(lambda x: filter_only_visible_on_camera(cam_cam, x), self.world.get_components(components.Position, components.Debug, components.Collidable)):
+			for debug_entity, (pos_comp, deb_comp) in filter(lambda x: filter_only_visible_on_camera(cam_cam, x), self.world.get_components(components.Position, components.Debug)):
 
 				# Here all the debug information are gathered
 				debug_text = ''

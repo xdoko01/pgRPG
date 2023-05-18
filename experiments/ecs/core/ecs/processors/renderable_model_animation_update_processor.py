@@ -3,7 +3,7 @@ __all__ = ['RenderableModelAnimationUpdateProcessor']
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 
-from .functions import filter_only_visible
+from .functions import filter_only_visible_on_camera
 
 class RenderableModelAnimationUpdateProcessor(esper.Processor):
 	''' Shift the animation
@@ -21,7 +21,7 @@ class RenderableModelAnimationUpdateProcessor(esper.Processor):
 		for cam, (camera) in self.world.get_component(components.Camera):
 			
 			# Get RenderableModels with Positions
-			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 	
 				# Call the update_frame function
 				if ent not in already_updated:

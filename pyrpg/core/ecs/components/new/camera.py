@@ -44,7 +44,7 @@ class Camera(Component):
 
         Parameters:
             :param always_center: If False then camera stops centering when entity is close to map edges (optional, default False).
-            :type screen_pos_x: bool
+            :type always_center: bool
 
             :param screen_pos_x: X-axis position of the topleft screen corner in the game window (optional, default 0).
             :type screen_pos_x: int

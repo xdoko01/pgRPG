@@ -8,7 +8,7 @@ from pyrpg.core.ecs.components.original.camera import Camera
 from pyrpg.core.ecs.components.original.position import Position
 from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
 
-from .functions import filter_only_visible
+from .functions import filter_only_visible_on_camera
 
 class RenderableModelAnimationUpdateProcessor(Processor):
     ''' Shift the animation
@@ -33,7 +33,7 @@ class RenderableModelAnimationUpdateProcessor(Processor):
         for cam, (camera) in self.world.get_component(Camera):
             
             # Get RenderableModels with Positions
-            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
+            for ent, (position, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, RenderableModel)):
     
                 # Call the update_frame function
                 if ent not in already_updated:

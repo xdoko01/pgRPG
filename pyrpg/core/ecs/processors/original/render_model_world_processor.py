@@ -10,7 +10,7 @@ from pyrpg.core.ecs.components.original.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.original.can_wear import CanWear
 from pyrpg.core.ecs.components.original.has_weapon import HasWeapon
 
-from .functions import filter_only_visible # for filtering only entities with position on the cameras
+from .functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 
 class RenderModelWorldProcessor(Processor):
     ''' Draws the entities in the world. Unlike RenderWorldProcessor
@@ -81,7 +81,7 @@ class RenderModelWorldProcessor(Processor):
             #####
 
             # Blit all the Entities that have Renderable and Position components - only visible entities
-            for ent, (position, renderable) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(Position, RenderableModel)):
+            for ent, (position, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, RenderableModel)):
                 #camera.screen.blit(renderable.get_frame(position.dir_name, renderable.action), camera.apply(renderable.topleft((position.x, position.y))))
                 camera.screen.blit(renderable.get_current_frame(position.dir_name), camera.apply(renderable.topleft((position.x, position.y))))
 

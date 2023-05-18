@@ -3,7 +3,7 @@ __all__ = ['RenderableModelAnimationActionProcessor']
 import core.ecs.esper as esper	# for esper.Processor - parent class of all processors
 import core.ecs.components as components # for definition of components
 
-from .functions import filter_only_visible
+from .functions import filter_only_visible_on_camera
 
 class RenderableModelAnimationActionProcessor2(esper.Processor):
 	''' Change the action of renderable model in order to display
@@ -16,7 +16,7 @@ class RenderableModelAnimationActionProcessor2(esper.Processor):
 			- for RenderableModel, HasWeapon -> ACTION ANIM, IDLE ANIM
 			- for RenderableModel, Motion -> WALK
 		- potom aktualizovat frame
-			- for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
+			- for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible_on_camera(all_cameras, x)
 				- update_frame() ... bez argumentu
 	'''
 	def __init__(self):
@@ -62,7 +62,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 			- for RenderableModel, HasWeapon -> ACTION ANIM, IDLE ANIM
 			- for RenderableModel, Motion -> WALK
 		- potom aktualizovat frame
-			- for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible(all_cameras, x)
+			- for RenderableModel, Position - pouze ty na kamerach novy filter filter_only_visible_on_camera(all_cameras, x)
 				- update_frame() ... bez argumentu
 	'''
 	def __init__(self):
@@ -77,7 +77,7 @@ class RenderableModelAnimationActionProcessor(esper.Processor):
 		for cam, (camera) in self.world.get_component(components.Camera):
 
 			# Get all states
-			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
+			for ent, (position, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(components.Position, components.RenderableModel)):
 
 				if ent not in already_updated:
 

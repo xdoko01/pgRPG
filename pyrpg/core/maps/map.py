@@ -96,13 +96,13 @@ class Map:
 	def get_tile_image(self, map_x, map_y, layer) -> pygame.Surface:
 		''' Return the Surface of the particular tile
 		 try:
-            # animated, so return the correct frame
-            return self._animated_tile[(x, y, l)]
+			# animated, so return the correct frame
+			return self._animated_tile[(x, y, l)]
 
-        except KeyError:
+		except KeyError:
 
-            # not animated, so return surface from data, if any
-            return self._get_tile_image(x, y, l)
+			# not animated, so return surface from data, if any
+			return self._get_tile_image(x, y, l)
 
 		'''
 
@@ -148,9 +148,58 @@ class Map:
 			# in cases that we are asking for out of map cells
 			return None
 
-
-	def check_collision(self, x, y):
+	def check_collision(self, tile_x, tile_y) -> bool:
 		try:
-			return bool(self.tmxdata.get_tile_gid(x, y, self.collision_layer) != 0)
+			return bool(self.tmxdata.get_tile_gid(tile_x, tile_y, self.collision_layer) != 0)
 		except ValueError:
 			return True
+
+	def get_tiles_in_line(self, source_px: tuple, target_px: tuple) -> tuple:
+		'''Yield the tiles between 2 points in px. Tiles coordinates are returned in
+		lazy mode and in the raster specified by tile_res.
+
+		Tiles include both starting and ending tiles.
+		'''
+		sign = lambda x: -1 if x < 0 else 1
+		
+		dx = target_px[0] - source_px[0]
+		dy = target_px[1] - source_px[1]
+
+		sx, sy = sign(dx), sign(dy)
+
+		# Starting position
+		x, y = source_px[0], source_px[1]
+
+		if abs(dx) > abs(dy):
+			x_incr = sx * config.TILE_RES
+			y_incr = x_incr * dy/dx
+
+			while sx*x < sx*target_px[0]:
+				#print(f'x:{x}, y:{y}, sx*x:{sx*x}, sx*target_px[0]:{sx*target_px[0]}')
+				yield (x // config.TILE_RES, int(y // config.TILE_RES))
+				x = x + x_incr
+				y = y + y_incr
+
+		else:
+			y_incr = sy * config.TILE_RES
+			x_incr = y_incr * dx/dy
+
+			while sy*y < sy*target_px[1]:
+				#print(f'x:{x}, y:{y}, sy*y:{sy*y}, sy*target_px[1]:{sy*target_px[1]}')
+				yield (int(x // config.TILE_RES), y // config.TILE_RES)
+				x = x + x_incr
+				y = y + y_incr
+
+	def check_collision_in_line(self, source_px: tuple, target_px: tuple) -> bool:
+		'''Check if on line between 2 points in pixels is some tile from the
+		collision layer
+		'''
+		# Iterate every tile in line
+		for tile in self.get_tiles_in_line(source_px, target_px):
+	
+			# If the tile is collidable end with True
+			if self.check_collision(tile[0], tile[1]):
+				return True
+		
+		# No tile in line is collidable
+		return False

@@ -1,6 +1,6 @@
-__all__ = ['filter_only_visible']
+__all__ = ['filter_only_visible_on_camera']
 
-def filter_only_visible(camera, comp_tuple, corr=32):
+def filter_only_visible_on_camera(camera, comp_tuple, corr=32):
 	''' Filter that is used for selection of only those entities
 	that are within visible scope of the camera screen.
 

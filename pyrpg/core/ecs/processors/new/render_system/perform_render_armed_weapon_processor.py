@@ -12,7 +12,7 @@ from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from pyrpg.core.ecs.components.new.weapon import Weapon
 
 # For filtering only entities with position on the cameras
-from ..functions import filter_only_visible
+from ..functions import filter_only_visible_on_camera
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ class PerformRenderArmedWeaponProcessor(Processor):
         for _, (camera) in self.world.get_component(Camera):
 
             # Blit all the Entities that have RenderDataFromParent + RenderableModel + Weapon
-            for ent_weapon, (render_data, renderable, weapon) in filter(lambda x: filter_only_visible(camera, x), self.world.get_components(RenderDataFromParent, RenderableModel, Weapon)):
+            for ent_weapon, (render_data, renderable, weapon) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(RenderDataFromParent, RenderableModel, Weapon)):
                 camera.screen.blit(renderable.get_current_frame(render_data.dir_name, render_data.action, render_data.last_frame), camera.apply(renderable.topleft((render_data.x, render_data.y))))
 
     def pre_save(self):
