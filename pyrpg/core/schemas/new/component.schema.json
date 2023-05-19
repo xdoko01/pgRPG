@@ -46,7 +46,10 @@
 		{"$ref": "components/damageable.schema.json"},
 		{"$ref": "components/scorable_on_no_health.schema.json"},
 		{"$ref": "components/scorable_on_damage.schema.json"},
-		{"$ref": "components/has_score.schema.json"}
+		{"$ref": "components/has_score.schema.json"},
+
+		{"$ref": "components/can_see.schema.json"},
+		{"$ref": "components/can_hear.schema.json"}
 
 	]
 }

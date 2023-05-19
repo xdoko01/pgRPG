@@ -24,7 +24,7 @@ class Debug(Component):
         2
     '''
 
-    __slots__ = ['collision', 'movement', 'sight', 'info']
+    __slots__ = ['collision', 'movement', 'sight', 'hearing', 'info']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Debug component.
@@ -38,6 +38,9 @@ class Debug(Component):
 
             :param sight: Properties for displaying debug information about CanSee and sight
             :type sight: dict
+
+            :param hearing: Properties for displaying debug information about CanHear and hearing
+            :type hearing: dict
         '''
 
         super().__init__()
@@ -45,6 +48,7 @@ class Debug(Component):
         self.collision = kwargs.get('collision', {'color' : [0, 0, 255], 'width' : 1})
         self.movement = kwargs.get('movement', {'color' : [255, 0, 0], 'width' : 1})
         self.sight = kwargs.get('sight', {'color' : [0, 255, 0], 'width' : 1})
+        self.hearing = kwargs.get('hearing', {'color' : [255, 255, 0], 'width' : 1})
 
         # Dictionary of information that we want to display about the entity.
         # It is filled by debug processor and also displayed there.
@@ -54,6 +58,7 @@ class Debug(Component):
             assert isinstance(self.collision, dict), f'Collision must be passed as a dictionary'
             assert isinstance(self.movement, dict), f'Movement must be passed as a dictionary.'
             assert isinstance(self.sight, dict), f'Sight must be passed as a dictionary.'
+            assert isinstance(self.hearing, dict), f'Hearing must be passed as a dictionary.'
             assert isinstance(self.info, dict), f'Info must be passed as a dictionary.'
 
         except AssertionError:

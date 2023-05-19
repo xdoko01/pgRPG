@@ -1,0 +1,58 @@
+{
+	"$id": "can_hear.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "CanHear Component",
+	"description": "Schema validating the CanSee component.",
+
+	"examples" : [
+		{"type" : "new.can_hear:CanHear", "params" : {"distance_px": 200}},
+		{"type" : "new.can_hear:CanHear", "params" : {"distance_tiles" : 20}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "new.can_hear:CanHear" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the CanHear component class - 'distance_px', 'distance_tiles', 'ent_within_earshot'.",
+			
+			"type": "object",
+			"required": ["distance_px", "distance_tiles"],
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"distance_px" : {
+					"title": "Distance",
+					"description": "Max hear distance in pixels.",
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				},
+				"distance_tiles" : {
+					"title": "Distance",
+					"description": "Max hear distance in tiles.",
+					"type": "integer",
+					"minimum": 0
+				},
+				"ent_within_earshot": {
+					"title": "Entities within Earshot",
+					"description": "List of entities which are being heard.",
+					"default": [],
+					"type": "array",
+					"uniqueItems": true
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+
+}

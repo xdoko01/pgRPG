@@ -30,7 +30,8 @@ def main(argv):
     #filepath = 'new/games/sokoban/sokoban.json'                NOT WORKING
     #filepath = 'new/games/collect_coins/collect_coins.json'
 
-    # 12_sensors
+    # 11_sensors
+    filepath = 'new/tests/11_sensors/test_sensors_01.json'
 
     # 11_btrees
 

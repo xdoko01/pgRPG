@@ -18,12 +18,11 @@ from pyrpg.core.ecs.components.new.damageable import Damageable
 from pyrpg.core.ecs.components.new.has_score import HasScore
 from pyrpg.core.ecs.components.new.btree import BTree
 from pyrpg.core.ecs.components.new.can_see import CanSee
-
+from pyrpg.core.ecs.components.new.can_hear import CanHear
 
 from ..functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
 from ..functions import get_view_points # for drawing of arrows
-
 
 from pyrpg.core.config.fonts import GAME_DEBUG_FONT # for the debug font
 from pyrpg.core.config.frames import GAME_DEBUG_FRAME # for the debug frame
@@ -110,6 +109,36 @@ class PerformRenderDebugInfoProcessor(Processor):
             # Get info about entities in sight
             for _, (position, debug, can_see) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanSee)):
                 debug.info.update({'Ent in Sight' : can_see.ent_in_sight})
+
+            # Get info about hearable entities
+            for _, (position, debug, can_hear) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanHear)):
+                debug.info.update({'Ent within Earshot' : can_hear.ent_within_earshot})
+
+            # Show CAN HEAR information about the audible area
+            for _, (position, debug, can_hear) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanHear)):
+
+                pygame.draw.circle(
+                    camera.screen,
+                    debug.hearing['color'], # Color taken from Debug component
+                    camera.apply((position.x, position.y)), # center
+                    can_hear.distance,
+                    debug.hearing['width'] # Thickness of line taken from Debug component
+                )
+
+                # Make line between all audible entities and the CanHear comp entity
+                for audible_ent in can_hear.ent_within_earshot:
+                    try:
+                        audible_ent_pos = self.world.component_for_entity(audible_ent, Position)
+
+                        pygame.draw.line(
+                            camera.screen,
+                            debug.hearing['color'], # Color taken from Debug component
+                            camera.apply((position.x, position.y)),
+                            camera.apply((audible_ent_pos.x, audible_ent_pos.y)),
+                            debug.hearing['width'] # Thickness of line taken from Debug component
+                        )
+                    except KeyError:
+                        pass
 
             # Show CAN SEE information about the view area
             for _, (position, debug, can_see) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanSee)):

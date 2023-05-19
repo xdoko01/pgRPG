@@ -1,5 +1,29 @@
 from math import sin, cos,sqrt
 
+def filter_only_within_earshot_of_ent(ent_pos_comp, ent_can_hear_comp, comp_tuple):
+    '''Filter that is used for selection of only those entities
+    that are within the earshot of the entity with CanHear
+    component.'''
+
+    # Select position component from the return tuple. Must be the first
+    _, (oth_pos_comp, *_) = comp_tuple
+
+    # Entity cannot hear itself
+    if ent_pos_comp == oth_pos_comp: return False
+
+    # Entity cannot hear other entity on other map
+    if ent_pos_comp.map != oth_pos_comp.map: return False
+
+    # Distance of entity from other entity on x, y and total
+    dx = oth_pos_comp.x - ent_pos_comp.x
+    dy = oth_pos_comp.y - ent_pos_comp.y
+    dist = sqrt(dx*dx + dy*dy)
+
+    # Chect that other entity is still in audible distance
+    if dist > ent_can_hear_comp.distance: return False
+
+    return True
+
 def filter_only_in_sight_of_ent(ent_pos_comp, ent_can_see_comp, comp_tuple):
     '''Filter that is used for selection of only those entities
     that are within the visible range of the entity with CanSee

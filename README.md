@@ -514,7 +514,7 @@
   - [ ] optimize  `map.get_tile_images_by_rect(layer, camera.map_screen_rect)` function. there are unnecessary calculation being done every cycle - tiles to show
   - [x] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
   - [ ] Revise usage of `dict.get()` because it is always returning None if value is not found. Sometimes I want the `KeyError` when the key does not exist and not `None`.
-  - [ ] Rewrite all event handling conditions in tests to JSON LOGIC.
+  - [x] Rewrite all event handling conditions in tests to JSON LOGIC.
   - [ ] Rename create_entity_ex to create_entity
   - [ ] Implement smooth camera moves. When player stops the camera slowly slows down till centred on the player
   - [ ] Implement ordering of displaying of entities based on their Y position. Entities with lower Y should be generated on the display before entities with higher Y
@@ -529,8 +529,9 @@
   - [ ] Implement `ALL`, `` into the cleanup at the beginning of the quest definition - ideally some pre_processing that will substitute keyword ALL with all the processors in the
   game. By doing it this way it will not be necessary to modify the logic of ecs_manager's delete_processor.
   - [x] Redo prereqs in the quest manager - the load is ugly
-  - [ ] Implement new component `CanSee` that will specify what the entity can see and will hold list of entities that are being seen.
+  - [x] Implement new component `CanSee` that will specify what the entity can see and will hold list of entities that are being seen.
   - [ ] Implement new component `CanHear` that will specify what the entity can hear and will hold list of entities that are being heard.
+  - [ ] Bug -Problem with pushing entities into walls - eventhough map collisions are enabled. To be fixed.
 
 
 ## TODOs - Behavior Trees for AI implementation, commands and brain
