@@ -14,7 +14,7 @@ from pyrpg.core.ecs.components.new.can_see import CanSee
 from pyrpg.core.ecs.components.new.camera import Camera
 from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 
-from ..functions import filter_only_in_sight_of_ent
+from ..functions import filter_only_in_view_angle_of_ent, filter_only_within_distance_from_ent
 from ..functions import filter_only_visible_on_camera
 
 # Logger init
@@ -74,8 +74,8 @@ class GenerateEntitiesInSightProcessor(Processor):
                 # Get map that is on the object in camera's focus
                 map = self.fnc_get_map(ent_pos.map)
 
-                # 1/ filter all entities with pos component in radius and angle (and optionally displayed on the camera)
-                for oth_ent, (oth_pos, _) in filter(lambda x: filter_only_in_sight_of_ent(ent_pos, ent_can_see, x), self.world.get_components(Position, RenderableModel)):
+                # Filter all entities with pos component in radius and angle
+                for oth_ent, (oth_pos, _) in filter(lambda x: filter_only_within_distance_from_ent(ent_pos, ent_can_see.distance, x) and filter_only_in_view_angle_of_ent(ent_pos, ent_can_see.sin_angle, x), self.world.get_components(Position, RenderableModel)):
 
                     logger.debug(f'({self.cycle}) - Checking if Entity {ent} sees entity {oth_ent} with pos comp: {oth_pos}.')
 
@@ -157,8 +157,8 @@ class GenerateEntitiesInSightFullProcessor(Processor):
             # Get map that is on the object in camera's focus
             map = self.fnc_get_map(ent_pos.map)
 
-            # 1/ filter all entities with pos component in radius and angle (and optionally displayed on the camera)
-            for oth_ent, (oth_pos, _) in filter(lambda x: filter_only_in_sight_of_ent(ent_pos, ent_can_see, x), self.world.get_components(Position, RenderableModel)):
+            # Filter all entities with pos component in radius and angle
+            for oth_ent, (oth_pos, _) in filter(lambda x: filter_only_within_distance_from_ent(ent_pos, ent_can_see.distance, x) and filter_only_in_view_angle_of_ent(ent_pos, ent_can_see.sin_angle, x), self.world.get_components(Position, RenderableModel)):
 
                 logger.debug(f'({self.cycle}) - Checking if Entity {ent} sees entity {oth_ent} with pos comp: {oth_pos}.')
 

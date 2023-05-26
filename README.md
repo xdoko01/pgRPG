@@ -532,7 +532,10 @@
   - [x] Implement new component `CanSee` that will specify what the entity can see and will hold list of entities that are being seen.
   - [ ] Implement new component `CanHear` that will specify what the entity can hear and will hold list of entities that are being heard.
   - [ ] Bug -Problem with pushing entities into walls - eventhough map collisions are enabled. To be fixed.
+  - [ ] schema validation path to every test quest
 
+## TODOs
+  - filters to be independent on component, so that those can be used also within commands and not only processors
 
 ## TODOs - Behavior Trees for AI implementation, commands and brain
   - special commands for init and for complete functions are problematic, because they return SUCCESS or FAILURE and by doing so, closing the whole node. Hence added result parameter for selected commands that would forcefully return RUNNING

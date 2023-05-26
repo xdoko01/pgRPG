@@ -30,10 +30,11 @@ def main(argv):
     #filepath = 'new/games/sokoban/sokoban.json'                NOT WORKING
     #filepath = 'new/games/collect_coins/collect_coins.json'
 
-    # 11_sensors
-    filepath = 'new/tests/11_sensors/test_sensors_01.json'
+    # 12_btrees
+    filepath = 'new/tests/12_btrees/test_entity_seen.json'
 
-    # 11_btrees
+    # 11_sensors
+    #filepath = 'new/tests/11_sensors/test_sensors_01.json'
 
     # 10_effects
     #filepath = 'new/tests/10_effects/test_fx_01.json'

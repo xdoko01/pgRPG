@@ -49,7 +49,7 @@ def cmd_move_to(*args, **kwargs):
     target = kwargs.get("bb_target")
 
     # Read the target from the bb
-    tx, ty = btree.blackboard.get_value(key=target)
+    tx, ty = btree.blackboard[target]
 
     # Get the coordinate of the entity and the target 
     position = world.component_for_entity(entity, Position)

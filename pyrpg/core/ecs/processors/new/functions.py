@@ -1,9 +1,39 @@
-from math import sin, cos,sqrt
+from math import sin, cos, sqrt
 
-def filter_only_within_earshot_of_ent(ent_pos_comp, ent_can_hear_comp, comp_tuple):
+from pyrpg.core.ecs.components.new.position import Position
+from pyrpg.core.ecs.components.new.camera import Camera
+from pyrpg.core.maps.map import Map
+
+def filter_only_not_behind_wall(ent_pos_comp: Position, map: Map, comp_tuple: tuple) -> bool:
+    ''' Filter that is used for filtering of entities that are not hidden
+    behind some wall from the entity.
+    '''
+    
+    # Select position component from the return tuple. Must be the first
+    _, (oth_pos_comp, *_) = comp_tuple
+
+    # We are interested only in entities NOT hidden beneath the wall
+    return not map.check_collision_in_line((ent_pos_comp.x, ent_pos_comp.y), (oth_pos_comp.x, oth_pos_comp.y))
+
+
+def filter_only_specific_entity_ids(list_of_entity_ids: list, comp_tuple: tuple) -> bool:
+    '''Filter that is used for filtering of only specific entity_ids.
+    '''
+    # If list is empty, consider entity as valid
+    if not list_of_entity_ids: return True
+
+    ent_id, _ = comp_tuple
+
+    if ent_id not in list_of_entity_ids: 
+        return False
+    else:
+        return True
+
+
+def filter_only_within_distance_from_ent(ent_pos_comp: Position, max_distance: int, comp_tuple: tuple) -> bool:
     '''Filter that is used for selection of only those entities
-    that are within the earshot of the entity with CanHear
-    component.'''
+    that are within the max_distance from the entity.
+    '''
 
     # Select position component from the return tuple. Must be the first
     _, (oth_pos_comp, *_) = comp_tuple
@@ -20,18 +50,49 @@ def filter_only_within_earshot_of_ent(ent_pos_comp, ent_can_hear_comp, comp_tupl
     dist = sqrt(dx*dx + dy*dy)
 
     # Chect that other entity is still in audible distance
-    if dist > ent_can_hear_comp.distance: return False
+    if dist > max_distance: 
+        return False
 
     return True
 
-def filter_only_in_sight_of_ent(ent_pos_comp, ent_can_see_comp, comp_tuple):
+def filter_only_in_view_angle_of_ent(ent_pos_comp: Position, sin_angle: float, comp_tuple: tuple) -> bool:
     '''Filter that is used for selection of only those entities
-    that are within the visible range of the entity with CanSee
-    component.'''
+    that are in the view angle of the entity.
+    '''
 
-    ent_can_see_comp.angle_rad_div2, ent_can_see_comp.distance, ent_can_see_comp.sin_angle, ent_can_see_comp.cos_angle
+    # Select position component from the return tuple. Must be the first
+    _, (oth_pos_comp, *_) = comp_tuple
 
-    ent_pos_comp.x, ent_pos_comp.y, ent_pos_comp.direction
+    # Entity cannot see itself
+    if ent_pos_comp == oth_pos_comp: return False
+
+    # Entity cannot see other entity on other map
+    if ent_pos_comp.map != oth_pos_comp.map: return False
+
+    # Distance of entity from other entity on x, y and total
+    dx = oth_pos_comp.x - ent_pos_comp.x
+    dy = oth_pos_comp.y - ent_pos_comp.y
+    dist = sqrt(dx*dx + dy*dy)
+
+    sin_angle_oth_vert = abs(dx/dist)
+    sin_angle_oth_horiz = abs(dy/dist)
+
+    # Check that oth ent position is in the viewable range
+    if (
+        (sin_angle_oth_vert <= sin_angle and dy > 0 and ent_pos_comp.direction[1] > 0) or  #(0,1)
+        (sin_angle_oth_vert <= sin_angle and dy < 0 and ent_pos_comp.direction[1] < 0) or  #(0,-1)
+        (sin_angle_oth_horiz <= sin_angle and dx > 0 and ent_pos_comp.direction[0] > 0) or #(1,0)
+        (sin_angle_oth_horiz <= sin_angle and dx < 0 and ent_pos_comp.direction[0] < 0) #(-1,0)
+    ):
+        return True
+
+    return False
+
+"""
+def filter_only_in_sight_of_ent(ent_pos_comp: Position, max_distance: int, sin_angle: float, comp_tuple: tuple) -> bool:
+    '''Filter that is used for selection of only those entities
+    that are within the visible range of the entity.
+    '''
 
     # Select position component from the return tuple. Must be the first
     _, (oth_pos_comp, *_) = comp_tuple
@@ -48,23 +109,24 @@ def filter_only_in_sight_of_ent(ent_pos_comp, ent_can_see_comp, comp_tuple):
     dist = sqrt(dx*dx + dy*dy)
 
     # Chect that other entity is still in viewable distance
-    if dist > ent_can_see_comp.distance: return False
+    if dist > max_distance: return False
 
     sin_angle_oth_vert = abs(dx/dist)
     sin_angle_oth_horiz = abs(dy/dist)
 
     # Check that oth ent position is in the viewable range
     if (
-        (sin_angle_oth_vert <= ent_can_see_comp.sin_angle and dy > 0 and ent_pos_comp.direction[1] > 0) or  #(0,1)
-        (sin_angle_oth_vert <= ent_can_see_comp.sin_angle and dy < 0 and ent_pos_comp.direction[1] < 0) or  #(0,-1)
-        (sin_angle_oth_horiz <= ent_can_see_comp.sin_angle and dx > 0 and ent_pos_comp.direction[0] > 0) or #(1,0)
-        (sin_angle_oth_horiz <= ent_can_see_comp.sin_angle and dx < 0 and ent_pos_comp.direction[0] < 0) #(-1,0)
+        (sin_angle_oth_vert <= sin_angle and dy > 0 and ent_pos_comp.direction[1] > 0) or  #(0,1)
+        (sin_angle_oth_vert <= sin_angle and dy < 0 and ent_pos_comp.direction[1] < 0) or  #(0,-1)
+        (sin_angle_oth_horiz <= sin_angle and dx > 0 and ent_pos_comp.direction[0] > 0) or #(1,0)
+        (sin_angle_oth_horiz <= sin_angle and dx < 0 and ent_pos_comp.direction[0] < 0) #(-1,0)
     ):
         return True
 
     return False
+"""
 
-def filter_only_visible_on_camera(camera, comp_tuple, corr=32):
+def filter_only_visible_on_camera(camera: Camera, comp_tuple: tuple, corr: int=32) -> bool:
     ''' Filter that is used for selection of only those entities
     that are within visible scope of the camera screen.
 

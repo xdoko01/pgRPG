@@ -645,7 +645,7 @@ class Blackboard:
         self._bb = {**self._bb, **values}
         logger.debug(f'Blackboard updated by values "{values}". Blackboard content: "{self._bb}"')
 
-    def get(self, key):
+    def get(self, key, default=None):
         '''Call to get value from the blackboard'''
         try:
             value = self._bb[key]
