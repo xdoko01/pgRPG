@@ -16,10 +16,12 @@ class PerformCommandProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self, FNC_GET_ENTITY_ID, FNC_PROCESS_COMMANDS, REF_ECS_MNG, *args, **kwargs):
+    #def __init__(self, FNC_GET_ENTITY_ID, FNC_PROCESS_COMMANDS, REF_ECS_MNG, *args, **kwargs):
+    def __init__(self, FNC_PROCESS_COMMANDS, REF_ECS_MNG, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
 
-        self.get_entity_from_alias_fnc = FNC_GET_ENTITY_ID
+        #self.get_entity_from_alias_fnc = FNC_GET_ENTITY_ID
         self.game_commands_handler = FNC_PROCESS_COMMANDS
         self.ecs_mng = REF_ECS_MNG
 
@@ -40,7 +42,8 @@ class PerformCommandProcessor(Processor):
         events = kwargs.get('events', [])
 
         # Call command handler - processing commands from the queue
-        self.game_commands_handler(self.get_entity_from_alias_fnc, world=self.world, ecs_mng=self.ecs_mng, keys=keys, events=events)
+        #self.game_commands_handler(self.get_entity_from_alias_fnc, world=self.world, ecs_mng=self.ecs_mng, keys=keys, events=events)
+        self.game_commands_handler(ecs_mng=self.ecs_mng, keys=keys, events=events)
 
         logger.debug(f'({self.cycle}) - Command handler executed.')
 

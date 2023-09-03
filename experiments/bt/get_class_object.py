@@ -42,7 +42,7 @@ def get_class_object(package: str, module: str, class_name: str) -> type:
         module = str_to_package_module(package=package, module=module)
         return str_to_class(module=module, class_name=class_name)
     except ValueError:
-        raise ValueError(f'Error getting class reference for "{package=}","{module=}" and "{class_name=}"')
+        ValueError(f'Error getting class reference for package "{package}", module "{module}" and class "{class_name}"')
 
 def get_class_from_def(class_def: str, class_package: str='pyrpg.core.ecs'):
     '''Returns class object based on string path.
@@ -58,7 +58,7 @@ def get_class_from_def(class_def: str, class_package: str='pyrpg.core.ecs'):
         module, name = class_def.split(':')
         return get_class_object(None, class_package + '.' + module, name)
     except ValueError:
-        raise ValueError(f'Error during loading of class "{name}"')
+        ValueError(f'Error during loading of class "{name}"')
 
 
 if __name__ == '__main__':

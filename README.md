@@ -533,6 +533,40 @@
   - [ ] Implement new component `CanHear` that will specify what the entity can hear and will hold list of entities that are being heard.
   - [ ] Bug -Problem with pushing entities into walls - eventhough map collisions are enabled. To be fixed.
   - [ ] schema validation path to every test quest
+  - [ ] Unit tests for BTree and BList
+  - [ ] implement `toml` format for easy quest definitions (same as currenlty used `yaml` and `json`)
+  - [ ] implement test quests for testing of the new commands with the command context.
+  - [ ] in `generate_command_from_XXX_processor` there is repetitive part that is extracting entity_id from the parameters or from the brain owner and putting the command into the queue - this common part can be abstracted into separate function and called separatelly. Alternativelly it can be transfered from processors to `command_manager.add_command` function. 
+  - [ ] I want to have 'moves' as a normal function parameter, not kwargs. It is not elegant here.(Command function implementation)
+
+
+## TODO - Rethinking Commands - BTrees and Brain
+  - `CommandContext` - abstract class representing context of currently running command
+    - information from other commands from the same BTree
+    - ticks and times
+    - Context is valid for both Btree and Brain. BTree's context is called BTree blackboard, Brain's context can be different implementation. But always need to provide the information guaranteed and defined by the CommandContext class.
+    - on init remove necessary sub-classing
+    - ... ... ... ... ... ...
+    - check that the tree is valid - all leaves are behavior nodes
+    - Packages
+      - Core
+        - Commands
+          - `cmd_generator.py`
+          - `cmd_context.py`
+          - `cmd_status.py`
+          - Generators
+            - BTree
+              - `btree.py`
+              - `blackboard.py`
+            - BList (formal Brain)
+              - `blist.py`
+                - ListNode
+                  -[(idx=0, on_fail_goto_idx=None, cmd='...'), ...]
+              - `blackboard.py`
+          - Commands
+            - `dummy_command.py`
+            - ...
+  -`Btree` module -> used in BTree component
 
 ## TODOs
   - filters to be independent on component, so that those can be used also within commands and not only processors

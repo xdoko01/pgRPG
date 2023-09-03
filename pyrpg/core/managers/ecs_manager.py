@@ -44,6 +44,12 @@ class ECSManager:
         logger.info(f'ECSManager initiated.')
 
     #####################
+    ## HELPERS - in order not to use _world in the commands
+    #####################
+    def component_for_entity(self, entity, component): return self._world.component_for_entity(entity, component)
+    def add_component(self, entity, new_component): return self._world.add_component(entity, new_component)
+
+    #####################
     ## PROCESSORS - START
     #####################
     def get_proc_class_from_def(self, proc_class_def):
@@ -71,6 +77,7 @@ class ECSManager:
 
         # Get the definition of the processor class
         new_class = self.get_proc_class_from_def(class_def)
+        assert new_class is not None, f'Unable to create class from definition {class_def = }'
 
         # Check that processor has everything that it needs to work in the game
         try:
@@ -186,7 +193,7 @@ class ECSManager:
             # Get the definition of the component class
             new_class = self.get_comp_class_from_def(comp_class_def=comp_class_def)
 
-            # Use alias_dict to seach the values and translate them from string to entity id integers here!!!
+            # Use _alias_to_entity dict to seach the values and translate them from string to entity id integers here!!!
             # Every value is searched in alias_dict keys and if found, value is substituted with entity id 
             # integer from alias_dict values.
 

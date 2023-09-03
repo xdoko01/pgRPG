@@ -1,14 +1,17 @@
 ''' Module "pyrpg.core.ecs.components.btree" contains
 BTree component implemented as a BTree class.
 
-Use 'python -m pyrpg.core.ecs.components.new.btree -v' to run
+Use 'python -m pyrpg.core.ecs.components.new.btree_ai -v' to run
 module tests.
 '''
 
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.btrees.btree import Blackboard, create_tree, print_tree
 
-class BTree(Component):
+from pyrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
+
+from pyrpg.core.config.paths import BTREE_PATH
+
+class BTreeAI(Component):
     ''' Entity can perform commands stored in its brain that is represented.
     by the BTree component. Conditions and Actions are represented by the leaf
     nodes, so called behaviours. The functionality itself is performed by the
@@ -22,13 +25,14 @@ class BTree(Component):
         - BTreeProcessor
 
     Example of JSON definition:
+
         {
             "type": "BTree", 
             "params": {
                 "blackboard": {
                     "$target": "player01"
                 },
-                "tree": {
+                "cmd_tree": {
                     "type": "Selector",
                     "name": "AI Root",
                     "children": [
@@ -44,49 +48,29 @@ class BTree(Component):
         }
 
     Tests:
-        >>> c = BTree(tree={"type": "Behavior", "name": "Wait"})
+        >>> import pygame
+        >>> pygame.init() # doctest: +ELLIPSIS
+        (...)
+        >>> c = BTreeAI(tree={"type": "Behavior", "name": "Wait", "command": "dummy_command"})
     '''
 
-    __slots__ = ['blackboard', 'root', 'running_behavior']
+    __slots__ = ['generator']
 
     def __init__(self, *args, **kwargs):
-        ''' Initiate values for the new BTree component.
+        ''' Initiate values for the new BTreeAI component.
 
             Parameters:
-                :param blackboard: List of commands to execute
-                :type blackboard: list
-
-                :param tree: Definition of the tree in the form of dict.
-                :type tree: dict
+                :param btree: Object representing the behavior tree
+                :type btree: BTree
         '''
 
         super().__init__()
 
         try:
-            self.blackboard = Blackboard(bb=kwargs.get('blackboard', {}))
-            self.running_behavior = self.blackboard.running_behavior
-            self.root = create_tree(parent=None, json_tree=kwargs['tree'], blackboard=self.blackboard)
-            print_tree(self.root)
-        except ValueError:
+            self.generator = BTree(tree_def=kwargs, template_path=BTREE_PATH, val_check=True)
+        except InvalidBehaviorTreeError:
             # Notify component factory that initiation has failed
             raise ValueError
-
-    def process_result(self, result):
-        ''' Processes the result of processed command and updates 
-        the tree node statuses.
-
-        Overview:
-            Function is called by command manager.
-
-        Parameters:
-            :param result: In case of successfull cmd finish returns 0
-            :type result: int
-
-        Called from:
-            command manager -> process_game_commands function
-        '''
-        # Notify the running node about the result
-        self.blackboard.running_behavior.set_result(result)
 
 
 if __name__ == '__main__':

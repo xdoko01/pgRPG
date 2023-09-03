@@ -1,4 +1,4 @@
-__all__ = ['GenerateCommandFromBrainProcessor']
+__all__ = ['GenerateCommandFromBListProcessor']
 
 import logging
 
@@ -6,28 +6,26 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI
+from pyrpg.core.ecs.components.new.blist_ai import BListAI
 
 # Logger init
 logger = logging.getLogger(__name__)
 
-class GenerateCommandFromBrainProcessor(Processor):
-    ''' Put command that is in the component's BrainAI (logic
-    represented by any oc the CommandGenerators) and push it
-    into the command queue.
+class GenerateCommandFromBListProcessor(Processor):
+    ''' Put command that is in the component's BList list
+    of commands into the command queue.
 
     Involved components:
-        -   BrainAI
+        -   BListAI
 
     Related processors:
-        -   GenerateCommandFromBTreeProcessor
-        -   GenerateCommandFromBListProcessor
+        -   GenerateCommandFromBrainProcessor
         -   GenerateCommandFromInputProcessor
         -   GenerateCommandFromFileProcessor
         -   PerformCommandProcessor
 
     What if this processor is disabled?
-        -   commands stored in entity's brain are not processed
+        -   commands stored in entity's blist are not processed
 
     Where the processor should be planned?
         -   after GenerateCommandFromInputProcessor
@@ -62,17 +60,17 @@ class GenerateCommandFromBrainProcessor(Processor):
         except SkipProcessorExecution:
             return
 
-        for ent, (brain) in self.world.get_component(BrainAI):
+        for ent, (blist) in self.world.get_component(BListAI):
 
-            cmd = brain.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
+            cmd = blist.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
 
             self.add_command_fnc(
                 cmd=cmd,
                 orig_entity_id=ent,
-                generator=brain.generator # who needs to be notified that command has started and about the result of the command
+                generator=blist.generator # who needs to be notified that command has started and about the result of the command
             )
 
-            logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from brain.')
+            logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from blist.')
 
 
     def pre_save(self):

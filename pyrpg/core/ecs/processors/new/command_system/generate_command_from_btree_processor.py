@@ -1,13 +1,12 @@
 __all__ = ['GenerateCommandFromBTreeProcessor']
 
 import logging
-import pygame	# for pygame.time.get_ticks()
 
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.btree import BTree
+from pyrpg.core.ecs.components.new.btree_ai import BTreeAI
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -61,29 +60,18 @@ class GenerateCommandFromBTreeProcessor(Processor):
         except SkipProcessorExecution:
             return
 
-        for ent, (btree) in self.world.get_component(BTree):
+        for ent, (btree) in self.world.get_component(BTreeAI):
 
-            # If the root node is in status SUCCESS or FAILURE, do not
-            # continue as the behavior has finished.
-            if btree.root.is_finished(): 
-                continue
+            cmd = btree.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
 
-            # if some node is RUNNING, execute him directly
-            if btree.blackboard.running_behavior.is_running():
-                cmd = btree.blackboard.running_behavior.process()
-                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" returned from the btree (running_behavior.process())')
+            self.add_command_fnc(
+                cmd=cmd,
+                orig_entity_id=ent,
+                generator=btree.generator # who needs to be notified that command has started and about the result of the command
+            )
 
-            # else search for some next behavior leaf node to run and execute process function on it
-            else:
-                cmd = btree.root.process()
-                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" returned from the btree (root.process()).')
+            logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from btree.')
 
-            cmd_fnc, cmd_params = cmd
-
-            # Put the command into the queue for processing - entity and btree can be override by the command
-            # itself. It is used for global scripting functionality.
-            self.add_command_fnc((cmd_fnc, {**{"entity" : ent, "brain" : btree}, **cmd_params}))
-            logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd_fnc}" with params {cmd_params} sent to the command queue - from btree.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

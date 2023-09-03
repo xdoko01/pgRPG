@@ -59,6 +59,7 @@ class GenerateCommandFromInputProcessor(Processor):
         except SkipProcessorExecution:
             return
 
+        """
         def _add_cmds_to_queue(cmd_list, ent, cmd_add_fnc):
             ''' Checks if entity is already part of the command. If not, fills owner of Controllable entity.
             Further adds the command to the queue.
@@ -79,17 +80,22 @@ class GenerateCommandFromInputProcessor(Processor):
             # Perform every command in sequence - can be more than one defined in the list
             for cmd in cmd_list:
             
+                #cmd_name, cmd_params = cmd
+
                 # Ensure that proper 'entity' is passed as a command parameter - owner of Controllable component
                 # if not stated otherwise
-                cmd_params = {**cmd[1], **{'entity' : ent}} if cmd[1].get('entity', None) is None else cmd[1]
+                #cmd_params = {**cmd[1], **{'entity' : ent}} if cmd[1].get('entity', None) is None else cmd[1]
 
                 # Add command to the queue
                 # cmd_queue.append((cmd[0], cmd_params))
-                cmd_add_fnc((cmd[0], cmd_params))
+                #cmd_add_fnc((cmd[0], cmd_params))
+                #cmd_add_fnc((cmd_name, cmd_params), ent, None) 
+                cmd_add_fnc(cmd, entity_id=ent, generator=None) 
+
 
                 # debug
-                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{(cmd[0], cmd_params)}" added to the cmd queue.')
-
+                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" added to the cmd queue.')
+        """
 
         # Extract events and keys from parameter kwargs
         # currently only keys are used but events might be usefull as well for mouse later
@@ -98,14 +104,23 @@ class GenerateCommandFromInputProcessor(Processor):
         keys = kwargs.get('keys', [])
         
         # Get all entities that are controllable - not necesserilly moveable as the input can be for static entity theoretically
-        for ent, (inp) in self.world.get_component(Controllable):
+        for ent, (control) in self.world.get_component(Controllable):
 
             for cmd_str in ['up', 'down', 'left', 'right', 'attack']:
                 
                 # Check if the assigned key for the command was pressed
-                if keys[inp.control_keys.get(cmd_str)]:
+                if keys[control.control_keys.get(cmd_str)]:
                     # Add all associated commands to the command queue
-                    _add_cmds_to_queue(inp.control_cmds.get(cmd_str), ent, self.add_command_fnc)
+                    #_add_cmds_to_queue(inp.control_cmds.get(cmd_str), ent, self.add_command_fnc)
+                    for cmd in control.control_cmds.get(cmd_str):
+
+                        self.add_command_fnc(
+                            cmd=cmd,
+                            orig_entity_id=ent # notice there here not passing info about generator
+                        )
+
+                        logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from input.')
+
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

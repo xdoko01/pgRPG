@@ -82,8 +82,8 @@ class Game:
             'FNC_GET_MAP': self.map_manager.get_map,
             # Commands
             'FNC_ADD_COMMAND' : self.command_manager.add_command,
-            'FNC_CLEAR_COMMANDS' : self.command_manager.clear_commands,
-            'FNC_GET_COMMANDS' : self.command_manager.get_commands,
+            'FNC_CLEAR_COMMANDS' : self.command_manager.clear_command_queue,
+            'FNC_GET_COMMANDS' : self.command_manager.get_command_queue,
             'FNC_PROCESS_COMMANDS' : self.command_manager.process_commands,
             # Events
             'FNC_ADD_EVENT' : self.event_manager.add_event,
@@ -198,7 +198,7 @@ class Game:
         self.map_manager.clear_maps()
         self.dialog_manager.clear_dialogs()
         self.message_manager.clear_messages()
-        self.command_manager.clear_commands()
+        self.command_manager.clear_command_queue()
         self.event_manager.clear_events()
         self.ecs_manager.clear_ecs()
         self.script_manager.clear_scripts()

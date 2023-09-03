@@ -16,7 +16,7 @@ from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.damageable import Damageable
 from pyrpg.core.ecs.components.new.has_score import HasScore
-from pyrpg.core.ecs.components.new.btree import BTree
+#from pyrpg.core.ecs.components.new.btree_ai import BTree
 from pyrpg.core.ecs.components.new.can_see import CanSee
 from pyrpg.core.ecs.components.new.can_hear import CanHear
 
@@ -91,8 +91,8 @@ class PerformRenderDebugInfoProcessor(Processor):
                 debug.info.update({'action' : renderable.action})
 
             # Get BTree info
-            for _, (position, debug, btree) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, BTree)):
-                debug.info.update({'Action' : str(btree.running_behavior.node)})
+            #for _, (position, debug, btree) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, BTree)):
+            #    debug.info.update({'Action' : str(btree.running_behavior.node)})
 
             # Get inventory info
             for _, (position, debug, inventory) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, HasInventory)):

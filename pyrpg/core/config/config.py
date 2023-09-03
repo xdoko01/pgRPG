@@ -123,7 +123,7 @@ PATHS = {
     "console_script_path" : "pyrpg/utils/scripts/",
     "menu_background_path" : "pyrpg/resources/images/menu_background/waterfall/",
     "script_module_path" : "pyrpg.core.scripts.",
-    "command_module_path" : "pyrpg.core.commands."
+    "command_module_path" : "pyrpg.core.commands.commands.new."
 
 }
 
@@ -264,8 +264,8 @@ LOGGING = {
         "pyrpg.core.managers" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
             #"handlers" : ["file_handler_mng"], # uncomment to log all the managers
-            "handlers" : ["null"],  # do not log to file for speed
-            #"handlers" : ["console"],  # log to the text console
+            #"handlers" : ["null"],  # do not log to file for speed
+            "handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
 
