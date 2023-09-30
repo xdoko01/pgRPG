@@ -4,9 +4,14 @@ Controllable component implemented as a Controllable class.
 Use 'python -m pyrpg.core.ecs.components.controllable -v' to run
 module tests.
 '''
+import logging
+
+# Create logger
+logger = logging.getLogger(__name__)
 
 from pyrpg.core.config.keys import K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
 from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.commands import cmd_factory
 
 class Controllable(Component):
     ''' Entity can be controlled by the keyboard commands.
@@ -76,11 +81,11 @@ class Controllable(Component):
 
         # Control commands definition
         default_cmds = {
-            'left' : [('new_move', {'moves' : ['left']})],
-            'right': [('new_move', {'moves' : ['right']})],
-            'up' : [('new_move', {'moves' : ['up']})],
-            'down' : [('new_move', {'moves' : ['down']})],
-            'attack' : [('new_attack', {})]
+            'left' : [('move_dir', {'moves' : ['left']})],
+            'right': [('move_dir', {'moves' : ['right']})],
+            'up' : [('move_dir', {'moves' : ['up']})],
+            'down' : [('move_dir', {'moves' : ['down']})],
+            'attack' : [('attack', {})]
         }
 
         control_cmds = kwargs.get("control_cmds", default_cmds)
@@ -106,16 +111,26 @@ class Controllable(Component):
         # Merge defaults with defined commands
         self.control_cmds = {**default_cmds, **control_cmds}
 
+        # Transform commands in form of a list/tuple to Command nametuples
+        for key, commands in self.control_cmds.copy().items():
+            for cmd_idx in range(len(commands)):
+                logger.debug(f'Command in orig form: {self.control_cmds[key][cmd_idx]}')
+                self.control_cmds[key][cmd_idx] = cmd_factory(self.control_cmds[key][cmd_idx])
+                logger.debug(f'Command after transformation: {self.control_cmds[key][cmd_idx]}')
+
+
+        logger.debug(f'Controls and assigned commands are following: {self.control_cmds=}')
+
     def disable_input(self):
         ''' Backup the input commands and substitute them with none command
         '''
         self.backup_control_cmds = self.control_cmds
         self.control_cmds = {
-            'left' : [('none', {})],
-            'right': [('none', {})],
-            'up' : [('none', {})],
-            'down' : [('none', {})],
-            'attack' : [('none', {})]
+            'left' : [],
+            'right': [],
+            'up' : [],
+            'down' : [],
+            'attack' : []
         }
 
     def restore_input(self):

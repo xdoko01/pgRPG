@@ -9,8 +9,9 @@ from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
 from pyrpg.core.ecs.components.new.destroy_on_no_health import DestroyOnNoHealth
 from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
-from pyrpg.core.ecs.components.new.brain import Brain
-from pyrpg.core.ecs.components.new.btree import BTree
+from pyrpg.core.ecs.components.new.brain_ai import BrainAI
+from pyrpg.core.ecs.components.new.btree_ai import BTreeAI
+from pyrpg.core.ecs.components.new.blist_ai import BListAI
 from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.controllable import Controllable
@@ -74,9 +75,10 @@ class GenerateDestroyOnNoHealthProcessor(Processor):
             self.add_event_fnc(killed_event)
 
             # Kill the brain, btree, movemens and collisions on the entity, if those exist
-            self.world.remove_component_force(ent, BTree)
             self.world.remove_component_force(ent, Movable)
-            self.world.remove_component_force(ent, Brain)
+            self.world.remove_component_force(ent, BrainAI)
+            self.world.remove_component_force(ent, BListAI)
+            self.world.remove_component_force(ent, BTreeAI)
             self.world.remove_component_force(ent, Collidable)
             self.world.remove_component_force(ent, Controllable)
 

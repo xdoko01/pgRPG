@@ -34,6 +34,7 @@ class Processor:
         """Init the processor values - added by xdoko01"""
         self.cycle = 0
         self.exec_cycle_step = kwargs.get('step', 1)
+        #self.skip_cycle = kwargs.get('skip_cycle', 0)
 
     def initialize(self, register):
         """Register the processor at the esper World"""
@@ -44,6 +45,9 @@ class Processor:
         self.cycle += 1
         # do not process if it is not the right time
         if self.cycle % self.exec_cycle_step != 0: raise SkipProcessorExecution
+        # skip the specific cycle
+        #if self.cycle == self.skip_cycle: raise SkipProcessorExecution
+
 
     def __str__(self):
         return f"Processor '{self.__class__.__name__}' at {hex(id(self))}: {self.__dict__}"

@@ -55,7 +55,7 @@ processors:
     
 # What maps to load
 maps:
-    - test_arena_sand
+  - test_arena_sand
 
 # What dialogs to load
 dialogs:
@@ -98,9 +98,9 @@ entities:
 - id: player01
   
   templates:
-  - new/model/body/male/human/white
-  
-  # List of components for the entity
+  - new/model/body/male/human/white # model template
+  - new/controls/default # controls template
+
   components:
 
   # Debug component
@@ -110,31 +110,6 @@ entities:
         name: PLAYER01
         description: Player is not corrected by collision from anyone even not
           LAVA.
-
-  # Controllable component
-  - type: new.controllable:Controllable
-    params:
-      key_profile: default
-      control_cmds:
-        left: 
-        - - new_move_add  # command
-          - moves: # command parameters
-            - left
-        right:
-        - - new_move_add
-          - moves:
-            - right
-        up:
-        - - new_move_add
-          - moves:
-            - up
-        down:
-        - - new_move_add
-          - moves:
-            - down
-        attack:
-        - - none
-          - {}
 
   # Position component
   - type: new.position:Position
@@ -231,20 +206,19 @@ entities:
         name: NPC01
         description: NPC01 is not corrected by collision from anyone except the
           PLAYER01
-  - type: new.brain:Brain
+
+  - type: new.brain_ai:BrainAI
     params:
-      commands:
-      - - 0
-        - new_move_to
-        - x: 1000
-          y: 450
-      - - 1
-        - new_move_to
-        - x: 10
-          y: 450
-      - - 0
-        - goto
-        - {}
+      cmd_list:
+        - command:
+            - move_to_pos_px
+            - pos: [1000, 450]
+        - command:
+            - move_to_pos_px
+            - pos: [10, 450]
+        - type: Goto
+          jmp_to: 0
+
   - type: new.camera:Camera
     params:
       always_center: false
@@ -283,20 +257,19 @@ entities:
       screen_pos_y: 240
       screen_width: 320
       screen_height: 240
-  - type: new.brain:Brain
+
+  - type: new.brain_ai:BrainAI
     params:
-      commands:
-      - - 0
-        - new_move_to
-        - x: 219
-          y: 10
-      - - 1
-        - new_move_to
-        - x: 219
-          y: 800
-      - - 0
-        - goto
-        - {}
+      cmd_list:
+        - command:
+            - move_to_pos_px
+            - pos: [219, 10]
+        - command:
+            - move_to_pos_px
+            - pos: [219, 800]
+        - type: Goto
+          jmp_to: 0
+
   - type: new.position:Position
     params:
       x: 219
@@ -319,20 +292,19 @@ entities:
     params:
       info:
         name: NPC03
-  - type: new.brain:Brain
+
+  - type: new.brain_ai:BrainAI
     params:
-      commands:
-      - - 0
-        - new_move_to
-        - x: 319
-          y: 1000
-      - - 1
-        - new_move_to
-        - x: 319
-          y: 10
-      - - 0
-        - goto
-        - {}
+      cmd_list:
+        - command:
+            - move_to_pos_px
+            - pos: [319, 1000]
+        - command:
+            - move_to_pos_px
+            - pos: [319, 10]
+        - type: Goto
+          jmp_to: 0
+
   - type: new.position:Position
     params:
       x: 319
@@ -355,20 +327,19 @@ entities:
     params:
       info:
         name: NPC04
-  - type: new.brain:Brain
+
+  - type: new.brain_ai:BrainAI
     params:
-      commands:
-      - - 0
-        - new_move_to
-        - x: 50
-          y: 500
-      - - 1
-        - new_move_to
-        - x: 1000
-          y: 500
-      - - 0
-        - goto
-        - {}
+      cmd_list:
+        - command:
+            - move_to_pos_px
+            - pos: [50, 500]
+        - command:
+            - move_to_pos_px
+            - pos: [1000, 500]
+        - type: Goto
+          jmp_to: 0
+
   - type: new.position:Position
     params:
       x: 1000
@@ -391,20 +362,19 @@ entities:
     params:
       info:
         name: NPC05
-  - type: new.brain:Brain
+
+  - type: new.brain_ai:BrainAI
     params:
-      commands:
-      - - 0
-        - new_move_to
-        - x: 300
-          y: 100
-      - - 1
-        - new_move_to
-        - x: 100
-          y: 100
-      - - 0
-        - goto
-        - {}
+      cmd_list:
+        - command:
+            - move_to_pos_px
+            - pos: [300, 100]
+        - command:
+            - move_to_pos_px
+            - pos: [100, 100]
+        - type: Goto
+          jmp_to: 0
+
   - type: new.movable:Movable
     params:
       velocity: 100
@@ -421,6 +391,12 @@ entities:
       dy: 8
 
 # How to handle events
-handlers: [
-  - QUEST_START: []
-]
+handlers:
+  - - QUEST_START
+    - id: ev_quest_start
+      actions:
+        - SCRIPT
+        - new.show_dlg_window
+        - dialog_id: dlg_quest_start
+          position: [5, 5]
+

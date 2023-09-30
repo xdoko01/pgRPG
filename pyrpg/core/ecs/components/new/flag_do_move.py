@@ -4,7 +4,7 @@ FlagDoMove component implemented as a FlagDoMove class.
 Use 'python -m pyrpg.core.ecs.components.flag_do_move -v' to run
 module tests.
 '''
-
+from dataclasses import dataclass
 from pyrpg.core.ecs.components.component import Component
 
 class FlagDoMove(Component):
@@ -15,9 +15,9 @@ class FlagDoMove(Component):
 
     '''
 
-    __slots__ = ['moves', 'vector']
+    __slots__ = ['moves', 'vector', 'dt_on', 'absolute']
 
-    def __init__(self, moves=[], vector=None):
+    def __init__(self, moves=[], vector=None, dt_on=True, absolute=False):
         ''' Initiate values for the new FlagDoMove component.
 
         Parameters:
@@ -26,12 +26,23 @@ class FlagDoMove(Component):
 
             :param vector: List/tuple (dx, dy) to store the movement vector.
             :type vector: list
-        '''
+
+            :param dt_on: Flag if the delta time dt should be take into 
+                account in processor for movement compensation.
+            :type dt_on: bool
+
+            :param absolute: True if entity should be moved by exactly the vector
+                without taking into acount the Movable velocity/acceleration.
+            :type absolute: bool
+
+                            '''
         super().__init__()
 
         # Intit the list of moves and vector
         self.moves = moves
         self.vector = vector
+        self.dt_on = dt_on
+        self.absolute = absolute
 
     def add_moves(self, moves_list):
         ''' Adds more moves to the FlagDoMove
@@ -55,6 +66,16 @@ class FlagDoMove(Component):
         if self.vector[0] != 0 and self.vector[1] != 0:
             self.vector[0] *= 0.7071
             self.vector[1] *= 0.7071
+
+# Mock component for usage in tests
+@dataclass
+class FlagDoMoveMock:
+    moves: list = None
+    vector: tuple = None
+    dt_on: bool = True
+    absolute: bool = False
+    add_moves = lambda self, m: None
+    calc_vector = lambda: None
 
 
 if __name__ == '__main__':

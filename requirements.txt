@@ -5,6 +5,7 @@ pygame_gui 0.6.4  # in order to display dialog windows
 pyyaml 6.0 # for yaml support
 lupa # lua support
 pytmx # for TIled maps
+toml # for toml format support
 ---
 ---
 

@@ -1,8 +1,8 @@
 {
 	// Basic data
-	"id" : "new_test01_collisions",
-	"title" : "Collisions Test",
-	"description" : "Test new collision processors",
+	"id" : "test_collisions_05",
+	"title" : "Collisions Test - special objects stone and lava",
+	"description" : "Test new collision processors - special objects stone and lava",
 	"objective" : "POC of the new collision system",
 
 	// What quests need to be loaded before this one
@@ -115,7 +115,10 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : [
+				"new/model/body/male/human/white", // model template
+				"new/controls/default" // controls template
+			],
 			"components" : [
 				{
 					"type" : "new.debug:Debug", 
@@ -124,16 +127,6 @@
 							"name" : "PLAYER01",
 							"description" : "Player is not corrected by collision from anyone even not LAVA."
 						}
-					}
-				},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
 					}
 				},
 
@@ -216,12 +209,20 @@
 					}
 				},
 
-				// Move right - left
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-					[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"blackboard": {
+							"position_1": [1000, 450],
+							"position_2": [10, 450]
+						},
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": "^position_1"}]},
+							{"command": ["move_to_pos_px", {"pos": "^position_2"}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				//{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
 
@@ -251,11 +252,20 @@
 				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 320, "screen_pos_y" : 240, "screen_width" : 320, "screen_height" : 240}},
 
 				// Move up - down
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 219, "y" : 10}],
-					[1, 	"new_move_to", {"x" : 219, "y" : 800}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"blackboard": {
+							"position_1": [1000, 450],
+							"position_2": [10, 450]
+						},
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": "^position_1"}]},
+							{"command": ["move_to_pos_px", {"pos": "^position_2"}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
@@ -276,11 +286,16 @@
 				},
 
 				// Move down - up
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 319, "y" : 1000}],
-					[1, 	"new_move_to", {"x" : 319, "y" : 10}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [319, 1000]}]},
+							{"command": ["move_to_pos_px", {"pos": [319, 10]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
@@ -301,11 +316,16 @@
 				},
 
 				// Move left - right
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 50, "y" : 500}],
-					[1, 	"new_move_to", {"x" : 1000, "y" : 500}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [50, 500]}]},
+							{"command": ["move_to_pos_px", {"pos": [1000, 500]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 
 				{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
@@ -327,11 +347,16 @@
 				},
 
 				// Move left - right
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 300, "y" : 100}],
-					[1, 	"new_move_to", {"x" : 100, "y" : 100}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [300, 100]}]},
+							{"command": ["move_to_pos_px", {"pos": [100, 100]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 				
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},

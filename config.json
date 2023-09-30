@@ -24,7 +24,7 @@
 		"resolution" : [640, 480],
 		"bitdepth" : 32,
 		"fullscreen" : false,
-		"max_fps" : 1200,
+		"max_fps" : 250,
 		"show_fps" : true
 	},
 

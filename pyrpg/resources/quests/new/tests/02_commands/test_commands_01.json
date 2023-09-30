@@ -1,9 +1,9 @@
 {
 	// Basic data
-	"id" : "new_test01_commands",
-	"title" : "Command Recording Test",
-	"description" : "Test Controllable, NewMoveable components and NewMove command + recording commands to the file",
-	"objective" : "POC of recording commands into the file",
+	"id" : "test_commands_01",
+	"title" : "Test brain implemented as behavior list",
+	"description" : "Test AI behavior of NPC implemented as behavior list.",
+	"objective" : "POC of NPC controlled by the script",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -21,8 +21,7 @@
 	// What processors to load
 	"processors" : [
 		// For commands
-		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["new.command_system.generate_command_from_file_processor:GenerateCommandFromFileProcessor", {"file" : "pyrpg/resources/quests/new/tests/02_commands/new_test_commands_01_record.json", "mode" : "total_control"}],
+		["new.command_system.generate_command_from_blist_processor:GenerateCommandFromBListProcessor", {}],
 		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
@@ -57,23 +56,27 @@
 			"templates" : ["new/model/body/male/human/brown"],
 			"components" : [
 
-				/////////////////////////////////////////////////////////
-				// TEST 3 - Movement command based on movement directions
-				// - diagonal is allowed on multiple keypress processing
-				// - single command / single direction upon keypress
-				/////////////////////////////////////////////////////////
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
+				{
+					"type" : "new.blist_ai:BListAI", 
+					"params" : {
+						"blackboard": {}, 
+						"cmd_list": [
+							{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0]}]}, //left
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"line": 2, "type": "Behavior", "command": ["move_vect", {"vector" : [0,1]}]}, //down
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"line": 4, "type": "Behavior", "command": ["move_vect", {"vector" : [1,0]}]}, //right
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"line": 6, "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1]}]}, //up
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"command": ["wait", {"duration_ms" : 1000}]}, //wait
+							{"line": 9, "type": "Goto", "jmp_to": 0} //repeat
+						]
 					}
 				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}

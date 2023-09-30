@@ -62,11 +62,11 @@
 				/////////////////////////////////////////////////////////
 				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
-						"left" : [["new_move_noadd", {"moves" : ["left", "up"]}]],
-						"right": [["new_move_noadd", {"moves" : ["right", "down"]}]],
-						"up" : [["new_move_noadd", {"moves" : ["up", "right"]}]],
-						"down" : [["new_move_noadd", {"moves" : ["down", "left"]}]],
-						"attack" : [["none", {}]]}
+						"left" : [["move_dir", {"moves" : ["left", "up"]}]],
+						"right": [["move_dir", {"moves" : ["right", "down"]}]],
+						"up" : [["move_dir", {"moves" : ["up", "right"]}]],
+						"down" : [["move_dir", {"moves" : ["down", "left"]}]],
+						"attack" : []}
 					}
 				},
 

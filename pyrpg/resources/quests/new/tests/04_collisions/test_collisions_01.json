@@ -1,8 +1,8 @@
 {
 	// Basic data
-	"id" : "new_test01_collisions",
-	"title" : "Collisions Test",
-	"description" : "Test new collision processors",
+	"id" : "test_collisions_01",
+	"title" : "Collisions Test - generation of collisions",
+	"description" : "Test generation of collisions without actually resolving them",
 	"objective" : "POC of the new collision system",
 
 	// What quests need to be loaded before this one
@@ -69,11 +69,11 @@
 
 				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
+						"left" : [["move_dir_add", {"moves" : ["left"]}]],
+						"right": [["move_dir_add", {"moves" : ["right"]}]],
+						"up" : [["move_dir_add", {"moves" : ["up"]}]],
+						"down" : [["move_dir_add", {"moves" : ["down"]}]],
+						"attack" : []}
 					}
 				},
 

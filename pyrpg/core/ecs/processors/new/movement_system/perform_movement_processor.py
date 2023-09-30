@@ -74,7 +74,7 @@ class PerformMovementProcessor(Processor):
             return
 
         # Get the time of processing of the frame from the game main loop in seconds
-        dt = kwargs.get('dt') / 1000
+        dt = kwargs.get('dt') / 1000 
 
         # Do not move in case that attack action is in progress - attack has priority over movement
         for ent, (position, movable, flag_do_move) in self.world.get_components_ex(Position, Movable, FlagDoMove, exclude=FlagDoAttack):
@@ -89,10 +89,12 @@ class PerformMovementProcessor(Processor):
             position.lastmap = position.map
             logger.debug(f'({self.cycle}) - Entity {ent} - original position: [{position.x}, {position.y}]')
 
-            # Update the position by the velocity. Compensate by dt
-            position.x += flag_do_move.vector[0] * dt * movable.velocity
-            position.y += flag_do_move.vector[1] * dt * movable.velocity
-            logger.debug(f'({self.cycle}) - Entity {ent} - new position: [{position.x}, {position.y}]')
+            # Update the position by the velocity. Compensate by dt - if flag_do_move.dt_on, do not compensate by dt
+            dt = dt if flag_do_move.dt_on else 1
+            velocity = 1 if flag_do_move.absolute else movable.velocity # ignore velocity and move using absolute vector
+            position.x += flag_do_move.vector[0] * velocity * dt
+            position.y += flag_do_move.vector[1] * velocity * dt
+            logger.debug(f'({self.cycle}) - Entity {ent} - new position: [{position.x}, {position.y}] {flag_do_move.dt_on=}, {dt=}, {velocity=}')
 
             # Adjust the velocity by acceleration/deceleration
             movable.velocity += movable.accelerate

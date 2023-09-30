@@ -1,6 +1,6 @@
 {
 	// Basic data
-	"id" : "new_test_teleportation_01",
+	"id" : "test_teleportation_01",
 	"title" : "Teleportation Test",
 	"description" : "Test new teleportation processors",
 	"objective" : "POC of the new teleportation system",
@@ -124,19 +124,12 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/dark1"],
+			"templates" : [
+				"new/model/body/male/human/dark1", // model template
+				"new/controls/default" // controls template
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				// New component for facilitating teleportation
 				{"type" : "new.teleportable:Teleportable", "params" :  {}},

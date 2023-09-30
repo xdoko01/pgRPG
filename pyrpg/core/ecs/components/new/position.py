@@ -4,10 +4,9 @@ Position component implemented as a Position class.
 Use 'python -m pyrpg.core.ecs.components.position -v' to run
 module tests.
 '''
-
+from dataclasses import dataclass
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.core.config.config import TILE_RES # in order to specify the position in tiles coordinates
-
 
 # TODO - is self.direction necessary? is not enough dir_name?
 class Position(Component):
@@ -128,6 +127,16 @@ class Position(Component):
         if self.dir_name == 'up': self.direction = (0, -1)
         if self.dir_name == 'left': self.direction = (-1, 0)
         if self.dir_name == 'right': self.direction = (1, 0)
+
+# Mock component for usage in tests
+@dataclass
+class PositionMock:
+    x: int = 0,
+    y: int = 0,
+    map: str = 'map_mock',
+    direction: tuple = (0,1),
+    dir_name: str = 'down',
+    set_direction = lambda self,dir: None
 
 
 if __name__ == '__main__':

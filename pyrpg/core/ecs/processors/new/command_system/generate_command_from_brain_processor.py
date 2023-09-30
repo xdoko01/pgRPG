@@ -1,25 +1,27 @@
 __all__ = ['GenerateCommandFromBrainProcessor']
 
 import logging
-import pygame	# for pygame.time.get_ticks()
 
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.brain import Brain
+from pyrpg.core.ecs.components.new.brain_ai import BrainAI
 
 # Logger init
 logger = logging.getLogger(__name__)
 
 class GenerateCommandFromBrainProcessor(Processor):
-    ''' Put command that is in the component Brain
-    and that is about to be processed into the command queue.
+    ''' Put command that is in the component's BrainAI (logic
+    represented by any oc the CommandGenerators) and push it
+    into the command queue.
 
     Involved components:
-        -   Brain
+        -   BrainAI
 
     Related processors:
+        -   GenerateCommandFromBTreeProcessor
+        -   GenerateCommandFromBListProcessor
         -   GenerateCommandFromInputProcessor
         -   GenerateCommandFromFileProcessor
         -   PerformCommandProcessor
@@ -60,39 +62,18 @@ class GenerateCommandFromBrainProcessor(Processor):
         except SkipProcessorExecution:
             return
 
-        for ent, (brain) in self.world.get_component(Brain):
-            
-            # Only continue processing if the brain is enabled
-            if brain.enabled:
+        for ent, (brain) in self.world.get_component(BrainAI):
 
-                # Get the command unit for processing
-                try:
-                    unit = brain.commands[brain.next_cmd_idx]
-                except:
-                    logger.debug(f'({self.cycle}) - Entity {ent} - No command found, disabling its brain.')
-                    brain.enabled = False
-                    return
-                
-                # Move pointers - next_cmd_idx is not yet decided, depends on the result of unit execution
-                brain.last_cmd_idx = brain.current_cmd_idx
-                brain.current_cmd_idx = brain.next_cmd_idx
-                
-                # Parse command unit - cmd_fnc is string
-                _, cmd_fnc, cmd_params = unit
+            cmd, _ = brain.generator.get_command() # CommandGenerator either returns (Command, is_first_call) or returns None - no command to process
 
-                # Put the command into the queue for processing - entity and brain can be override by the command
-                # itself. It is used for global scripting functionality.
-                # self.input_command_queue.append((cmd_fnc, {**{"entity" : ent, "brain" : brain}, **cmd_params}))
-                self.add_command_fnc((cmd_fnc, {**{"entity" : ent, "brain" : brain}, **cmd_params}))
-                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd_fnc}" with params {cmd_params} sent to the command queue.')
+            self.add_command_fnc(
+                cmd=cmd,
+                orig_entity_id=ent,
+                generator=brain.generator # who needs to be notified that command has started and about the result of the command
+            )
 
-                # If the unit exist then check if it was previously called
-                # remember the self.unit_first_call_time
-                if brain.next_cmd_idx != brain.last_cmd_idx:
-                    brain.cmd_first_call_time = pygame.time.get_ticks()
-                    brain.cmd_first_call = True
-                else:
-                    brain.cmd_first_call = False
+            logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from brain.')
+
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

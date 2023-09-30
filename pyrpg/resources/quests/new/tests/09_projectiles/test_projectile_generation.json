@@ -1,6 +1,6 @@
 {
 	// Basic data
-	"id" : "new_test_projectile_generation",
+	"id" : "test_projectile_generation",
 	"title" : "Test of Projectile Generation",
 	"description" : "Test of Attack and Factory system - generation of projectile",
 	"objective" : "POC of the new Attack and Factory system",
@@ -92,9 +92,14 @@
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
-									[0, 	"new_move_auto", {"duration" : 3000}] // move for 3 seconds
-									]}},
+								{
+									"type" : "new.brain_ai:BrainAI",
+									"params" : {
+										"cmd_list" : [
+											{"command": ["move_auto", {"duration_ms": 3000}]}
+										]
+									}
+								},
 		
 								//{"type" : "LinearMotion", "params" : {"speed" : 200}},
 								//{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
@@ -120,21 +125,15 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : [
+				"new/model/body/male/human/white",
+				"new/controls/default"
+			],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["new_attack", {}]]}
-					}
-				},
 
 				// Bow is armed and preselected as the active weapon
 				{"type" : "new.has_weapon:HasWeapon", "params" : {

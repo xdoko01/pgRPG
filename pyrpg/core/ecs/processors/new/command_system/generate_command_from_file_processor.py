@@ -30,7 +30,7 @@ class GenerateCommandFromFileProcessor(Processor):
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = []
 
-    def __init__(self, FNC_ADD_COMMAND, FNC_CLEAR_COMMANDS, file, *args, mode='append', **kwargs):
+    def __init__(self, FNC_ADD_COMMAND, FNC_CLEAR_COMMANDS, file, *args, mode='total_control', **kwargs):
         ''' Init the processor.
 
         Parameters:
@@ -96,16 +96,17 @@ class GenerateCommandFromFileProcessor(Processor):
         if self.next_rec:
 
             # Check if the record in the file is for execution in this cycle run
-            if self.cycle_counter == self.next_rec[0]:
+            if self.cycle_counter == self.next_rec[0]: # cycle
 
                 # If in overwrite mode, clear the command queue before inserting commands from the file
                 if self.overwrite:
                     self.clear_commands_fnc()
                 
                 # Insert commands from the file for the given cycle
-                for cmd in self.next_rec[1]:
-                    self.add_command_fnc(cmd)
-                    logger.debug(f'({self.cycle}) - Adding command "{cmd}" from file into the cycle {self.cycle_counter}.')
+                for cmd in self.next_rec[1]: # command queue
+                    command, entity_id, generator = cmd
+                    self.add_command_fnc(command, entity_id, generator)
+                    logger.debug(f'({self.cycle}) - Adding command "{command}" from file into the cycle {self.cycle_counter}.')
 
                 # Read the next record
                 self.next_rec = self._read_next_line()

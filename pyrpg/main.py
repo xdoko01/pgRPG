@@ -136,11 +136,14 @@ class Main:
         loop codes depending of current GameState
         '''
 
+        # Fix of the problem with the first frame that has too
+        # big dt and as a consequence the first movement with
+        # the first frame is too big.
+        # Calculate the first dt directly
+        self.gui_manager.clock.tick(DISPLAY_MAX_FPS)
+        dt = 1000 / DISPLAY_MAX_FPS # ms
+
         while True:
-
-
-            # Get the time of the frame
-            dt = self.gui_manager.clock.tick(DISPLAY_MAX_FPS)
             
             # Read the keys pressed, mouse, win resize etc.
             key_events = pygame.event.get()
@@ -201,6 +204,9 @@ class Main:
 
             # Display FPS in window title
             pygame.display.set_caption('FPS: ' + str(int(self.gui_manager.clock.get_fps())))
+
+            # Get the time of the frame
+            dt = self.gui_manager.clock.tick(DISPLAY_MAX_FPS)
 
 
     def end_program(self) -> None:

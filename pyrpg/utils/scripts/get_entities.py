@@ -46,7 +46,7 @@ for ent in (all_params[1:-1] if list_all_attrs else all_params[1:]):
     print(f'E: {entity} A: {alias}')
 
     # Print all components of entity/alias
-    for component in game.main.engine.ecs_manager.get_game_world().components_for_entity(entity):
+    for component in game.main.engine.ecs_manager._world.components_for_entity(entity):
         print(f'C: {component}')
 
         if list_all_attrs:

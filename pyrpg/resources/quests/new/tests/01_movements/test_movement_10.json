@@ -22,6 +22,8 @@
 	"processors" : [
 		// For commands
 		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+
 		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
@@ -61,18 +63,31 @@
 				// - by pressing attack button, movement in the same way
 				// - single command / single direction upon keypress
 				/////////////////////////////////////////////////////////
+				{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
 				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["new_move_auto", {}]]}
+						"left" : [["move_dir_add", {"moves" : ["left"]}]],
+						"right": [["move_dir_add", {"moves" : ["right"]}]],
+						"up" : [["move_dir_add", {"moves" : ["up"]}]],
+						"down" : [["move_dir_add", {"moves" : ["down"]}]],
+						"attack" :  [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_auto", {"duration_ms": 10}]}
+										]
+									}
+								}
+							]
+						]}
 					}
 				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 50, "accelerate": 5}},
 				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}

@@ -31,7 +31,7 @@ def main(argv):
     #filepath = 'new/games/collect_coins/collect_coins.json'
 
     # 12_btrees
-    filepath = 'new/tests/12_btrees/test_entity_seen.json'
+    #filepath = 'new/tests/12_btrees/test_entity_seen.json'
 
     # 11_sensors
     #filepath = 'new/tests/11_sensors/test_sensors_01.json'
@@ -71,10 +71,17 @@ def main(argv):
     #filepath = 'new/tests/03_animations/test_animations_01.json'
 
     # 02_commands
+    #filepath = 'new/tests/02_commands/test_commands_03.json'
     #filepath = 'new/tests/02_commands/test_commands_02.json'
     #filepath = 'new/tests/02_commands/test_commands_01.json'
+    #filepath = 'new/tests/02_commands/play_commands_03.json'
+    #filepath = 'new/tests/02_commands/play_commands_02.json'
+    #filepath = 'new/tests/02_commands/play_commands_01.json'
+    #filepath = 'new/tests/02_commands/record_commands.json'
 
     # 01_movements
+    filepath = 'new/tests/01_movements/test_controls_12.json'
+    #filepath = 'new/tests/01_movements/test_movement_11.json'
     #filepath = 'new/tests/01_movements/test_movement_10.json'
     #filepath = 'new/tests/01_movements/test_movement_09.json'
     #filepath = 'new/tests/01_movements/test_movement_08.json'

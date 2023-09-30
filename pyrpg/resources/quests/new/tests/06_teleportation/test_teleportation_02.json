@@ -1,6 +1,6 @@
 {
 	// Basic data
-	"id" : "new_test_teleportation_02",
+	"id" : "test_teleportation_02",
 	"title" : "Teleportation with Key Test",
 	"description" : "Test new teleportation processors",
 	"objective" : "POC of the new teleportation system",
@@ -141,19 +141,12 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/olive"],
+			"templates" : [
+				"new/model/body/male/human/olive",
+				"new/controls/default"
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				// New component for facilitating teleportation - Teleportee has the key so it can use teleport that requires this key01
 				{"type" : "new.teleportable:Teleportable", "params" : {"keys" : ["key02"]}},

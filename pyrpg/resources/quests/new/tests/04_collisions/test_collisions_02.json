@@ -1,8 +1,8 @@
 {
 	// Basic data
-	"id" : "new_test02_collisions",
-	"title" : "Collisions Test",
-	"description" : "Test new collision processors",
+	"id" : "test_collisions_02",
+	"title" : "Collisions Test - resolving collisions",
+	"description" : "Test new collision processors - generation and resolving of the collisions",
 	"objective" : "POC of the new collision system",
 
 	// What quests need to be loaded before this one
@@ -64,19 +64,12 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/female/human/white"],
+			"templates" : [
+				"new/model/body/female/human/white", // model template
+				"new/controls/default" // controls template
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
