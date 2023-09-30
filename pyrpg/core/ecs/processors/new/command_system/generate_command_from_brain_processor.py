@@ -64,7 +64,7 @@ class GenerateCommandFromBrainProcessor(Processor):
 
         for ent, (brain) in self.world.get_component(BrainAI):
 
-            cmd = brain.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
+            cmd, _ = brain.generator.get_command() # CommandGenerator either returns (Command, is_first_call) or returns None - no command to process
 
             self.add_command_fnc(
                 cmd=cmd,

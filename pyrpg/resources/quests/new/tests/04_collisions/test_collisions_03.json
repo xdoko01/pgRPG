@@ -1,8 +1,8 @@
 {
 	// Basic data
-	"id" : "new_test03_collisions",
-	"title" : "Collisions Test",
-	"description" : "Test new collision processors",
+	"id" : "new_collisions_03",
+	"title" : "Collisions Test - moving NPCs resolving collisions",
+	"description" : "Test new collision processors - moving NPCs are hiting each other while resolving collisions.",
 	"objective" : "POC of the new collision system",
 
 	// What quests need to be loaded before this one
@@ -115,19 +115,12 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/female/human/white"],
+			"templates" : [
+				"new/model/body/female/human/white", // model template
+				"new/controls/default" // controls template
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
@@ -142,11 +135,16 @@
 				{"type" : "new.debug:Debug", "params" : {}},
 
 				// Move right - left
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-					[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [1000, 450]}]},
+							{"command": ["move_to_pos_px", {"pos": [10, 450]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
@@ -160,11 +158,16 @@
 				{"type" : "new.debug:Debug", "params" : {}},
 
 				// Move up - down
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 219, "y" : 10}],
-					[1, 	"new_move_to", {"x" : 219, "y" : 800}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [219, 10]}]},
+							{"command": ["move_to_pos_px", {"pos": [219, 800]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
@@ -178,11 +181,16 @@
 				{"type" : "new.debug:Debug", "params" : {}},
 
 				// Move down - up
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 319, "y" : 1000}],
-					[1, 	"new_move_to", {"x" : 319, "y" : 10}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [319, 1000]}]},
+							{"command": ["move_to_pos_px", {"pos": [319, 10]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
@@ -196,12 +204,16 @@
 				{"type" : "new.debug:Debug", "params" : {}},
 
 				// Move left - right
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 50, "y" : 500}],
-					[1, 	"new_move_to", {"x" : 1000, "y" : 500}],
-					[0, 	"goto", {}]
-				]}},
-
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [50, 500]}]},
+							{"command": ["move_to_pos_px", {"pos": [1000, 500]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},

@@ -17,13 +17,13 @@
                             // Save target position component ref on bb
                             "type": "Behavior",
                             "name": "Save Target Position Component",
-                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "new.position:Position"}]
+                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "new.position:Position"}]
                         },
                         {
                             // Move to the close range to the target
                             "type": "Behavior",
                             "name": "Move to the target",
-                            "cmd_process": [
+                            "command": [
                                 "btree.move_to_target_range", 
                                 {
                                     "target_pos_comp": "bb_target_pos_comp", 
@@ -45,19 +45,19 @@
                             // Save entity damagable component
                             "type": "Behavior",
                             "name": "Save My Damagable Component",
-                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "new.damageable:Damageable"}]
+                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "new.damageable:Damageable"}]
                         },
                         {
                             // Save target damagable component
                             "type": "Behavior",
                             "name": "Save Target Damageable Component",
-                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "bb_entity": "$target", "component": "new.damageable:Damageable"}]
+                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "bb_entity": "$target", "component": "new.damageable:Damageable"}]
                         },
                         {
                             // Attack
                             "type": "Behavior",
                             "name": "Attack the target",
-                            "cmd_process": [
+                            "command": [
                                 "btree.attack_full", 
                                 {
                                     "target_damageable_comp": "bb_target_damageable_comp", 

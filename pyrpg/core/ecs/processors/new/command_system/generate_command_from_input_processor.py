@@ -112,8 +112,8 @@ class GenerateCommandFromInputProcessor(Processor):
                 if keys[control.control_keys.get(cmd_str)]:
                     # Add all associated commands to the command queue
                     #_add_cmds_to_queue(inp.control_cmds.get(cmd_str), ent, self.add_command_fnc)
+                    #for cmd_name, cmd_params in control.control_cmds.get(cmd_str):
                     for cmd in control.control_cmds.get(cmd_str):
-
                         self.add_command_fnc(
                             cmd=cmd,
                             orig_entity_id=ent # notice there here not passing info about generator

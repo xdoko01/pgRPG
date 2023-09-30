@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 import sys
 import pygame
 
-from functools import reduce, partialmethod
+from functools import reduce
 from pathlib import Path
 from enum import Enum
 
@@ -199,11 +199,11 @@ class TreeNode:
         self.set_failure()
 
     def notify_from_child(self, result: BTreeCommandStatus) -> None:
-        '''Notification about the result from child node.'''
+        '''Notification about the result from child node - should be either SUCCESS or FAILURE.'''
         logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Starting notify_from_child({result}) function from child idx ({self.child_running_idx}) - "{self._children[self.child_running_idx].name}"')
 
         try:
-            assert result.is_valid
+            assert result.is_completed
         except AssertionError:
             raise InvalidBTreeCommandStatusError(f'{result = } is invalid status.')
 
@@ -227,12 +227,13 @@ class Behavior(TreeNode):
 
     __slots__ = ['command']
 
-    def __init__(self, name, parent=None, **kwargs):
+    def __init__(self, name: str, command: list, parent=None, **kwargs):
         # Run TreeNode constructor
         super().__init__(name=name, parent=parent)
 
         # Behavior must have command representing action or condition
-        self.command = kwargs['command']
+        #self.command = kwargs['command']
+        self.command = command
 
     def __str__(self) -> str:
         '''String representation of Behavior TreeNode'''
@@ -295,9 +296,9 @@ class Behavior(TreeNode):
         """
 
         # New code that requires returns as 'SUCCESS', 'FAILURE', 'RUNNING'
-        assert result in ['SUCCESS', 'FAILURE', 'RUNNING']
+        #assert result in ['SUCCESS', 'FAILURE', 'RUNNING']
         
-        if result != 'RUNNING':
+        if result != CommandStatus.RUNNING:
             self.on_completion(BTreeCommandStatus(CommandStatus(result)))
 
 class Composite(TreeNode):
@@ -402,7 +403,7 @@ class Sequence(Composite):
             self.child_running_idx += 1
             logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Moving to the next child idx ({self.child_running_idx}) - "{self._children[self.child_running_idx].name}"')
 
-        # Otherwise complete the Sequence
+        # Otherwise complete the Sequence - either FAILURE or SUCCESS and no more child nodes to continue with 
         else:
             # Call the super-class method - calls either on_failure or on_success methods
             self.on_completion(result)
@@ -561,11 +562,57 @@ class Succeeder(Decorator):
 	pass
 
 class Repeater(Decorator):
-	'''A repeater will reprocess its child node each time its child returns a result. 
-	These are often used at the very base of the tree, to make the tree to run 
-	continuously. Repeaters may optionally run their children a set number of times 
-	before returning to their parent.'''
-	pass
+    '''A repeater will reprocess its child node each time its child returns a result. 
+    These are often used at the very base of the tree, to make the tree to run 
+    continuously. Repeaters may optionally run their children a set number of times 
+    before returning to their parent.
+    '''
+    
+    def __init__(self, name, repeat: int=None, parent=None, **kwargs):
+        '''Create instance of a Repeater node'''
+
+        # Call Decorator constructor
+        super().__init__(name, parent=parent)
+
+        # Number of repeat cycles
+        #self.repeat = kwargs.get("repeat")
+        self.repeat = repeat
+        self._repeat_cnt = 0
+
+    def __str__(self) -> str:
+        '''String representation of Behavior TreeNode'''
+        return f'{TreeNode.PRINT_COLOR[self._status]}{self.__class__.__name__} ({self.name}), Status: {self._status}, Depth: {self._depth}, Repeat: {self.repeat}, Cycle_Cnt: {self._repeat_cnt}\033[00m'
+
+    def process(self) -> None:
+        '''Top-down process of searching the leaf node to execute and to have the RUNNING status.'''
+
+        # Call the super-class method - calls on_init function if it is the first tick
+        super().process()
+
+        # Call process() on the proper child - eventually trying to reach the Behavior leaf node
+        logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Calling process() on child "{self._children[0].name}"')
+        return self._children[0].process()
+
+    def notify_from_child(self, result: BTreeCommandStatus) -> None:
+        '''Callback from child to parent to notify the parent about the final 
+        status (SUCCESS, FAILURE).
+        
+        If no repeat parameter present, repeat forever, else repeat n-times.
+        '''
+        # Call the super-class method - just logs the child and status
+        super().notify_from_child(result)
+
+        self._repeat_cnt += 1 # increase repeat counter
+
+        if not self.repeat or self.repeat > self._repeat_cnt:
+            logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Received {result} from child, ({self.repeat=}, {self._repeat_cnt=}) reseting the child sub-tree and starting the processing again.')
+            self._children[0].reset() # Set the node status to None and the whole subtree
+            self._children[0].process() # Start over
+        else:
+            logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Received {result} from child, returning {result} to the parent ({self.repeat=}, {self._repeat_cnt=}).')
+            self.on_success()
+
+
 
 class RepeatUntilFail(Decorator):	
     '''Like a repeater, these decorators will continue to reprocess their child. 
@@ -588,7 +635,7 @@ class RepeatUntilFail(Decorator):
         logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Calling process() on child "{self._children[0].name}"')
         return self._children[0].process()
 
-    def notify_from_child(self, result: BTreeCommandStatus) -> None:
+    def notify_from_child(self, result: CommandStatus) -> None:
         '''Callback from child to parent to notify the parent about the final 
         status (SUCCESS, FAILURE).
         If child returns success, start the child again and remain in RUNNING.
@@ -599,7 +646,7 @@ class RepeatUntilFail(Decorator):
         super().notify_from_child(result)
 
         # In case child reports FAILURE, return SUCCESS
-        if result.is_failure:
+        if BTreeCommandStatus(result).is_failure:
             logger.debug(f'{self._depth * ">>> "}{self.__class__.__name__} ({self.name}), Status: {self._status}: Received FAILURE from child, returning SUCCESS to the parent.')
             #self.on_completion(BTreeCommandStatus.SUCCESS)
             self.on_success()
@@ -634,15 +681,18 @@ class BTreeBlackboard(CommandContext):
         self.init_time = None
         self.duration = None
         self.tick_count = None
+        self.current_time = pygame.time.get_ticks()
 
     def reset(self):
         self.local_bb = {} # Every Action Node starts with clear memory
         self.init_time = pygame.time.get_ticks()
         self.duration = 0
         self.tick_count = 1
+        self.current_time = pygame.time.get_ticks()
 
     def update(self):
-        self.duration = pygame.time.get_ticks() - self.init_time
+        self.current_time = pygame.time.get_ticks()
+        self.duration = self.current_time - self.init_time
         self.tick_count += 1
 
 class BTree(CommandGenerator):
@@ -652,6 +702,13 @@ class BTree(CommandGenerator):
 
     def __init__(self, tree_def: dict, cmd_factory=(lambda x: x), template_path: Path=Path(''), val_check: bool=False) -> None:
         '''Read the behavior tree from dictionary'''
+
+        # Store cmd factory for init and later usage in reset method in order
+        # for the reset method to be executed always with the same command factory
+        # that was defined during the init.
+        self.cmd_factory = cmd_factory
+        self.reset(new_ai_structure=tree_def, template_path=template_path, val_check=val_check)
+        '''
         self._root_node = create_tree(tree_def=tree_def['cmd_tree'], cmd_factory=cmd_factory, template_path=template_path)
 
         # Check that all leafs are behavior nodes with commands
@@ -661,6 +718,7 @@ class BTree(CommandGenerator):
         self._action_node = None
         self._new_action_node_found = False
         self.bb = BTreeBlackboard(global_bb=tree_def.get('blackboard'))
+        '''
 
     def print_tree(self, node: TreeNode=None, depth: int=0, lvl_str: str=" |_ ") -> None:
         '''Print the behavior tree on the console'''
@@ -675,32 +733,56 @@ class BTree(CommandGenerator):
         for child in (node._children or []):
             self.print_tree(node=child, depth=depth+1, lvl_str=lvl_str)
 
+    def reset(self, new_ai_structure: dict, template_path: Path=Path(''), val_check: bool=False) -> None:
+        '''Read the behavior tree from dictionary'''
+        self._root_node = create_tree(tree_def=new_ai_structure['cmd_tree'], cmd_factory=self.cmd_factory, template_path=template_path)
 
-    def get_command(self) -> tuple:
+        # Check that all leafs are behavior nodes with commands
+        if val_check and not self._root_node.check(): 
+            raise InvalidBehaviorTreeError('Behavior tree is invalid')
+
+        self._action_node = None
+        self._new_action_node_found = False
+        self.bb = BTreeBlackboard(global_bb=new_ai_structure.get('blackboard', {}))
+
+    def get_command(self) -> (any, bool):
+        ''' Return the command from the Behavior node of the tree and additionally indicate
+        if it is the first return of this particular tree node or not. 
+
+        :returns: Tuple consisting of any object stored in Behavior node Command attribute and
+            information if this object is being obtained for the first time.
+        '''
         # If the root node is in status SUCCESS or FAILURE, do not continue as the tree has finished.
         if self._root_node.is_completed:
             logger.debug(f'Behavior tree is completed, no more command to return')
-            return
+            return (None, False)
+
+        cmd = None
 
         # If we have some action node, use it
         if self._action_node:
             action_node, cmd = self._action_node.process() # call action node again
-            return cmd
+            return (cmd, False) # indicate that it is not a first call of the command
 
         else:
             action_node, cmd = self._root_node.process() # find new action node
             self._action_node = action_node
             # Indicate that the new action node has been assigned
             self._new_action_node_found = True
-            return cmd
+            return (cmd, True) # indicate that it is a first call of the command
+
 
     def process_command_result(self, result: BTreeCommandStatus) -> None:
         '''Callback the result of the command in order to update
         CommandGenerator internal state.'''
-        self._action_node.set_result(result)
 
-        if self._action_node.is_completed: # Indicate search for the new action node
+        self._action_node.set_result(result) 
+
+        # here eventually the action node can be in None status due to reset. Hence we need to remember the original result
+        # and act based on the original result.
+        if BTreeCommandStatus(result).is_completed:
             self._action_node = None
+
 
     def notify_command_start(self) -> None:
         '''Callback from command manager before the command starts
@@ -724,31 +806,41 @@ def create_tree(tree_def: dict, parent: TreeNode=None, depth: int=0, cmd_factory
     tree_template = tree_def.get("template")
 
     if tree_template:
-        print(f'{depth * ">>> "}Creating Tree from template "{tree_template}".')
-        result = create_tree(tree_def=get_dict_params(definition=tree_template, dir=template_path), parent=parent)
-        print(f'{depth * ">>> "}Creating Tree from template "{tree_template}". Returns {result}')
+        logger.debug(f'{depth * ">>> "}Creating Tree from template "{tree_template}".')
+        result = create_tree(tree_def=get_dict_params(definition=tree_template, dir=template_path), parent=parent, cmd_factory=cmd_factory)
+        logger.debug(f'{depth * ">>> "}Creating Tree from template "{tree_template}". Returns {result}')
         return result
 
     else:
         # Get TreeNode parameters
-        node_type = tree_def['type'] # mandatory
-        node_name = tree_def['name'] # mandatory
-
+        ##node_type = tree_def['type'] # mandatory
+        ##node_name = tree_def['name'] # mandatory
+        node_type = tree_def.pop('type') # mandatory
+        
         # Optional for Behavior - None if not present
-        node_command = cmd_factory(tree_def.get('command'))
+        try:
+            tree_def['command'] = cmd_factory(tree_def['command'])
+        except KeyError:
+            pass
 
         # Get TreeNode class object based on 'type' from the JSON
         node_class = str_to_class(module=sys.modules[__name__], class_name=node_type)
 
-        logger.debug(f'{depth * ">>> "}Creating TreeNode: class="{node_class}", name="{node_name}", command="{node_command}"')
+        ##logger.debug(f'{depth * ">>> "}Creating TreeNode: class="{node_class}", name="{node_name}", command="{node_command}"')
 
-        node = node_class(
-                    name=node_name,
-                    parent=parent,
-                    command=node_command
-        )
+        ## Remove children from the tree_def
+        children_def = tree_def.pop('children', [])
 
-        children_def = tree_def.get('children', [])
+        ##node = node_class(
+        ##            name=node_name,
+        ##            parent=parent,
+        ##            command=node_command
+        ##)
+
+        node = node_class(parent=parent, **tree_def)
+        ##print(f'CREATING {node_class=}, {tree_def=}, {children_def=}')
+
+        ##children_def = tree_def.get('children', [])
 
         for child_def in children_def:
             result = create_tree(tree_def=child_def, parent=node, depth=depth+1, cmd_factory=cmd_factory, template_path=template_path)
@@ -759,122 +851,5 @@ def create_tree(tree_def: dict, parent: TreeNode=None, depth: int=0, cmd_factory
 
 
 if __name__ == '__main__':
-    #import doctest
-    #doctest.testmod()
-
-    b_tree_data_with_templates = {
-    "blackboard": {
-        "$target": "player01"
-    },
-    "tree": {
-            "type": "Selector",
-            "name": "AI Root",
-            "children": [
-                {
-                    "template": [
-                        "destroy_target",
-                        {
-                            "$range_in": 200
-                        }
-                    ]
-                },
-                {
-                    "type": "Behavior",
-                    "name": "Wait",
-                    "command": "wait_cmd"
-                },
-                {
-                    "template": [
-                        "destroy_target",
-                        {
-                            "$range_in": 300
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-
-    b_tree_data = {
-        'blackboard': {},
-        'tree': {
-            "type": "Selector",
-            "name": "AI Root",
-            "children": [
-                {
-                    "type": "Sequence",
-                    "name": "Chase Player",
-                    "children": [
-                        {
-                            "type": "Behavior",
-                            "name": "Rotate to face BB entry",
-                            "command": "Rotate to face BB entry_cmd",
-                        },
-                        {
-                            "type": "Behavior",
-                            "name": "BTT_ChasePlayer",
-                            "command": "BTT_ChasePlayer_cmd"
-
-                        },
-                        {
-                            "type": "Behavior",
-                            "name": "Move To",
-                            "command": "Move_to_cmd"
-                        }
-                    ]
-                },
-                {
-                    "type": "Sequence",
-                    "name": "Patrol",
-                    "children": [
-                        {
-                            "type": "Behavior",
-                            "name": "BTT_FindRandomPatrol",
-                            "command": "BTT_FindRandomPatrol_cmd"
-                        },
-                        {
-                            "type": "Behavior",
-                            "name": "Move To",
-                            "command": "Move_To_cmd"
-                        },
-                        {
-                            "type": "Behavior",
-                            "name": "Wait",
-                            "command": "Wait_cmd"
-                        }
-                    ]
-                },
-                {
-                    "type": "Behavior",
-                    "name": "Wait",
-                    "command": "Wait_cmd"
-                }
-            ]
-        }
-    }
-
-    from random import randint
-
-    pygame.init()
-    btree = BTree(tree_def=b_tree_data_with_templates, template_path=Path('pyrpg/resources/btrees'), val_check=False)
-    btree.print_tree()
-
-    i=0
-    while not btree._root_node.is_completed:
-        i += 1
-        print(f'STEP {i}')
-        print(f'Getting Command from Action Node ... ACTION NODE: {btree._action_node.name if btree._action_node else None}')
-        cmd = btree.get_command()
-
-        btree.notify_command_start()
-        print(f'Blackboard updated ... {btree.bb.init_time = }, {btree.bb.duration = }, {btree.bb.tick_count = }')
-
-        cmd_result = eval("['FAILURE', 'SUCCESS', 'RUNNING','RUNNING','RUNNING','RUNNING'][randint(0,5)]")
-        #cmd_result = input('Enter the result FAILURE, SUCCESS, RUNNING: ')
-        print(f'Result received {cmd_result = }')
-        
-        print(f'Processing the result in the tree ... ACTION NODE: {btree._action_node.name if btree._action_node else None}')
-        btree.process_command_result(result=cmd_result)
-        
-        print(f'Tree status at the end of the step ... ACTION NODE: {btree._action_node.name if btree._action_node else None}')
-        btree.print_tree()
+    import doctest
+    doctest.testmod()

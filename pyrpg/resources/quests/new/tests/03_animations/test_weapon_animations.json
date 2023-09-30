@@ -40,6 +40,8 @@
 		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
 		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
 		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		["new.render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
 		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
@@ -79,21 +81,14 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : [
+				"new/model/body/male/human/white", // model template
+				"new/controls/default" // control template
+			],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["new_attack", {}]]}
-					}
-				},
 
 				// In order to animate attack, some weapom must be in use
 				{"type" : "new.has_weapon:HasWeapon", "params" : {

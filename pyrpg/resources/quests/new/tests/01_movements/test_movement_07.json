@@ -63,11 +63,11 @@
 				/////////////////////////////////////////////////////////
 				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
-						"left" : [["new_move_vect_noadd", {"vector" : [-1, 0]}]],
-						"right": [["new_move_vect_noadd", {"vector" : [1, 0]}]],
-						"up" : [["new_move_vect_noadd", {"vector" : [0, -2]}]],
-						"down" : [["new_move_vect_noadd", {"vector" : [0, 2]}]],
-						"attack" : [["none", {}]]}
+						"left" : [["move_vect", {"vector" : [-1, 0]}]],
+						"right": [["move_vect", {"vector" : [1, 0]}]],
+						"up" : [["move_vect", {"vector" : [0, -2]}]],
+						"down" : [["move_vect", {"vector" : [0, 2]}]],
+						"attack" : []}
 					}
 				},
 

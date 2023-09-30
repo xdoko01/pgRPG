@@ -50,6 +50,7 @@ class GUIManager:
         )
 
         self.clock = pygame.time.Clock()
+
         self.screen_copy = pygame.Surface(self._res)
         self.window_manager = pygame_gui.UIManager(self._res)
 

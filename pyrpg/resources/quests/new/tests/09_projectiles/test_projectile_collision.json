@@ -2,7 +2,7 @@
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
 	// Basic data
-	"id" : "new_test_projectile_collision",
+	"id" : "test_projectile_collision",
 	"title" : "Test of Projectile Collision",
 	"description" : "Test of Attack and Factory and Effect system - collision of projectile",
 	"objective" : "POC of the new Attack and Factory and Effect system",
@@ -209,10 +209,14 @@
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
-									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-									]}},
-
+								{
+									"type" : "new.brain_ai:BrainAI",
+									"params" : {
+										"cmd_list" : [
+											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
+										]
+									}
+								},
 
 								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
@@ -251,10 +255,14 @@
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
-									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-									]}},
-
+								{
+									"type" : "new.brain_ai:BrainAI",
+									"params" : {
+										"cmd_list" : [
+											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
+										]
+									}
+								},
 
 								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500}},
 								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
@@ -281,7 +289,10 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : [
+				"new/model/body/male/human/white", // model template
+				"new/controls/default" // control template
+			],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -291,16 +302,6 @@
 					"params" :  {
 						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
-					}
-				},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["new_attack", {}]]}
 					}
 				},
 
@@ -330,11 +331,16 @@
 				{"type" : "new.debug:Debug", "params" : {}},
 
 				// Move right - left
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-					[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-					[0, 	"goto", {}]
-				]}},
+				{
+					"type" : "new.brain_ai:BrainAI",
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [1000, 450]}]},
+							{"command": ["move_to_pos_px", {"pos": [10, 450]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},

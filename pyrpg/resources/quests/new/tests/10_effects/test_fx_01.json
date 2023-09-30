@@ -270,9 +270,14 @@
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
-									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-									]}},
+								{
+									"type" : "new.brain_ai:BrainAI",
+									"params" : {
+										"cmd_list" : [
+											{"command": ["move_auto", {"duration_ms": 3000}]}
+										]
+									}
+								},
 
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 50}},
 
@@ -300,7 +305,10 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : [
+				"new/model/body/male/human/white",
+				"new/controls/default"
+			],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -313,15 +321,6 @@
 					}
 				},
 
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["new_attack", {}]]}
-					}
-				},
 
 				// Bow is armed and preselected as the active weapon
 				{"type" : "new.has_weapon:HasWeapon", "params" : {
@@ -349,13 +348,17 @@
 			"templates" : ["new/model/body/special/minotaur"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				// Move right - left
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
-					[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-					[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-					[0, 	"goto", {}]
-				]}},
+				
+				{
+					"type": "new.brain_ai:BrainAI", 
+					"params": {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [1000,450]}]},
+							{"command": ["move_to_pos_px", {"pos": [10,450]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
 
 
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},

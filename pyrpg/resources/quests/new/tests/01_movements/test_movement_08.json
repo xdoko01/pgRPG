@@ -62,28 +62,72 @@
 				// - program is added to the brain and executed accross several cycles
 				//
 				/////////////////////////////////////////////////////////
-				{"type" : "new.brain:Brain", "params" : {"commands" : []}},
+				{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
 
 				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
 						// Do 3 circles upon pressing left
-						"left" : [["new_modify_brain", {"commands" : [
-							[null, "new_move_vect_noadd", {"vector" : [-5, 0]}], // left
-							[null, "new_move_vect_noadd", {"vector" : [0, 5]}], // down
-							[null, "new_move_vect_noadd", {"vector" : [5, 0]}], // right
-							[null, "new_move_vect_noadd", {"vector" : [0, -5]}], // up
-							[0, "loop", {"iterations" : 3}]]}]],
+						"left" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [-5, 0]}]}, //left
+											{"line": 1, "type": "Behavior", "command": ["move_vect", {"vector" : [0, 5]}]}, //down
+											{"line": 2, "type": "Behavior", "command": ["move_vect", {"vector" : [5, 0]}]}, //right
+											{"line": 3, "type": "Behavior", "command": ["move_vect", {"vector" : [0, -5]}]}, //up
+											{"line": 4, "type": "Loop", "repeat": 3, "jmp_to": 0} //repeat 3-times
+										]
+									}
+								}
+							]
+						],
 						
-						"right" : [["new_modify_brain", {"commands" : [
-							[null, "new_move_vect_noadd", {"vector" : [10, 0]}]]}]],
+						"right" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [10, 0]}]}
+										]
+									}
+								}
+							]
+						],
 						
-						"up" : [["new_modify_brain", {"commands" : [
-							[null, "new_move_vect_noadd", {"vector" : [0, -10]}]]}]],
+						"up" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [0, -10]}]}
+										]
+									}
+								}
+							]
+						],
 						
-						"down" : [["new_modify_brain", {"commands" : [
-							[null, "new_move_vect_noadd", {"vector" : [0, 10]}]]}]],
+						"down" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [0, 10]}]}
+										]
+									}
+								}
+							]
+						],
 
-						"attack" : [["none", {}]]}
+						"attack" : []}
 					}
 				},
 

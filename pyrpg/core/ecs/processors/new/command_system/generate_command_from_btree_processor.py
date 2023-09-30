@@ -62,7 +62,7 @@ class GenerateCommandFromBTreeProcessor(Processor):
 
         for ent, (btree) in self.world.get_component(BTreeAI):
 
-            cmd = btree.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
+            cmd, _ = btree.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
 
             self.add_command_fnc(
                 cmd=cmd,

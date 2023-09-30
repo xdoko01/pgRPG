@@ -4,9 +4,16 @@ BrainAI component implemented as a BTree or BList class.
 Use 'python -m pyrpg.core.ecs.components.new.brain_ai -v' to run
 module tests.
 '''
+from dataclasses import dataclass
+
+import logging
+
+# Create logger
+logger = logging.getLogger(__name__)
 
 from pyrpg.core.ecs.components.component import Component
 
+from pyrpg.core.commands import cmd_factory, CommandGeneratorMock
 from pyrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
 from pyrpg.core.config.paths import BTREE_PATH
 
@@ -65,6 +72,27 @@ class BrainAI(Component):
         >>> c = BrainAI(cmd_list=[{"line": 0, "type": "Behavior", "name": "Move", "command": "dummy_command", "on_fail_jmp": None}])
     '''
 
+    # In case of incorrect brain structure definition, start to rotate
+    FAILSAFE_TREE = {
+            'blackboard': {},
+            'cmd_tree': {
+                'type': 'Repeater',
+                'name': 'Repeat',
+                'children': [
+                    {
+                        'type': 'Sequence',
+                        'name': 'Move Around',
+                        'children': [
+                            {'type': 'Behavior', 'name': 'Move Up', 'command': ['move_dir', {'moves': ['up'], 'absolute': True}]},
+                            {'type': 'Behavior', 'name': 'Move Left', 'command': ['move_dir', {'moves': ['left'], 'absolute': True}]},
+                            {'type': 'Behavior', 'name': 'Move Down', 'command': ['move_dir', {'moves': ['down'], 'absolute': True}]},
+                            {'type': 'Behavior', 'name': 'Move Right', 'command': ['move_dir', {'moves': ['right'], 'absolute': True}]}
+                        ]
+                    }
+                ]
+            }
+        }
+
     __slots__ = ['generator']
 
     def __init__(self, *args, **kwargs):
@@ -77,19 +105,26 @@ class BrainAI(Component):
 
         super().__init__()
 
-        if kwargs.get('cmd_tree'):
+        if kwargs.get('cmd_tree') is not None:
             try:
-                self.generator = BTree(tree_def=kwargs, template_path=BTREE_PATH, val_check=True)
+                self.generator = BTree(tree_def=kwargs, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
             except InvalidBehaviorTreeError:
-                raise ValueError
-        elif kwargs.get('cmd_list'):
+                logger.error(f'The Behavior Tree is invalid. Substituing with default behavior.')
+                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+        elif kwargs.get('cmd_list') is not None:
             try:
-                self.generator = BList(list_def=kwargs)
+                self.generator = BList(list_def=kwargs, cmd_factory=cmd_factory)
             except InvalidBehaviorListError:
-                raise ValueError
+                logger.error(f'The Behavior List is invalid. Substituing with default behavior.')
+                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
         else:
-            raise ValueError
+            logger.error(f'The Behavior is invalid. Substituing with default behavior.')
+            self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
 
+# Mock component for usage in tests
+@dataclass
+class BrainAIMock:
+    generator: CommandGeneratorMock = CommandGeneratorMock()
 
 if __name__ == '__main__':
     import doctest

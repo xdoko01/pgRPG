@@ -4,9 +4,14 @@ BListAI component implemented as a BList class.
 Use 'python -m pyrpg.core.ecs.components.new.blist_ai -v' to run
 module tests.
 '''
+import logging
+
+# Create logger
+logger = logging.getLogger(__name__)
 
 from pyrpg.core.ecs.components.component import Component
 
+from pyrpg.core.commands import cmd_factory
 from pyrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError
 
 
@@ -41,6 +46,18 @@ class BListAI(Component):
         >>> c = BListAI(tree={"type": "Behavior", "name": "Wait", "command": "dummy_command"})
     '''
 
+    # In case of incorrect brain structure definition, start to rotate
+    FAILSAFE_LIST = {
+            'blackboard': {},
+            'cmd_list': [
+                {'name': 'Move Up', 'command': ['move_dir', {'moves': ['up'], 'absolute': True}]},
+                {'name': 'Move Left', 'command': ['move_dir', {'moves': ['left'], 'absolute': True}]},
+                {'name': 'Move Down', 'command': ['move_dir', {'moves': ['down'], 'absolute': True}]},
+                {'name': 'Move Right', 'command': ['move_dir', {'moves': ['right'], 'absolute': True}]},
+                {'type': 'goto', 'jmp_to': 0}
+            ]
+        }
+
     __slots__ = ['generator']
 
     def __init__(self, *args, **kwargs):
@@ -53,11 +70,23 @@ class BListAI(Component):
 
         super().__init__()
 
+
         try:
-            self.generator = BList(list_def=kwargs)
+
+            self.generator = BList(
+                list_def=kwargs,
+                cmd_factory=BListAI.factory # create Commands
+            )
+        
         except InvalidBehaviorListError:
+
             # Notify component factory that initiation has failed
-            raise ValueError
+            logger.error(f'The Behavior List is invalid. Substituing with default behavior.')
+            
+            self.generator = BList(
+                list_def=BListAI.FAILSAFE_LIST,
+                cmd_factory=cmd_factory # create Commands
+            )
 
 if __name__ == '__main__':
     import doctest

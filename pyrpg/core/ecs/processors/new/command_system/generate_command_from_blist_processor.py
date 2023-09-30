@@ -62,11 +62,11 @@ class GenerateCommandFromBListProcessor(Processor):
 
         for ent, (blist) in self.world.get_component(BListAI):
 
-            cmd = blist.generator.get_command() # CommandGenerator either returns command or returns None - no command to process
+            cmd, _ = blist.generator.get_command() # CommandGenerator either returns (Command, is first_call) or returns None - no command to process
 
             self.add_command_fnc(
                 cmd=cmd,
-                orig_entity_id=ent,
+                orig_entity_id=ent, # entity that generated the command. Not necessarily the entity that is target of this command
                 generator=blist.generator # who needs to be notified that command has started and about the result of the command
             )
 

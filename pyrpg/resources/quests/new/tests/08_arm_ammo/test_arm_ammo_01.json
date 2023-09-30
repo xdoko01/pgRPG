@@ -1,6 +1,6 @@
 {
 	// Basic data
-	"id" : "new_test_arm_ammo_01",
+	"id" : "test_arm_ammo_01",
 	"title" : "Simple Arm Ammo Test",
 	"description" : "Test new arm ammo processors",
 	"objective" : "POC of the new arm ammo system",
@@ -225,19 +225,12 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/skeleton/white"],
+			"templates" : [
+				"new/model/body/male/skeleton/white", // model template
+				"new/controls/default" // controls template
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				// Can pick up another entity
 				{"type" : "new.has_inventory:HasInventory", "params" : {}},

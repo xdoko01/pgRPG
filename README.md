@@ -476,6 +476,11 @@
   - This might become handy, if the processor is resource heavy and does not need to run real-time. For example, processor for checking if the entity has reached the destination position
   - Example of processor definition: `["new.position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}]`
 
+### 2023-09-07 Commands and Command Generators Redone
+  - Newly, logic can be defined by `btree` or `blist`. Commands can be used in both structures. Both structures follow `CommandGenerator` prototype. In future, no problem to add more structures that will follow `CommandGenerator` prototype.
+  - Newly, `Command` namedtuple consists of `name`,`params` and `entity_id` attribtes. Those 3 attributes reflect the information from the `quest` definition. Specifically, `entity_id` marks the optional parameter specified in the quest on which entity the command must be executed. It is hence possible for the player entity to issue commands (for example via `Controllable` Component) to other entity such as NPC. Useful for global brain entity that can issue commands to different entities and hence orchestrate the action in the game.
+  - Newly, all commands have as a parameter `Command`, `CommandContext` blackboard and `ECSmanager` that contains functions for manipulating the game world.
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -536,9 +541,112 @@
   - [ ] Unit tests for BTree and BList
   - [ ] implement `toml` format for easy quest definitions (same as currenlty used `yaml` and `json`)
   - [ ] implement test quests for testing of the new commands with the command context.
-  - [ ] in `generate_command_from_XXX_processor` there is repetitive part that is extracting entity_id from the parameters or from the brain owner and putting the command into the queue - this common part can be abstracted into separate function and called separatelly. Alternativelly it can be transfered from processors to `command_manager.add_command` function. 
-  - [ ] I want to have 'moves' as a normal function parameter, not kwargs. It is not elegant here.(Command function implementation)
+  - [x] in `generate_command_from_XXX_processor` there is repetitive part that is extracting entity_id from the parameters or from the brain owner and putting the command into the queue - this common part can be abstracted into separate function and called separatelly. Alternativelly it can be transfered from processors to `command_manager.add_command` function. 
+  - [ ] create tests for recording and playback of commands - put out generator value, it is not important.
+  - [x] problem that the first movement eventhough by small step is doing huge leap by using `FlagDoMove()` this is because the first `dt` is huge. Has been solved by redoing the first `dt` calculation directly from the `max_fps` value and moving the `dt` calculation at the end of the `main.run` procedure.
+  - [x] implement a new FlagDoMove feature that does not take into account `dt` value and always moves by specific amount of pixels, steps. Prepare also new command for that. It is useful for movements of NPCs because using of `dt` correction might lead to unpredicted steps/jumps in the NPC path.
+  - [ ] it would be nice to have left mouse click and right mouse click mapable in the `Controllable` component to some commands. For example by left click, there will be new brain sequence that will move the character to the target.
+  - [x] Bug - btree problem when the tree should run again - for example with usage of the `Repeater` node. Fixed. It was caused by the `btree._action_node` not reseting to None when the `Repeater` reset the whole tree to run it again.
+  - [ ] btree_test.py failing - try to fix the error with templates
+  - [ ] dialogs to be more easily used as a templates
+  - [ ] Bug in `test_arm_ammo_01.json` - once you press attack, no other commands are processed
+  - [ ] `FAILSAFE_TREE` and `FAILSAFE_LIST` put into config file outside of `Component` classes. Also, unify with default key_commands - those should be in configuration probably as well.
+  - [x] Bug - at the moment cannot controll other entity as the `entity` parameter is poped from the command `params`. As `params` is mutable dictionary, it is removed everywhere. As a fix, either add `entity_id` into the `Command` namedtuple or do not `pop` the entity parameter, just read it.
+  - [ ] Bug - seems that `ECSManager` does not translate references to aliases that are lower in the quest file. It would be needed to add new item to the `engine.load_quest_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
 
+## BUG - double use of Command Command factory
+  1. `Controllable` component - contains `Command` called `reset_brain`
+  2.  `GenerateCommandsFromInputProcessor` processor - following `Command` `reset_brain` is added into the command queue
+    - `Command(name='reset_brain', params={'new_ai_struct': {'blackboard': {}, 'cmd_list': [{'line': 0, 'type': 'Behavior', 'command': ['move_vect', {'vector': [10, 0]}]}]}})`
+  3. `CommandManager` manager
+    - adds to _cmd_queue
+    - registers `reset_brain` and `reset_brain_init` at `CommandManager` 
+    - executes command
+  4. `reset_brain` command - first call is ok
+    - `cmd_ctx=None, new_ai_struct={'blackboard': {}, 'cmd_list': [{'line': 0, 'type': 'Behavior', 'command': ['move_vect', {'vector': [10, 0]}]}]}`
+  5. `blist` brain
+    - New set of commands in BList before translation is `self.commands=[{'line': 0, 'type': 'Behavior', 'command': ['move_vect', {'vector': [10, 0]}]}]`
+    - List of commands after transformation by the command factory: `self.commands=[{'line': 0, 'type': 'Behavior', 'command': Command(name='move_vect', params={'vector': [10, 0]})}]`
+
+  X.  `GenerateCommandsFromInputProcessor` processor - incorrect following `Command` `reset_brain` is added into the command queue
+    - `Command(name='reset_brain', params={'new_ai_struct': {'blackboard': {}, 'cmd_list': [{'line': 0, 'type': 'Behavior', 'command': Command(name='move_vect', params={'vector': [10, 0]})}]}})`
+
+    probaly it is that Command is mutable and system works with references
+     - as a solution, namedtuple is imutable and should be ok to work with him
+
+
+## TODO - fill in values from blackboard into the command definition
+  - `"move_to_target", {"target": "player01"}` ... translated on ecs_mng level to `"move_to_target", {"target": 1}`
+  - `"move_to_target", {"target": "^enemy"}` ... translated on ecs_mng level to `"move_to_target", {"target": "^enemy"}` ... specifically look for `enemy` key in the blackboard ... I would like this key to be substituted before execution of the command so that command does not need to parse the arguments.
+  - maybe at the moment of creation of the component BrainAI - but at that moment the `enemy` key does not need to exist.
+  - `target=global_bb.get(target, target)` ... first try to look on the blackboard and if not found use the input value. This might be problematic.
+  - in the first cycle read the `target` ... `target = target if target[0] != '^' else global_bb[target[1:]]` ... have this in every command?
+  - or give it somehow to execute command command_manager ... has cmd_ctx.global_bb
+    - check params values that start with `^` and try to substitute by cmd_ctx.global_bb value
+  - or better during putting it to the command queue!!!
+    
+    - *Below is not relevant* - you can get information if the command is firstly called from the context if the context exists (tick_count == 1)
+    - idea - it is not relevant 
+      - `btree_preocessor` calls `btree.get_command``
+      - `btree.get_command` returns command and information if it is the first call of the command (change of action node) - done
+      - information about the first command call is pushed together with the command, entity_id and generator to the `command_queue`
+      - in the `process_commands` method, pass the `is_first_call` information to the `execute_command` function
+      - `execute_command` is looking for the registered command and executes it with parameters.
+       - here probably execute some `init` function and then the command
+         - `init` command will fill all command parameters into the cmd_ctx.locals_bb
+         - `command_fnc` will then be called with `**cmd_ctx.local_bb` to fill in the parameters
+     - or moving the init logic to `add_command` might be possible.
+
+      - get from generator if the command is the first command call
+      - if yes, 
+        - translate the values using global_bb keys
+        - store all parameters into local_bb
+        - run the command init function that will fill additional information into local_bbs
+        - run the command function with parameters **local_bb
+
+     - it is now implemented but it is not elegant
+     - try to use classes
+       --> `btree`` is returning tuple with name and params
+       --> component `BTreeAI` is creating tree with commands as objects using the factory
+         --> probably `command_manager` will have function that creates and returns instance of `Command` object *this need some more thought - coupling component with command manager*
+       --> `get_command` will return Command instance ... same
+       --> `add_command` will put Command object into queue
+       --> `process_commands` will pop command from queue
+        --> if the command has some context
+          --> `notify_command_start` will calculate the statistics of the tree ... same
+          --> `execute_command`
+            --> check blackboard for substitution ... ok
+            --> run `init` - this can be handled internally, no specific code for that
+              --> command class has separate `init` function, empty if not needed
+                --> can call super.process() and upper class will identify the first run and execute the init code automatically
+              --> no local_bb needed, everything is persisted in the instance
+            --> run `command`
+        --> if the command has no context????
+          --> such command cannot call init function
+          -->
+  
+  **NEXT STEPS**
+    - probably continue finetuning the functional approach
+      --> functions `init`, `process` and `initialize`
+      --> solve how to recognize commands and their behavior with context and without context
+        --> maybe additional functions `process_wo_ctx` and if not registered then show error that it cannot be run without ctx
+
+
+  **ADVANTAGE**
+    - implicit call of init() function within the Command parent class super.process() will check the context and the first tick
+  **PROBLEMS**
+  ??? Input commands will be objects???? How to make it work
+    --> controllable component would need to have reference to command factory that will create the command
+  ??? How to call such command from COnsole?
+    --> factory will create command from text
+    --> such command will be passed to queue
+
+## Other idea - commands as classes
+  - behavior tree node is parent class. Command is child of Behavior class and it is an instance.
+  - command instance is created at the moment of creation of the tree
+   - command instance has `tick()` method
+   - on `btree.get_command` we return `behavior.tick()` method that is put into the command queue
+   -
 
 ## TODO - Rethinking Commands - BTrees and Brain
   - `CommandContext` - abstract class representing context of currently running command

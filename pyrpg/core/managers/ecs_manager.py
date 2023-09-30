@@ -48,6 +48,7 @@ class ECSManager:
     #####################
     def component_for_entity(self, entity, component): return self._world.component_for_entity(entity, component)
     def add_component(self, entity, new_component): return self._world.add_component(entity, new_component)
+    def try_component(self, entity, component): return self._world.try_component(entity, component)
 
     #####################
     ## PROCESSORS - START
@@ -120,7 +121,7 @@ class ECSManager:
 
     def check_proc_in_world(self, proc_class_def: str) -> bool:
         ''' Checks, if the class represented by string exists and is already initiated in the
-        game world. Returns True in case the prerequisit processor is present inthe game world.
+        game world. Returns True in case the prerequisit processor is present in the game world.
         Else, returns False.
         '''
         check_class = self.get_proc_class_from_def(proc_class_def)
@@ -491,3 +492,10 @@ class ECSManager:
             }
         })
 
+from dataclasses import dataclass
+
+@dataclass
+class ECSManagerMock:
+    component_for_entity = lambda self,e,c: None
+    add_component = lambda self,e,c: None
+    try_component = lambda self,e,c: None

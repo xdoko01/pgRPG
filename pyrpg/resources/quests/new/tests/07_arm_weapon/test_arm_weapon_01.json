@@ -1,6 +1,6 @@
 {
 	// Basic data
-	"id" : "new_test_arm_weapon_01",
+	"id" : "test_arm_weapon_01",
 	"name" : "Simple Arm Weapon Test",
 	"description" : "Test new arm weapon processors",
 	"objective" : "POC of the new arm weapon system",
@@ -175,19 +175,12 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/reptile/azure"],
+			"templates" : [
+				"new/model/body/male/reptile/azure", // model template
+				"new/controls/default" // controls template
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				// Can pick up another entity
 				{"type" : "new.has_inventory:HasInventory", "params" : {}},

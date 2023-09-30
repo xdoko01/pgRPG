@@ -63,11 +63,11 @@
 				/////////////////////////////////////////////////////////
 				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}], ["new_move_add", {"moves" : ["up"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}], ["new_move_add", {"moves" : ["down"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}], ["new_move_add", {"moves" : ["right"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}], ["new_move_add", {"moves" : ["left"]}]],
-						"attack" : [["none", {}]]}
+						"left" : [["move_dir_add", {"moves" : ["left"]}], ["move_dir_add", {"moves" : ["up"]}]],
+						"right": [["move_dir_add", {"moves" : ["right"]}], ["move_dir_add", {"moves" : ["down"]}]],
+						"up" : [["move_dir_add", {"moves" : ["up"]}], ["move_dir_add", {"moves" : ["right"]}]],
+						"down" : [["move_dir_add", {"moves" : ["down"]}], ["move_dir_add", {"moves" : ["left"]}]],
+						"attack" : []}
 					}
 				},
 

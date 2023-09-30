@@ -17,11 +17,11 @@ class RecordCommandToFileProcessor(Processor):
         'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 
-    def __init__(self, get_commands_fnc, file, *args, **kwargs):
+    def __init__(self, FNC_GET_COMMANDS, file, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # Reference to command queue
-        self.get_commands_fnc = get_commands_fnc
+        self.get_commands_fnc = FNC_GET_COMMANDS
 
         # File handler
         self.fh = open(file, 'w')

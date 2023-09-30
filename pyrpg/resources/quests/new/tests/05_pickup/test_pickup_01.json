@@ -1,6 +1,6 @@
 {
 	// Basic data
-	"id" : "new_test_pickup_01",
+	"id" : "test_pickup_01",
 	"title" : "Pickup Test",
 	"description" : "Test new pickup processors",
 	"objective" : "POC of the new pickup system",
@@ -124,19 +124,12 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/dark2"],
+			"templates" : [
+				"new/model/body/male/human/dark2", // model template
+				"new/controls/default" // control template
+			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
-
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
-					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["none", {}]]}
-					}
-				},
 
 				// New component for facilitating pickup
 				{"type" : "new.has_inventory:HasInventory", "params" :  {}},
