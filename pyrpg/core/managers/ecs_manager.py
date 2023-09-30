@@ -274,14 +274,45 @@ class ECSManager:
     ## ENTITIES - START
     #####################
 
-    def load_entity(self, entity_def: dict) -> None:
-        '''Creates brand new entity based on entity definition in a form of dictionary.'''
-        self.create_entity(entity_def)
+    def load_register_empty_entity(self, entity_def: dict) -> None:
+        '''Creates empty entity and registers it into the lookup tables.
+        
+        It is called from the engine as a first step of loading of entities in
+        order to be able to use entity aliases in definition of other entity
+        components.
+
+        :param entity_def: Description of entity in JSON format (python dict).
+        :type entity_def: dict
+        '''
+        self._create_empty_entity(entity_alias=entity_def["id"])
+
+    def load_update_empty_entity(self, entity_def: dict) -> None:
+        '''Fills the empty entity with components.
+        
+        It is called from the engine as the second step of loading entities.
+        It is vital that register_empty_entity is called before to ensure that
+        all game entity aliases that might be referenced in the component definition
+        already exists in the lookup tables
+        
+        :param entity_def: Description of entity in JSON format (python dict).
+        :type entity_def: dict
+        '''
+
+        # Find the entity_id that is associated with the alias stored in entity_def["id"]
+        entity_id = self.get_entity_id(entity_alias=entity_def["id"])
+
+        # Now add components to this entity id empty envelope
+        self._update_entity(entity_def=entity_def, entity_id=entity_id)
+
+    #def load_entity(self, entity_def: dict) -> None:
+    #    '''Creates brand new entity based on entity definition in a form of dictionary.'''
+    #    self.create_entity(entity_def)
 
     def create_entity(self, entity_def: dict, entity_alias: str=None) -> int:
         '''Creates brand new entity with components - called from game logic to factory 
         new entities during the game - projectiles etc.
-        Entities that are created from quest file are created using load_entity function.
+        Entities that are created from quest file are created using load_register_empty_entity
+        and load_update_empty_entity function.
 
         :param entity_def: Description of entity in JSON format (python dict).
         :type entity_def: dict
@@ -300,7 +331,7 @@ class ECSManager:
         entity_id = self._create_empty_entity(entity_alias=entity_alias if entity_alias else entity_def.get("id", None))
 
         # Now add components to this entity id empty envelope
-        self.update_entity(entity_def=entity_def, entity_id=entity_id)
+        self._update_entity(entity_def=entity_def, entity_id=entity_id)
 
         return entity_id
 
@@ -320,7 +351,7 @@ class ECSManager:
 
         return entity_id
 
-    def update_entity(self, entity_def: dict, entity_id: int):
+    def _update_entity(self, entity_def: dict, entity_id: int):
         '''Add and remove components/templates specified in entity_def on specified entity_id.
 
             Parameters:
@@ -342,7 +373,7 @@ class ECSManager:
             # Create all entities from the template
             logger.info(f'**Creating components from template ""{template_id}"".')
             try:
-                self.update_entity(template_entity_data, entity_id=entity_id)
+                self._update_entity(template_entity_data, entity_id=entity_id)
             except ValueError:
                 logger.error(f'Error in creation of entity from template "{template_id}".')
                 raise ValueError

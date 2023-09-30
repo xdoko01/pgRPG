@@ -113,7 +113,9 @@ class Game:
             ['maps', self.map_manager.load_map],
             ['dialogs', self.dialog_manager.load_dialog],
             ['templates', self.ecs_manager.load_template],
-            ['entities', self.ecs_manager.load_entity],
+            #['entities', self.ecs_manager.load_entity],
+            ['entities', self.ecs_manager.load_register_empty_entity], # first register all entities
+            ['entities', self.ecs_manager.load_update_empty_entity], # next fill them in order to be able to use aliases everywhere
             ['handlers', self.event_manager.load_handler]
         ]
 
