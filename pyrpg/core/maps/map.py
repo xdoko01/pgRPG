@@ -1,3 +1,6 @@
+'''
+For tests call python -m pyrpg.core.maps.map -v
+'''
 import pyrpg.core.config.config as config # for TILE_RES
 
 from pyrpg.core.config.paths import MAP_PATH
@@ -5,6 +8,7 @@ from pyrpg.core.config.paths import MAP_PATH
 import pygame
 from pytmx.util_pygame import load_pygame
 from itertools import product
+from pathlib import Path
 
 ########################################################
 ### Package init commands
@@ -32,12 +36,14 @@ class Map:
 
 	def __init__(self, map_name):
 
+		
 		self.name = map_name
 
 		#### TMX load map and properties
 
 		# Load map
 		self.tmxdata = load_pygame(MAP_PATH / str(map_name + '.tmx'))
+
 
 		# Rescale images
 		self.tmxdata.images = images_rescale(self.tmxdata.images, (config.TILE_RES, config.TILE_RES))
@@ -49,13 +55,45 @@ class Map:
 
 		# Visible layers
 
-		# Collision layer number
+		# Collision layer number - Tiled properties need to be 'collisionLayer=True'
 		self.collision_layer = 2
 
 		# Map properties print(f'Width: {tmxdata.width} Height: {tmxdata.width} TileWidth: {tmxdata.tilewidth} TIleHeight: {tmxdata.tileheight}')
 		# With and Height of the map in pixels
 		self.width = self.tmxdata.width * config.TILE_RES
 		self.height = self.tmxdata.height * config.TILE_RES
+
+	def info(self):
+		print(f'Tile dims: {self.tmxdata.width=}, {map.tmxdata.height=}')
+		print(f'Pixel dims: {self.width=}, {map.height=}')
+		print(f'All layers: {self.tmxdata.layers}')
+		print(f'Visible Layers: {[l for l in self.tmxdata.visible_layers]}')
+
+	def print_layer(self, layer):
+		print(f'Layer name: {self.tmxdata.layers[layer].name}')
+		print(f'Layer props: {self.tmxdata.layers[layer].visible=}, {self.tmxdata.layers[layer].properties=}')
+
+		for y in range(map.tmxdata.height):
+			print()
+			for x in range(map.tmxdata.width):
+				gid = map.tmxdata.get_tile_gid(x, y, layer)
+				print(f'{" " if gid == 0 else chr((gid % 32)+64)}',end='')
+		print()
+
+	def print_layer_path(self, path, layer):
+		print(f'Layer name: {self.tmxdata.layers[layer].name}')
+		print(f'Layer path: {path}')
+		
+		for y in range(map.tmxdata.height):
+			print()
+			for x in range(map.tmxdata.width):
+				gid = map.tmxdata.get_tile_gid(x, y, layer)
+				if (x,y) in path:
+					print('X', end='')
+				else:
+					print(f'{" " if gid == 0 else chr((gid % 32)+64)}', end='')
+		print()
+
 
 	def get_tile_images_by_rect(self, layer, rect):
 		''' Get all the map tiles that are in the camera view as
@@ -203,3 +241,133 @@ class Map:
 		
 		# No tile in line is collidable
 		return False
+	
+	def is_walkable(self, tile: tuple) -> bool:
+		'''Is within map and is walkable (no obstacle)'''
+		return (0 <= tile[0] <= self.tmxdata.width - 1) and (0 <= tile[1] <= self.tmxdata.height - 1) and self.tmxdata.get_tile_gid(tile[0], tile[1], self.collision_layer) == 0
+
+	def get_path_bfs(
+			self,
+			start: tuple, 
+			end: tuple,
+			inc_start: bool=False, 
+			avail_moves: tuple=(
+				(0,-1), #up
+				(0,1), #down
+				(-1,0), #left
+				(1,0) #right
+			)
+		) -> list:
+
+		print(f'FINDING PATH ... {start=}, {end=}')
+		if start == end: return []
+
+		visited = set()
+		queue = []
+		pre = dict()
+		path = []
+
+		# Record where I am
+		queue.append(start)
+
+		while queue:
+
+			curr = queue.pop(0)
+
+			# Check if I am on the end - finish
+			if curr == end:
+				# Print the path
+				path.append(end)
+				pre_path = pre[end]
+				while pre_path != start:
+					path.append(pre_path)
+					pre_path = pre[pre_path]
+
+				if inc_start: path.append(start)
+				path.reverse() # from start to end
+				return path
+
+
+			else:
+				# Mark as visited
+				visited.add(curr)
+
+				for move in avail_moves:
+					next = (curr[0] + move[0], curr[1] + move[1])
+					if self.is_walkable(next) and next not in visited and next not in queue:
+						# Add into the queue
+						queue.append(next)
+						# Remember from which point you are continuing
+						pre[next] = curr
+
+		return [] # no path found
+
+	def get_path_checkpoints(self, path:list) -> list:
+		'''Extract only points from the path where
+		direction is changed - checkpoints
+
+		Path needs to include start point and end point.
+
+		Point(x=0, y=1), (0,0) #start
+		Point(x=1, y=1), (1,0) #keep - next is changed
+		Point(x=1, y=2), (0,1)
+		Point(x=1, y=3), (0,1)
+		Point(x=1, y=4), (0,1)
+		Point(x=1, y=5), (0,1)
+		Point(x=1, y=6), (0,1)
+		Point(x=1, y=7), (0,1)  #keep - next is changed
+		Point(x=2, y=7), (1,0)
+		Point(x=3, y=7), (1,0)
+		Point(x=4, y=7), (1,0)
+		Point(x=5, y=7), (1,0)
+		Point(x=6, y=7), (1,0)
+		Point(x=7, y=7), (1,0)  #keep - next is changed
+		Point(x=7, y=6), (0,-1)
+		Point(x=7, y=5), (0,-1)
+		Point(x=7, y=4)  (0,-1) #end - always keep
+		
+			0    1,2 
+			1    1,3 ... 0,1 #out
+			2    1,4 ... 0,1 #out
+			3    1,5 ... 0,1 #out
+			4    1,6 ... 0,1 #out
+			5    1,7 ... 0,1 #keep
+			6    2,7 ... 1,0
+
+		'''
+
+		assert len(path) >= 2 # at least start and end
+
+		movement = None
+		checkpoints = []
+
+		for i in range(len(path)-1):
+			if (path[i+1][0] - path[i][0] , path[i+1][1] - path[i][1]) != movement:
+				checkpoints.append(path[i])
+				movement = (path[i+1][0] - path[i][0], path[i+1][1] - path[i][1])
+
+		# Always append end 
+		checkpoints.append(path[-1])
+		
+		# Always remove start
+		checkpoints.pop(0)
+
+		return checkpoints
+
+
+if __name__ == '__main__':
+
+	window = pygame.display.set_mode((640,480), 0, 24)
+	
+	map = Map(map_name='test_arena_sand')
+
+	map.info()
+
+	map.print_layer(0)
+	map.print_layer(1)
+	map.print_layer(2)
+
+	path = map.get_path_bfs(start=(5,5), end=(50,50))
+	path = map.get_path_bfs(start=(50,50), end=(5,5))
+
+	map.print_layer_path(layer=2, path=path)

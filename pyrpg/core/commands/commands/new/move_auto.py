@@ -42,6 +42,7 @@ from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatu
 ### Optional imports
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove, FlagDoMoveMock # To work with components in commands (remove search add ...)
 from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
+from .move_dir import process as cmd_move_dir # import other existing command
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -158,7 +159,15 @@ def process(
     if (duration_ms is None) or (cmd_ctx.duration < duration_ms) :
 
         # Create new FlagDoMove component
-        ecs_mng.add_component(entity_id, FlagDoMove(moves=[_ent_pos.dir_name], dt_on=dt_comp, absolute=absolute))
+        #ecs_mng.add_component(entity_id, FlagDoMove(moves=[_ent_pos.dir_name], dt_on=dt_comp, absolute=absolute))
+        cmd_move_dir(
+            ecs_mng=ecs_mng, 
+            entity_id=entity_id, 
+            cmd_ctx=cmd_ctx, 
+            moves=[_ent_pos.dir_name],
+            dt_comp=dt_comp,
+            absolute=absolute
+        )
 
         # There is still some time to move - return running
         return CommandStatus.RUNNING

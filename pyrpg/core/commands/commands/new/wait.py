@@ -43,7 +43,7 @@ def init(
         # Mandatory attributes that must be always present
         # 'Public' attributes specific to this command and used while calling the command
         # The rest of parameters, if needed
-        **cmd_kwargs
+        *cmd_args, **cmd_kwargs
     ) -> None:
     '''This function is called only if CommandContext is not None - i.e., in case of more
     complicated commands that require multiple cycles for processing (can return CommandStatus.RUNNING).

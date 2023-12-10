@@ -1,0 +1,97 @@
+{
+	"blist": {
+		"title": "Behavioral List",
+		"description": "Behavioral List",
+		"examples": [
+			{
+				"blackboard": {},
+				"cmd_list" : [
+					{"line": 0, "on_fail_jmp": 0, "command": ["new_guard", {"enemy": "player01", "radius": 200, "update_time_ms": 2000}] },
+					{"line": 1, "on_fail_jmp": 1, "command": ["new_move_to_target", {"target" : "player01", "radius": 50, "update_time_ms": 500}]},
+					{"line": 2, "on_fail_jmp": 2, "command": ["new_attack_full", {"attack_time_ms": 500}]},
+					{"line": 3, "jmp_to": 1, "type": "Goto"}
+				]
+			}
+		],
+		"type": "object",
+		"required": ["cmd_list"],
+		"properties": {
+			"blackboard": {
+				"$ref": "generator.schema.json#/command_context"
+			},
+			"cmd_list": {
+				"type": "array",
+				"items": {
+					"$ref": "#/node"
+				}
+			}
+		}
+	},
+	"node": {
+		"title": "Behavioral List Node",
+		"description": "Behavioral List Node",
+		"examples": [
+			{"line": 6, "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1]}]},
+			{"command": ["move_auto", {"duration_ms" : 250}]}, 
+			{"command": ["wait", {"duration_ms" : 1000}]},
+			{"line": 9, "type": "Goto", "jmp_to": 0},
+			{"line": 2, "type": "Loop", "name": "Looper1", "repeat": 2, "jmp_to": 0}
+		],
+		"type": "object",
+		"oneOf": [
+			{"$ref": "#/behavior_node"},
+			{"$ref": "#/goto_node"},
+			{"$ref": "#/loop_node"}
+		]
+	},
+	"behavior_node": {
+		"title": "Behavior List Behavior Node",
+		"description": "Behavior List Behavior Node",
+		"examples": [
+			{"line": 6, "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1]}]},
+			{"command": ["move_auto", {"duration_ms" : 250}]}, 
+			{"command": ["wait", {"duration_ms" : 1000}]}
+		],
+		"type": "object",
+		"required": ["command"],
+		"properties": {
+			"line": {"type": "integer", "minimum": 0},
+			"name": {"type": "string"},
+			"type": {"enum": ["Behavior"]},
+			"command": {"$ref": "../../command.schema.json"},
+			"on_fail_jmp": {"type": "integer", "minimum": -1}
+		}
+	},
+	"goto_node": {
+		"title": "Behavior List Goto Node",
+		"description": "Behavior List Goto Node",
+		"examples": [
+			{"line": 9, "type": "Goto", "jmp_to": 0},
+			{"name": "Jump", "type": "Goto", "jmp_to": 0}
+		],
+		"type": "object",
+		"required": ["type", "jmp_to"],
+		"properties": {
+			"line": {"type": "integer", "minimum": 0},
+			"name": {"type": "string"},
+			"type": {"enum": ["Goto"]},
+			"jmp_to": {"type": "integer", "minimum": -1}
+		}
+	},
+	"loop_node": {
+		"title": "Behavior List Loop Node",
+		"description": "Behavior List Loop Node",
+		"examples": [
+			{"line": 2, "type": "Loop", "name": "Looper1", "repeat": 2, "jmp_to": 0}
+		],
+		"type": "object",
+		"required": ["type", "jmp_to", "repeat"],
+		"properties": {
+			"line": {"type": "integer", "minimum": 0},
+			"name": {"type": "string"},
+			"type": {"enum": ["Loop"]},
+			"jmp_to": {"type": "integer", "minimum": -1},
+			"repeat": {"type": "integer", "minimum": 0}
+		}
+	}
+}

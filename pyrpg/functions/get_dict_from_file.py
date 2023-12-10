@@ -40,7 +40,7 @@ def get_dict_from_file(filepath: Path, dir: Path=Path('')) -> dict:
             res = get_dict_from_toml(filepath)
         if file_extension in ['.yaml']:
             res = get_dict_from_yaml(filepath)
-        elif file_extension in ['.json']:
+        elif file_extension in ['.json', '.jsonc']:
             res = get_dict_from_json(filepath)
         else:
             try:
@@ -49,7 +49,11 @@ def get_dict_from_file(filepath: Path, dir: Path=Path('')) -> dict:
                 try:
                     res = get_dict_from_yaml(Path(str(filepath) + '.yaml'))
                 except FileNotFoundError:
-                    res = get_dict_from_json(Path(str(filepath) + '.json'))
+                    try:
+                        res = get_dict_from_json(Path(str(filepath) + '.json'))
+                    except FileNotFoundError:
+                        res = get_dict_from_json(Path(str(filepath) + '.jsonc'))
+
     except FileNotFoundError:
         raise ValueError(f'Cannot load dict from file "{filepath}".')
 

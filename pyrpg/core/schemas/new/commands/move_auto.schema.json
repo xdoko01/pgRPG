@@ -1,0 +1,52 @@
+{
+	"$id": "move_auto.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_auto command",
+	"description": "Continue movement in the same direction.",
+	"markdownDescription": "Continue *movement* in the same direction.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_auto command",
+			"description": "Continue movement in the same direction.",
+			"markdownDescription": "Continue *movement* in the same direction.",		
+			"enum": ["move_auto"]
+		},
+		{
+			"title": "move_auto command parameters",
+			"description": "duration_ms (optional), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`duration_ms` (optional), `dt_comp` (optional), `absolute` (optional)",
+			"type": "object",
+
+			"properties": {
+				"duration_ms": {
+					"title": "Auto Movement Duration Time in ms",
+					"description": "Keep moving for specific amount of time (in ms).",
+					"markdownDescription": "Keep moving for specific amount of time (in ms).",
+					"examples": [50, 100, 200, 500, 1000],
+					"type": "integer",
+					"minimum": 0
+				},
+				"dt_comp": {
+					"title": "Delta-time Compensation",
+					"description": "Specifies if the movement is compensated by current framerate. Default is True",
+					"markdownDescription": "Specifies if the movement is compensated by current framerate. Default is `true`",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				},
+				"absolute": {
+					"title": "Do not apply velocity on the movement",
+					"description": "Specifies if the movement is adjusted using velocity. Default is True",
+					"markdownDescription": "Specifies if the movement is adjusted using velocity. Default is `true`",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				}
+			}
+		}
+	],
+	"items": false
+}

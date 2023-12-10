@@ -32,9 +32,22 @@ from pyrpg.functions import get_dict_from_file, get_dict_value
 logger.info(f'Engine initiated')
 
 class Quest:
-    def __init__(self, alias: str, quest_def: dict):
-        self.alias = alias
-        dict_def = quest_def
+    def __init__(self, alias: str, quest_def: dict) -> None:
+        self.filepath: str = None
+        self.id, self.alias = alias, alias
+        self.title = quest_def.get('title')
+        self.description = quest_def.get('description')
+        self.objective = quest_def.get('objective')
+        #dict_def = quest_def
+        self.stats = {
+            'no_of_prereqs': len(quest_def.get('prereqs')),
+            'no_of_procs': len(quest_def.get('processors')),
+            'no_of_maps': len(quest_def.get('maps')),
+            'no_of_dlgs': len(quest_def.get('dialogs')),
+            'no_of_temps': len(quest_def.get('templates')),
+            'no_of_ents': len(quest_def.get('entities')),
+            'no_of_comps': {e.get('id'): len(e.get('components')) for e in quest_def.get('entities')}
+        }
 
 class Game:
 
@@ -138,7 +151,10 @@ class Game:
 
         # Translate quest definition into the game objects
         quest = self.load_quest_from_def(quest_def)
-        
+
+        # Remember the path
+        quest.filepath = filepath
+
         # Return the quest objects containing usefull information
         return quest
 
@@ -190,7 +206,20 @@ class Game:
         # Load the quest, register it and create QUEST_START event
         quest = self.load_quest_from_file(filepath=filepath)
         self._quests[quest.alias] = quest
-        self.event_manager.add_event(Event('QUEST_START', self, None, params={'quest_id': quest.alias}))
+        self.event_manager.add_event(
+            Event('QUEST_START', 
+            self, 
+            None, 
+            params={
+                'filepath': quest.filepath,
+                'id': quest.id,
+                'alias': quest.alias,
+                'title': quest.title,
+                'description': quest.description,
+                'objective': quest.objective,
+                'stats': quest.stats
+            })
+        )
 
         logger.info(f'Quest "{filepath}" successfully loaded.')
 

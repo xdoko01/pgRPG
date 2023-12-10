@@ -1,0 +1,165 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
+	// Basic data
+	"id" : "test_movement_08",
+	"title" : "Movement Test 08",
+	"description" : "Test Controllable, NewMoveable components and NewMove command",
+	"objective" : "POC of the improved movement system",
+
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// For processing input and movements
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/brown"],
+			"components" : [
+
+				/////////////////////////////////////////////////////////
+				// TEST 8 - Movement command based on modify_brain command
+				// - program is added to the brain and executed accross several cycles
+				//
+				/////////////////////////////////////////////////////////
+				{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						// Do 3 circles upon pressing left
+						"left" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [-5, 0]}]}, //left
+											{"line": 1, "type": "Behavior", "command": ["move_vect", {"vector" : [0, 5]}]}, //down
+											{"line": 2, "type": "Behavior", "command": ["move_vect", {"vector" : [5, 0]}]}, //right
+											{"line": 3, "type": "Behavior", "command": ["move_vect", {"vector" : [0, -5]}]}, //up
+											{"line": 4, "type": "Loop", "repeat": 3, "jmp_to": 0} //repeat 3-times
+										]
+									}
+								}
+							]
+						],
+						
+						"right" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [10, 0]}]}
+										]
+									}
+								}
+							]
+						],
+						
+						"up" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [0, -10]}]}
+										]
+									}
+								}
+							]
+						],
+						
+						"down" : [
+							[
+								"reset_brain", 
+								{
+									"new_ai_struct" : {
+										"blackboard": {},
+										"cmd_list": [
+											{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [0, 10]}]}
+										]
+									}
+								}
+							]
+						],
+
+						"attack" : []}
+					}
+				},
+
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_quest_start",
+				"actions": 	[
+					"SCRIPT",
+					"new.show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

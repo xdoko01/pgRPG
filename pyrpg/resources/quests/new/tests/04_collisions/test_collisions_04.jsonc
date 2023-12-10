@@ -1,0 +1,296 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
+	// Basic data
+	"id" : "test_collisions_04",
+	"title" : "Collisions Test - exceptions in collisions",
+	"description" : "Test new collision processors - exceptions in collisions",
+	"objective" : "POC of the new collision system",
+	"init_phase" : "phase01",
+
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+
+		// For displaying
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// For clearing of processing of movements and collisions
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs" : [
+		{
+			"id" : "dlg_quest_start",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 24,
+				"color" : "#00FFFF",
+				"align" : "LEFT"
+				},
+		
+			"texts" : [
+				{
+					"text" : "Collision test no.3 - Demonstration of collision resolution",
+					"position" : [5, 20]
+				}
+			],
+			
+			"frames" : [
+				{
+					"font" : {
+						"path" : "small_font.json",
+						"size" : 16,
+						"color" : "#FFFFFF",
+						"align" : "LEFT"
+						},
+
+					"texts" : [
+						{
+							"text" : "Entities are moving in left-right, up-down direction\nwhile hitting each other.",
+							"position" : [5, 65]
+						}
+					]
+				},
+				{
+					"texts" : [
+						{
+							"text" : "Press Enter to continue ...",
+							"position" : [5, 165]
+						}
+					]
+				}
+			]
+		}
+	],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : [
+				"new/model/body/male/human/white", // for model
+				"new/controls/default" // for controls
+			],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "NPC01",
+			"templates" : ["new/model/body/male/skeleton/white"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// Move right - left
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [1000, 450]}]},
+							{"command": ["move_to_pos_px", {"pos": [10, 450]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC02",
+			"templates" : ["new/model/body/male/skeleton/green"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// Move up - down
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [219, 10]}]},
+							{"command": ["move_to_pos_px", {"pos": [219, 800]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC03",
+			"templates" : ["new/model/body/male/skeleton/grey"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// Move down - up
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [319, 1000]}]},
+							{"command": ["move_to_pos_px", {"pos": [319, 10]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC04",
+			"templates" : ["new/model/body/male/zombie/green"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				// Move left - right
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [50, 500]}]},
+							{"command": ["move_to_pos_px", {"pos": [1000, 500]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
+
+
+				{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC05",
+			"templates" : ["new/model/body/male/wolfman/gold"],
+			"components" : [
+				{
+					"type" : "new.debug:Debug", 
+					"params" : {
+						"info" : {
+							"name" : "NPC05",
+							"description" : "NPC05 is not corrected by collision from anyone."
+						}
+					}
+				},
+
+				// Move left - right
+				{
+					"type" : "new.brain_ai:BrainAI", 
+					"params" : {
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [300, 100]}]},
+							{"command": ["move_to_pos_px", {"pos": [100, 100]}]},
+							{"type": "Goto", "jmp_to": 0}
+						]
+					}
+				},
+				
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
+														"y" : 27,
+														"dx" : 0,
+														"dy" : 8,
+														"accept_pos_fix_from_denylist" : ["ALL"], // do not adjust upon collision with anybody
+														"denylist" : ["player01"] // no collision with player01 will be recorded
+														}
+				}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_info_msg",
+				"actions": 	[
+					"SCRIPT",
+					"new.show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		],
+		[
+			"QUEST_START",
+			{
+				"id" : "ev_quest_start",
+				"actions" : [
+					"SCRIPT",
+					"new.show_dlg_window", 
+					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
+				]
+			}
+		]
+	]
+}

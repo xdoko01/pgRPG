@@ -129,10 +129,10 @@
 			},
 			"uniqueItems": true
 		},
-		"event_handlers": {
+		"handlers": {
 			"title": "Quest Event Handlers",
 			"description" : "List of entities used in the quest.",
-			"type": "object"
+			"type": "array"
 		}
 	}
 }

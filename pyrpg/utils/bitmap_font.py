@@ -187,7 +187,6 @@ class BitmapFont():
         It is used internally tin render function to determine the final dimensions
         of a font surface.
         '''
-
         return sum([self.char_width[char] for char in text]) + (self.spacing[0] * len(text))
 
         # Almost same speed as above

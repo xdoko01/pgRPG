@@ -1,0 +1,36 @@
+{
+	"$id": "attack.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "attack command",
+	"description": "Perform attack by the entity",
+	"markdownDescription": "Perform *attack* by the entity",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "attack command",
+			"description": "Perform the attack.",
+			"markdownDescription": "Perform the attack.",
+			"enum": ["attack"]
+		},
+		{
+			"title": "attack command parameters",
+			"description": "attack_time_ms (optional)",
+			"markdownDescription": "`attack_time_ms` (optional)",
+			"type": "object",
+
+			"properties": {
+				"attack_time_ms": {
+					"title": "Attack Time in ms",
+					"description": "Keep repeating attack for a specific amount of time (in ms).",
+					"markdownDescription": "Keep repeating attack for a specific amount of time (in ms).",
+					"examples": [50, 100, 200, 300, 500, 1000],
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		}
+	],
+	"items": false
+}

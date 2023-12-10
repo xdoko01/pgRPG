@@ -112,6 +112,10 @@ class Position(Component):
         self.lasty = self.y
         self.lastmap = self.map
 
+    def get_tile(self) -> tuple:
+        '''Get tile coordinates'''
+        return (self.x // TILE_RES, self.y // TILE_RES)
+
     def set_direction(self, dir_name):
         '''
         '''

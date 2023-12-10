@@ -30,8 +30,17 @@ def main(argv):
     #filepath = 'new/games/sokoban/sokoban.json'                NOT WORKING
     #filepath = 'new/games/collect_coins/collect_coins.json'
 
-    # 12_btrees
-    #filepath = 'new/tests/12_btrees/test_entity_seen.json'
+    # 12_ai
+    filepath = 'new/tests/12_ai/simple/move_to_vect.jsonc'
+
+    #filepath = 'new/tests/12_ai/simple/move_to.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_pos_tile_vect.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_pos_px_vect.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_pos_tile.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_pos_px.jsonc'
+    #filepath = 'new/tests/12_ai/move_between_2_points.jsonc'
+
+    #filepath = 'new/tests/12_ai/test_entity_seen.jsonc'
 
     # 11_sensors
     #filepath = 'new/tests/11_sensors/test_sensors_01.json'
@@ -56,46 +65,46 @@ def main(argv):
     #filepath = 'new/tests/06_teleportation/test_teleportation_01.json'
 
     # 05_pickup
-    #filepath = 'new/tests/05_pickup/test_pickup_01.json'
+    #filepath = 'new/tests/05_pickup/test_pickup_01.jsonc'
 
     # 04_collisions
     #filepath = 'new/tests/04_collisions/test_collisions_05.yaml'
-    #filepath = 'new/tests/04_collisions/test_collisions_05.json'
-    #filepath = 'new/tests/04_collisions/test_collisions_04.json'
-    #filepath = 'new/tests/04_collisions/test_collisions_03.json'
-    #filepath = 'new/tests/04_collisions/test_collisions_02.json'
-    #filepath = 'new/tests/04_collisions/test_collisions_01.json'
+    #filepath = 'new/tests/04_collisions/test_collisions_05.jsonc'
+    #filepath = 'new/tests/04_collisions/test_collisions_04.jsonc'
+    #filepath = 'new/tests/04_collisions/test_collisions_03.jsonc'
+    #filepath = 'new/tests/04_collisions/test_collisions_02.jsonc'
+    #filepath = 'new/tests/04_collisions/test_collisions_01.jsonc'
 
     # 03_animations
-    #filepath = 'new/tests/03_animations/test_weapon_animations.json'
-    #filepath = 'new/tests/03_animations/test_animations_01.json'
+    #filepath = 'new/tests/03_animations/test_weapon_animations.jsonc'
+    #filepath = 'new/tests/03_animations/test_animations_01.jsonc'
 
     # 02_commands
-    #filepath = 'new/tests/02_commands/test_commands_03.json'
-    #filepath = 'new/tests/02_commands/test_commands_02.json'
-    #filepath = 'new/tests/02_commands/test_commands_01.json'
-    #filepath = 'new/tests/02_commands/play_commands_03.json'
-    #filepath = 'new/tests/02_commands/play_commands_02.json'
-    #filepath = 'new/tests/02_commands/play_commands_01.json'
-    #filepath = 'new/tests/02_commands/record_commands.json'
+    #filepath = 'new/tests/02_commands/test_commands_03.jsonc'
+    #filepath = 'new/tests/02_commands/test_commands_02.jsonc'
+    #filepath = 'new/tests/02_commands/test_commands_01.jsonc'
+    #filepath = 'new/tests/02_commands/play_commands_03.jsonc'
+    #filepath = 'new/tests/02_commands/play_commands_02.jsonc'
+    #filepath = 'new/tests/02_commands/play_commands_01.jsonc'
+    #filepath = 'new/tests/02_commands/record_commands.jsonc'
 
     # 01_movements
-    filepath = 'new/tests/01_movements/test_controls_12.json'
-    #filepath = 'new/tests/01_movements/test_movement_11.json'
-    #filepath = 'new/tests/01_movements/test_movement_10.json'
-    #filepath = 'new/tests/01_movements/test_movement_09.json'
-    #filepath = 'new/tests/01_movements/test_movement_08.json'
-    #filepath = 'new/tests/01_movements/test_movement_07.json'
-    #filepath = 'new/tests/01_movements/test_movement_06.json'
-    #filepath = 'new/tests/01_movements/test_movement_05.json'
-    #filepath = 'new/tests/01_movements/test_movement_04.json'
-    #filepath = 'new/tests/01_movements/test_movement_03.json'
-    #filepath = 'new/tests/01_movements/test_movement_02.json'
-    #filepath = 'new/tests/01_movements/test_movement_01.json'
+    #filepath = 'new/tests/01_movements/test_controls_12'
+    #filepath = 'new/tests/01_movements/test_movement_11.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_10.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_09.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_08.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_07.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_06.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_05.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_04.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_03.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_02.jsonc'
+    #filepath = 'new/tests/01_movements/test_movement_01.jsonc'
 
     # 00_render
-    #filepath = 'new/tests/00_render/test_render_02.json'
-    #filepath = 'new/tests/00_render/test_render_01.json'
+    #filepath = 'new/tests/00_render/test_render_02.jsonc'
+    #filepath = 'new/tests/00_render/test_render_01.jsonc'
 
 
     usage_info = '''

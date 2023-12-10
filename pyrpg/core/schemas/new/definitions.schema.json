@@ -28,7 +28,7 @@
 			"title": "Template List definition",
 			"description": "List representation of a template with or without parameters",
 			"examples": [
-				["new/_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in":[]}]
+				["new/_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in": []}]
 			],
 
 			"type": "array",
@@ -71,6 +71,15 @@
 			"items":{
 				"$ref": "#/definitions/entity_id"
 			}
+		},
+
+		"blackboard_pointer": {
+			"title": "Pointer to Command Generator Blackboard Value",
+			"description": "Pointer to Command Generator Blackboard Value",
+			"examples": ["^target", "^position", "^player"],
+			"type": "string",
+			"pattern": "^\\^.+"
+
 		},
 
 		"entity_id" : {
@@ -185,6 +194,13 @@
 			"type": "string"
 		},
 
+		"model_file": {
+			"title": "Model File",
+			"description": "Model file",
+			"examples": ["model.json", "new/models/model.json"],
+			"type": "string"
+		},
+
 		"color_rgb": {
 			"title": "RGB color",
 			"description": "RGB color definition.",
@@ -251,6 +267,6 @@
 				{ "$ref": "#/definitions/pixel_radius" }
 			],
 			"items": false
-		}
+		}	
 	}
 }

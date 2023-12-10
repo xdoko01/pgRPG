@@ -5,6 +5,7 @@ import json
 
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.commands import Command
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -103,9 +104,9 @@ class GenerateCommandFromFileProcessor(Processor):
                     self.clear_commands_fnc()
                 
                 # Insert commands from the file for the given cycle
-                for cmd in self.next_rec[1]: # command queue
+                for cmd in self.next_rec[1]: # command queue 
                     command, entity_id, generator = cmd
-                    self.add_command_fnc(command, entity_id, generator)
+                    self.add_command_fnc(Command(command[0], command[1], command[2]), entity_id, generator)
                     logger.debug(f'({self.cycle}) - Adding command "{command}" from file into the cycle {self.cycle_counter}.')
 
                 # Read the next record

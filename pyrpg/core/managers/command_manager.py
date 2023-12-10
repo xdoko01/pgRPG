@@ -102,7 +102,7 @@ class CommandManager:
             else:
                 # commands without context - ad hoc from console
                 #self.execute_command(ecs_mng=ecs_mng, entity_id=entity_id, cmd_ctx=None, command_module_name=cmd_fnc, **cmd_params)
-                self.execute_command(ecs_mng=ecs_mng, entity_id=entity_id, cmd=cmd)
+                self.execute_command(ecs_mng=ecs_mng, entity_id=entity_id, cmd_name=cmd.name, cmd_params=cmd.params)
                 #self.execute_command(ecs_mng=ecs_mng, cmd=cmd)
 
     def _register_command(self, fnc, alias) -> None:
@@ -200,12 +200,15 @@ class CommandManager:
         '''
         # simple command execution, only instead parameters use local_bb
         #return self.execute_command(ecs_mng, entity_id, cmd=Command(cmd.name, cmd_ctx.local_bb), cmd_ctx=cmd_ctx)
-        cmd.params = cmd_ctx.local_bb # this can cause some troubles! CHanging the original parameters of the command
-        logger.debug(f'Executing command {cmd=} substituted with parameters of local_bb.')
-        return self.execute_command(ecs_mng, entity_id, cmd=cmd, cmd_ctx=cmd_ctx)
+        #cmd.params = cmd_ctx.local_bb # this can cause some troubles! CHanging the original parameters of the command
+        #logger.debug(f'Executing command {cmd=} substituted with parameters of local_bb.')
+        logger.debug(f'Executing command {cmd=} substituted with parameters of {cmd_ctx.local_bb=}')
+        #return self.execute_command(ecs_mng, entity_id, cmd=cmd, cmd_ctx=cmd_ctx)
+        return self.execute_command(ecs_mng, entity_id, cmd_name=cmd.name, cmd_params=cmd_ctx.local_bb, cmd_ctx=cmd_ctx)
 
-    def execute_command(self, ecs_mng, entity_id: int, cmd: Command, cmd_ctx=None):
     #def execute_command(self, ecs_mng, cmd: Command, cmd_ctx=None):
+    #def execute_command(self, ecs_mng, entity_id: int, cmd: Command, cmd_ctx=None):
+    def execute_command(self, ecs_mng, entity_id: int, cmd_name: str, cmd_params: dict, cmd_ctx=None):
 
         '''Executes command and returns the result
             
@@ -218,8 +221,12 @@ class CommandManager:
             processor.
         '''
 
-        cmd_fnc = self.get_command(cmd.name)
+        #cmd_fnc = self.get_command(cmd.name)
 
-        logger.debug(f'Calling "{cmd.name}" function with {cmd.params=}')
-        return cmd_fnc(ecs_mng, entity_id, cmd_ctx=cmd_ctx, **cmd.params)
+        #logger.debug(f'Calling "{cmd.name}" function with {cmd.params=}')
+        #return cmd_fnc(ecs_mng, entity_id, cmd_ctx=cmd_ctx, **cmd.params)
 
+        cmd_fnc = self.get_command(cmd_name)
+
+        logger.debug(f'Calling "{cmd_name}" function with {cmd_params=}')
+        return cmd_fnc(ecs_mng, entity_id, cmd_ctx=cmd_ctx, **cmd_params)

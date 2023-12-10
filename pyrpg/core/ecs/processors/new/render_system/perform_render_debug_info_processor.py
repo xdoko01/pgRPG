@@ -16,7 +16,7 @@ from pyrpg.core.ecs.components.new.movable import Movable
 from pyrpg.core.ecs.components.new.collidable import Collidable
 from pyrpg.core.ecs.components.new.damageable import Damageable
 from pyrpg.core.ecs.components.new.has_score import HasScore
-#from pyrpg.core.ecs.components.new.btree_ai import BTree
+from pyrpg.core.ecs.components.new.brain_ai import BrainAI
 from pyrpg.core.ecs.components.new.can_see import CanSee
 from pyrpg.core.ecs.components.new.can_hear import CanHear
 
@@ -26,6 +26,7 @@ from ..functions import get_view_points # for drawing of arrows
 
 from pyrpg.core.config.fonts import GAME_DEBUG_FONT # for the debug font
 from pyrpg.core.config.frames import GAME_DEBUG_FRAME # for the debug frame
+from pyrpg.core.config.config import TILE_RES
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 
@@ -87,12 +88,12 @@ class PerformRenderDebugInfoProcessor(Processor):
 
             # Get position and model status info
             for _, (position, debug, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, RenderableModel)):
-                debug.info.update({'position' : (int(position.x), int(position.y), position.dir_name)})
+                debug.info.update({'position' : f'(px=({int(position.x)},{int(position.y)}), tl=({int(position.x)//TILE_RES},{int(position.y)//TILE_RES}), dir={position.dir_name}'})
                 debug.info.update({'action' : renderable.action})
 
             # Get BTree info
-            #for _, (position, debug, btree) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, BTree)):
-            #    debug.info.update({'Action' : str(btree.running_behavior.node)})
+            for _, (position, debug, brain) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, BrainAI)):
+                debug.info.update({'AI' : str(brain.generator._action_node)})
 
             # Get inventory info
             for _, (position, debug, inventory) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, HasInventory)):

@@ -60,7 +60,14 @@
 					"title": "Control Commands",
 					"description": "List of commands assigned to actions.",
 					"type": "object",
-					"required": ["left", "right", "up", "down", "attack"]
+					"required": ["left", "right", "up", "down", "attack"],
+					"properties": {
+						"left": {"type": "array", "items": {"$ref": "../command.schema.json"}},
+						"right": {"type": "array", "items": {"$ref": "../command.schema.json"}},
+						"up": {"type": "array", "items": {"$ref": "../command.schema.json"}},
+						"down": {"type": "array", "items": {"$ref": "../command.schema.json"}},
+						"attack": {"type": "array", "items": {"$ref": "../command.schema.json"}}
+					}
 				}
 			}
 		}

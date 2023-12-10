@@ -41,6 +41,7 @@ from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatu
 
 ### Optional imports
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove, FlagDoMoveMock # To work with components in commands (remove search add ...)
+from .move_dir import process as cmd_move_dir # import other existing command
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -153,9 +154,19 @@ def process(
         flag_do_move.add_moves(moves)
         logger.debug(f'{entity_id=} - moves added to already existing component {flag_do_move}.')
     except KeyError:
-        new_component = FlagDoMove(moves=moves, dt_on=dt_comp, absolute=absolute)
-        ecs_mng.add_component(entity_id, new_component)
-        logger.debug(f'{entity_id=} - new component created {new_component}.')
+        #new_component = FlagDoMove(moves=moves, dt_on=dt_comp, absolute=absolute)
+        #ecs_mng.add_component(entity_id, new_component)
+        #logger.debug(f'{entity_id=} - new component created {new_component}.')
+
+        # Use simple move command if movement component does not yet exists
+        cmd_move_dir(
+            ecs_mng=ecs_mng, 
+            entity_id=entity_id, 
+            cmd_ctx=cmd_ctx, 
+            moves=moves,
+            dt_comp=dt_comp,
+            absolute=absolute
+        )
 
     return CommandStatus.SUCCESS
 

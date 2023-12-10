@@ -1,0 +1,121 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
+	// Basic data
+	"id" : "test_collisions_01",
+	"title" : "Collisions Test - generation of collisions",
+	"description" : "Test generation of collisions without actually resolving them",
+	"objective" : "POC of the new collision system",
+
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+
+		// For displaying
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// Removal of obsolete flags
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/female/human/white"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+					"control_cmds" : {
+						"left" : [["move_dir_add", {"moves" : ["left"]}]],
+						"right": [["move_dir_add", {"moves" : ["right"]}]],
+						"up" : [["move_dir_add", {"moves" : ["up"]}]],
+						"down" : [["move_dir_add", {"moves" : ["down"]}]],
+						"attack" : []}
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "NPC",
+			"templates" : ["new/model/body/female/human/brown"],
+			"components" : [
+				{"type" : "new.debug:Debug", "params" : {}},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_quest_start",
+				"actions": 	[
+					"SCRIPT",
+					"new.show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

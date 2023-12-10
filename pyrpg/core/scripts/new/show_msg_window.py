@@ -24,9 +24,11 @@ def script_show_msg_window(event, *args, **kwargs):
     ''' Script that displays pygame_gui dialog window and freezes the game.
     '''
     html_text = kwargs.get('html_text', '')
+    window_title = kwargs.get('title', '')
 
     # Substitute words starting by % with values from event.params dict
     html_text = translate_str(for_trans=html_text, trans_dict=event.params, prefix='%')
+    window_title = translate_str(for_trans=window_title, trans_dict=event.params, prefix='%')
 
     # Must be with parameter True because the flip is done at the end of main loop
     main.gui_manager.save_screen(flip_before_copy=True)
@@ -35,7 +37,9 @@ def script_show_msg_window(event, *args, **kwargs):
     message_window = UIMessageWindow(
         rect=Rect(main.gui_manager._gui_dlg_start, main.gui_manager._gui_dlg_dim), 
         html_message = html_text,
-        manager=main.gui_manager.window_manager)
+        manager=main.gui_manager.window_manager,
+        window_title=window_title
+    )
 
     is_running = True
 

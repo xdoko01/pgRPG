@@ -42,6 +42,7 @@ from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatu
 ### Optional imports
 from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
 from .move_to_pos_px import process as cmd_move_to_pos_px # import other existing command
+from .move_to_pos_px import init as cmd_move_to_pos_px_init
 
 def init(
         # Mandatory attributes that must be always present
@@ -77,10 +78,21 @@ def init(
         >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, target=2)
     '''
     # Additional parameters that can be used in the command
-    cmd_ctx.local_bb['_ent_pos'] = ecs_mng.try_component(entity_id, Position)
+    #cmd_ctx.local_bb['_ent_pos'] = ecs_mng.try_component(entity_id, Position)
+    #cmd_ctx.local_bb['_last_dir_change'] = 0
+    #cmd_ctx.local_bb['_move_axis'] = None
+
+    # Reuse existing init from more general move to px function
+    cmd_move_to_pos_px_init(
+        ecs_mng=ecs_mng,
+        entity_id=entity_id,
+        cmd_ctx=cmd_ctx,
+        **cmd_kwargs
+    )
+
+    # Add new local - position component of the target
     cmd_ctx.local_bb['_tar_pos'] = ecs_mng.try_component(target, Position)
-    cmd_ctx.local_bb['_last_dir_change'] = 0
-    cmd_ctx.local_bb['_move_axis'] = None
+
 
 # DO NOT REMOVE - Mandatory function
 def process(

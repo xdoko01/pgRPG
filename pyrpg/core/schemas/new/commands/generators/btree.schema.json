@@ -1,0 +1,162 @@
+{
+	"btree": {
+		"title": "Behavioral Tree",
+		"description": "Behavioral Tree",
+		"examples": [
+			{
+				"blackboard": {}, 
+				"cmd_tree": {
+					"type": "Repeater",
+					"name": "Repeat Indefinetelly",
+					"children": [
+						{
+							"type": "Sequence",
+							"name": "Make square movement",
+							"children": [
+								{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+								{"name": "Move Left", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Turn Down", "type": "Behavior", "command": ["move_vect", {"vector" : [0,1], "absolute": true}]},
+								{"name": "Move Down", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Turn Right", "type": "Behavior", "command": ["move_vect", {"vector" : [1,0], "absolute": true}]},
+								{"name": "Move Right", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Turn Up", "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1], "absolute": true}]},
+								{"name": "Move Up", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
+							]
+						}
+					]
+				}
+			}
+		],
+		"type": "object",
+		"required": ["cmd_tree"],
+		"properties": {
+			"blackboard": {
+				"$ref": "generator.schema.json#/command_context"
+			},
+			"cmd_tree": {
+				"type": "object",
+				"$ref": "#/node"
+			}
+		}
+	},
+
+	"node": {
+		"title": "Behavioral Tree Node",
+		"description": "Behavioral Tree Node",
+		"examples": [
+			{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+			{"type": "Repeater", "name": "Repeat Indefinetelly","children": []}
+		],
+		"type": "object",
+		"required": ["type", "name"],
+		"oneOf": [
+			{"$ref": "#/behavior_node"},
+			{"$ref": "#/sequence_node"},
+			{"$ref": "#/selector_node"},
+			{"$ref": "#/repeater_node"}
+		]
+	},
+
+	"behavior_node": {
+		"title": "Behavior Tree Behavior Node",
+		"description": "Behavior Tree Behavior Node",
+		"examples": [
+			{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+			{"name": "Move Left", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]}
+		],
+		"type": "object",
+		"required": ["type", "command"],
+		"properties": {
+			"type": {"enum": ["Behavior"]},
+			"command": {"$ref": "../../command.schema.json"}
+		}
+	},
+	"sequence_node": {
+		"title": "Behavior Tree Sequence Node",
+		"description": "Behavior Tree Sequence Node",
+		"examples": [
+			{
+				"type": "Sequence",
+				"name": "Make square movement",
+				"children": [
+					{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+					{"name": "Move Left", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+					{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
+				]
+			}
+		],
+		"type": "object",
+		"required": ["type", "children"],
+		"properties": {
+			"type": {"enum": ["Sequence"]},
+			"children": {
+				"type": "array",
+				"items": {
+					"$ref": "#/node"
+				}
+			}
+		}
+	},
+	"selector_node": {
+		"title": "Behavior Tree Selector Node",
+		"description": "Behavior Tree Selector Node",
+		"examples": [
+			{
+				"type": "Selector",
+				"name": "Move Left or Move Right if not success",
+				"children": [
+					{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+					{"name": "Turn Right", "type": "Behavior", "command": ["move_vect", {"vector" : [1,0], "absolute": true}]}
+				]
+			}
+		],
+		"type": "object",
+		"required": ["type", "children"],
+		"properties": {
+			"type": {"enum": ["Selector"]},
+			"children": {
+				"type": "array",
+				"items": {
+					"$ref": "#/node"
+				}
+			}
+		}
+	},
+	"repeater_node": {
+		"title": "Behavior Tree Repeater Node",
+		"description": "Behavior Tree Repeater Node",
+		"examples": [
+			{
+				"type": "Repeater",
+				"name": "Repeat Indefinetelly",
+				"children": [
+					{
+						"type": "Sequence",
+						"name": "Make square movement",
+						"children": [
+							{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+							{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
+						]
+					}
+				]
+			}
+		],
+		"type": "object",
+		"required": ["type", "children"],
+		"properties": {
+			"type": {"enum": ["Repeater"]},
+			"children": {
+				"type": "array",
+				"maxItems": 1,
+				"items": {
+					"$ref": "#/node"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,35 @@
+{
+	"$id": "reset_brain.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "reset_brain command",
+	"description": "Remove and substitute commands in entity's brain with new commands.",
+	"markdownDescription": "*Remove* and *substitute* commands in entity's brain with new commands.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "reset_brain command",
+			"description": "Remove and substitute commands in entity's brain with new commands.",
+			"markdownDescription": "*Remove* and *substitute* commands in entity's brain with new commands.",		
+			"enum": ["reset_brain"]
+		},
+		{
+			"title": "reset_brain command parameters",
+			"description": "new_ai_struct (optional)",
+			"markdownDescription": "`new_ai_struct` (optional)",
+			"type": "object",
+
+			"properties": {
+				"new_ai_struct": {
+					"title": "New AI Structure",
+					"description": "New AI structure in a form of blist or btree",
+					"markdownDescription": "New AI structure in a form of blist or btree",
+					"default": {},
+					"$ref": "generators/generator.schema.json#/command_generator"
+				}
+			}
+		}
+	],
+	"items": false
+}

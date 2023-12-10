@@ -1,8 +1,8 @@
 {
-	"$id": "entity.schema.json",
+	"$id": "template.schema.json",
 	"$schema": "https://json-schema.org/draft-07/schema",
 	"description": "Schema validating template",
-	"title": "Entity Schema",
+	"title": "Template Schema",
 
 	"required": ["id"],
 	"properties": {
@@ -13,9 +13,14 @@
 		
 		"vars": {
 			"description": "Definition of variables",
+			"examples": [
+				["$tileX", "$tileY", "$map"]
+			],
 			"type": "array",
 			"items": {
-			  "type": "string"
+			  "type": "string",
+			  "pattern": "^\\$[a-zA-Z0-9]+$"
+
 			},
 			"minItems": 0,
 			"uniqueItems": true
@@ -25,7 +30,7 @@
 			"description": "Templates description",
 			"type": "array",
 			"items": {
-				"$ref": "#/basics/template_def"
+				"$ref": "definitions.schema.json#/basics/template_def"
 			},
 			"minItems": 0,
 			"uniqueItems": true

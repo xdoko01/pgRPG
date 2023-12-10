@@ -1,0 +1,108 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+
+	// Basic data
+	"id" : "test_commands_01",
+	"title" : "Test brain implemented as behavior list",
+	"description" : "Test AI behavior of NPC implemented as behavior list.",
+	"objective" : "POC of NPC controlled by the script",
+
+	// What quests need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["new.command_system.generate_command_from_blist_processor:GenerateCommandFromBListProcessor", {}],
+		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		
+		// For displaying
+		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// For processing input and movements
+		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["new/model/body/male/human/brown"],
+			"components" : [
+
+				{
+					"type" : "new.blist_ai:BListAI", 
+					"params" : {
+						"blackboard": {}, 
+						"cmd_list": [
+							{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0]}]}, //left
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"line": 2, "type": "Behavior", "command": ["move_vect", {"vector" : [0,1]}]}, //down
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"line": 4, "type": "Behavior", "command": ["move_vect", {"vector" : [1,0]}]}, //right
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"line": 6, "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1]}]}, //up
+							{"command": ["move_auto", {"duration_ms" : 250}]}, 
+							{"command": ["wait", {"duration_ms" : 1000}]}, //wait
+							{"line": 9, "type": "Goto", "jmp_to": 0} //repeat
+						]
+					}
+				},
+
+				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_quest_start",
+				"actions": 	[
+					"SCRIPT",
+					"new.show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

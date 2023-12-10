@@ -11,7 +11,10 @@
 		{"$ref": "components/factory.schema.json"},
 		{"$ref": "components/debug.schema.json"},
 		{"$ref": "components/collidable.schema.json"},
-		{"$ref": "components/brain.schema.json"},
+		{"$ref": "components/blist_ai.schema.json"},
+		{"$ref": "components/btree_ai.schema.json"},
+
+		{"$ref": "components/brain_ai.schema.json"},
 		{"$ref": "components/btree.schema.json"},
 
 		{"$ref": "components/destroy_on_collision.schema.json"},

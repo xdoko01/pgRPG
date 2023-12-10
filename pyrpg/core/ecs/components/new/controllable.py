@@ -113,7 +113,7 @@ class Controllable(Component):
 
         # Transform commands in form of a list/tuple to Command nametuples
         for key, commands in self.control_cmds.copy().items():
-            for cmd_idx in range(len(commands)):
+            for cmd_idx in range(len(commands if commands else [])):
                 logger.debug(f'Command in orig form: {self.control_cmds[key][cmd_idx]}')
                 self.control_cmds[key][cmd_idx] = cmd_factory(self.control_cmds[key][cmd_idx])
                 logger.debug(f'Command after transformation: {self.control_cmds[key][cmd_idx]}')

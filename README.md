@@ -481,6 +481,10 @@
   - Newly, `Command` namedtuple consists of `name`,`params` and `entity_id` attribtes. Those 3 attributes reflect the information from the `quest` definition. Specifically, `entity_id` marks the optional parameter specified in the quest on which entity the command must be executed. It is hence possible for the player entity to issue commands (for example via `Controllable` Component) to other entity such as NPC. Useful for global brain entity that can issue commands to different entities and hence orchestrate the action in the game.
   - Newly, all commands have as a parameter `Command`, `CommandContext` blackboard and `ECSmanager` that contains functions for manipulating the game world.
 
+### 2023-09-30 Fixed usage of aliases in all quest definitions
+  - Previously, it was not possible to use alias in the quest file definition, if the entity representing this alias was not yet created (was defined lower in the quest file than in was used).
+  - Newly, alias can be used anywhere in the quest file. Even if the entity is defined last in the quest file, it can be referenced by the entity that is defined first in the quest file.
+
 ## To Do
 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
@@ -552,7 +556,16 @@
   - [ ] Bug in `test_arm_ammo_01.json` - once you press attack, no other commands are processed
   - [ ] `FAILSAFE_TREE` and `FAILSAFE_LIST` put into config file outside of `Component` classes. Also, unify with default key_commands - those should be in configuration probably as well.
   - [x] Bug - at the moment cannot controll other entity as the `entity` parameter is poped from the command `params`. As `params` is mutable dictionary, it is removed everywhere. As a fix, either add `entity_id` into the `Command` namedtuple or do not `pop` the entity parameter, just read it.
-  - [ ] Bug - seems that `ECSManager` does not translate references to aliases that are lower in the quest file. It would be needed to add new item to the `engine.load_quest_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
+  - [x] Bug - seems that `ECSManager` does not translate references to aliases that are lower in the quest file. It would be needed to add new item to the `engine.load_quest_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
+  - [x] Every command should hae its JSON schema definition
+  - [ ] BUG - fix `play_commands_01.jsonc`
+  - [ ] Add JSON schema definition to all new movement commands px, tile, move_to
+  - [ ] Add tests to all new movement commands px, tile, move_to
+  - [ ] Revise map class - using pygame.Vector2 instead tuple and list
+  - [ ] Position component to use Vector2 from pygame and all game to use Vector2 for pos_px and pos_tile variables
+  - [ ] pygame.Vector2 to be used everywhere where possible
+  - [ ] `Position` component to have reference to the `map` - so that in commands having path, we can use the map functions for pathfinding
+  - [ ] Try to implement `move_to` command as a `btree` rather then encapsulate all logic and path points into the command itself. Then compare those 2 approaches. 
 
 ## BUG - double use of Command Command factory
   1. `Controllable` component - contains `Command` called `reset_brain`

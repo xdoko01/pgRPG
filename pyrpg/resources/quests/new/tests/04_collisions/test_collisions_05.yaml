@@ -393,6 +393,14 @@ entities:
 # How to handle events
 handlers:
   - - QUEST_START
+    - id: ev_info_msg
+      actions:
+        - SCRIPT
+        - new.show_msg_window
+        - title: "%filepath"
+          html_text: "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+
+  - - QUEST_START
     - id: ev_quest_start
       actions:
         - SCRIPT

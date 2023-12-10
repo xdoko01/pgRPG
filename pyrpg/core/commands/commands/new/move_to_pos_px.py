@@ -78,6 +78,8 @@ def init(
     cmd_ctx.local_bb['_ent_pos'] = ecs_mng.component_for_entity(entity_id, Position)
     cmd_ctx.local_bb['_last_dir_change'] = 0
     cmd_ctx.local_bb['_move_axis'] = None
+    
+    logger.debug(f'Locals initiated: {cmd_ctx.local_bb=}')
 
 # DO NOT REMOVE - Mandatory function
 def process(
@@ -171,26 +173,33 @@ def process(
     '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}')
+    #logger.debug(f'{cmd_ctx=}')
 
     # Command must run with context, else does not make sense
     assert cmd_ctx is not None, f'Command cannot run without context.'
 
     # Check if entity has still position component, if not finish
-    if _ent_pos is None: return CommandStatus.FAILURE
+    if _ent_pos is None:
+        logger.debug(f'Entity component reference is lost, returning failure.')
+        return CommandStatus.FAILURE
 
     # Check, if we are not moving to the point for too long
-    if max_time_s is not None and cmd_ctx.duration > max_time_s*1000: return CommandStatus.FAILURE
+    if max_time_s is not None and cmd_ctx.duration > max_time_s*1000: 
+        logger.debug(f'Max time for movement is up. Returning failure.')
+        return CommandStatus.FAILURE
 
     x, y = pos # for readibility
 
     # Check, if the distance is closed finish with SUCCESS
     if abs(y - _ent_pos.y) < proximity_px and abs(x - _ent_pos.x) < proximity_px:
+        logger.debug(f'Target position {x}, {y} reached with {proximity_px=}')
         return CommandStatus.SUCCESS
 
     # Check, if it is time to change the direction
     if cmd_ctx.current_time - _last_dir_change >= change_dir_ms:
         cmd_ctx.local_bb['_last_dir_change'] = cmd_ctx.current_time
+
+        logger.debug(f'Changing direction after {change_dir_ms=}')
 
         # Decide on which axis we will be closing the gap - close the smaller gap
         if abs(x - _ent_pos.x) > abs(y - _ent_pos.y):

@@ -1,0 +1,20 @@
+{
+	"command_context": {
+		"title": "Command Context",
+		"description": "Command Context representing blackboard",
+		"examples": [
+			{"target_entity": 2, "pos_entity": "NPC01"}
+		],
+		"type": "object"
+	},
+
+	"command_generator": {
+		"title": "Command Generator",
+		"description": "Command Generator representing AI logic",
+		"type": "object",
+		"OneOf": [
+			{"$ref": "blist.schema.json#/blist"},
+			{"$ref": "btree.schema.json#/btree"}
+		]
+	}
+}

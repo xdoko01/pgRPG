@@ -75,7 +75,7 @@ class BListAI(Component):
 
             self.generator = BList(
                 list_def=kwargs,
-                cmd_factory=BListAI.factory # create Commands
+                cmd_factory=cmd_factory # create Commands
             )
         
         except InvalidBehaviorListError:

@@ -86,7 +86,7 @@ class BTreeAI(Component):
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new BTreeAI component.
-
+ 
             Parameters:
                 :param btree: Object representing the behavior tree
                 :type btree: BTree

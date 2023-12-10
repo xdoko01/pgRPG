@@ -1,0 +1,53 @@
+{
+	"$id": "move_dir.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_dir command",
+	"description": "Move to specified direction ('up', 'down', 'left', 'right').",
+	"markdownDescription": "*Move* to specified direction ('up', 'down', 'left', 'right').",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_dir command",
+			"description": "Move to specified direction ('up', 'down', 'left', 'right').",
+			"markdownDescription": "*Move* to specified direction ('up', 'down', 'left', 'right').",
+			"enum": ["move_dir"]
+		},
+		{
+			"title": "move_dir command parameters",
+			"description": "moves (required), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`moves` (required), `dt_comp` (optional), `absolute` (optional)",
+			"type": "object",
+			"required": ["moves"],
+
+			"properties": {
+				"moves": {
+					"title": "Movements",
+					"description": "List of moves ('up', 'down', 'left', 'right')",
+					"markdownDescription": "List of moves (`'up'`, `'down'`, `'left'`, `'right'`)",
+					"examples": [["up"], ["down"], ["left"], ["right"]],
+					"type": "array",
+					"items": {"$ref": "../definitions.schema.json#/definitions/entity_direction"}
+				},
+				"dt_comp": {
+					"title": "Delta-time Compensation",
+					"description": "Specifies if the movement is compensated by current framerate. Default is True",
+					"markdownDescription": "Specifies if the movement is compensated by current framerate. Default is `true`",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				},
+				"absolute": {
+					"title": "Do not apply velocity on the movement",
+					"description": "Specifies if the movement is adjusted using velocity. Default is True",
+					"markdownDescription": "Specifies if the movement is adjusted using velocity. Default is `true`",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				}
+			}
+		}
+	],
+	"items": false
+}
