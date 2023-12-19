@@ -111,7 +111,7 @@ def process(
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
-    ''' Move to the position of specified in tiles on the current map.
+    ''' Move to the position of specified in tiles on the current map via straight line.
 
     This function represents the body of the command. It can be executed once and 
     finish with the CommandStatus.SUCCESS or ComandStatus.FAILURE, or can be called
@@ -122,33 +122,15 @@ def process(
     Parameters:
         :param pos: Target position in tiles
         :type pos: list
-        
-        :param proximity_px: How far from the target to stop
-        :type proximity_px: int
-        
+                
         :param max_time_s: Maximum time before ending with failure. If None, never fails.
         :type max_time_s: int
-
-        :param change_dir_ms: How long keep direction before changing it
-        :type change_dir_ms: int
 
         :param dt_comp: Should delta time (dt) correction be taken into account.
         :type dt_comp: bool
 
         :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
         :type absolute: bool
-
-        :param _ent_pos: Private attribute holding Position component of the entity.
-        :type _ent_pos: Component
-
-        :param _tar_pos: Private attribute holding Position component of the target.
-        :type _tar_pos: Component
-
-        :param _last_dir_change: Private attribute holding time when the direction was last changed.
-        :type _last_dir_change: int
-
-        :param _move_axis: Private attribute keeping direction of current movement.
-        :type _move_axis: str (X,Y)
 
         :param _px_pos: Target position in px
         :type _px_pos: list
@@ -163,28 +145,28 @@ def process(
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[10,10])
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[10,10], _px_pos=[610,610])
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _px_pos=[610,610], _ent_pos=None)
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position Not Reached in Time
             >>> cmd_ctx_mock = CommandContextMock(duration=20000)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[10,10], max_time_s=5)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[10,10], _px_pos=[610,610], max_time_s=5)
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
             >>> _ent_pos_mock = PositionMock(x=608, y=608)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], proximity_px=20, _ent_pos=_ent_pos_mock)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _px_pos=[610,610], proximity_px=20, _ent_pos=_ent_pos_mock)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
             >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=_ent_pos_mock, _last_dir_change = 50)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _px_pos=[610,610], _ent_pos=_ent_pos_mock, _last_dir_change = 50)
             <CommandStatus.RUNNING: 'RUNNING'>
     '''
 

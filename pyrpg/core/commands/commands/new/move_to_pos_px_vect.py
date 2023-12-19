@@ -73,7 +73,7 @@ def init(
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock)
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[100,100])
     '''
     # Additional parameters that can be used in the command
     pos_comp = ecs_mng.component_for_entity(entity_id, Position)
@@ -128,6 +128,10 @@ def process(
         :param _ent_pos: Private attribute holding Position component of the entity.
         :type _ent_pos: Component
 
+        :param _norm_vect: Private attribute holding unit vector of movement (eventually multiplied 
+        by velocity in some movement processor)
+        :type _norm_vect: tuple
+
         :returns: CommandStatus
 
     Tests:
@@ -153,13 +157,13 @@ def process(
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=105)
+            >>> _ent_pos_mock = PositionMock(x=98, y=102)
             >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
             >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock, _last_dir_change = 50)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock)
             <CommandStatus.RUNNING: 'RUNNING'>
     '''
 

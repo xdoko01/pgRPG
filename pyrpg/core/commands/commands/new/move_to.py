@@ -1,6 +1,6 @@
-''' Module implementing MOVE_TO_POS_TILE command 
+''' Module implementing MOVE_TO command 
 
-For tests call python -m pyrpg.core.commands.commands.new.move_to_pos_tile -v
+For tests call python -m pyrpg.core.commands.commands.new.move_to -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -129,26 +129,14 @@ def process(
         :param pos: Target position in tiles
         :type pos: list
         
-        :param proximity_px: How far from the target to stop
-        :type proximity_px: int
-        
-        :param max_time_s: Maximum time before ending with failure. If None, never fails.
-        :type max_time_s: int
-
-        :param change_dir_ms: How long keep direction before changing it
-        :type change_dir_ms: int
-
-        :param dt_comp: Should delta time (dt) correction be taken into account.
-        :type dt_comp: bool
-
-        :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
-        :type absolute: bool
-
         :param _ent_pos: Private attribute holding Position component of the entity.
         :type _ent_pos: Component
 
         :param _path: List of tiles on the path
         :type _path: list
+
+        :param _path_idx: Index of the next path point.
+        :type _path_idx: int
 
         :returns: CommandStatus
 
@@ -160,23 +148,18 @@ def process(
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[10,10])
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[10,10], _path=[(1,1),(2,2),(3,3)], _path_idx=0)
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=None)
-            <CommandStatus.FAILURE: 'FAILURE'>
-
-        -> Test Target Position Not Reached in Time
-            >>> cmd_ctx_mock = CommandContextMock(duration=20000)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[10,10], max_time_s=5)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=None, _path=[(1,1),(2,2),(3,3)], _path_idx=0)
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
             >>> _ent_pos_mock = PositionMock(x=608, y=608)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], proximity_px=20, _ent_pos=_ent_pos_mock)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=_ent_pos_mock, _pos_px=(610,610),_path=[(1,1),(2,2),(3,3)], _path_idx=0)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached

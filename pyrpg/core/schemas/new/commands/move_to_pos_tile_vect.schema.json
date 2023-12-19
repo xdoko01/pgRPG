@@ -1,0 +1,66 @@
+{
+	"$id": "move_to_pos_tile_vect.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_to_pos_tile_vect command",
+	"description": "Move to specific tile position on the current map via straight line.",
+	"markdownDescription": "*Move* to specific tile position on the current map via straight line.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_to_pos_tile_vect command",
+			"description": "Move to specific tile position on the current map via straight line.",
+			"markdownDescription": "*Move* to specific tile position on the current map via straight line.",		
+			"enum": ["move_to_pos_tile_vect"]
+		},
+		{	
+			"title": "move_to_pos_tile_vect command parameters",
+			"description": "pos (required), max_time_s (optional), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`pos` (required), `max_time_s` (optional), `dt_comp` (optional), `absolute` (optional)",
+			"type": "object",
+			"required": ["pos"],
+
+			"properties": {
+				"pos": {
+					"title": "Position in tiles",
+					"description": "Position in tiles",
+					"markdownDescription": "Position in tiles",
+					"examples": [[0, 0], [10, 20], [100,100], [500,500]],
+					"type": "array",
+					"prefixItems": [
+						{"title": "X-axis in tiles", "type": "integer", "minimum": 0},
+						{"title": "Y-axis in tiles", "type": "integer", "minimum": 0}
+					],
+					"items": false
+				},
+				"max_time_s": {
+					"title": "Maximum time (in sec) to reach the position",
+					"description": "Maximum time (in sec) to reach the position. After this time the movement stops.",
+					"markdownDescription": "Maximum time (in sec) to reach the position. After this time the movement stops.",
+					"examples": [null,10,20,50,100],
+					"default": null,
+					"type": "integer",
+					"minimum": 0
+				},
+				"dt_comp": {
+					"title": "Delta-time Compensation",
+					"description": "Specifies if the movement is compensated by current framerate. Default is True",
+					"markdownDescription": "Specifies if the movement is compensated by current framerate. Default is `true`",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				},
+				"absolute": {
+					"title": "Do not apply velocity on the movement",
+					"description": "Specifies if the movement is adjusted using velocity. Default is True",
+					"markdownDescription": "Specifies if the movement is adjusted using velocity. Default is `true`",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				}
+			}
+		}
+	],
+	"items": false
+}

@@ -39,3 +39,13 @@ class MapManager:
         for map_name in maps:
             self.delete_map(map_name)
         logger.info(f'All maps cleared.')
+
+
+from dataclasses import dataclass
+
+@dataclass
+class MapManagerMock:
+
+    def get_map(self, map_name):
+        from pyrpg.core.maps.map import MapMock
+        return MapMock()

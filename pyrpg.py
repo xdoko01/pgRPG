@@ -31,9 +31,9 @@ def main(argv):
     #filepath = 'new/games/collect_coins/collect_coins.json'
 
     # 12_ai
-    filepath = 'new/tests/12_ai/simple/move_to_vect.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_vect.jsonc'
 
-    #filepath = 'new/tests/12_ai/simple/move_to.jsonc'
+    filepath = 'new/tests/12_ai/simple/move_to.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_tile_vect.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_px_vect.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_tile.jsonc'

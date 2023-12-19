@@ -141,6 +141,7 @@ class PositionMock:
     direction: tuple = (0,1),
     dir_name: str = 'down',
     set_direction = lambda self,dir: None
+    get_tile = lambda self: (self.x // TILE_RES, self.y // TILE_RES)
 
 
 if __name__ == '__main__':

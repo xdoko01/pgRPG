@@ -527,6 +527,29 @@ from dataclasses import dataclass
 
 @dataclass
 class ECSManagerMock:
-    component_for_entity = lambda self,e,c: None
+
     add_component = lambda self,e,c: None
     try_component = lambda self,e,c: None
+
+    def try_component(self, entity, comp):
+        from pyrpg.core.ecs.components.new.position import Position, PositionMock
+        if comp == Position:
+            return PositionMock(x=0,y=0)
+        else:
+            return None
+
+    def component_for_entity(self, entity, comp):
+        from pyrpg.core.ecs.components.new.position import Position, PositionMock
+        if comp == Position:
+            return PositionMock(x=0,y=0)
+        else:
+            return None
+
+    def fnc_get_map_mock(map_name):
+        from pyrpg.core.managers.map_manager import MapManagerMock
+        return MapManagerMock().get_map(map_name)
+
+    _game_functions = {
+        'FNC_GET_MAP': fnc_get_map_mock
+    }
+

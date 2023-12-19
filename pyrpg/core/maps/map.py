@@ -355,6 +355,12 @@ class Map:
 		return checkpoints
 
 
+from dataclasses import dataclass
+
+@dataclass
+class MapMock:
+	get_path_bfs = lambda self,start,end: [(1,1),(2,2),(3,3)]
+
 if __name__ == '__main__':
 
 	window = pygame.display.set_mode((640,480), 0, 24)

@@ -558,14 +558,18 @@
   - [x] Bug - at the moment cannot controll other entity as the `entity` parameter is poped from the command `params`. As `params` is mutable dictionary, it is removed everywhere. As a fix, either add `entity_id` into the `Command` namedtuple or do not `pop` the entity parameter, just read it.
   - [x] Bug - seems that `ECSManager` does not translate references to aliases that are lower in the quest file. It would be needed to add new item to the `engine.load_quest_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
   - [x] Every command should hae its JSON schema definition
-  - [ ] BUG - fix `play_commands_01.jsonc`
+  - [x] BUG - fix `play_commands_01.jsonc`
   - [ ] Add JSON schema definition to all new movement commands px, tile, move_to
   - [ ] Add tests to all new movement commands px, tile, move_to
   - [ ] Revise map class - using pygame.Vector2 instead tuple and list
   - [ ] Position component to use Vector2 from pygame and all game to use Vector2 for pos_px and pos_tile variables
   - [ ] pygame.Vector2 to be used everywhere where possible
-  - [ ] `Position` component to have reference to the `map` - so that in commands having path, we can use the map functions for pathfinding
   - [ ] Try to implement `move_to` command as a `btree` rather then encapsulate all logic and path points into the command itself. Then compare those 2 approaches. 
+  - [ ] Write more mocs to components and managers
+  - [ ] Consolidate the packages so instead of the `from pyrpg.core.ecs.components.new.position import Position, PositionMock` we can import as `from pyrpg.core.ecs.components import Position, PositionMock`
+  - [ ] In case of error, load some mock - test map instead of real map, test sound instead of real sound, test model instead of real model, test AI instead of real AI
+  - [ ] Change ofmap rendering - do not always generate all the tiles from scretch but - re-use the pane and only draw the tiles that are new + re-draw the animated tiles if needed.
+  - [ ] How to solve the problem when AI follows some path and is attacked? The easier way is probably to reset the BT as a part of event handler, not sure.
 
 ## BUG - double use of Command Command factory
   1. `Controllable` component - contains `Command` called `reset_brain`

@@ -12,9 +12,8 @@ MAP = '11111111111111111111' + \
       '11111111111111111111'
 
 
-from collections import namedtuple
+from pygame.math import Vector2
 
-Point = namedtuple('Point', ('x', 'y'))
 
 class Map:
 
@@ -37,7 +36,7 @@ class Map:
         assert 0 <= y <= self.height - 1
         return self.data[x][y]
 
-    def is_walkable(self, step: Point):
+    def is_walkable(self, step: Vector2):
         '''Is within map and is walkable (no obstacle)'''
         return (0 <= step.x <= self.width - 1) and (0 <= step.y <= self.height - 1) and self.data[step.x][step.y] == 0
 
@@ -49,14 +48,14 @@ class Map:
 
 def get_path_bfs(
         map: Map, 
-        start: Point, 
-        end: Point,
+        start: Vector2, 
+        end: Vector2,
         inc_start: bool=False, 
         avail_moves: tuple=(
-            Point(0,-1), #up
-            Point(0,1), #down
-            Point(-1,0), #left
-            Point(1,0) #right
+            Vector2(0,-1), #up
+            Vector2(0,1), #down
+            Vector2(-1,0), #left
+            Vector2(1,0) #right
         )
     ) -> list:
 
@@ -76,10 +75,10 @@ def get_path_bfs(
         if curr == end:
             # Print the path
             path.append(end)
-            pre_path = pre[end]
+            pre_path = pre[tuple(end)]
             while pre_path != start:
                 path.append(pre_path)
-                pre_path = pre[pre_path]
+                pre_path = pre[tuple(pre_path)]
 
             if inc_start: path.append(start)
             path.reverse() # from start to end
@@ -88,15 +87,15 @@ def get_path_bfs(
 
         else:
             # Mark as visited
-            visited.add(curr)
+            visited.add(tuple(curr))
 
             for move in avail_moves:
-                next = Point(curr.x + move.x, curr.y + move.y)
+                next = Vector2(curr.x + move.x, curr.y + move.y)
                 if map.is_walkable(next) and next not in visited and next not in queue:
                     # Add into the queue
                     queue.append(next)
                     # Remember from which point you are continuing
-                    pre[next] = curr
+                    pre[tuple(next)] = tuple(curr)
 
     return [] # no path found
 
@@ -154,10 +153,10 @@ def get_path_checkpoints(path:list) -> list:
 
 def get_graph(map: Map, 
                 avail_moves: tuple=(
-                    Point(0,-1), #up
-                    Point(0,1), #down
-                    Point(-1,0), #left
-                    Point(1,0) #right
+                    Vector2(0,-1), #up
+                    Vector2(0,1), #down
+                    Vector2(-1,0), #left
+                    Vector2(1,0) #right
     )) -> dict:
     '''Create graph in a form of a dictionary'''
 
@@ -167,11 +166,11 @@ def get_graph(map: Map,
     for x in range(map.width):
         for y in range(map.height):
             if map.get_tile(x,y) == 0:
-                graph[Point(x,y)] = set()
+                graph[Vector2(x,y)] = set()
                 for move in avail_moves:
-                    next = Point(x + move.x, y + move.y)
+                    next = Vector2(x + move.x, y + move.y)
                     if map.is_walkable(next):
-                        graph[Point(x,y)].add(next)
+                        graph[Vector2(x,y)].add(next)
 
     return graph
 
@@ -191,18 +190,18 @@ if __name__ == "__main__":
     #print(f'{get_checkpoints(path)=}')
 
     print(f'With diagonal moves:')
-    path = get_path_bfs(map=map, start=Point(x=1, y=1), end=Point(x=7, y=4), inc_start=True, avail_moves=(
-            Point(0,-1), #up
-            Point(1,-1), # upright
-            Point(1,0), #right
-            Point(1,1), #downright
-            Point(0,1), #down
-            Point(-1,1), #downleft
-            Point(-1,0), #left
-            Point(-1,-1) #upleft
+    path = get_path_bfs(map=map, start=Vector2(x=1, y=1), end=Vector2(x=7, y=4), inc_start=True, avail_moves=(
+            Vector2(0,-1), #up
+            Vector2(1,-1), # upright
+            Vector2(1,0), #right
+            Vector2(1,1), #downright
+            Vector2(0,1), #down
+            Vector2(-1,1), #downleft
+            Vector2(-1,0), #left
+            Vector2(-1,-1) #upleft
         ))
     print(f'{path=}')
-    print(f'{get_checkpoints(path)=}')
+    print(f'{get_path_checkpoints(path)=}')
     print(f'{get_graph(map=map)}')
 
     map.draw_path(path)

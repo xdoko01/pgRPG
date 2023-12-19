@@ -92,7 +92,6 @@ def init(
         **cmd_kwargs
     )
 
-
     logger.debug(f'Locals initiated: {cmd_ctx.local_bb=}')
 
 # DO NOT REMOVE - Mandatory function
@@ -146,9 +145,6 @@ def process(
         :param _ent_pos: Private attribute holding Position component of the entity.
         :type _ent_pos: Component
 
-        :param _tar_pos: Private attribute holding Position component of the target.
-        :type _tar_pos: Component
-
         :param _last_dir_change: Private attribute holding time when the direction was last changed.
         :type _last_dir_change: int
 
@@ -183,8 +179,9 @@ def process(
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
-            >>> _ent_pos_mock = PositionMock(x=608, y=608)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], proximity_px=20, _ent_pos=_ent_pos_mock)
+            >>> px_pos = (100,100)
+            >>> _ent_pos_mock = PositionMock(x=100, y=100)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[1,1], proximity_px=20, _ent_pos=_ent_pos_mock, _px_pos=px_pos)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
