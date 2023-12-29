@@ -31,28 +31,35 @@ def main(argv):
     #filepath = 'new/games/collect_coins/collect_coins.json'
 
     # 12_ai
-    #filepath = 'new/tests/12_ai/simple/move_to_vect.jsonc'
+    #filepath = 'new/tests/12_ai/test_entity_seen.jsonc' - old, does not work, fix it
+    #filepath = 'new/tests/12_ai/move_between_2_points.jsonc'
+    filepath = 'new/tests/12_ai/trace_and_attack.jsonc'
 
-    filepath = 'new/tests/12_ai/simple/move_to.jsonc'
+
+    #filepath = 'new/tests/12_ai/simple/move_to_vect.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_target.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to.jsonc'
+
+    #filepath = 'new/tests/12_ai/simple/attack.jsonc'
+    #filepath = 'new/tests/12_ai/simple/face_target.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_pos_target_vect.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_to_pos_target.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_tile_vect.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_px_vect.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_tile.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_pos_px.jsonc'
-    #filepath = 'new/tests/12_ai/move_between_2_points.jsonc'
-
-    #filepath = 'new/tests/12_ai/test_entity_seen.jsonc'
 
     # 11_sensors
-    #filepath = 'new/tests/11_sensors/test_sensors_01.json'
+    #filepath = 'new/tests/11_sensors/test_sensors_01.jsonc'
 
     # 10_effects
-    #filepath = 'new/tests/10_effects/test_fx_01.json'
+    #filepath = 'new/tests/10_effects/test_fx_01.jsonc'
 
     # 09_projectiles
-    #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.json'
-    #filepath = 'new/tests/09_projectiles/test_projectile_generation.json'
-    #filepath = 'new/tests/09_projectiles/test_projectile_damage.json'
-    #filepath = 'new/tests/09_projectiles/test_projectile_collision.json'
+    #filepath = 'new/tests/09_projectiles/test_projectile_score_generation.jsonc'
+    #filepath = 'new/tests/09_projectiles/test_projectile_generation.jsonc'
+    #filepath = 'new/tests/09_projectiles/test_projectile_damage.jsonc'
+    #filepath = 'new/tests/09_projectiles/test_projectile_collision.jsonc'
 
     # 08_arm_ammo
     #filepath = 'new/tests/08_arm_ammo/test_arm_ammo_01.json'

@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Protocol, Iterable
 from collections import namedtuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 Command = namedtuple('Command', ['name', 'params', 'entity_id'])
 
@@ -33,12 +33,30 @@ class CommandStatus(Enum):
     FAILURE = 'FAILURE'
 
 @dataclass
+class Container:
+    '''Container for data stored as class instance attributes. 
+    Used to access data as attributes rather than dictionary.
+    '''
+    def __init__(self, attrs: dict={}):
+        for k, v in attrs.items():
+            self.add(k, v)
+
+    def __str__(self):
+        return f'{self.__dict__}'
+
+    def __repr__(self):
+        return f'{self.__dict__}'
+
+    def add(self, name: str, val) -> None:
+        setattr(self, name, val)
+
+@dataclass
 class CommandContext(Protocol):
     '''Requirement for information about the status of the 
     CommandGenerator.'''
 
-    global_bb: dict
-    local_bb: dict
+    globals: Container
+    locals: Container
     init_time: int
     duration: int
     tick_count: int
@@ -46,12 +64,13 @@ class CommandContext(Protocol):
 
 @dataclass
 class CommandContextMock(CommandContext):
-    global_bb: dict = None
-    local_bb: dict = None
+    globals: Container = field(default_factory=Container)
+    locals: Container = field(default_factory=Container)
     init_time: int = 0
     duration: int = 0
     tick_count: int = 1
     current_time: int = 0
+
 
 class CommandGenerator(Protocol):
     '''Protocol class for all data structures that can generate
@@ -64,7 +83,7 @@ class CommandGenerator(Protocol):
         pass
 
     def get_command(self) -> Command:
-        '''Return Command based on the CommandGenerator logic.'''
+        '''Return next Command based on the CommandGenerator logic.'''
         pass
 
     def process_command_result(self, result: CommandStatus) -> None:

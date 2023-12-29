@@ -75,9 +75,9 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        vector=[0, 0],
+        vector=(0, 0),
         dt_comp=True,
         absolute=False,
         # 'Private' attributes that have been prepared by init function
@@ -118,7 +118,7 @@ def process(
     '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     new_component = FlagDoMove(vector=vector, dt_on=dt_comp, absolute=absolute) # Create new FlagDoMove component
     ecs_mng.add_component(entity_id, new_component)

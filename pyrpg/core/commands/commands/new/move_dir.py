@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,  # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,8 +36,8 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
@@ -47,7 +47,7 @@ def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         moves,
         dt_comp=True,
@@ -77,10 +77,12 @@ def init(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), moves=['left', 'up'])
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), moves=['left', 'up'])
     '''
     pass
 
@@ -89,7 +91,7 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         moves,
         dt_comp=True,
@@ -122,22 +124,24 @@ def process(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
         -> Test Movement Successful
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), moves=['left'])
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), moves=['left'])
             <CommandStatus.SUCCESS: 'SUCCESS'>
         
         -> Test Missing Argument Moves
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock())
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock())
             Traceback (most recent call last):
             ...
             TypeError: process() missing 1 required positional argument: 'moves'
     '''
 
     # Comment out, if you want see the stats about the commandd
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
     # assert cmd_ctx is not None, f'Command cannot run without context.'

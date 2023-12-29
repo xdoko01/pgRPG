@@ -174,19 +174,19 @@ class CommandManager:
             logger.debug(f'First call of command {cmd.name=} with {cmd.params=}')
             
             # Parameters that should be substitutedmust start with ^ character
-            cmd_params_with_bb_values = translate(trans_dict=cmd_ctx.global_bb, value=cmd.params, prefix='^')
+            cmd_params_with_bb_values = translate(trans_dict=cmd_ctx.globals.__dict__, value=cmd.params, prefix='^')
             logger.debug(f'Global BB translated params for {cmd.name=} are {cmd_params_with_bb_values=}')
             
-            # Store all parameters (already translated) into cmd_ctx.local_bb dictionary
-            cmd_ctx.local_bb = {**cmd_ctx.local_bb, **cmd_params_with_bb_values}
-            logger.debug(f'Local BB filled by cmd params {cmd_ctx.local_bb=}')
+            # Store all translated command parameters inti cmd_ctx.locals container
+            for k, v in cmd_params_with_bb_values.items(): cmd_ctx.locals.add(k, v)
+            logger.debug(f'Locals BB filled by cmd params {cmd_ctx.locals=}')
             
             # Call command init if exists with the local_bb as parameters for additional setup
             # of local_bb parameters.
             cmd_init_fnc = self.get_command(cmd.name, init=True)
             logger.debug(f'Calling {cmd.name}_init function {cmd_init_fnc=}...')
-            cmd_init_fnc(ecs_mng, entity_id, cmd_ctx, **cmd_ctx.local_bb)
-            logger.debug(f'Init function {cmd.name}_init finished with {cmd_ctx.local_bb=}')
+            cmd_init_fnc(ecs_mng, entity_id, cmd_ctx, **cmd_ctx.locals.__dict__)
+            logger.debug(f'Init function {cmd.name}_init finished with {cmd_ctx.locals=}')
 
         '''
         #command_fnc = self.get_command(command_module_name)
@@ -202,9 +202,9 @@ class CommandManager:
         #return self.execute_command(ecs_mng, entity_id, cmd=Command(cmd.name, cmd_ctx.local_bb), cmd_ctx=cmd_ctx)
         #cmd.params = cmd_ctx.local_bb # this can cause some troubles! CHanging the original parameters of the command
         #logger.debug(f'Executing command {cmd=} substituted with parameters of local_bb.')
-        logger.debug(f'Executing command {cmd=} substituted with parameters of {cmd_ctx.local_bb=}')
+        logger.debug(f'Executing command {cmd=} substituted with parameters of {cmd_ctx.locals=}')
         #return self.execute_command(ecs_mng, entity_id, cmd=cmd, cmd_ctx=cmd_ctx)
-        return self.execute_command(ecs_mng, entity_id, cmd_name=cmd.name, cmd_params=cmd_ctx.local_bb, cmd_ctx=cmd_ctx)
+        return self.execute_command(ecs_mng, entity_id, cmd_name=cmd.name, cmd_params=cmd_ctx.locals.__dict__, cmd_ctx=cmd_ctx)
 
     #def execute_command(self, ecs_mng, cmd: Command, cmd_ctx=None):
     #def execute_command(self, ecs_mng, entity_id: int, cmd: Command, cmd_ctx=None):
@@ -229,4 +229,4 @@ class CommandManager:
         cmd_fnc = self.get_command(cmd_name)
 
         logger.debug(f'Calling "{cmd_name}" function with {cmd_params=}')
-        return cmd_fnc(ecs_mng, entity_id, cmd_ctx=cmd_ctx, **cmd_params)
+        return cmd_fnc(ecs_mng=ecs_mng, entity_id=entity_id, ctx=cmd_ctx, **cmd_params)

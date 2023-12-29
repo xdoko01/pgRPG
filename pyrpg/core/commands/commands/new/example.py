@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,  # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,18 +36,18 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 
 # DO NOT REMOVE - Mandatory function
 def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         example_parameter: str,
         # The rest of parameters, if needed
@@ -69,24 +69,24 @@ def init(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), example_parameter='Hello')
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), example_parameter='Hello')
     '''
     # Get the direction from position of the entity
-    cmd_ctx.local_bb['_ent_pos'] = ecs_mng.try_component(entity_id, Position)
+    ctx.locals.add('_ent_pos', ecs_mng.try_component(entity_id, Position))
 
 # DO NOT REMOVE - Mandatory function
 def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         example_parameter: str,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -100,35 +100,33 @@ def process(
         :param example_parameter: Example parameter
         :type example_parameter: str
 
-        :param _ent_pos: Private attribute holding entity position component reference
-        :type _ent_pos: Component
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
-        >>> _ent_pos_mock = PositionMock(dir_name='left')
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
         -> Test Execution should continue
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(tick_count=3), example_parameter='Hello', _ent_pos=_ent_pos_mock)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(tick_count=3), example_parameter='Hello')
             <CommandStatus.RUNNING: 'RUNNING'>
 
         -> Test Execution should stop
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(tick_count=11), example_parameter='Hello', _ent_pos=_ent_pos_mock)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(tick_count=11), example_parameter='Hello')
             <CommandStatus.SUCCESS: 'SUCCESS'>
     '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
-    assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
-    if cmd_ctx.tick_count > 10:
+    if ctx.tick_count > 10:
         return CommandStatus.SUCCESS
     
     return CommandStatus.RUNNING

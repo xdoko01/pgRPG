@@ -17,7 +17,7 @@ import pygame
 from enum import Enum
 
 # BTree must follow all command related protocols
-from pyrpg.core.commands import CommandStatus, CommandGenerator, CommandContext
+from pyrpg.core.commands import CommandStatus, CommandGenerator, CommandContext, Container
 
 class BListCommandStatus(Enum):
     '''Mapping of ComandStatus to internal Statuses used in the behavior list implementation.'''
@@ -48,15 +48,15 @@ class BListBlackboard(CommandContext):
 
     def __init__(self, global_bb: dict={}):
         assert pygame.get_init() # without initialization get_ticks function will not work properly
-        self.global_bb = global_bb
-        self.local_bb = {}
+        self.globals = Container(attrs=global_bb)
+        self.locals = Container()
         self.init_time = None
         self.duration = None
         self.tick_count = None
         self.current_time = pygame.time.get_ticks()
 
     def reset(self):
-        self.local_bb = {} # Every Action Node starts with clear memory
+        self.locals = Container() # Every Action Node starts with clear memory
         self.init_time = pygame.time.get_ticks()
         self.duration = 0
         self.tick_count = 1
@@ -132,6 +132,9 @@ class BList(CommandGenerator):
                 print(f'\033[93m{self.commands[cmd_idx]}\033[00m')
             else:
                 print(f'{self.commands[cmd_idx]}')
+
+    def __str__(self):
+        return f'{self.commands[self.current_cmd_idx]}'
 
     def reset(self, new_ai_struct: dict) -> None:
         '''Reset the BList structure and fill it with the new commands.

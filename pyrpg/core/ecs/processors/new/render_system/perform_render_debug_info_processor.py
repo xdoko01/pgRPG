@@ -91,9 +91,10 @@ class PerformRenderDebugInfoProcessor(Processor):
                 debug.info.update({'position' : f'(px=({int(position.x)},{int(position.y)}), tl=({int(position.x)//TILE_RES},{int(position.y)//TILE_RES}), dir={position.dir_name}'})
                 debug.info.update({'action' : renderable.action})
 
-            # Get BTree info
+            # Get AIBrain info
             for _, (position, debug, brain) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, BrainAI)):
-                debug.info.update({'AI' : str(brain.generator._action_node)})
+                debug.info.update({'AI CMD' : str(brain.generator)})
+                debug.info.update({'AI CTX' : str(brain.generator.bb)})
 
             # Get inventory info
             for _, (position, debug, inventory) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, HasInventory)):
@@ -114,6 +115,50 @@ class PerformRenderDebugInfoProcessor(Processor):
             # Get info about hearable entities
             for _, (position, debug, can_hear) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanHear)):
                 debug.info.update({'Ent within Earshot' : can_hear.ent_within_earshot})
+
+            # Show PATH information
+            # Show debug information to all entities with AIBrain component and ctx.locals._path variable existing
+            for _, (position, debug, movable, brain) in self.world.get_components(Position, Debug, Movable, BrainAI):
+
+                tile_to_px = lambda t_pos: (t_pos[0]*TILE_RES + TILE_RES // 2, t_pos[1]*TILE_RES + TILE_RES // 2)
+
+                try:
+                    path = tuple(map(camera.apply, map(tile_to_px, brain.generator.bb.locals._path)))
+
+                    assert len(path) > 1, f'Path must have more than 1 point in order to draw it'
+
+                    # Draw Path without start
+                    pygame.draw.lines(
+                        camera.screen,
+                        debug.movement.get('color', pygame.Color('red')),
+                        False,
+                        # list of connected points - add using map the start coordinates to all arrow points and draw it
+                        path,
+                        debug.movement.get('width', 2) # Thickness of movement arrow taken from Debug component
+                    )
+
+                    # Draw line between entity and next path point
+                    pygame.draw.line(
+                        camera.screen,
+                        pygame.Color('orange'),
+                        camera.apply((position.x, position.y)), # from entity
+                        path[brain.generator.bb.locals._path_idx], # to next path point
+                        2 # Thickness of line taken from Debug component
+                    )
+
+                except AttributeError:
+                    pass
+                except AssertionError:
+                    # Draw line between entity and next path point
+                    pygame.draw.line(
+                        camera.screen,
+                        pygame.Color('orange'),
+                        camera.apply((position.x, position.y)), # from entity
+                        path[brain.generator.bb.locals._path_idx], # to next path point
+                        2 # Thickness of line taken from Debug component
+                    )
+
+
 
             # Show CAN HEAR information about the audible area
             for _, (position, debug, can_hear) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, CanHear)):
@@ -195,7 +240,8 @@ class PerformRenderDebugInfoProcessor(Processor):
                     debug.movement.get('width', 1) # Thickness of movement arrow taken from Debug component
                 )
 
-            # Experiment with mouse hoover
+
+            # Experiment with mouse hover
             # Show debug information to all entities with Position, Debug and NewMoveable components
             for _, (position, debug) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug)):
 

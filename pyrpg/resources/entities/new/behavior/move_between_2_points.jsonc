@@ -1,0 +1,21 @@
+{
+    "id": "t_move_between_2_points",
+    "vars": ["$x1", "$y1", "$x2", "$y2"],
+    "components": [
+
+        {
+            "type" : "new.brain_ai:BrainAI", 
+            "params" : {
+                "blackboard": {
+                    "start_tile_x": "$x1", "start_tile_y": "$y1",
+                    "end_tile_x": "$x2", "end_tile_y": "$y2"
+                }, 
+                "cmd_list": [
+                    {"line": 0, "type": "Behavior", "command": ["move_to_pos_tile", {"pos": ["^start_tile_x", "^start_tile_y"]}]},
+                    {"line": 1, "type": "Behavior", "command": ["move_to_pos_tile", {"pos": ["^end_tile_x", "^end_tile_y"]}]},
+                    {"line": 2, "type": "Goto", "jmp_to": 0}
+                ]
+            }
+        }
+    ]
+}

@@ -1,6 +1,6 @@
 ''' Module implementing ATTACK command 
 
-For tests call python -m pyrpg.core.commands.commands.new.attack -v
+For tests call `python -m pyrpg.core.commands.commands.new.attack -v`
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,8 +36,8 @@ def initialize(register, module_name):
 ######## COMMAND(S) PART
 
 ### Mandatory imports, DO NOT REMOVE
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack # To work with components in commands (remove search add ...)
@@ -47,7 +47,7 @@ def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         attack_time_ms: int=None,
         # The rest of parameters, if needed
@@ -67,10 +67,17 @@ def init(
 
     Tests:
 
+        Prepare mocs:
+        -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> ctx_mock = CommandContextMock()
+
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), attack_time_ms=1000)
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock())
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, attack_time_ms=1000)
+        >>> print(ctx_mock.locals)
+        {}
     '''
     pass
 
@@ -79,7 +86,7 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         attack_time_ms: int=None,
         # The rest of parameters, if needed
@@ -101,37 +108,44 @@ def process(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> ctx_mock = CommandContextMock()
+
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, attack_time_ms=1000)
+        >>> print(ctx_mock.locals)
+        {}
 
         Run tests:
         ----------
         -> Test Attack Should Stop 1
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(duration=1200), attack_time_ms=1000)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(duration=1200), attack_time_ms=1000)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Attack Should Continue 1
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(duration=500), attack_time_ms=1000)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(duration=500), attack_time_ms=1000)
             <CommandStatus.RUNNING: 'RUNNING'>
 
         -> Test Attack Should Stop 2
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(duration=500))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(duration=500))
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Attack Should Stop 3
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, attack_time_ms=1000)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, attack_time_ms=1000)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Attack Should Stop 
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock())
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock())
             <CommandStatus.SUCCESS: 'SUCCESS'>
     '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Mark the attack
     ecs_mng.add_component(entity_id, FlagDoAttack())
 
-    if cmd_ctx is None or attack_time_ms is None or cmd_ctx.duration > attack_time_ms:
+    if ctx is None or attack_time_ms is None or ctx.duration > attack_time_ms:
         return CommandStatus.SUCCESS
 
     return CommandStatus.RUNNING

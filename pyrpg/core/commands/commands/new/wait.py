@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,  # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,8 +36,8 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 def init(
         # Mandatory attributes that must be always present
@@ -59,10 +59,15 @@ def init(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> ctx_mock = CommandContextMock()
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), duration_ms=2000)
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, duration_ms=2000)
+        >>> print(ctx_mock.locals)
+        {}
     '''
     pass
 
@@ -70,7 +75,7 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         duration_ms,
         # 'Private' attributes that have been prepared by init function
@@ -95,34 +100,39 @@ def process(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+
+        >>> ctx_mock = CommandContextMock()
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock)
 
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, duration_ms=2000)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, duration_ms=2000)
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Time is Still Running
-            >>> cmd_ctx_mock = CommandContextMock(duration=500)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, duration_ms=2000)
+            >>> ctx_mock.duration = 500
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, duration_ms=2000)
             <CommandStatus.RUNNING: 'RUNNING'>
 
         -> Test Time is Up
-            >>> cmd_ctx_mock = CommandContextMock(duration=2500)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, duration_ms=2000)
+            >>> ctx_mock.duration = 2500
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, duration_ms=2000)
             <CommandStatus.SUCCESS: 'SUCCESS'>
         '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
-    assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
     # Did I wait enough?
-    if (cmd_ctx.duration < duration_ms) :
+    if (ctx.duration < duration_ms) :
 
         # There is still some time to wait
         return CommandStatus.RUNNING

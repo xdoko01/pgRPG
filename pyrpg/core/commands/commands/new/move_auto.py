@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,  # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,12 +36,11 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove, FlagDoMoveMock # To work with components in commands (remove search add ...)
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 from .move_dir import process as cmd_move_dir # import other existing command
 
 # DO NOT REMOVE - Mandatory function
@@ -49,7 +48,7 @@ def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         duration_ms=None,
         dt_comp=True,
@@ -79,27 +78,27 @@ def init(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(local_bb={}))
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock())
     '''
 
     # Get the direction from position of the entity
-    cmd_ctx.local_bb['_ent_pos'] = ecs_mng.try_component(entity_id, Position)
+    ctx.locals.add('_ent_pos', ecs_mng.try_component(entity_id, Position))
 
 # DO NOT REMOVE - Mandatory function
 def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         duration_ms=None,
         dt_comp=True,
         absolute=False,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos=None,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -122,49 +121,54 @@ def process(
         :param absolute: Should the velocity be ignored
         :type absolute: bool
 
-        :param _ent_pos: Holding Position Component of the entity (from init)
-        :type _ent_pos: Component
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
-        >>> _ent_pos_mock = PositionMock(dir_name='left')
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+
+        >>> ctx_mock = CommandContextMock()
+        >>> ctx_mock.locals.add("_ent_pos", PositionMock(dir_name='left'))
 
         Run tests:
         ----------
         -> Test Exception when Context is not Provided
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, duration_ms=1000)
-            <CommandStatus.SUCCESS: 'SUCCESS'>
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, duration_ms=1000)
+            Traceback (most recent call last):
+            ...
+            AssertionError: Command cannot run without context.
 
         -> Test Movement Should Continue
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(duration=500), duration_ms=1000, _ent_pos=_ent_pos_mock)
+            >>> ctx_mock.duration = 500
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, duration_ms=1000)
             <CommandStatus.RUNNING: 'RUNNING'>
 
         -> Test Movement Has Finished (time is up)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(duration=1200), duration_ms=1000, _ent_pos=_ent_pos_mock)
+            >>> ctx_mock.duration = 1200
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, duration_ms=1000)
             <CommandStatus.SUCCESS: 'SUCCESS'>
-
     '''
 
     # Comment out, if you want see the stats about the commandd
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
-    assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
     # Continue movement if time is not yet up or no duration was specified or duration is None
-    if (duration_ms is None) or (cmd_ctx.duration < duration_ms) :
+    if (duration_ms is None) or (ctx.duration < duration_ms) :
 
         # Create new FlagDoMove component
         #ecs_mng.add_component(entity_id, FlagDoMove(moves=[_ent_pos.dir_name], dt_on=dt_comp, absolute=absolute))
         cmd_move_dir(
             ecs_mng=ecs_mng, 
             entity_id=entity_id, 
-            cmd_ctx=cmd_ctx, 
-            moves=[_ent_pos.dir_name],
+            ctx=ctx, 
+            moves=[ctx.locals._ent_pos.dir_name],
             dt_comp=dt_comp,
             absolute=absolute
         )

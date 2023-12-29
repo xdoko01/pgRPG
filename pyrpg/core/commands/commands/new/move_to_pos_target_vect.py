@@ -1,6 +1,6 @@
-''' Module implementing MOVE_TO_VECT command 
+''' Module implementing MOVE_TO_POS_TARGET_VECT command 
 
-For tests call python -m pyrpg.core.commands.commands.new.move_to_vect -v
+For tests call python -m pyrpg.core.commands.commands.new.move_to_pos_target_vect -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -40,9 +40,9 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
-from .move_to_pos_tile_vect import process as cmd_move_to_pos_tile_vect # import other existing command
-from .move_to_pos_tile_vect import init as cmd_move_to_pos_tile_vect_init # import other existing command
+from .move_to_pos_px_vect import process as cmd_move_to_pos_px_vect # import other existing command
+from .move_to_pos_px_vect import init as cmd_move_to_pos_px_vect_init
+from pyrpg.core.ecs.components.new.position import Position
 
 def init(
         # Mandatory attributes that must be always present
@@ -50,7 +50,7 @@ def init(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        pos,
+        target,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -69,42 +69,28 @@ def init(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> ctx_mock = CommandContextMock()
+        
+        >>> ctx_mock =  CommandContextMock()
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
-        >>> print((ctx_mock.locals._px_pos, ctx_mock.locals._path[0], ctx_mock.locals._path_idx))
-        ((96, 96), (1, 1), 0)
-
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, target=2)
     '''
 
-    # Additional parameters that can be used in the command
-    pos_comp = ecs_mng.try_component(entity_id, Position)
-    map = ecs_mng._game_functions['FNC_GET_MAP'](pos_comp.map)
-    path = map.get_path_bfs(
-        start=pos_comp.get_tile(), 
-        end=(pos[0], pos[1]),
-        inc_start=True, # In order to simlify the path in the get_path_checkpoints function, it is necessary to include start 
-        avail_moves=((1,1),(1,-1),(-1,-1),(-1,1),(0,1),(1,0),(0,-1),(-1,0))
-    )
-    path = map.get_path_checkpoints(path) # Path contains only points where direction is changed
-    ctx.locals.add('_ent_pos', pos_comp)
-    ctx.locals.add('_path', path)
-    ctx.locals.add('_path_idx', 0) # move to the first point first
+    # Add new local - position component of the target
+    ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
 
-    logger.debug(f'Calling move_to_pos_px_tile_vect_init ...')
     # Reuse existing init from more general move to px function
-    cmd_move_to_pos_tile_vect_init(
-        ecs_mng=ecs_mng,
-        entity_id=entity_id,
-        ctx=ctx,
-        pos=(path[0] if len(path) > 0 else None),  #Move to the first point in the path or stay on the same place
-        **cmd_kwargs
-    )
+    #cmd_move_to_pos_px_vect_init(
+    #    ecs_mng=ecs_mng,
+    #    entity_id=entity_id,
+    #    ctx=ctx,
+    #    pos=(ctx.locals._tar_pos.x, ctx.locals._tar_pos.y)
+    #    **cmd_kwargs
+    #)
+
 
     logger.debug(f'Locals initiated: {ctx.locals=}')
-
 
 # DO NOT REMOVE - Mandatory function
 def process(
@@ -113,11 +99,14 @@ def process(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        pos,
+        target,
+        max_time_s=None,
+        dt_comp=True,
+        absolute=False,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
-    ''' Move to the position using the path.
+    ''' Move to the position of specified entity (target) on the current map via straight line.
 
     This function represents the body of the command. It can be executed once and 
     finish with the CommandStatus.SUCCESS or ComandStatus.FAILURE, or can be called
@@ -126,9 +115,18 @@ def process(
     'private' attributes are passed to it by CommandManager.
 
     Parameters:
-        :param pos: Target position in tiles
-        :type pos: list
-        
+        :param target: Target entity
+        :type target: int
+                
+        :param max_time_s: Maximum time before ending with failure. If None, never fails.
+        :type max_time_s: int
+
+        :param dt_comp: Should delta time (dt) correction be taken into account.
+        :type dt_comp: bool
+
+        :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
+        :type absolute: bool
+
         :returns: CommandStatus
 
     Tests:
@@ -140,9 +138,6 @@ def process(
         >>> from pyrpg.core.ecs.components.new.position import PositionMock
 
         >>> ctx_mock = CommandContextMock()
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
-        >>> print((ctx_mock.locals._px_pos, ctx_mock.locals._path[0], ctx_mock.locals._path_idx))
-        ((96, 96), (1, 1), 0)
 
         Run tests:
         ----------
@@ -154,26 +149,26 @@ def process(
 
         -> Test Entity Ceased to Exist
             >>> ctx_mock.locals.add("_ent_pos", None)
+            >>> ctx_mock.locals.add("_px_pos", (610,610))
             >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position Not Reached in Time
-            ctx_mock.duration = 20000
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+            >>> ctx_mock.duration = 20000
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10], max_time_s=5)
             <CommandStatus.FAILURE: 'FAILURE'>
+
+        -> Test Target Position has been Reached
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=608, y=608))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10], proximity_px=20)
+            <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
             >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=120))
+            >>> ctx_mock.locals.add("_last_dir_change", 50)
+            >>> ctx_mock.locals.add("_norm_vect", (0,1))
             >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.RUNNING: 'RUNNING'>
-
-        -> Test Target Position has been Reached
-            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=672, y=672))
-            >>> ctx_mock.locals.add("_path", ((1,1),(2,2),(10,10)))
-            >>> ctx_mock.locals.add("_path_idx", 2)
-            >>> ctx_mock.locals.add("_px_pos", (672,672))
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
-            <CommandStatus.SUCCESS: 'SUCCESS'>
     '''
 
     # Comment out, if you want see the stats about the command
@@ -182,48 +177,36 @@ def process(
     # Command must run with context, else does not make sense
     assert ctx is not None, f'Command cannot run without context.'
 
-    logger.debug(f'Moving to path point {ctx.locals._path[ctx.locals._path_idx]} -> {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])}')
+    logger.debug(f'Moving to target pos {ctx.locals._tar_pos.x}, {ctx.locals._tar_pos.y}')
 
-    res = cmd_move_to_pos_tile_vect(
-            ecs_mng=ecs_mng,
-            entity_id=entity_id,
-            ctx=ctx,
-            # 'Public' attributes specific to this command and used while calling the command
-            pos=(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1]),
-            #max_time_s=None,
-            dt_comp=True,
-            absolute=False,
-            # The rest of parameters, if needed
-            **cmd_kwargs
-        )
-    
-    # In case moving to the next tile succeeds - move to the next tile in the path and return RUNNING
+    cmd_move_to_pos_px_vect_init(
+        ecs_mng=ecs_mng,
+        entity_id=entity_id,
+        ctx=ctx,
+        # 'Public' attributes specific to this command and used while calling the command
+        pos=(ctx.locals._tar_pos.x, ctx.locals._tar_pos.y),
+        **cmd_kwargs
+    )
+
+    res = cmd_move_to_pos_px_vect(
+        ecs_mng=ecs_mng,
+        entity_id=entity_id,
+        ctx=ctx,
+        # 'Public' attributes specific to this command and used while calling the command
+        pos=(ctx.locals._tar_pos.x, ctx.locals._tar_pos.y),
+        max_time_s=max_time_s,
+        dt_comp=dt_comp,
+        absolute=absolute,
+        # The rest of parameters, if needed
+        **cmd_kwargs
+    )
+
     if res == CommandStatus.SUCCESS:
-        logger.debug(f'Moving to tile {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} ended with success. My position is {ctx.locals._ent_pos.get_tile()}')
-        # Check if we are at the end
-        if ctx.locals._path_idx == len(ctx.locals._path) - 1: return CommandStatus.SUCCESS
-
-        # New point of the path
-        ctx.locals._path_idx += 1
-        logger.debug(f'Targeting to the next point {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} and returning running')
-        
-        # Init movement between new 2 points
-        logger.debug(f'Calling move_to_pos_px_tile_init ...')
-        cmd_move_to_pos_tile_vect_init(
-            ecs_mng=ecs_mng,
-            entity_id=entity_id,
-            ctx=ctx,
-            pos=(ctx.locals._path[ctx.locals._path_idx]),
-            **cmd_kwargs
-        )
-
-        # Continue on the path with the next point
-        return CommandStatus.RUNNING
-
+        logger.debug(f'Moving to target {ctx.locals._tar_pos.x}, {ctx.locals._tar_pos.y} was SUCCESSFUL')
     elif res == CommandStatus.FAILURE:
-        logger.debug(f'Moving to tile {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} FAILED')
-
+        logger.debug(f'Moving to target {ctx.locals._tar_pos.x}, {ctx.locals._tar_pos.y} has FAILED')
     return res
+
 
 if __name__ == '__main__':
 

@@ -20,7 +20,7 @@ from pathlib import Path
 from enum import Enum
 
 # BTree must follow all command related protocols
-from pyrpg.core.commands import CommandStatus, CommandGenerator, CommandContext
+from pyrpg.core.commands import CommandStatus, CommandGenerator, CommandContext, Container
 from pyrpg.functions import str_to_class, get_dict_params
 
 class BTreeCommandStatus(Enum):
@@ -676,15 +676,15 @@ class BTreeBlackboard(CommandContext):
 
     def __init__(self, global_bb: dict={}):
         assert pygame.get_init() # without initialization get_ticks function will not work properly
-        self.global_bb = global_bb
-        self.local_bb = {}
+        self.globals = Container(attrs=global_bb)
+        self.locals = Container()
         self.init_time = None
         self.duration = None
         self.tick_count = None
         self.current_time = pygame.time.get_ticks()
 
     def reset(self):
-        self.local_bb = {} # Every Action Node starts with clear memory
+        self.locals = Container() # Every Action Node starts with clear memory
         self.init_time = pygame.time.get_ticks()
         self.duration = 0
         self.tick_count = 1
@@ -732,6 +732,9 @@ class BTree(CommandGenerator):
 
         for child in (node._children or []):
             self.print_tree(node=child, depth=depth+1, lvl_str=lvl_str)
+
+    def __str__(self):
+        return f'ROOT_NODE: {self._root_node.name}, ACTION_NODE: {self._action_node.name if self._action_node else None}'
 
     def reset(self, new_ai_structure: dict, template_path: Path=Path(''), val_check: bool=False) -> None:
         '''Read the behavior tree from dictionary'''

@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,19 +36,18 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-import typing
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.position import Position #To work with components in commands (remove search add ...)
 from .move_dir import process as cmd_move_dir # import other existing command
 
 def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         # The rest of parameters, if needed
         **cmd_kwargs
@@ -67,26 +66,26 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> cmd_ctx_mock = CommandContextMock(local_bb={})
-        >>> ecs_mng_mock = ECSManagerMock()
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock)
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock())
     '''
     # Additional parameters that can be used in the command
-    cmd_ctx.local_bb['_ent_pos'] = ecs_mng.component_for_entity(entity_id, Position)
-    cmd_ctx.local_bb['_last_dir_change'] = 0
-    cmd_ctx.local_bb['_move_axis'] = None
-    
-    logger.debug(f'Locals initiated: {cmd_ctx.local_bb=}')
+    ctx.locals.add('_ent_pos',  ecs_mng.component_for_entity(entity_id, Position))
+    ctx.locals.add('_last_dir_change',  0)
+    ctx.locals.add('_move_axis',  None)
+
+    logger.debug(f'Locals initiated: {ctx.locals=}')
 
 # DO NOT REMOVE - Mandatory function
 def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         pos,
         proximity_px=10,
@@ -94,10 +93,6 @@ def process(
         change_dir_ms=1000,
         dt_comp=True,
         absolute=False,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos=None,
-        _last_dir_change=None,
-        _move_axis=None,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -128,93 +123,92 @@ def process(
         :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
         :type absolute: bool
 
-        :param _ent_pos: Private attribute holding Position component of the entity.
-        :type _ent_pos: Component
-
-        :param _last_dir_change: Private attribute holding time when the direction was last changed.
-        :type _last_dir_change: int
-
-        :param _move_axis: Private attribute keeping direction of current movement.
-        :type _move_axis: str (X,Y)
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+
+        >>> ctx_mock = CommandContextMock()
 
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[100,100])
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, pos=[100,100])
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=None)
+            >>> ctx_mock.locals.add("_ent_pos", None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100])
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position Not Reached in Time
-            >>> cmd_ctx_mock = CommandContextMock(duration=20000)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[100,100], max_time_s=5)
+            >>> ctx_mock.locals.add("duration", 2000)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100], max_time_s=5)
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=105)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=105))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100])
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock, _last_dir_change = 50)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=120))
+            >>> ctx_mock.locals.add("_last_dir_change", 50)
+            >>> ctx_mock.locals.add("_move_axis", None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100])
             <CommandStatus.RUNNING: 'RUNNING'>
     '''
 
     # Comment out, if you want see the stats about the command
-    #logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
-    assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
     # Check if entity has still position component, if not finish
-    if _ent_pos is None:
+    if ctx.locals._ent_pos is None:
         logger.debug(f'Entity component reference is lost, returning failure.')
         return CommandStatus.FAILURE
 
     # Check, if we are not moving to the point for too long
-    if max_time_s is not None and cmd_ctx.duration > max_time_s*1000: 
+    if max_time_s is not None and ctx.duration > max_time_s*1000: 
         logger.debug(f'Max time for movement is up. Returning failure.')
         return CommandStatus.FAILURE
 
     x, y = pos # for readibility
 
     # Check, if the distance is closed finish with SUCCESS
-    if abs(y - _ent_pos.y) < proximity_px and abs(x - _ent_pos.x) < proximity_px:
+    if abs(y - ctx.locals._ent_pos.y) < proximity_px and abs(x - ctx.locals._ent_pos.x) < proximity_px:
         logger.debug(f'Target position {x}, {y} reached with {proximity_px=}')
         return CommandStatus.SUCCESS
 
     # Check, if it is time to change the direction
-    if cmd_ctx.current_time - _last_dir_change >= change_dir_ms:
-        cmd_ctx.local_bb['_last_dir_change'] = cmd_ctx.current_time
+    if ctx.current_time - ctx.locals._last_dir_change >= change_dir_ms:
+        ctx.locals._last_dir_change = ctx.current_time
 
         logger.debug(f'Changing direction after {change_dir_ms=}')
 
         # Decide on which axis we will be closing the gap - close the smaller gap
-        if abs(x - _ent_pos.x) > abs(y - _ent_pos.y):
-            cmd_ctx.local_bb['_move_axis'] = 'X'
+        if abs(x - ctx.locals._ent_pos.x) > abs(y - ctx.locals._ent_pos.y):
+            ctx.locals._move_axis = 'X'
         else:
-            cmd_ctx.local_bb['_move_axis'] = 'Y'
+            ctx.locals._move_axis = 'Y'
 
     # Continue movement
-    if _move_axis == 'X':
+    if ctx.locals._move_axis == 'X':
         # use existing command
         cmd_move_dir(
             ecs_mng=ecs_mng, 
             entity_id=entity_id, 
-            cmd_ctx=None, 
-            moves=['left' if x - _ent_pos.x < 0 else 'right' if x - _ent_pos.x > 0 else 'right'],
+            ctx=None, 
+            moves=['left' if x - ctx.locals._ent_pos.x < 0 else 'right' if x - ctx.locals._ent_pos.x > 0 else 'right'],
             dt_comp=dt_comp,
             absolute=absolute
         )
@@ -222,8 +216,8 @@ def process(
         cmd_move_dir(
             ecs_mng=ecs_mng, 
             entity_id=entity_id, 
-            cmd_ctx=None, 
-            moves=['up' if y - _ent_pos.y < 0 else 'down' if y - _ent_pos.y > 0 else 'down'],
+            ctx=None, 
+            moves=['up' if y - ctx.locals._ent_pos.y < 0 else 'down' if y - ctx.locals._ent_pos.y > 0 else 'down'],
             dt_comp=dt_comp,
             absolute=absolute
         )
