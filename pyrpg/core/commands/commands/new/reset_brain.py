@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,  # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,11 +36,11 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI, BrainAIMock # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.brain_ai import BrainAI # To work with components in commands (remove search add ...)
 
 def init(
         # Mandatory attributes that must be always present
@@ -62,10 +62,15 @@ def init(
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> ctx_mock = CommandContextMock()
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None)
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock)
+        >>> print(ctx_mock.locals)
+        {}
     '''
     pass
 
@@ -73,7 +78,7 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         new_ai_struct={},
         # 'Private' attributes that have been prepared by init function
@@ -100,28 +105,33 @@ def process(
 
         Prepare mocs:
         -------------
-        >>> ecs_mng_mock=ECSManagerMock()
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.brain_ai import BrainAIMock
+
+        >>> ctx_mock = CommandContextMock()
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock)
 
         Run tests:
         ----------
         -> Test Only Reset to No Brain 
+            >>> ecs_mng_mock = ECSManagerMock()
             >>> ecs_mng_mock.component_for_entity = lambda e,c: BrainAIMock()
-            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, cmd_ctx=None)
+            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, ctx=None)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Only Reset to Some Brain 
-            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, cmd_ctx=None, new_ai_struct={})
+            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, ctx=None, new_ai_struct={})
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Entity does not have BrainAI Component 
             >>> ecs_mng_mock.component_for_entity = lambda e,c: raise_mock(KeyError)
-            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, cmd_ctx=None)
+            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, ctx=None)
             <CommandStatus.FAILURE: 'FAILURE'>
-
     '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}, {new_ai_struct=}')
+    logger.debug(f'{ctx=}, {new_ai_struct=}')
 
     try:
         brain = ecs_mng.component_for_entity(entity_id, BrainAI)

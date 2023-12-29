@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,11 +36,10 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
 from .move_to_pos_px import process as cmd_move_to_pos_px # import other existing command
 from .move_to_pos_px import init as cmd_move_to_pos_px_init
 from pyrpg.core.config.config import TILE_RES
@@ -49,7 +48,7 @@ def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         pos,
         # The rest of parameters, if needed
@@ -68,38 +67,38 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> cmd_ctx_mock = CommandContextMock(local_bb={})
-        >>> ecs_mng_mock = ECSManagerMock()
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+
+        >>> ctx_mock = CommandContextMock()
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[10,10])
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+        >>> print(ctx_mock.locals._px_pos)
+        (672, 672)
     '''
-    # Additional parameters that can be used in the command
-    #cmd_ctx.local_bb['_ent_pos'] = ecs_mng.try_component(entity_id, Position)
-    #cmd_ctx.local_bb['_last_dir_change'] = 0
-    #cmd_ctx.local_bb['_move_axis'] = None
 
     # Add new local - position recalculated to px
-    cmd_ctx.local_bb['_px_pos'] = [(pos[0] * TILE_RES) + (TILE_RES // 2), (pos[1] * TILE_RES) + (TILE_RES // 2)]
-    
+    ctx.locals.add('_px_pos', ((pos[0] * TILE_RES) + (TILE_RES // 2), (pos[1] * TILE_RES) + (TILE_RES // 2)))
+
     # Reuse existing init from more general move to px function
     logger.debug(f'Calling move_to_pos_px_init ...')
     cmd_move_to_pos_px_init(
         ecs_mng=ecs_mng,
         entity_id=entity_id,
-        cmd_ctx=cmd_ctx,
+        ctx=ctx,
         **cmd_kwargs
     )
 
-    logger.debug(f'Locals initiated: {cmd_ctx.local_bb=}')
+    logger.debug(f'Locals initiated: {ctx.locals=}')
 
 # DO NOT REMOVE - Mandatory function
 def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         pos,
         proximity_px=10,
@@ -107,11 +106,6 @@ def process(
         change_dir_ms=1000,
         dt_comp=True,
         absolute=False,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos=None,
-        _last_dir_change=0,
-        _move_axis=None,
-        _px_pos=[0,0],
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -142,79 +136,82 @@ def process(
         :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
         :type absolute: bool
 
-        :param _ent_pos: Private attribute holding Position component of the entity.
-        :type _ent_pos: Component
-
-        :param _last_dir_change: Private attribute holding time when the direction was last changed.
-        :type _last_dir_change: int
-
-        :param _move_axis: Private attribute keeping direction of current movement.
-        :type _move_axis: str (X,Y)
-
-        :param _px_pos: Target position in px
-        :type _px_pos: list
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+
+        >>> ctx_mock = CommandContextMock()
+
 
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[10,10])
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, pos=[10,10])
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=None)
+            >>> ctx_mock.locals.add("_px_pos", (100,100))
+            >>> ctx_mock.locals.add("_ent_pos", None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position Not Reached in Time
-            >>> cmd_ctx_mock = CommandContextMock(duration=20000)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[10,10], max_time_s=5)
+            >>> ctx_mock.duration = 20000
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10], max_time_s=5)
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
-            >>> px_pos = (100,100)
-            >>> _ent_pos_mock = PositionMock(x=100, y=100)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[1,1], proximity_px=20, _ent_pos=_ent_pos_mock, _px_pos=px_pos)
+            >>> ctx_mock.locals.add("_px_pos", (100,100))
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=100, y=100))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[1,1], proximity_px=20)
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=_ent_pos_mock, _last_dir_change = 50)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=120))
+            >>> ctx_mock.locals.add("_last_dir_change", 50)
+            >>> ctx_mock.locals.add("_move_axis", "X")
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.RUNNING: 'RUNNING'>
     '''
+    # Comment out, if you want see the stats about the command
+    logger.debug(f'{ctx=}')
 
-    logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {_px_pos[0]},{_px_pos[1]}')
+    # Command must run with context, else does not make sense
+    assert ctx is not None, f'Command cannot run without context.'
+
+    logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]}')
 
     res = cmd_move_to_pos_px(
         ecs_mng=ecs_mng,
         entity_id=entity_id,
-        cmd_ctx=cmd_ctx,
+        ctx=ctx,
         # 'Public' attributes specific to this command and used while calling the command
-        pos=(_px_pos[0], _px_pos[1]),
+        pos=(ctx.locals._px_pos[0], ctx.locals._px_pos[1]),
         proximity_px=proximity_px,
         max_time_s=max_time_s,
         change_dir_ms=change_dir_ms,
         dt_comp=dt_comp,
         absolute=absolute,
         # 'Private' attributes that have been prepared by init function
-        _ent_pos=_ent_pos,
-        _last_dir_change=_last_dir_change,
-        _move_axis=_move_axis,
+        #_ent_pos=_ent_pos,
+        #_last_dir_change=_last_dir_change,
+        #_move_axis=_move_axis,
         # The rest of parameters, if needed
         **cmd_kwargs
     )
 
     if res == CommandStatus.SUCCESS:
-        logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {_px_pos[0]},{_px_pos[1]} was SUCCESSFUL')
+        logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]} was SUCCESSFUL')
     elif res == CommandStatus.FAILURE:
-        logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {_px_pos[0]},{_px_pos[1]} has FAILED')
+        logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]} has FAILED')
     return res
 
 

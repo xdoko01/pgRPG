@@ -1,6 +1,6 @@
-''' Module implementing MOVE_DIR_ADD command 
+''' Module implementing FACE_TARGET command 
 
-For tests call python -m pyrpg.core.commands.commands.new.move_dir_add -v
+For tests call python -m pyrpg.core.commands.commands.new.face_target -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -41,7 +41,9 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
-from .move_dir import process as cmd_move_dir # import other existing command
+from pyrpg.core.ecs.components.new.position import Position
+
+sign = lambda x: -1 if x<0 else (1 if x>0 else 0)
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -50,9 +52,7 @@ def init(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        moves,
-        dt_comp=True,
-        absolute=False,
+        target,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -63,14 +63,8 @@ def init(
     In case that no specific steps are required before the first run of process(), pass it.
 
     Parameters:
-        :param moves: List of moves
-        :type moves: list
-
-        :param dt_comp: Should delta time correction be applied
-        :type dt_comp: bool
-
-        :param absolute: Should the velocity be ignored
-        :type absolute: bool
+        :param target: Entity id of the target
+        :type target: int
 
         :returns: None
 
@@ -85,7 +79,10 @@ def init(
         ----------
         >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), moves=['left', 'up'])
     '''
-    pass
+    # Add new locals - position component of the target and the entity
+    ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
+    ctx.locals.add('_ent_pos', ecs_mng.try_component(entity_id, Position))
+
 
 # DO NOT REMOVE - Mandatory function
 def process(
@@ -94,18 +91,11 @@ def process(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        moves,
-        dt_comp=True,
-        absolute=False,
-        # 'Private' attributes that have been prepared by init function
+        target,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
-    ''' Move to specified direction ('up', 'down', 'left', 'right').
-    Move command that supports adding moves to already existing
-    moves and hence constructs FlagDoMove entity from multiple commands.
-    Typical example is pressing 'up' + 'left' at the same time which results
-    in moving diagonaly in case this command is used.
+    ''' Set entity to face towards the target entity.
 
     This function represents the body of the command. It can be executed once and 
     finish with the CommandStatus.SUCCESS or ComandStatus.FAILURE, or can be called
@@ -114,14 +104,8 @@ def process(
     'private' attributes are passed to it by CommandManager.
 
     Parameters:
-        :param moves: List of moves
-        :type moves: list
-
-        :param dt_comp: Should delta time correction be applied
-        :type dt_comp: bool
-
-        :param absolute: Should the velocity be ignored
-        :type absolute: bool
+        :param target: Entity id of the target
+        :type target: int
 
         :returns: CommandStatus
 
@@ -131,47 +115,47 @@ def process(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMoveMock
-
-        >>> ecs_mng_mock = ECSManagerMock()
 
         Run tests:
         ----------
-        -> Test Adding Movement to Existing Component
-            >>> ecs_mng_mock.component_for_entity = lambda e,c: FlagDoMoveMock(moves=['up'])
-            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, ctx=CommandContextMock(), moves=['left'])
+        -> Test Movement Successful
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), moves=['left'])
             <CommandStatus.SUCCESS: 'SUCCESS'>
-
-        -> Test Creation of New FlagDoMove Component
-            >>> ecs_mng_mock.component_for_entity = lambda e, c: raise_mock(KeyError)
-            >>> process(ecs_mng=ecs_mng_mock, entity_id=1, ctx=CommandContextMock(), moves=['right'])
-            <CommandStatus.SUCCESS: 'SUCCESS'>
+        
+        -> Test Missing Argument Moves
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock())
+            Traceback (most recent call last):
+            ...
+            TypeError: process() missing 1 required positional argument: 'moves'
     '''
 
     # Comment out, if you want see the stats about the commandd
     logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
-    # assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
-    try:
-        flag_do_move = ecs_mng.component_for_entity(entity_id, FlagDoMove)
-        flag_do_move.add_moves(moves)
-        logger.debug(f'{entity_id=} - moves added to already existing component {flag_do_move}.')
-    except KeyError:
-        #new_component = FlagDoMove(moves=moves, dt_on=dt_comp, absolute=absolute)
-        #ecs_mng.add_component(entity_id, new_component)
-        #logger.debug(f'{entity_id=} - new component created {new_component}.')
+    # Check if target still exists
+    if ctx.locals._tar_pos is None or ctx.locals._ent_pos is None:
+        logger.debug(f'Target or Entity position component reference is lost, returning failure.')
+        return CommandStatus.FAILURE
 
-        # Use simple move command if movement component does not yet exists
-        cmd_move_dir(
-            ecs_mng=ecs_mng, 
-            entity_id=entity_id, 
-            ctx=ctx, 
-            moves=moves,
-            dt_comp=dt_comp,
-            absolute=absolute
-        )
+    # Calculate the vector between target and entity
+
+    # if possitive, pos_entity must face Right
+    x_dir = ctx.locals._tar_pos.x - ctx.locals._ent_pos.x
+    # if positive, pos_entity must face Down
+    y_dir = ctx.locals._tar_pos.y - ctx.locals._ent_pos.y
+
+    if abs(x_dir) > abs(y_dir): # turn left or right
+        vect = (sign(x_dir), 0)
+    else:
+        vect = (0, sign(y_dir)) # turn up or down
+
+    logger.debug(f'{x_dir=}, {y_dir=}, {vect=}')
+
+    # Move one pixel (absolute=True) and effectively change the facing direction
+    ecs_mng.add_component(entity_id, FlagDoMove(vector=vect, absolute=True))
 
     return CommandStatus.SUCCESS
 
@@ -179,7 +163,7 @@ def process(
 if __name__ == '__main__':
 
     # Prepare the mocs
-    def raise_mock(exception): raise exception
+    #def raise_mock(exception): raise exception
 
     # Run the tests
     import doctest

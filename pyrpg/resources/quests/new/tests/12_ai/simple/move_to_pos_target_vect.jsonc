@@ -1,11 +1,11 @@
 {
 	// JSON Schema for validation of the game parameters
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../../../core/schemas/new/quest.schema.json",
 
 	// Basic data
-	"id" : "move_between_2_points",
-	"title" : "Test brain implemented as behavior either btree or blist",
-	"description" : "Test AI behavior of NPC implemented as behavior tree or blist using brain.",
+	"id" : "move_to_pos_target_vect",
+	"title" : "Test command move_to_pos_target_vect",
+	"description" : "Test command move_to_pos_target_vect",
 	"objective" : "POC of NPC controlled by the script",
 
 	// What quests need to be loaded before this one
@@ -30,6 +30,11 @@
 		// For movement
 		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 		
+		// For animation
+		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
 		// For displaying
 		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
 		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
@@ -58,17 +63,31 @@
 	// What entities to load
 	"entities" : [
 		{
+			"id" : "NPC",
+			"templates" : [
+				"new/model/body/male/wolfman/gold",
+				"new/behavior/move_between_2_points($x1=10,$y1=10,$x2=30,$y2=10)" // behavior template
+			],
+			"components" : [
+				{"type" : "new.debug:Debug", "params": {"info": {"name" : "NPC"}}},
+				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}}
+			]
+		},
+		
+		{
 			"id" : "player01",
 			"templates" : ["new/model/body/male/human/brown"],
 			"components" : [
-
+				{"type" : "new.debug:Debug", "params" : {}},
 				{
 					"type" : "new.brain_ai:BrainAI", 
 					"params" : {
 
 						"blackboard": {
-							"start_tile_pos": [10,10],
-							"end_tile_pos": [20,20]
+							"tile_pos": [20,20],
+							"target_ent": "NPC"
 						}, 
 
 						"cmd_tree": {
@@ -77,15 +96,12 @@
 							"children": [
 								{
 									"type": "Sequence",
-									"name": "Move Between Points",
-									"blackboard": {
-										"start_tile_pos": [10,10],
-										"end_tile_pos": [20,20]
-									},
+									"name": "Move Between the point and the target entity",
 									"children": [
-										{"name": "Move to end point", "type": "Behavior", "command": ["move_to_pos_tile", {"pos": "^end_tile_pos"}]},
+										{"name": "Move to point", "type": "Behavior", "command": ["move_to_pos_tile_vect", {"pos": "^tile_pos"}]},
 										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]},
-										{"name": "Move to start point", "type": "Behavior", "command": ["move_to_pos_tile", {"pos": "^start_tile_pos"}]}
+										{"name": "Move to target", "type": "Behavior", "command": ["move_to_pos_target_vect", {"target": "^target_ent"}]},
+										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
 									]
 								}
 							]
@@ -93,7 +109,7 @@
 					}
 				},
 
-				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "new.position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]

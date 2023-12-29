@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,  # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,11 +36,11 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 from .move_vect import process as cmd_move_vect # import other existing command
 from math import sqrt
 
@@ -48,7 +48,7 @@ def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         pos,
         # 'Public' attributes specific to this command and used while calling the command
         # The rest of parameters, if needed
@@ -68,12 +68,12 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> cmd_ctx_mock = CommandContextMock(local_bb={})
-        >>> ecs_mng_mock = ECSManagerMock()
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[100,100])
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), pos=[100,100])
     '''
     # Additional parameters that can be used in the command
     pos_comp = ecs_mng.component_for_entity(entity_id, Position)
@@ -81,25 +81,25 @@ def init(
     vect = ((x - pos_comp.x), (y - pos_comp.y))
     l = sqrt(vect[0]*vect[0] + vect[1]*vect[1])
 
-    cmd_ctx.local_bb['_norm_vect'] = (vect[0]/l, vect[1]/l)
-    cmd_ctx.local_bb['_ent_pos'] = pos_comp
+    ctx.locals.add('_norm_vect', (vect[0]/l, vect[1]/l))
+    ctx.locals.add('_ent_pos', pos_comp)
 
-    logger.debug(f'Locals initiated: {cmd_ctx.local_bb=}')
+    logger.debug(f'Locals initiated: {ctx.locals=}')
 
 # DO NOT REMOVE - Mandatory function
 def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         pos,
         max_time_s=None,
         dt_comp=True,
         absolute=False,
         # 'Private' attributes that have been prepared by init function
-        _ent_pos=None,
-        _norm_vect=None,
+        #_ent_pos=None,
+        #_norm_vect=None,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -125,45 +125,45 @@ def process(
         :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
         :type absolute: bool
 
-        :param _ent_pos: Private attribute holding Position component of the entity.
-        :type _ent_pos: Component
-
-        :param _norm_vect: Private attribute holding unit vector of movement (eventually multiplied 
-        by velocity in some movement processor)
-        :type _norm_vect: tuple
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.position import PositionMock
 
+        >>> ctx_mock = CommandContextMock()
+        
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[100,100])
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, pos=[100,100])
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=None)
+            >>> ctx_mock.locals.add("_ent_pos", None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100])
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position Not Reached in Time
-            >>> cmd_ctx_mock = CommandContextMock(duration=20000)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[100,100], max_time_s=5)
+            >>> ctx_mock.duration = 20000
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100], max_time_s=5)
             <CommandStatus.FAILURE: 'FAILURE'>
 
         -> Test Target Position has been Reached
-            >>> _ent_pos_mock = PositionMock(x=98, y=102)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=98, y=102))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100])
             <CommandStatus.SUCCESS: 'SUCCESS'>
 
         -> Test Target Position has not been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[100,100], _ent_pos=_ent_pos_mock)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=120))
+            >>> ctx_mock.locals.add("_norm_vect", (0,1))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[100,100])
             <CommandStatus.RUNNING: 'RUNNING'>
     '''
 
@@ -171,22 +171,22 @@ def process(
     #logger.debug(f'{cmd_ctx=}')
 
     # Command must run with context, else does not make sense
-    assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
     # Check if entity has still position component, if not finish
-    if _ent_pos is None:
+    if ctx.locals._ent_pos is None:
         logger.debug(f'Entity component reference is lost, returning failure.')
         return CommandStatus.FAILURE
 
     # Check, if we are not moving to the point for too long
-    if max_time_s is not None and cmd_ctx.duration > max_time_s*1000: 
+    if max_time_s is not None and ctx.duration > max_time_s*1000: 
         logger.debug(f'Max time for movement is up. Returning failure.')
         return CommandStatus.FAILURE
 
     x, y = pos # for readibility
 
     # Calc the vector between entity position and target position
-    vect = ((x - _ent_pos.x), (y - _ent_pos.y))
+    vect = ((x - ctx.locals._ent_pos.x), (y - ctx.locals._ent_pos.y))
 
     # Check, if the distance is closed finish with SUCCESS
     if abs(vect[0]) < 3 and abs(vect[1]) < 3:
@@ -202,9 +202,9 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng=ecs_mng,
         entity_id=entity_id,
-        cmd_ctx=cmd_ctx,
+        ctx=ctx,
         # 'Public' attributes specific to this command and used while calling the command
-        vector=_norm_vect,
+        vector=ctx.locals._norm_vect,
         dt_comp=dt_comp,
         absolute=absolute
     )

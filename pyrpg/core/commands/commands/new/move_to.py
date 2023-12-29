@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,11 +36,11 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
+from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
 from .move_to_pos_tile import process as cmd_move_to_pos_tile # import other existing command
 from .move_to_pos_tile import init as cmd_move_to_pos_tile_init # import other existing command
 
@@ -48,7 +48,7 @@ def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         pos,
         # The rest of parameters, if needed
@@ -67,32 +67,45 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> cmd_ctx_mock = CommandContextMock(local_bb={})
-        >>> ecs_mng_mock = ECSManagerMock()
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> ctx_mock = CommandContextMock()
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, pos=[10,10])
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+        >>> print((ctx_mock.locals._px_pos, ctx_mock.locals._path[0], ctx_mock.locals._path_idx))
+        ((96, 96), (1, 1), 0)
     '''
 
     # Additional parameters that can be used in the command
     pos_comp = ecs_mng.try_component(entity_id, Position)
-    path = ecs_mng._game_functions['FNC_GET_MAP'](pos_comp.map).get_path_bfs(start=pos_comp.get_tile(), end=(pos[0], pos[1]))
-    cmd_ctx.local_bb['_ent_pos'] = pos_comp
-    cmd_ctx.local_bb['_path'] = path
-    cmd_ctx.local_bb['_path_idx'] = 0 # move to the first point first
+    map = ecs_mng._game_functions['FNC_GET_MAP'](pos_comp.map)
+
+    path = map.get_path_bfs(
+        start=pos_comp.get_tile(), 
+        end=(pos[0], pos[1]),
+        inc_start=True, # In order to simlify the path in the get_path_checkpoints function, it is necessary to include start 
+        avail_moves=((0,1),(1,0),(0,-1),(-1,0))
+    )
+    path = map.get_path_checkpoints(path) # Path contains only points where direction is changed
+
+    ctx.locals.add('_ent_pos', pos_comp)
+    ctx.locals.add('_path', path)
+    ctx.locals.add('_path_idx', 0) # move to the first point first
 
     logger.debug(f'Calling move_to_pos_px_tile_init ...')
+
     # Reuse existing init from more general move to px function
     cmd_move_to_pos_tile_init(
         ecs_mng=ecs_mng,
         entity_id=entity_id,
-        cmd_ctx=cmd_ctx,
+        ctx=ctx,
         pos=(path[0] if len(path) > 0 else None),  #Move to the first point in the path or stay on the same place
         **cmd_kwargs
     )
 
-    logger.debug(f'Locals initiated: {cmd_ctx.local_bb=}')
+    logger.debug(f'Locals initiated: {ctx.locals=}')
 
 
 # DO NOT REMOVE - Mandatory function
@@ -100,20 +113,9 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         pos,
-        #proximity_px=10,
-        #max_time_s=None,
-        #change_dir_ms=0000,
-        #dt_comp=True,
-        #absolute=False,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos=None,
-        _path=[],
-        _path_idx=0,
-        #_last_dir_change=0,
-        #_move_axis=None,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -129,60 +131,69 @@ def process(
         :param pos: Target position in tiles
         :type pos: list
         
-        :param _ent_pos: Private attribute holding Position component of the entity.
-        :type _ent_pos: Component
-
-        :param _path: List of tiles on the path
-        :type _path: list
-
-        :param _path_idx: Index of the next path point.
-        :type _path_idx: int
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+
+        >>> ctx_mock = CommandContextMock()
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+        >>> print((ctx_mock.locals._px_pos, ctx_mock.locals._path[0], ctx_mock.locals._path_idx))
+        ((96, 96), (1, 1), 0)
 
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, pos=[10,10], _path=[(1,1),(2,2),(3,3)], _path_idx=0)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, pos=[10,10])
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=None, _path=[(1,1),(2,2),(3,3)], _path_idx=0)
+            >>> ctx_mock.locals.add("_ent_pos", None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.FAILURE: 'FAILURE'>
 
-        -> Test Target Position has been Reached
-            >>> _ent_pos_mock = PositionMock(x=608, y=608)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=_ent_pos_mock, _pos_px=(610,610),_path=[(1,1),(2,2),(3,3)], _path_idx=0)
-            <CommandStatus.SUCCESS: 'SUCCESS'>
-
         -> Test Target Position has not been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), pos=[10,10], _ent_pos=_ent_pos_mock, _last_dir_change = 50)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=120))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.RUNNING: 'RUNNING'>
+
+        -> Test Target Position has been Reached
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=672, y=672))
+            >>> ctx_mock.locals.add("_path", ((1,1),(2,2),(10,10)))
+            >>> ctx_mock.locals.add("_path_idx", 2)
+            >>> ctx_mock.locals.add("_px_pos", (672,672))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+            <CommandStatus.SUCCESS: 'SUCCESS'>
     '''
 
-    logger.debug(f'Moving to path point {_path[_path_idx]} -> {(_path[_path_idx][0], _path[_path_idx][1])}')
+    # Comment out, if you want see the stats about the command
+    logger.debug(f'{ctx=}')
+
+    # Command must run with context, else does not make sense
+    assert ctx is not None, f'Command cannot run without context.'
+
+    logger.debug(f'Moving to path point {ctx.locals._path[ctx.locals._path_idx]} -> {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])}')
 
     res = cmd_move_to_pos_tile(
             ecs_mng=ecs_mng,
             entity_id=entity_id,
-            cmd_ctx=cmd_ctx,
+            ctx=ctx,
             # 'Public' attributes specific to this command and used while calling the command
-            pos=(_path[_path_idx][0], _path[_path_idx][1]),
+            pos=(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1]),
             proximity_px=5,
             max_time_s=None,
             change_dir_ms=0,
             #dt_comp=dt_comp,
             #absolute=absolute,
             # 'Private' attributes that have been prepared by init function
-            _ent_pos=_ent_pos,
+            #_ent_pos=_ent_pos,
             #_last_dir_change=0,
             #_move_axis=,
             # The rest of parameters, if needed
@@ -191,22 +202,21 @@ def process(
     
     # In case moving to the next tile succeeds - move to the next tile in the path and return RUNNING
     if res == CommandStatus.SUCCESS:
-        logger.debug(f'Moving to tile {(_path[_path_idx][0], _path[_path_idx][1])} ended with success. My position is {_ent_pos.get_tile()}')
+        logger.debug(f'Moving to tile {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} ended with success. My position is {ctx.locals._ent_pos.get_tile()}')
         # Check if we are at the end
-        if _path_idx == len(_path) - 1: return CommandStatus.SUCCESS
+        if ctx.locals._path_idx == len(ctx.locals._path) - 1: return CommandStatus.SUCCESS
 
         # New point of the path
-        cmd_ctx.local_bb['_path_idx'] = _path_idx + 1
-        _path_idx = _path_idx + 1 # also the local variable must be unfortunatelly updated
-        logger.debug(f'Targeting to the next point {(_path[_path_idx][0], _path[_path_idx][1])} and returning running')
+        ctx.locals._path_idx += 1
+        logger.debug(f'Targeting to the next point {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} and returning running')
         
         # Init movement between new 2 points
         logger.debug(f'Calling move_to_pos_px_tile_init ...')
         cmd_move_to_pos_tile_init(
             ecs_mng=ecs_mng,
             entity_id=entity_id,
-            cmd_ctx=cmd_ctx,
-            pos=(_path[_path_idx]),
+            ctx=ctx,
+            pos=(ctx.locals._path[ctx.locals._path_idx]),
             **cmd_kwargs
         )
 
@@ -214,7 +224,7 @@ def process(
         return CommandStatus.RUNNING
 
     elif res == CommandStatus.FAILURE:
-        logger.debug(f'Moving to tile {(_path[_path_idx][0], _path[_path_idx][1])} FAILED')
+        logger.debug(f'Moving to tile {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} FAILED')
 
     return res
 

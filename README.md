@@ -570,6 +570,18 @@
   - [ ] In case of error, load some mock - test map instead of real map, test sound instead of real sound, test model instead of real model, test AI instead of real AI
   - [ ] Change ofmap rendering - do not always generate all the tiles from scretch but - re-use the pane and only draw the tiles that are new + re-draw the animated tiles if needed.
   - [ ] How to solve the problem when AI follows some path and is attacked? The easier way is probably to reset the BT as a part of event handler, not sure.
+  - [ ] ECS manager will provide only `_game_functions` to processors and commands and nothing else. Thus, we would need to pass the whole `ecs_mng` reference to the commands but only `ecs_mng._game_functions` (dict of references)
+  - [x] redo doctests for all commands (cmd_ctx was substituted by ctx) - `move_to.py` and onwards
+  - [x] redo `CommandContextMock` so that it does not need to be initiated as `CommandContextMock(globals=ContainerMock(), locals=ContainerMock())` but as `CommandContextMock()`
+  - [ ] doctest on command files - process tests calling always `init` as prerequisite
+  - [ ] path finding using checkpoints on the map and BFS from source and target
+  - [ ] BUG - move_to_pos_target_vect - direction of movement (facing of entity is not being changed)
+  - [x] move_to_target command - that is calculating the path
+  - [x] move to range and attack with arrows example using path finding and attack command.
+  - [ ] tile_to_px function and px_to_tile function store somewhere and use it universaly - now haviong it in commands and debug processor at least.
+  - [ ] adjust BFS pathfinding so it prefers right-left up-down movement based on the greater distance to the target.
+  - [ ] write test to `move_to_target` and `face_entity` commands, then merge the branches
+
 
 ## BUG - double use of Command Command factory
   1. `Controllable` component - contains `Command` called `reset_brain`

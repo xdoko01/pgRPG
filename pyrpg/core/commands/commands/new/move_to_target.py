@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - cmd_ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -36,21 +36,25 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
-from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
+from pyrpg.core.managers.ecs_manager import ECSManager
+from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position, PositionMock # To work with components in commands (remove search add ...)
-from .move_to_pos_px import process as cmd_move_to_pos_px # import other existing command
-from .move_to_pos_px import init as cmd_move_to_pos_px_init
+from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
+from .move_to import process as cmd_move_to # import other existing command
+from .move_to import init as cmd_move_to_init # import other existing command
+from pyrpg.core.config.config import TILE_RES
 
 def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         target,
+        upd_path_ms=5000, # after how many ms to update the path
+        max_time_s=None, # how long to chase
+        proximity_tl=0, # how close to get to finish successfully
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -61,8 +65,9 @@ def init(
     In case that no specific steps are required before the first run of process(), pass it.
 
     Parameters:
-        :param target: Entity_id of the target
-        :type target: integer
+
+        :param target: Target entity id.
+        :type target: int
 
         :returns: None
 
@@ -70,28 +75,33 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> cmd_ctx_mock = CommandContextMock(local_bb={})
-        >>> ecs_mng_mock = ECSManagerMock()
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> ctx_mock = CommandContextMock()
 
         Run tests:
         ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, target=2)
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+        >>> print((ctx_mock.locals._px_pos, ctx_mock.locals._path[0], ctx_mock.locals._path_idx))
+        ((96, 96), (1, 1), 0)
     '''
-    # Additional parameters that can be used in the command
-    #cmd_ctx.local_bb['_ent_pos'] = ecs_mng.try_component(entity_id, Position)
-    #cmd_ctx.local_bb['_last_dir_change'] = 0
-    #cmd_ctx.local_bb['_move_axis'] = None
 
-    # Reuse existing init from more general move to px function
-    cmd_move_to_pos_px_init(
+    # Add new local - position component of the target
+    ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
+    ctx.locals.add('_last_tar_pos', ctx.locals._tar_pos.get_tile())
+    ctx.locals.add('_last_path_change', ctx.current_time)
+
+    cmd_move_to_init(
         ecs_mng=ecs_mng,
         entity_id=entity_id,
-        cmd_ctx=cmd_ctx,
+        ctx=ctx,
+        # 'Public' attributes specific to this command and used while calling the command
+        pos=ctx.locals._last_tar_pos,
+        # The rest of parameters, if needed
         **cmd_kwargs
     )
 
-    # Add new local - position component of the target
-    cmd_ctx.local_bb['_tar_pos'] = ecs_mng.try_component(target, Position)
+    logger.debug(f'Locals initiated: {ctx.locals=}')
 
 
 # DO NOT REMOVE - Mandatory function
@@ -99,23 +109,16 @@ def process(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
-        cmd_ctx: CommandContext,
+        ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         target,
-        proximity_px=10,
-        max_time_s=None,
-        change_dir_ms=1000,
-        dt_comp=True,
-        absolute=False,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos=None,
-        _tar_pos=None,
-        _last_dir_change=None,
-        _move_axis=None,
+        upd_path_ms=5000, # after how many ms to update the path
+        max_time_s=None, # how long to chase
+        proximity_tl=0, # how close to get to finish successfully
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
-    ''' Move to the position of certain entity on the current map.
+    ''' Move to the target entity position using the path.
 
     This function represents the body of the command. It can be executed once and 
     finish with the CommandStatus.SUCCESS or ComandStatus.FAILURE, or can be called
@@ -124,162 +127,116 @@ def process(
     'private' attributes are passed to it by CommandManager.
 
     Parameters:
-        :param target: Entity_id that should be reached.
+        :param target: Target entity id
         :type target: int
         
-        :param proximity_px: How far from the target to stop
-        :type proximity_px: int
-        
-        :param max_time_s: Maximum time before ending with failure. If None, never fails.
-        :type max_time_s: int
-
-        :param change_dir_ms: How long keep direction before changing it
-        :type change_dir_ms: int
-
-        :param dt_comp: Should delta time (dt) correction be taken into account.
-        :type dt_comp: bool
-
-        :param absolute: Should velocity be ignored (only move by vector, not multipy by velocity).
-        :type absolute: bool
-
-        :param _ent_pos: Private attribute holding Position component of the entity.
-        :type _ent_pos: Component
-
-        :param _tar_pos: Private attribute holding Position component of the target.
-        :type _tar_pos: Component
-
-        :param _last_dir_change: Private attribute holding time when the direction was last changed.
-        :type _last_dir_change: int
-
-        :param _move_axis: Private attribute keeping direction of current movement.
-        :type _move_axis: str (X,Y)
-
         :returns: CommandStatus
 
     Tests:
 
         Prepare mocs:
         -------------
+        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+
+        >>> ctx_mock = CommandContextMock()
+        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+        >>> print((ctx_mock.locals._px_pos, ctx_mock.locals._path[0], ctx_mock.locals._path_idx))
+        ((96, 96), (1, 1), 0)
 
         Run tests:
         ----------
         -> Test No Context
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=None, target=2)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=None, pos=[10,10])
             Traceback (most recent call last):
             ...
             AssertionError: Command cannot run without context.
 
-        -> Test Target Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), target=2, _tar_pos=None)
-            <CommandStatus.FAILURE: 'FAILURE'>
-
         -> Test Entity Ceased to Exist
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), target=2, _ent_pos=None)
+            >>> ctx_mock.locals.add("_ent_pos", None)
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.FAILURE: 'FAILURE'>
 
-        -> Test Target Position Not Reached in Time
-            >>> cmd_ctx_mock = CommandContextMock(duration=20000)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=cmd_ctx_mock, target=2, max_time_s=5)
-            <CommandStatus.FAILURE: 'FAILURE'>
+        -> Test Target Position has not been Reached
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=91, y=120))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
+            <CommandStatus.RUNNING: 'RUNNING'>
 
         -> Test Target Position has been Reached
-            >>> _ent_pos_mock = PositionMock(x=91, y=105)
-            >>> _tar_pos_mock = PositionMock(x=85, y=105)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), target=2, _ent_pos=_ent_pos_mock, _tar_pos=_tar_pos_mock)
+            >>> ctx_mock.locals.add("_ent_pos", PositionMock(x=672, y=672))
+            >>> ctx_mock.locals.add("_path", ((1,1),(2,2),(10,10)))
+            >>> ctx_mock.locals.add("_path_idx", 2)
+            >>> ctx_mock.locals.add("_px_pos", (672,672))
+            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])
             <CommandStatus.SUCCESS: 'SUCCESS'>
-
-        -> Test Target Position has not been Reached Yet
-            >>> _ent_pos_mock = PositionMock(x=91, y=120)
-            >>> _tar_pos_mock = PositionMock(x=20, y=10)
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, cmd_ctx=CommandContextMock(), target=2, _ent_pos=_ent_pos_mock, _tar_pos=_tar_pos_mock, _last_dir_change = 50)
-            <CommandStatus.RUNNING: 'RUNNING'>
     '''
 
     # Comment out, if you want see the stats about the command
-    logger.debug(f'{cmd_ctx=}')
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
-    assert cmd_ctx is not None, f'Command cannot run without context.'
+    assert ctx is not None, f'Command cannot run without context.'
 
-    # Check if target have still position component, if not finish. Entity position
-    # component existence is checked in move_to_pos_px command.
-    if _tar_pos is None: return CommandStatus.FAILURE
+    # Check if we are close enough to the target
+    #tar_pos_tl = ctx.locals._tar_pos.get_tile()
+    #ent_pos_tl = ctx.locals._ent_pos.get_tile()
 
-    return cmd_move_to_pos_px(
-        ecs_mng=ecs_mng,
-        entity_id=entity_id,
-        cmd_ctx=cmd_ctx,
-        # 'Public' attributes specific to this command and used while calling the command
-        pos=(_tar_pos.x, _tar_pos.y),
-        proximity_px=proximity_px,
-        max_time_s=max_time_s,
-        change_dir_ms=change_dir_ms,
-        dt_comp=dt_comp,
-        absolute=absolute,
-        # 'Private' attributes that have been prepared by init function
-        _ent_pos=_ent_pos,
-        _last_dir_change=_last_dir_change,
-        _move_axis=_move_axis,
-        # The rest of parameters, if needed
-        **cmd_kwargs
-    )
+    #if abs(tar_pos_tl[0] - ent_pos_tl[0]) <= proximity_tl and abs(tar_pos_tl[1] - ent_pos_tl[1]) <= proximity_tl:
+    #    return CommandStatus.SUCCESS
 
-    '''
-    # INIT CYCLE # - During the first run of the command, get the position of the entity and target and save it to local blackboard
-    if cmd_ctx.tick_count == 1:
-        try:
-            target = cmd_ctx.global_bb.get(target, target) # take target from blackboard if present there
-            cmd_ctx.local_bb['ent_pos'] = ecs_mng.component_for_entity(entity_id, Position) # save entity pos component
-            cmd_ctx.local_bb['tar_pos'] = ecs_mng.component_for_entity(target, Position) # save target pos component
-            cmd_ctx.local_bb['last_dir_change'] = 0
-        except KeyError:
-            return CommandStatus.FAILURE # entity or target Position component does not exist anymore
+    proximity_px = proximity_tl * TILE_RES
 
-    # Check, if we are not moving to the point for too long
-    if max_time_s is not None and cmd_ctx.duration > max_time_s: return CommandStatus.FAILURE
+    if abs(ctx.locals._tar_pos.x - ctx.locals._ent_pos.x) <= proximity_px and abs(ctx.locals._tar_pos.y - ctx.locals._ent_pos.y) <= proximity_px:
+        return CommandStatus.SUCCESS
 
-    # Check, if the distance is closed finish with SUCCESS
-    try:
-        if abs(cmd_ctx.local_bb['tar_pos'].y - cmd_ctx.local_bb['ent_pos'].y) < proximity_px and \
-        abs(cmd_ctx.local_bb['tar_pos'].x - cmd_ctx.local_bb['ent_pos'].x) < proximity_px:
+
+    # Check if it is time to recalc the path
+    if ctx.current_time - ctx.locals._last_path_change >= upd_path_ms:
+
+        # Check if target still exists
+        if ctx.locals._tar_pos is None:
+            logger.debug(f'Target Entity component reference is lost, returning failure.')
+            return CommandStatus.FAILURE
+
+        # Check, if we are not moving to the target for too long
+        if max_time_s is not None and ctx.duration > max_time_s*1000: 
+            logger.debug(f'Max time for movement is up. Returning failure.')
+            return CommandStatus.FAILURE
+
+        # Start over
+        init(ecs_mng=ecs_mng, entity_id=entity_id, ctx=ctx, target=target, **cmd_kwargs)
+
+        # Log
+        logger.debug(f'Updating path after {upd_path_ms=} ms. New target pos {ctx.locals._last_tar_pos}. New path {ctx.locals._path=}')
+
+    # Move to _last_tar_pos
+    res = cmd_move_to(
+            ecs_mng=ecs_mng,
+            entity_id=entity_id,
+            ctx=ctx,
+            # 'Public' attributes specific to this command and used while calling the command
+            pos=ctx.locals._last_tar_pos,
+            # The rest of parameters, if needed
+            **cmd_kwargs
+        )
+
+    # Check if the target is near. If not, continue moving towards it
+    if res == CommandStatus.SUCCESS:
+
+        # Check if entity is close enough to the target to finish successfully
+        tar_pos_tl = ctx.locals._tar_pos.get_tile()
+        ent_pos_tl = ctx.locals._ent_pos.get_tile()
+
+        if abs(tar_pos_tl[0] - ent_pos_tl[0]) <= proximity_tl and abs(tar_pos_tl[1] - ent_pos_tl[1]) <= proximity_tl:
             return CommandStatus.SUCCESS
 
-        # Check, if it is time to change the direction
-        if cmd_ctx.current_time - cmd_ctx.local_bb['last_dir_change'] >= change_dir_ms:
-            cmd_ctx.local_bb['last_dir_change'] = cmd_ctx.current_time
-
-            # Decide on which axis we will be closing the gap - close the smaller gap
-            if abs(cmd_ctx.local_bb['tar_pos'].x- cmd_ctx.local_bb['ent_pos'].x) > abs(cmd_ctx.local_bb['tar_pos'].y - cmd_ctx.local_bb['ent_pos'].y):
-                cmd_ctx.local_bb['move_axis'] = 'X'
-            else:
-                cmd_ctx.local_bb['move_axis'] = 'Y'
-
-        # Continue movement
-        if cmd_ctx.local_bb['move_axis'] == 'X':
-            # use existing command
-            cmd_move_dir(
-                ecs_mng=ecs_mng, 
-                entity_id=entity_id, 
-                cmd_ctx=None, 
-                moves=['left' if cmd_ctx.local_bb['tar_pos'].x - cmd_ctx.local_bb['ent_pos'].x < 0 else 'right' if cmd_ctx.local_bb['tar_pos'].x - cmd_ctx.local_bb['ent_pos'].x > 0 else 'right'],
-                dt_comp=dt_comp,
-                absolute=absolute
-            )
         else:
-            cmd_move_dir(
-                ecs_mng=ecs_mng, 
-                entity_id=entity_id, 
-                cmd_ctx=None, 
-                moves=['up' if cmd_ctx.local_bb['tar_pos'].y - cmd_ctx.local_bb['ent_pos'].y < 0 else 'down' if cmd_ctx.local_bb['tar_pos'].y - cmd_ctx.local_bb['ent_pos'].y > 0 else 'down'],
-                dt_comp=dt_comp,
-                absolute=absolute
-            )
-
-        return CommandStatus.RUNNING  # entity or target Position component does not exist anymore
-    
-    except KeyError:
-        return CommandStatus.FAILURE
-    '''
+            # Start over
+            init(ecs_mng=ecs_mng, entity_id=entity_id, ctx=ctx, target=target, **cmd_kwargs)
+            return CommandStatus.RUNNING
+    else:
+        return res
 
 if __name__ == '__main__':
 

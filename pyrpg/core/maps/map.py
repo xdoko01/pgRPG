@@ -336,7 +336,8 @@ class Map:
 
 		'''
 
-		assert len(path) >= 2 # at least start and end
+		if len(path) < 2: return path
+		#assert len(path) >= 2 # at least start and end
 
 		movement = None
 		checkpoints = []
@@ -359,7 +360,8 @@ from dataclasses import dataclass
 
 @dataclass
 class MapMock:
-	get_path_bfs = lambda self,start,end: [(1,1),(2,2),(3,3)]
+	get_path_bfs = lambda self,start,end,inc_start=False,avail_moves=((0,0)): [(1,1),(2,2),(3,3)]
+	get_path_checkpoints = lambda self, path: ((1,1),(2,2),(3,3))
 
 if __name__ == '__main__':
 
