@@ -20,13 +20,14 @@ from pyrpg.core.managers.command_manager import CommandManager
 from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.managers.event_manager import EventManager
 from pyrpg.core.managers.script_manager import ScriptManager
+from pyrpg.core.managers.pathfind_manager import PathfindManager
 
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
 from pathlib import Path
 from pyrpg.core.config.paths import QUEST_PATH
 from pyrpg.core.events.event import Event
-from pyrpg.functions import get_dict_from_file, get_dict_value
+from pyrpg.functions import get_dict_from_file, get_dict_value, get_coll_value
 
 
 logger.info(f'Engine initiated')
@@ -64,6 +65,7 @@ class Game:
         self.command_manager = CommandManager() # command manager must have reference to Game in order commands can manipulate the game world
         self.ecs_manager = ECSManager()
         self.script_manager = ScriptManager(alias_to_entity_dict_fnc=self.ecs_manager.get_alias_to_entity_dict)
+        self.pathfind_manager = PathfindManager()
         
         # Reference function for adding events
         # TODO - maybe it would be better to handle processing of events within processor that
@@ -98,6 +100,13 @@ class Game:
             'FNC_CLEAR_COMMANDS' : self.command_manager.clear_command_queue,
             'FNC_GET_COMMANDS' : self.command_manager.get_command_queue,
             'FNC_PROCESS_COMMANDS' : self.command_manager.process_commands,
+            'FNC_EXEC_CMD_INIT' : self.command_manager.execute_command_init, # for do_parallel command
+            'FNC_EXEC_CMD' : self.command_manager.execute_command, # for do_parallel command
+
+            # Paths
+            'FNC_CALC_PATHS': self.pathfind_manager.continue_pathfinding,
+            'FNC_REQUEST_PATHFIND': self.pathfind_manager.request_path,
+            'FNC_GET_PATH': self.pathfind_manager.get_path,
             # Events
             'FNC_ADD_EVENT' : self.event_manager.add_event,
             'add_event_fnc' : self.event_manager.add_event,
@@ -126,9 +135,9 @@ class Game:
             ['maps', self.map_manager.load_map],
             ['dialogs', self.dialog_manager.load_dialog],
             ['templates', self.ecs_manager.load_template],
-            #['entities', self.ecs_manager.load_entity],
             ['entities', self.ecs_manager.load_register_empty_entity], # first register all entities
             ['entities', self.ecs_manager.load_update_empty_entity], # next fill them in order to be able to use aliases everywhere
+            ['entities/components/params/handlers', self.event_manager.load_handler], # look for handlers in the parameters of components
             ['handlers', self.event_manager.load_handler]
         ]
 
@@ -179,9 +188,10 @@ class Game:
         for data_path, process_fnc in self.load_quest_def_fncs:
 
             # Get the data on the path to be processed
-            data_to_process = get_dict_value(quest_def, path=data_path, sep='/', not_found=[])
+            #data_to_process = get_dict_value(quest_def, path=data_path, sep='/', not_found=[])
+            data_to_process = get_coll_value(coll=quest_def, path=data_path, sep='/') # generator
 
-            logger.info(f'Start of processing of "{data_path}" for quest "{quest.alias}". Total "{len(data_to_process)} definitions".')
+            logger.info(f'Start of processing of "{data_path}" for quest "{quest.alias}".')
 
             # Cycle this data and process them using progress bar
             with ProgressBar2(gui_manager=self.gui_manager, header='Loading', text=data_path) as progress:

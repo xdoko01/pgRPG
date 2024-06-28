@@ -105,6 +105,7 @@ class BrainAI(Component):
 
         super().__init__()
 
+        # Create AI generator
         if kwargs.get('cmd_tree') is not None:
             try:
                 self.generator = BTree(tree_def=kwargs, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)

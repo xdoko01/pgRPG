@@ -1,3 +1,127 @@
+events
+  - if any event occurs that concerns the entity as an main actor -> reset the tree
+  - example: if attacked, stop chasing the enemy and start chasing someone else.
+    - btree should be subscribed to events and once events received, some record should be recorder in the blackboard
+    - someone hit me, my btree knows about it and has defined action on that event, to write the attacker entity to the specific blackboard key.
+
+    "handlers": [
+      "GOT_HIT": {
+        bb_key: "under_attack_from",
+        bb_value: some_field_from_the_event,
+        action: "TREE_RESET"
+      },
+      "TARGET_SEEN": {
+        bb_key: "target"
+        bb_value:
+      }
+    ]
+
+ScriptManager.execute_event_actions(EVENT, ACTIONS)
+
+        json_logic(
+            expr=translated_actions, 
+            value_fnc=lambda x: x, 
+            script_fnc=lambda *args: self.execute_script(args[0], event, **args[1]), 
+            data=event.params
+        )
+
+							[	// CHange the behavior in case of attack
+								"GOT_HIT",
+								{
+									"actions": [
+										"IF", ["==", ["VAR", "entity"], "player01"]
+										],
+										["SEQ",
+											["SCRIPT", "set_bb_data", {"target_ent": ???}], /// how to get info from event here
+											["SCRIPT", "reset_behavior", {}]
+										]
+									]
+								}
+							]
+
+guard - guards until it spots the enemy
+ - guard a spot
+  - finds a random point around
+  - moves to that point
+  - checks for enemy close - when spotted switch to track and attack
+
+ - guard a path
+  - 
+
+enemy 
+ - wanders around, 
+ -> EVENT damage - when hit, runs away
+
+# BT supporting events (requests)
+
+  - special type of node - Request Handler
+  - on creation of BT, create a dictionary mapping event type to RH node (one node)
+  - when BT processor is executed, pass to the BT all the events
+  - if BT has some of those events registered then:
+    - check if the currently running behavior has higher priority than the RH node
+      - if yes, continue execution of the current node as normal
+    - stop processing the current behavior ans skip to the RH node and start processing it
+      - the RH node will first record all event details to the blackboard
+      - next it will start processing the underlying tree
+    - when the RH node is finished, it returns its status to the upper node as normal
+  - if RH nodes are part of the Sequence, they are ignored. THey are only invoked when event arrives
+
+ OR:
+ - on event, it is written on the blackboard
+ - decorator which is resolving conditions using globals and decorating sequence is used
+ - RH subtree runs meanwhile no events are processed
+
+EVENTS - easy:
+ - current node is aborted
+ - tree starts from the root
+ - the branches processing events are processed first
+
+TODO:
+  - events are passed to BTree - or BTRee knows abouat event manager and communicates with it
+  - `CommandManager` to be able to process multiple behaviors passed by the generator
+  - implement condition on globals as decorator (of any node - even sequence, ...)
+  - how to decide if the currently processed node has higher priority than RH node?
+    - if BT reacts on ON_DAMAGE and receives another ON_DAMAGE event - it should ignore it
+
+  "cmd_tree": {
+
+    "type": "Repeater",
+    "name": "Trace and Attack",
+    "children": [
+      {
+        "type": "RequestHandler",
+        "name": "ON_DAMAGE run away - if health < 50",
+        "event": "ON_DAMAGE",
+
+        --> ctx.globals.event_type = "ON_DAMAGE"
+        --> ctx.globals.event_source_ent = "player01"
+        --> ctx.globals.event_dest_ent = "NPC"
+
+        "children": [
+          "type": "Sequence",
+          "name": "If health < 50, run away",
+          "children": [
+            {"name": "Check globals", "type": "Behavior", "command": ["check_globals", {"conds": ["==", "NPC", ["VAR", "event_dest_ent"]]}, 
+            {"name": "Check health", "type": "Behavior", "command": ["check_health", {"cond": "<50"}]},
+            {"name": "Find safe spot", "type": "Behavior", "command": ["find_safe_spot", {"safe_spot_tl": "bb_safe spot"}]},
+            {"name": "Move to Safe spot", "type": "Behavior", "command": ["move_to", {"pos": "^bb_safe_spot"}]},
+        ]
+      },
+
+      {
+        "type": "Sequence",
+        "name": "Move Between the point and the target entity",
+        "children": [
+          {"name": "Move to target", "type": "Behavior", "command": ["move_to_target", {"target": "^target_ent", "proximity_tl": 3, "upd_path_ms": 1000}]},
+          {"name": "Face the target", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
+          {"name": "Attack the target", "type": "Behavior", "command": ["attack", {"attack_time_ms": 2000}]},
+          {"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 500}]}
+        ]
+      }
+    ]
+  }
+
+
 # Composable comands
  - mapping outputs to inputs - similar to UE videos
  
@@ -62,9 +186,9 @@
 ## walk and check for enemies at the same moment in one cycle
 
  - simple paralel node
- - move - secondary action
- - check - primary action -
- 
+ - move - secondary action - running
+ - check - primary action - false
+
 
 ## How to implement the scope chain - it is implemented as a stack LIFO of objects - dictionaries
 

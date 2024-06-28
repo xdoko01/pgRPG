@@ -33,9 +33,14 @@ def main(argv):
     # 12_ai
     #filepath = 'new/tests/12_ai/test_entity_seen.jsonc' - old, does not work, fix it
     #filepath = 'new/tests/12_ai/move_between_2_points.jsonc'
-    filepath = 'new/tests/12_ai/trace_and_attack.jsonc'
+    filepath = 'new/tests/12_ai/guard_and_fight_back_if_ambushed_using_events.jsonc'
+    #filepath = 'new/tests/12_ai/guard_and_fight_back_if_ambushed.jsonc'
+    #filepath = 'new/tests/12_ai/guard_and_attack_on_sight.jsonc'
 
-
+    #filepath = 'new/tests/12_ai/simple/test_damaged.jsonc'
+    #filepath = 'new/tests/12_ai/simple/test_bb_value.jsonc'
+    #filepath = 'new/tests/12_ai/simple/do_parallel.jsonc'
+    #filepath = 'new/tests/12_ai/simple/move_between_checkpoints.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_vect.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to_target.jsonc'
     #filepath = 'new/tests/12_ai/simple/move_to.jsonc'

@@ -1,11 +1,11 @@
 {
 	// JSON Schema for validation of the game parameters
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../../../core/schemas/new/quest.schema.json",
 
 	// Basic data
-	"id" : "trace_and_attack",
-	"title" : "Test command trace_and_attack",
-	"description" : "Test command trace_and_attack",
+	"id" : "test_bb_value",
+	"title" : "Test command checking the values on the blackboard",
+	"description" : "Test command checking the values on the blackboard",
 	"objective" : "POC of NPC controlled by the script",
 
 	// What quests need to be loaded before this one
@@ -26,9 +26,6 @@
 		// For commands
 		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
 		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
-
-		// Calculate path
-		["new.command_system.perform_pathfinding_calculation_processor:PerformPathfindingCalculationProcessor", {"max_no_of_calcs": 100}],
 		
 		// For movement
 		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
@@ -46,6 +43,7 @@
 
 		// NEW - For generation of projectile from factory and projectile data
 		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+
 
 		// For destroy
 		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
@@ -171,23 +169,19 @@
 							"target_ent": "NPC"
 						}, 
 
-						
-						
 						"cmd_tree": {
-							"type": "Repeater",
-							"name": "Repeat Follow and Attack the Target",
+							"name": "End with success if the json logic test is successful",
+							"type": "Sequence",
 							"children": [
-								{
-									"type": "Sequence",
-									"name": "Follow and Attack the Target",
-									"children": [
-										{"name": "Move to target", "type": "Behavior", "command": ["move_to_target", {"target": "^target_ent", "proximity_tl": 3, "upd_path_ms": 3000}]},
-										{"name": "Face the target", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
-										{"name": "Attack the target", "type": "Behavior", "command": ["attack", {"attack_time_ms": 2000}]},
-										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 500}]}
-									]
-								}
-							]
+								{"name": "Controll check", "type": "Behavior", "command": ["test_bb_value", {"json_expr": ["!=", ["VAR", "target_ent"], "^target_ent"]}]},
+								{"name": "Log - Controll check", "type": "Behavior", "command": ["log", {"text": "Control check - SUCCESS"}]}, 
+ 
+								{"name": "Check if target is specified", "type": "Behavior", "command": ["test_bb_value", {"json_expr": ["!=", ["VAR", "target_ent"], 0]}]}, 
+								{"name": "Log - Check if target is specified", "type": "Behavior", "command": ["log", {"text": "Check if target is specified - SUCCESS"}]}, 
+
+								{"name": "Check if target is NPC", "type": "Behavior", "command": ["test_bb_value", {"json_expr": ["!=", ["VAR", "target_ent"], "NPC"]}]}, 
+								{"name": "Log - Check if target is NPC", "type": "Behavior", "command": ["log", {"text": "Check if target is NPC - SUCCESS"}]}
+							]	
 						}
 					}
 				},

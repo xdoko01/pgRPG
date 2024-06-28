@@ -123,9 +123,13 @@ class PerformRenderDebugInfoProcessor(Processor):
                 tile_to_px = lambda t_pos: (t_pos[0]*TILE_RES + TILE_RES // 2, t_pos[1]*TILE_RES + TILE_RES // 2)
 
                 try:
+                    # Skip in case path is not yet calculated
+                    if not brain.generator.bb.locals._path: continue
+                    
                     path = tuple(map(camera.apply, map(tile_to_px, brain.generator.bb.locals._path)))
 
                     assert len(path) > 1, f'Path must have more than 1 point in order to draw it'
+
 
                     # Draw Path without start
                     pygame.draw.lines(
@@ -145,6 +149,25 @@ class PerformRenderDebugInfoProcessor(Processor):
                         path[brain.generator.bb.locals._path_idx], # to next path point
                         2 # Thickness of line taken from Debug component
                     )
+
+                    # Draw little circles on the path
+                    for i, point in enumerate(path):
+                        
+                        pygame.draw.circle(
+                            camera.screen,
+                            pygame.Color('black'),
+                            point,
+                            3
+                        )
+
+                        # Print point coordinates
+                        camera.screen.blit(
+                            GAME_DEBUG_FONT.render(
+                                pformat((round(brain.generator.bb.locals._path[i][0]), round(brain.generator.bb.locals._path[i][1])))
+                            ), 
+                            (point[0], point[1] - 5)
+                        )
+
 
                 except AttributeError:
                     pass

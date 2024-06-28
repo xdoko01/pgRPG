@@ -84,7 +84,8 @@ class PerformDamageSingleProcessor(Processor):
                 damage_source = damage.parent if damage.parent else damage.entity
 
                 # Add FlagWasDamagedBy to ent_damageable entity
-                self.world.add_component(ent_damageable, FlagWasDamagedBy(entities={damage.entity, damage_source}))
+                #self.world.add_component(ent_damageable, FlagWasDamagedBy(entities={damage.entity, damage_source}))
+                self.world.add_component(ent_damageable, FlagWasDamagedBy(entities={damage_source}))
                 logger.debug(f'({self.cycle}) - Entity {ent_damageable} was damaged by entity {damage.entity}.')
 
                 # Add FlagHasDamaged to ent_damaging entity
@@ -102,6 +103,9 @@ class PerformDamageSingleProcessor(Processor):
                 # Check if is destroyed
                 if damageable.health == 0:
                     self.world.add_component(ent_damageable, FlagHasNoHealth())
+
+                # Record the damage also on Damageable component - to be able to query this component in command checking if entity has been damaged by someone
+                damageable.damages.append(damage)
 
 
     def pre_save(self):

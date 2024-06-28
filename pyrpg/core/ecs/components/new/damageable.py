@@ -24,7 +24,7 @@ class Damageable(Component):
         50
     '''
 
-    __slots__ = ['health']
+    __slots__ = ['health', 'damages']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the  Health component.
@@ -32,6 +32,7 @@ class Damageable(Component):
         super().__init__()
 
         self.health = kwargs.get("health", 100)
+        self.damages = []
 
 
 if __name__ == '__main__':

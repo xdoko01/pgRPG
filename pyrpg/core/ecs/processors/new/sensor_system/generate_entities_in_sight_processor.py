@@ -17,6 +17,8 @@ from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
 from ..functions import filter_only_in_view_angle_of_ent, filter_only_within_distance_from_ent
 from ..functions import filter_only_visible_on_camera
 
+from pyrpg.core.events.event import Event
+
 # Logger init
 logger = logging.getLogger(__name__)
 
@@ -41,7 +43,7 @@ class GenerateEntitiesInSightProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self, FNC_GET_MAP, *args, **kwargs):
+    def __init__(self, FNC_GET_MAP, FNC_ADD_EVENT, *args, **kwargs):
         ''' Init the processor.
 
         Parameters:
@@ -50,6 +52,7 @@ class GenerateEntitiesInSightProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
         self.fnc_get_map = FNC_GET_MAP
+        self.add_event_fnc = FNC_ADD_EVENT
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -85,6 +88,16 @@ class GenerateEntitiesInSightProcessor(Processor):
                         # 3/ write to CanSee component
                         ent_can_see.ent_in_sight.add(oth_ent)
                         logger.debug(f'({self.cycle}) - Entity {ent} has seen entity {oth_ent}.')
+
+                        # Report event that oth entity has been spottet
+                        sight_event = Event(
+                            event_type='CAN_SEE', 
+                            generator_obj=ent, 
+                            other_obj=oth_ent, 
+                            params={'observer': ent, 'subject': oth_ent}
+                        )
+                        self.add_event_fnc(sight_event)
+
 
 
     def pre_save(self):

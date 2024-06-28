@@ -1,11 +1,11 @@
 {
 	// JSON Schema for validation of the game parameters
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../../../core/schemas/new/quest.schema.json",
 
 	// Basic data
-	"id" : "trace_and_attack",
-	"title" : "Test command trace_and_attack",
-	"description" : "Test command trace_and_attack",
+	"id" : "do_parallel",
+	"title" : "Test parallel processing of 2 commands",
+	"description" : "Test parallel processing of 2 commands",
 	"objective" : "POC of NPC controlled by the script",
 
 	// What quests need to be loaded before this one
@@ -46,6 +46,9 @@
 
 		// NEW - For generation of projectile from factory and projectile data
 		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+
+		// For sight - run once per 10 cycles
+		["new.sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
 
 		// For destroy
 		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
@@ -168,30 +171,31 @@
 					"params" : {
 
 						"blackboard": {
-							"target_ent": "NPC"
+							"checkpoints": [[5,5], [30,10], [50,50], [50,5]],
+							"target_ent": null
 						}, 
 
-						
-						
 						"cmd_tree": {
-							"type": "Repeater",
-							"name": "Repeat Follow and Attack the Target",
-							"children": [
+							"name": "Move on the checkpoints and end with SUCCESS once when NPC spotted",
+							"type": "Behavior",
+							"command": [
+								"do_parallel",
 								{
-									"type": "Sequence",
-									"name": "Follow and Attack the Target",
-									"children": [
-										{"name": "Move to target", "type": "Behavior", "command": ["move_to_target", {"target": "^target_ent", "proximity_tl": 3, "upd_path_ms": 3000}]},
-										{"name": "Face the target", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
-										{"name": "Attack the target", "type": "Behavior", "command": ["attack", {"attack_time_ms": 2000}]},
-										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 500}]}
-									]
+									"commands": [
+										["test_can_see", {"entities": ["NPC"], "out_bb_key": "target_ent"}],
+										["move_to_checkpoints", {"checkpoints": "^checkpoints"}]
+									],
+									"returns": {
+										"SS": "SUCCESS", "SR": "SUCCESS", "SF": "SUCCESS",
+										"FS": "FAILURE", "FR": "RUNNING", "FF": "FAILURE"
+									}
 								}
 							]
 						}
 					}
 				},
 
+				{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_tiles": 5}},
 				{"type" : "new.position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}

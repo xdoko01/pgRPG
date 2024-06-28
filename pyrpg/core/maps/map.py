@@ -63,6 +63,9 @@ class Map:
 		self.width = self.tmxdata.width * config.TILE_RES
 		self.height = self.tmxdata.height * config.TILE_RES
 
+		# Generate the graph for pathfinding on the given map
+		self.path_graph = self.generate_path_graph()
+
 	def info(self):
 		print(f'Tile dims: {self.tmxdata.width=}, {map.tmxdata.height=}')
 		print(f'Pixel dims: {self.width=}, {map.height=}')
@@ -245,6 +248,33 @@ class Map:
 	def is_walkable(self, tile: tuple) -> bool:
 		'''Is within map and is walkable (no obstacle)'''
 		return (0 <= tile[0] <= self.tmxdata.width - 1) and (0 <= tile[1] <= self.tmxdata.height - 1) and self.tmxdata.get_tile_gid(tile[0], tile[1], self.collision_layer) == 0
+
+	def generate_path_graph(
+			self, 
+			avail_moves: tuple=(
+				(0,-1), #up
+				(0,1), #down
+				(-1,0), #left
+				(1,0) #right
+			)
+		) -> dict:
+		"""Generate the graph for pathfinding from the map data"""
+
+		path_graph = dict()
+		cost = 1 # all distance between nodes is set to 1
+
+		# Iterate all tiles self.tmxdata.width - 1, self.tmxdata.height - 1
+		for y in range(self.tmxdata.height):
+			for x in range(self.tmxdata.width):
+				# If the tile is walkable
+				if self.tmxdata.get_tile_gid(x, y, self.collision_layer) == 0:
+					neighbours = []
+					for d in avail_moves:
+						if self.is_walkable(tile=(x+d[0],y+d[1])):
+							neighbours.append(((x+d[0],y+d[1]), cost))
+					path_graph.update({(x,y): neighbours})		
+	
+		return path_graph
 
 	def get_path_bfs(
 			self,

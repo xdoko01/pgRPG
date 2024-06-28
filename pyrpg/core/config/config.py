@@ -215,7 +215,7 @@ LOGGING = {
         },
         "file_handler_cmd": {
             "class": "logging.FileHandler",
-            "formatter": "short",
+            "formatter": "short_with_func",
             "filename": "pyrpg/logs/commands.log",
             "mode": "w",
             "encoding": "utf-8"
@@ -251,24 +251,24 @@ LOGGING = {
         # Save all the logs from component classes to the file
         "pyrpg.core.ecs.components" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_comp"], # uncomment to log all the processors
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_comp"], # uncomment to log all the processors
+            "handlers" : ["null"],  # do not log to file for speed
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
 
         # Save all the logs from processor classes to the file
         "pyrpg.core.ecs.processors" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_proc"], # uncomment to log all the processors
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_proc"], # uncomment to log all the processors
+            "handlers" : ["null"],  # do not log to file for speed
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
 
         # Save all the logs from engine
         "pyrpg.core.engine" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            #"handlers" : ["file_handler_engine"], # uncomment to log to the file
-            "handlers" : ["null"],  # do not log to file for speed
+            "handlers" : ["file_handler_engine"], # uncomment to log to the file
+            #"handlers" : ["null"],  # do not log to file for speed
             #"handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
@@ -285,8 +285,8 @@ LOGGING = {
         # Save all the logs from behavior list classes to the file
         "pyrpg.core.commands.generators.blist" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-            "handlers" : ["file_handler_blists"], # uncomment to log to the file
-            #"handlers" : ["null"],  # do not log to file for speed
+            #"handlers" : ["file_handler_blists"], # uncomment to log to the file
+            "handlers" : ["null"],  # do not log to file for speed
             #"handlers" : ["console"],  # log to the text console
             "propagate" : False # Do not send messages from these loggers to parent (root) logger
         },
@@ -303,6 +303,7 @@ LOGGING = {
         # Save all the logs from command functions to the file
         "pyrpg.core.commands" : {
             "level" : "DEBUG", # Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+            #"handlers" : ["console"], # uncomment to log all the commands
             "handlers" : ["file_handler_cmd"], # uncomment to log all the commands
             #"handlers" : ["null"],  # do not log to file for speed
             "propagate" : False # Do not send messages from these loggers to parent (root) logger

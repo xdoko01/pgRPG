@@ -1,3 +1,6 @@
+''' Run python -m pyrpg.functions.dict_utils -v for test.
+'''
+
 def _create_dict_list(path: list, value) -> dict:
     '''Create a dictionary(tree) specified by the list of
     embeded keys. The value is put to the deepest key.
@@ -93,7 +96,6 @@ def set_dict_value(d: dict, path: str, value, sep: str='.') -> None:
     except KeyError:
         # If path no longer exists, create the necessary keys
         d.update(_create_dict_list(parse_path[depth:], value))
-
 
 def get_dict_value(d: dict, path: str, sep :str='.', not_found=None):
     '''Get the value from the dictionary that
@@ -247,6 +249,100 @@ def get_all_dict_values(d: dict):
         else:
             yield val
 
+def _get_coll_value(coll, keys: list):
+    '''Get the value specified on the path (specified by sequence of keys) 
+    from the collection.
+
+    Parameters:
+        :param coll: Collection that is being searched
+        :type coll: dict/list/tuple/set/...
+
+        :param keys: List of keys where new value should be found.
+        :type keys: list
+    '''
+
+    if len(keys) == 0: yield coll
+
+    if isinstance(coll, dict):
+        try:
+            if len(keys) == 1: # Yield the results
+                sub_coll = coll[keys[0]]
+                if sub_coll:
+                    if isinstance(sub_coll, list) or isinstance(sub_coll, tuple) or isinstance(sub_coll, set):
+                        for item in sub_coll: yield item
+                    else:
+                        yield sub_coll
+            else:
+                # If some parts of path exist, continue
+                yield from _get_coll_value(coll=coll[keys[0]], keys=keys[1:])
+        except KeyError:
+            return # key was not found in the dictionary, return nothing
+
+    elif isinstance(coll, list) or isinstance(coll, tuple) or isinstance(coll, set):
+        for item in coll:
+            yield from _get_coll_value(coll=item, keys=keys)
+
+
+def get_coll_value(coll, path: str, sep: str='.'):
+    '''Get the value specified on the path from the collection.
+
+    Parameters:
+        :param coll: Collection that is being searched
+        :type coll: dict/list/tuple/set/...
+
+        :param path: List of keys in form of a string separated by sep
+                     where new value should be found.
+        :type path: str
+
+        :param sep: Separator used to separate the keys in path string
+        :type sep: str
+
+    Tests:
+        >>> ex = {\
+            'prereqs': [],\
+            'entities': [\
+                {\
+                    'id': 'NPC',\
+                    'components': [\
+                        {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}\
+                    ]\
+                },\
+                {\
+                    'id': 'PLAYER',\
+                    'components': [\
+                        {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}\
+                    ]\
+                }\
+            ]\
+        }
+
+        # List all components
+        >>> print([i for i in get_coll_value(coll=ex, path='entities/components', sep='/')])
+        [{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.damageable:Damageable', 'params': {'health': 100}}, {'type': 'new.destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [11, 22, 33]}}, {'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.damageable:Damageable', 'params': {'health': 100}}, {'type': 'new.destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [111, 222, 333]}}]
+        
+        # List all component types
+        >>> print([i for i in get_coll_value(coll=ex, path='entities/components/type', sep='/')])
+        ['new.collidable:Collidable', 'new.damageable:Damageable', 'new.destroy_on_no_health:DestroyOnNoHealth', 'new.collidable:Collidable', 'new.damageable:Damageable', 'new.destroy_on_no_health:DestroyOnNoHealth']
+        
+        # List all entity ids
+        >>> print([i for i in get_coll_value(coll=ex, path='entities/id', sep='/')])
+        ['NPC', 'PLAYER']
+
+        # List all healths
+        >>> print([i for i in get_coll_value(coll=ex, path='entities/components/params/health', sep='/')])
+        [100, 100]
+
+        # List all collidable components
+        >>> print( list( filter( lambda x: x["type"] == "new.collidable:Collidable", get_coll_value(coll=ex, path='entities/components', sep='/') ) ) )
+        [{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}]
+
+    '''
+    keys = [] if path == '' else path.split(sep)
+    yield from _get_coll_value(coll=coll, keys=keys)
 
 if __name__ == '__main__':
     import doctest

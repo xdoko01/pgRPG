@@ -86,22 +86,29 @@ def init(
         ((96, 96), (1, 1), 0)
     '''
 
-    # Add new local - position component of the target
-    ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
-    ctx.locals.add('_last_tar_pos', ctx.locals._tar_pos.get_tile())
-    ctx.locals.add('_last_path_change', ctx.current_time)
+    logger.debug(f'{entity_id=}. Start move_to_target init')
 
-    cmd_move_to_init(
-        ecs_mng=ecs_mng,
-        entity_id=entity_id,
-        ctx=ctx,
-        # 'Public' attributes specific to this command and used while calling the command
-        pos=ctx.locals._last_tar_pos,
-        # The rest of parameters, if needed
-        **cmd_kwargs
-    )
+    # If target not exists or position component not exist, create _tar_pos as None and exit
+    try:
+        ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
+        ctx.locals.add('_last_tar_pos', ctx.locals._tar_pos.get_tile())
+        ctx.locals.add('_last_path_change', ctx.current_time)
 
-    logger.debug(f'Locals initiated: {ctx.locals=}')
+        cmd_move_to_init(
+            ecs_mng=ecs_mng,
+            entity_id=entity_id,
+            ctx=ctx,
+            # 'Public' attributes specific to this command and used while calling the command
+            pos=ctx.locals._last_tar_pos,
+            # The rest of parameters, if needed
+            **cmd_kwargs
+        )
+
+    except KeyError:
+        logger.debug(f'{entity_id=}. Target or its position component no longer exists. Exiting init.')
+        ctx.locals.add('_tar_pos', None)
+
+    logger.debug(f'{entity_id=}. Locals initiated: {ctx.locals=}')
 
 
 # DO NOT REMOVE - Mandatory function
@@ -178,26 +185,18 @@ def process(
     # Command must run with context, else does not make sense
     assert ctx is not None, f'Command cannot run without context.'
 
-    # Check if we are close enough to the target
-    #tar_pos_tl = ctx.locals._tar_pos.get_tile()
-    #ent_pos_tl = ctx.locals._ent_pos.get_tile()
+    # Check if target still exists
+    if ctx.locals._tar_pos is None:
+        logger.debug(f'Target Entity component reference is lost, returning failure.')
+        return CommandStatus.FAILURE
 
-    #if abs(tar_pos_tl[0] - ent_pos_tl[0]) <= proximity_tl and abs(tar_pos_tl[1] - ent_pos_tl[1]) <= proximity_tl:
-    #    return CommandStatus.SUCCESS
-
+    # Check if target reached
     proximity_px = proximity_tl * TILE_RES
-
     if abs(ctx.locals._tar_pos.x - ctx.locals._ent_pos.x) <= proximity_px and abs(ctx.locals._tar_pos.y - ctx.locals._ent_pos.y) <= proximity_px:
         return CommandStatus.SUCCESS
 
-
     # Check if it is time to recalc the path
     if ctx.current_time - ctx.locals._last_path_change >= upd_path_ms:
-
-        # Check if target still exists
-        if ctx.locals._tar_pos is None:
-            logger.debug(f'Target Entity component reference is lost, returning failure.')
-            return CommandStatus.FAILURE
 
         # Check, if we are not moving to the target for too long
         if max_time_s is not None and ctx.duration > max_time_s*1000: 
@@ -208,7 +207,7 @@ def process(
         init(ecs_mng=ecs_mng, entity_id=entity_id, ctx=ctx, target=target, **cmd_kwargs)
 
         # Log
-        logger.debug(f'Updating path after {upd_path_ms=} ms. New target pos {ctx.locals._last_tar_pos}. New path {ctx.locals._path=}')
+        logger.debug(f'Updating/restarting path after {upd_path_ms=} ms. New target pos {ctx.locals._last_tar_pos}. New path {ctx.locals._path=}')
 
     # Move to _last_tar_pos
     res = cmd_move_to(

@@ -1,6 +1,6 @@
-''' Module implementing MOVE_TO command 
+''' Module implementing MOVE_TO_CHECKPOINTS command 
 
-For tests call python -m pyrpg.core.commands.commands.new.move_to -v
+For tests call python -m pyrpg.core.commands.commands.new.move_to_checkpoints -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -41,8 +41,9 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
-from .move_to_pos_tile import process as cmd_move_to_pos_tile # import other existing command
-from .move_to_pos_tile import init as cmd_move_to_pos_tile_init # import other existing command
+from .move_to import process as cmd_move_to # import other existing command
+from .move_to import init as cmd_move_to_init # import other existing command
+from pyrpg.core.config.config import TILE_RES
 
 def init(
         # Mandatory attributes that must be always present
@@ -50,7 +51,10 @@ def init(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        pos,
+        checkpoints,
+        #upd_path_ms=5000, # after how many ms to check for update of the checkpoints
+        repeat=False,
+        max_time_s=None, # how long to move along the checkpoints
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -61,6 +65,10 @@ def init(
     In case that no specific steps are required before the first run of process(), pass it.
 
     Parameters:
+
+        :param target: Target entity id.
+        :type target: int
+
         :returns: None
 
     Tests:
@@ -78,30 +86,27 @@ def init(
         ((96, 96), (1, 1), 0)
     '''
 
-    logger.debug(f'{entity_id=}. Start move_to init')
+    logger.debug(f'{entity_id=}. Start move_to_checkpoints init')
 
-    # Must be here. Did not want to put the whole tile move init here.
-    ctx.locals.add('_ent_pos', ecs_mng.component_for_entity(entity_id, Position))
+    # Add new local - position component of the target
+    #ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
+    #ctx.locals.add('_last_tar_pos', ctx.locals._tar_pos.get_tile())
+    #ctx.locals.add('_last_path_change', ctx.current_time)
+    ctx.locals.add('_checkpoints', checkpoints)
+    ctx.locals.add('_checkpoint_idx', 0)
+    ctx.locals.add('_next_checkpoint', checkpoints[0])
 
-    # Additional parameters that can be used in the command
-    #pos_comp = ecs_mng.try_component(entity_id, Position)
-    map = ecs_mng._game_functions['FNC_GET_MAP'](ctx.locals._ent_pos.map)
-
-    path_calc_request_id = ecs_mng._game_functions['FNC_REQUEST_PATHFIND'](
-        graph=map.path_graph, 
-        start=ctx.locals._ent_pos.get_tile(), 
-        goal=(pos[0], pos[1]),
-        search='BFS_CHECKPOINTS'
+    cmd_move_to_init(
+        ecs_mng=ecs_mng,
+        entity_id=entity_id,
+        ctx=ctx,
+        # 'Public' attributes specific to this command and used while calling the command
+        pos=ctx.locals._next_checkpoint,
+        # The rest of parameters, if needed
+        **cmd_kwargs
     )
 
-    ctx.locals.add('_path_calc_request_id', path_calc_request_id)
-    ctx.locals.add('_path', None) # path not yet found
-    #ctx.locals.add('_path_idx', 0)
-
-    logger.debug(f'{entity_id=}. Path calculation request from {ctx.locals._ent_pos.get_tile()} to {(pos[0], pos[1])} created')
-
     logger.debug(f'{entity_id=}. Locals initiated: {ctx.locals=}')
-    logger.debug(f'{entity_id=}. End move_to init')
 
 
 # DO NOT REMOVE - Mandatory function
@@ -111,11 +116,15 @@ def process(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        pos,
+        checkpoints,
+        #upd_path_ms=5000, # after how many ms to update the path
+        repeat=False,
+        max_time_s=None, # how long to chase
+        #proximity_tl=0, # how close to get to finish successfully
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
-    ''' Move to the position using the path.
+    ''' Move to the target entity position using the path.
 
     This function represents the body of the command. It can be executed once and 
     finish with the CommandStatus.SUCCESS or ComandStatus.FAILURE, or can be called
@@ -124,8 +133,8 @@ def process(
     'private' attributes are passed to it by CommandManager.
 
     Parameters:
-        :param pos: Target position in tiles
-        :type pos: list
+        :param target: Target entity id
+        :type target: int
         
         :returns: CommandStatus
 
@@ -169,96 +178,54 @@ def process(
             <CommandStatus.SUCCESS: 'SUCCESS'>
     '''
 
-    logger.debug(f'{entity_id=}. Start move_to process')
+    # Comment out, if you want see the stats about the command
+    logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
     assert ctx is not None, f'Command cannot run without context.'
 
-    # Still waiting for the path to be calculated
-    if ctx.locals._path is None:
-        logger.debug(f'{entity_id=}. Path not yet initialized, checking the path calculation request id: {ctx.locals._path_calc_request_id}')
-
-        # Check if the path is already calculated
-        path = ecs_mng._game_functions['FNC_GET_PATH'](ctx.locals._path_calc_request_id)
-
-        # Still calculating, wait further
-        if path is None: 
-            logger.debug(f'{entity_id=}. Pathfinding is still in progress. Ending with RUNNING.')
-            return CommandStatus.RUNNING
-
-        # If no path to the target can be found, end with failure
-        if path == []:
-            logger.debug(f'{entity_id=}. No path to the target found, ending with FAILURE')
-            return CommandStatus.FAILURE
-
-        # PATH FOUND, calculation done, store the path and init movement to the first point on the path
-        ctx.locals.add('_path', path)
-        ctx.locals.add('_path_idx', 0) # move to the first point first
-        logger.debug(f'{entity_id=}. Path found. {ctx.locals._path=}, {ctx.locals._path_idx=}')
-
-        # Reuse existing init from more general move to px function - this will help you to get variables in the locals such as _ent_pos
-        logger.debug(f'{entity_id=}. Calling move_to_pos_tile_init ...')
-        cmd_move_to_pos_tile_init(
-            ecs_mng=ecs_mng,
-            entity_id=entity_id,
-            ctx=ctx,
-            pos=(path[ctx.locals._path_idx]), # init movement to the first point on the path
-            **cmd_kwargs
-        )
-
-
-    # Move along the path
-    logger.debug(f'{entity_id=}. Moving to path point {ctx.locals._path[ctx.locals._path_idx]} on index {ctx.locals._path_idx}')
-
-    logger.debug(f'{entity_id=}. Calling move_to_pos_tile command to move to {ctx.locals._path[ctx.locals._path_idx]}')
-    res = cmd_move_to_pos_tile(
+    # Move to _next_checkpoint
+    res = cmd_move_to(
             ecs_mng=ecs_mng,
             entity_id=entity_id,
             ctx=ctx,
             # 'Public' attributes specific to this command and used while calling the command
-            pos=(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1]),
-            proximity_px=5,
-            max_time_s=None,
-            change_dir_ms=0,
-            #dt_comp=dt_comp,
-            #absolute=absolute,
-            # 'Private' attributes that have been prepared by init function
-            #_ent_pos=_ent_pos,
-            #_last_dir_change=0,
-            #_move_axis=,
+            pos=ctx.locals._next_checkpoint,
             # The rest of parameters, if needed
             **cmd_kwargs
         )
-    
-    # In case moving to the next tile succeeds - move to the next tile in the path and return RUNNING
-    if res == CommandStatus.SUCCESS:
-        logger.debug(f'{entity_id=}. Moving to tile {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} ended with success. My position is {ctx.locals._ent_pos.get_tile()}')
-        # Check if we are at the end
-        if ctx.locals._path_idx == len(ctx.locals._path) - 1: 
-            logger.debug(f'{entity_id=}. End of the path reached. Returning SUCCESS.')
-            return CommandStatus.SUCCESS
 
-        # New point of the path
-        ctx.locals._path_idx += 1
-        logger.debug(f'{entity_id=}. Targeting to the next point {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} and returning running')
-        
-        # Init movement between new 2 points
-        logger.debug(f'{entity_id=}. Calling move_to_pos_tile_init ...')
-        cmd_move_to_pos_tile_init(
+    # Check if the checkpoint is near. If not, continue moving towards it
+    if res == CommandStatus.SUCCESS:
+
+        # Log that checkpoint has bean reached
+        logger.debug(f'{entity_id=}. Standing on the checkpoint {ctx.locals._next_checkpoint}. ')
+
+        # If standing on the last checkpoint finish with success or repeat the checkpoints
+        if (ctx.locals._checkpoint_idx == len(ctx.locals._checkpoints) - 1):
+            if not repeat:
+                logger.debug(f'Standing on the last checkpoint. Returning SUCCESS.')
+                return CommandStatus.SUCCESS
+            else:
+                ctx.locals._checkpoint_idx = -1   # Continue from the start
+
+        # Otherwise, move to the next checkpoint
+        ctx.locals._checkpoint_idx += 1
+        ctx.locals._next_checkpoint = ctx.locals._checkpoints[ctx.locals._checkpoint_idx]
+        logger.debug(f'{entity_id=}. Next checkpoint to visit {ctx.locals._next_checkpoint}.')
+
+        cmd_move_to_init(
             ecs_mng=ecs_mng,
             entity_id=entity_id,
             ctx=ctx,
-            pos=(ctx.locals._path[ctx.locals._path_idx]),
+            pos=ctx.locals._next_checkpoint,
             **cmd_kwargs
         )
 
-        # Continue on the path with the next point
         return CommandStatus.RUNNING
 
-    elif res == CommandStatus.FAILURE:
-        logger.debug(f'{entity_id=}. Moving to tile {(ctx.locals._path[ctx.locals._path_idx][0], ctx.locals._path[ctx.locals._path_idx][1])} FAILED')
-
-    return res
+    else:
+        return res
 
 if __name__ == '__main__':
 

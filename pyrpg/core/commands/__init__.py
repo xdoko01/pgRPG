@@ -49,6 +49,9 @@ class Container:
 
     def add(self, name: str, val) -> None:
         setattr(self, name, val)
+    
+    def get(self, name: str):
+        return getattr(self, name)
 
 @dataclass
 class CommandContext(Protocol):

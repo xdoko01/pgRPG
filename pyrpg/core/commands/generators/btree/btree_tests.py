@@ -47,8 +47,9 @@ def test_btree(btree:BTree, res_generator, steps=True):
 
 b_tree_data_with_templates = {
     "blackboard": {
-        "$target": "player01"
+        "checkpoints": [[0,0],[1,1],[2,2]]
     },
+
     "cmd_tree": {
             "type": "Selector",
             "name": "AI Root",
@@ -57,7 +58,7 @@ b_tree_data_with_templates = {
                     "template": [
                         "destroy_target",
                         {
-                            "$range_in": 200
+                            "$range_in": [[0,0],[1,1],[2,2]]
                         }
                     ]
                 },
@@ -246,7 +247,7 @@ if __name__ == '__main__':
 
     btree = BTree(
         tree_def=b_tree_data_with_templates, # put the tree here
-        cmd_factory=factory, # create from list with 2 items Command namedtuple
+        cmd_factory=lambda x: x, #factory, # create from list with 2 items Command namedtuple
         template_path=Path('pyrpg/resources/btrees'), 
         val_check=False
     )
@@ -254,3 +255,9 @@ if __name__ == '__main__':
     btree.print_tree() # print the tree at the beginning
 
     test_btree(btree, res_generator=(res[r] for r in 'SRSRSRSRSRSRSRSRSRSRSR'), steps=False)
+
+    btree.restart_brain()
+    print('AFTER RESTART')
+    btree.print_tree()
+    test_btree(btree, res_generator=(res[r] for r in 'SSS'), steps=False)
+

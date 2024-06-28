@@ -707,6 +707,7 @@ class BTree(CommandGenerator):
         # for the reset method to be executed always with the same command factory
         # that was defined during the init.
         self.cmd_factory = cmd_factory
+        self.tree_def = tree_def
         self.reset(new_ai_structure=tree_def, template_path=template_path, val_check=val_check)
         '''
         self._root_node = create_tree(tree_def=tree_def['cmd_tree'], cmd_factory=cmd_factory, template_path=template_path)
@@ -797,6 +798,13 @@ class BTree(CommandGenerator):
             self._new_action_node_found = False
         else:
             self.bb.update() # Update statistics
+
+    def restart_brain(self, bb: dict=None):
+        '''Start processing from the root again - usually after event is received'''
+        self.reset(new_ai_structure=self.tree_def)
+
+        if bb is not None:
+            self.bb = BTreeBlackboard(global_bb=bb)
 
 def create_tree(tree_def: dict, parent: TreeNode=None, depth: int=0, cmd_factory=(lambda x: x), template_path: Path=Path('')) -> TreeNode:
     '''Create recursively behavior tree from json definition.

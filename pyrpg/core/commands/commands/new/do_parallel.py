@@ -1,6 +1,6 @@
-''' Module implementing FACE_TARGET command 
+''' Module implementing DO_PARALLEL command 
 
-For tests call python -m pyrpg.core.commands.commands.new.face_target -v
+For tests call python -m pyrpg.core.commands.commands.new.do_parallel -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -15,7 +15,7 @@ Command module must consists of 3 functions:
 Every init() and process() functions must always have at least the following parameters:
     - ecs_mng: ECSManager,      # Provides all necessary tools for manipulating the game world
     - entity_id: int,           # Game world entity to which the command should be applied
-    - ctx: CommandContext,  # Contains information from other commands and statistics
+    - ctx: CommandContext,      # Contains information from other commands and statistics
 '''
 
 ######## INIT PART
@@ -40,19 +40,16 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
-from pyrpg.core.ecs.components.new.position import Position
+from functools import reduce
 
-sign = lambda x: -1 if x<0 else (1 if x>0 else 0)
-
-# DO NOT REMOVE - Mandatory function
 def init(
         # Mandatory attributes that must be always present
         ecs_mng: ECSManager,
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        target,
+        commands,
+        returns,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -63,29 +60,25 @@ def init(
     In case that no specific steps are required before the first run of process(), pass it.
 
     Parameters:
-        :param target: Entity id of the target
-        :type target: int
 
-        :returns: None
+        :param commands: list of commands that should be executed in one click
+        :type commands: list
 
-    Tests:
-
-        Prepare mocs:
-        -------------
-        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
-        >>> from pyrpg.core.commands import CommandContextMock
-
-        Run tests:
-        ----------
-        >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), moves=['left', 'up'])
+        :param returns: mapping of results of individual commands to the overall result of parallel command
+        :type returns: dict
     '''
 
     logger.debug(f'{entity_id=}. Starting init')
 
-    # Add new locals - position component of the target and the entity
-    ctx.locals.add('_tar_pos', ecs_mng.try_component(target, Position))
-    ctx.locals.add('_ent_pos', ecs_mng.try_component(entity_id, Position))
-    
+    # Store functions for calling the commands
+    ctx.locals.add('exec_cmd_fnc', ecs_mng._game_functions['FNC_EXEC_CMD'])
+    ctx.locals.add('exec_cmd_init_fnc', ecs_mng._game_functions['FNC_EXEC_CMD_INIT'])
+
+    # Call init on all the commands that we want to execute in parallel
+    for command in commands:
+        cmd_name, cmd_params = command
+        ctx.locals.exec_cmd_init_fnc(ecs_mng=ecs_mng, entity_id=entity_id, cmd_ctx=ctx, cmd_name=cmd_name, cmd_params=cmd_params)
+
     logger.debug(f'{entity_id=}. Locals initiated: {ctx.locals=}')
 
 
@@ -96,11 +89,12 @@ def process(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        target,
+        commands,
+        returns,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
-    ''' Set entity to face towards the target entity.
+    ''' Move to the target entity position using the path.
 
     This function represents the body of the command. It can be executed once and 
     finish with the CommandStatus.SUCCESS or ComandStatus.FAILURE, or can be called
@@ -109,63 +103,46 @@ def process(
     'private' attributes are passed to it by CommandManager.
 
     Parameters:
-        :param target: Entity id of the target
-        :type target: int
+        :param commands: list of commands that should be executed in one click
+        :type commands: list
 
-        :returns: CommandStatus
-
-    Tests:
-
-        Prepare mocs:
-        -------------
-        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
-        >>> from pyrpg.core.commands import CommandContextMock
-
-        Run tests:
-        ----------
-        -> Test Movement Successful
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock(), moves=['left'])
-            <CommandStatus.SUCCESS: 'SUCCESS'>
+        :param returns: mapping of results of individual commands to the overall result of parallel command
+        :type returns: dict
         
-        -> Test Missing Argument Moves
-            >>> process(ecs_mng=ECSManagerMock(), entity_id=1, ctx=CommandContextMock())
-            Traceback (most recent call last):
-            ...
-            TypeError: process() missing 1 required positional argument: 'moves'
+        :returns: CommandStatus
     '''
 
-    # Comment out, if you want see the stats about the commandd
+    # Comment out, if you want see the stats about the command
     logger.debug(f'{ctx=}')
 
     # Command must run with context, else does not make sense
     assert ctx is not None, f'Command cannot run without context.'
+    
+    # Execute every command and store the result in the list
+    cmd_results = []
+    for command in commands:
+        cmd_name, cmd_params = command
+        res = ctx.locals.exec_cmd_fnc(ecs_mng=ecs_mng, entity_id=entity_id, cmd_name=cmd_name, cmd_params=cmd_params, cmd_ctx=ctx)
+        cmd_results.append(res)
+    
+    logger.debug(f'{entity_id=}. Result of commands is {cmd_results=}. ')
 
-    # Check if target still exists
-    if ctx.locals._tar_pos is None or ctx.locals._ent_pos is None:
-        logger.debug(f'Target or Entity position component reference is lost, returning failure.')
-        return CommandStatus.FAILURE
+    # Return the final do_parallel result based on results parameter
+    
+    # 1. Only evaluate the results if any of commands returns something else than RUNNING
+    if all(cmd_results) == CommandStatus.RUNNING:
+        logger.debug(f'{entity_id=}. All commands are still RUNNING. Returning Running') 
+        return CommandStatus.RUNNING
 
-    # Calculate the vector between target and entity
+    # 2.Re-cast the results to the string representation -> e.g. CommandsStatus.FAILURE, CommandStatus.SUCCESS to 'FS'
+    cmd_results = reduce(lambda x, y: x+y, map(lambda cs: cs.value[0], cmd_results))
+    
+    # 3. find the exact result in the returns dict
+    res = returns.get(cmd_results)
 
-    # if possitive, pos_entity must face Right
-    x_dir = ctx.locals._tar_pos.x - ctx.locals._ent_pos.x
-    # if positive, pos_entity must face Down
-    y_dir = ctx.locals._tar_pos.y - ctx.locals._ent_pos.y
-
-    if abs(x_dir) > abs(y_dir): # turn left or right
-        vect = (sign(x_dir), 0)
-    else:
-        vect = (0, sign(y_dir)) # turn up or down
-
-    logger.debug(f'{x_dir=}, {y_dir=}, {vect=}')
-
-    # Move one pixel (absolute=True) and effectively change the facing direction
-    ecs_mng.add_component(entity_id, FlagDoMove(vector=vect, absolute=True))
-
-    logger.debug(f'{entity_id=}. Now facing the target {target=}')
-
-    return CommandStatus.SUCCESS
-
+    # 4. if no exact result found, try to match with the substituting X character
+    logger.debug(f'{entity_id=}. FOund the record in results {res=}. Returning {CommandStatus[res]}')
+    return CommandStatus[res]
 
 if __name__ == '__main__':
 

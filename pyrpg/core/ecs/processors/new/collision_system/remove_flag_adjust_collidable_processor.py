@@ -43,7 +43,7 @@ class RemoveFlagAdjustCollidableProcessor(Processor):
         register(self)
 
     def process(self, *args, **kwargs):
-        ''' Removes the FlagHasCollided flag.
+        ''' Removes the FlagAdjustCollidable flag.
         '''
         try:
             super().process(*args, **kwargs)

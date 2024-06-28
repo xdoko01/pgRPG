@@ -115,11 +115,11 @@ class Main:
             # Everything is loaded, game can start
             self.state_manager.change_state(State.GAME)
 
-            logger.info(f'Starting game into the game.')
+            logger.info(f'Starting into the game.')
 
         else:
             self.state_manager.change_state(State.MAIN_MENU)
-            logger.info(f'Starting game into the main menu.')
+            logger.info(f'Starting into the main menu.')
 
     def init_game(self, filepath):
         # Show loading screen here

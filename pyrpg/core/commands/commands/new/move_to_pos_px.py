@@ -78,7 +78,7 @@ def init(
     ctx.locals.add('_last_dir_change',  0)
     ctx.locals.add('_move_axis',  None)
 
-    logger.debug(f'Locals initiated: {ctx.locals=}')
+    logger.debug(f'{entity_id=}. Locals initiated: {ctx.locals=}')
 
 # DO NOT REMOVE - Mandatory function
 def process(
@@ -174,26 +174,26 @@ def process(
 
     # Check if entity has still position component, if not finish
     if ctx.locals._ent_pos is None:
-        logger.debug(f'Entity component reference is lost, returning failure.')
+        logger.debug(f'{entity_id=}. Entity component reference is lost, returning failure.')
         return CommandStatus.FAILURE
 
     # Check, if we are not moving to the point for too long
     if max_time_s is not None and ctx.duration > max_time_s*1000: 
-        logger.debug(f'Max time for movement is up. Returning failure.')
+        logger.debug(f'{entity_id=}. Max time for movement is up. Returning failure.')
         return CommandStatus.FAILURE
 
     x, y = pos # for readibility
 
     # Check, if the distance is closed finish with SUCCESS
     if abs(y - ctx.locals._ent_pos.y) < proximity_px and abs(x - ctx.locals._ent_pos.x) < proximity_px:
-        logger.debug(f'Target position {x}, {y} reached with {proximity_px=}')
+        logger.debug(f'{entity_id=}. Target position {x}, {y} reached with {proximity_px=}')
         return CommandStatus.SUCCESS
 
     # Check, if it is time to change the direction
     if ctx.current_time - ctx.locals._last_dir_change >= change_dir_ms:
         ctx.locals._last_dir_change = ctx.current_time
 
-        logger.debug(f'Changing direction after {change_dir_ms=}')
+        logger.debug(f'{entity_id=}. Changing direction after {change_dir_ms=}')
 
         # Decide on which axis we will be closing the gap - close the smaller gap
         if abs(x - ctx.locals._ent_pos.x) > abs(y - ctx.locals._ent_pos.y):

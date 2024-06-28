@@ -3,9 +3,9 @@
 	"$schema": "../../../../../core/schemas/new/quest.schema.json",
 
 	// Basic data
-	"id" : "trace_and_attack",
-	"title" : "Test command trace_and_attack",
-	"description" : "Test command trace_and_attack",
+	"id" : "move_between_checkpoints",
+	"title" : "Test movement between multiple checkpoints",
+	"description" : "Test movement between multiple checkpoints",
 	"objective" : "POC of NPC controlled by the script",
 
 	// What quests need to be loaded before this one
@@ -168,23 +168,20 @@
 					"params" : {
 
 						"blackboard": {
-							"target_ent": "NPC"
+							"checkpoints": [[5,5], [50,50], [50,5]]
 						}, 
 
 						
 						
 						"cmd_tree": {
 							"type": "Repeater",
-							"name": "Repeat Follow and Attack the Target",
+							"name": "Repeat Movement among the checkpoints",
 							"children": [
 								{
 									"type": "Sequence",
-									"name": "Follow and Attack the Target",
+									"name": "Move between Checkpoints",
 									"children": [
-										{"name": "Move to target", "type": "Behavior", "command": ["move_to_target", {"target": "^target_ent", "proximity_tl": 3, "upd_path_ms": 3000}]},
-										{"name": "Face the target", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
-										{"name": "Attack the target", "type": "Behavior", "command": ["attack", {"attack_time_ms": 2000}]},
-										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 500}]}
+										{"name": "Move to checkpoints", "type": "Behavior", "command": ["move_to_checkpoints", {"checkpoints": "^checkpoints"}]}
 									]
 								}
 							]

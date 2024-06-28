@@ -349,7 +349,7 @@
 				}},
 
 				//{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
+				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},

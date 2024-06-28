@@ -79,19 +79,20 @@ def init(
         (672, 672)
     '''
 
-    # Add new local - position recalculated to px
+    # Add new local - position recalculated to px - 
     ctx.locals.add('_px_pos', ((pos[0] * TILE_RES) + (TILE_RES // 2), (pos[1] * TILE_RES) + (TILE_RES // 2)))
 
     # Reuse existing init from more general move to px function
-    logger.debug(f'Calling move_to_pos_px_init ...')
+    logger.debug(f'{entity_id=}. Calling move_to_pos_px_init ...')
     cmd_move_to_pos_px_init(
         ecs_mng=ecs_mng,
         entity_id=entity_id,
         ctx=ctx,
+        pos=ctx.locals._px_pos,
         **cmd_kwargs
     )
 
-    logger.debug(f'Locals initiated: {ctx.locals=}')
+    logger.debug(f'{entity_id=}. Locals initiated: {ctx.locals=}')
 
 # DO NOT REMOVE - Mandatory function
 def process(
@@ -187,7 +188,7 @@ def process(
     # Command must run with context, else does not make sense
     assert ctx is not None, f'Command cannot run without context.'
 
-    logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]}')
+    logger.debug(f'{entity_id=}. Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]}')
 
     res = cmd_move_to_pos_px(
         ecs_mng=ecs_mng,
@@ -209,9 +210,9 @@ def process(
     )
 
     if res == CommandStatus.SUCCESS:
-        logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]} was SUCCESSFUL')
+        logger.debug(f'{entity_id=}. Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]} was SUCCESSFUL')
     elif res == CommandStatus.FAILURE:
-        logger.debug(f'Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]} has FAILED')
+        logger.debug(f'{entity_id=}. Moving to tile {pos[0]}, {pos[1]} -> px pos {ctx.locals._px_pos[0]},{ctx.locals._px_pos[1]} has FAILED')
     return res
 
 
