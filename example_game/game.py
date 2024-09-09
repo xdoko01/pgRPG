@@ -1,20 +1,17 @@
-''' pyrpg/pyrpg.py
+# Path to the pyrpg engine module
+pyrpg_path = '../pyrpg'
 
-    Called from:
-    -> None (init module)
+# Bring pyrpg package onto the path
+import sys, os, getopt
+from pathlib import Path
 
-    Aim:
-    -> Starts pyrpg.core.main.init() function which initiates pygame and starts the game.
+print(f'Path before change: {sys.path}')
+#sys.path.append(os.path.abspath(os.path.join('..', 'pyrpg')))
+sys.path.append(os.path.abspath(Path(pyrpg_path)))
+print(f'Path after change: {sys.path}')
 
-    Usage:
-    -> Run the pyrpg game
-
-    Notes:
-
-    Examples:
-'''
-
-import sys, getopt # for processing of cli arguments
+# Now do your import
+from pyrpg.main import init
 
 def main(argv):
     '''Run the game using the CLI arguments'''
