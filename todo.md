@@ -1,9 +1,15 @@
 # To Do
+ 
+  - [ ] `do_parallel` to support skipping of cycles so that some commands run once per some amount of ticks and meanwhile return some default value
+  - [ ] prepare `test_bb_value_in` and `test_bb_value_not_in` as a faster alternatives to `test_bb_values` that is using potentionally slow json logic
+  - [ ] blackboard having implicit value `self` referencing the entity ID or name - can be then used in all handlers
+  - [ ] new command based on experience with `do_parallel` - `do_if_bb_test_true`
   - [ ] Behavior Tree and Behavior list - implementation of restart function - tree/list starts again from scratch. Useful for restart of the whole tree if some event comes.
-  - [ ] Implement handlers into behavior tree definitons - handlers will just put some value from the event on the blackboard.
-    - [ ] Prepare the script capable of writing value on the blackboard of specific entity
-  - [ ] make scripts runnable from the console
-
+  - [ ] Make scripts runnable from the console
+  - [ ] Rename quests to scenes. Scene is more common name for what the engine is defining in the json files.
+  - [ ] Every game/test using scenes should be defined outside of pyRPG folders and only import pyRPG and use its parts. No direct changes in pyRPG folders and files.
+  - [ ] Make scripts more nice - now they are using main, is it ok? Missing logging, missing description. Missing concept when to use commands and when to use scripts, make them work from console...
+  - [ ] finish tests and json definitions for new commands
 
 ## Bugs
   - [ ] BUG - move_to command makes the NPSs to walk through the tiles
@@ -26,6 +32,8 @@
   - [x] BUG - fix `play_commands_01.jsonc`
 
 ## Features - to rearange
+  - [x] Implement handlers into behavior tree definitons - handlers will just put some value from the event on the blackboard. Done - now handlers can be part of components (or basically anywhere in the scene definition. Only the engine code needs to be slightly adjusted). Script `set_bb_key` was prepared to set blackboard value and can be used in the handlers.
+
   - [ ] Move the processors that are removing the temporary Flag components before the processors that generate Flag components. To ensure that the Flag component is available for all processors, even for those that are before the generator processor.
   - [ ] Instead of ecs_mng return group of functions from the engine - not only for ECS manipulation but for other purposes as well. For example for executing commands, processing events, getting path from the map or pathfind manager etc.
   - [ ] When some command is internally calling other command, all ctx.locals are put on one place - that can be chaotic. It would be great to have some way to distinguish in which command the ctx variable was created.

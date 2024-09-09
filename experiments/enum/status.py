@@ -50,3 +50,6 @@ if __name__ == '__main__':
 	cmd_results = [Status.FAILURE, Status.SUCCESS]
 	res = reduce(lambda x, y: x+y, map(lambda cs: cs.value[0], cmd_results))
 	print(res)
+
+	r = "SUCCESS"
+	print(Status[r])

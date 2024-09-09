@@ -17,6 +17,8 @@ from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
 from ..functions import filter_only_within_distance_from_ent
 from ..functions import filter_only_visible_on_camera
 
+from pyrpg.core.events.event import Event
+
 # Logger init
 logger = logging.getLogger(__name__)
 
@@ -42,7 +44,7 @@ class GenerateEntitiesWithinEarshotProcessor(Processor):
     PREREQ = [
     ]
 
-    def __init__(self, FNC_GET_MAP, *args, **kwargs):
+    def __init__(self, FNC_GET_MAP, FNC_ADD_EVENT, *args, **kwargs):
         ''' Init the processor.
 
         Parameters:
@@ -51,6 +53,7 @@ class GenerateEntitiesWithinEarshotProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
         self.fnc_get_map = FNC_GET_MAP
+        self.add_event_fnc = FNC_ADD_EVENT
 
     def initialize(self, register):
         '''Processor registers itself at esper ECS World'''
@@ -83,9 +86,18 @@ class GenerateEntitiesWithinEarshotProcessor(Processor):
                     # 2/ for every such entity check if there is no wall between
                     if not map.check_collision_in_line((ent_pos.x, ent_pos.y), (oth_pos.x, oth_pos.y)):
 
-                        # 3/ write to CanSee component
+                        # 3/ write to CanHear component
                         ent_can_hear.ent_within_earshot.add(oth_ent)
                         logger.debug(f'({self.cycle}) - Entity {ent} has seen entity {oth_ent}.')
+
+                        # Report event that oth entity has been heard
+                        hear_event = Event(
+                            event_type='CAN_HEAR', 
+                            generator_obj=ent, 
+                            other_obj=oth_ent, 
+                            params={'listener': ent, 'subject': oth_ent}
+                        )
+                        self.add_event_fnc(hear_event)
 
 
     def pre_save(self):

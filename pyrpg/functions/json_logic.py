@@ -31,8 +31,9 @@ OPERATORS = {
 	"<=": lambda a, b: a<=b,
 
 	# Non-condition operators
-	"VAR": lambda *args: None,
-	"IF": lambda *args: None,
+	"LIST": lambda list: None, # for returning list other than from data dict
+	"VAR": lambda var: None,
+	"IF": lambda cond, act: None,
 	"SEQ": lambda *args: None,
 	# Other
 	"SCRIPT": lambda: None
@@ -48,6 +49,8 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 	script_fnc: function that should be executed on SCRIPT operator ["SCRIPT", "new.dialog", {}]
 	TODO data: dictionary with data that are used in the expression - google jsonLogic
 	'''
+
+	#print(f'JSON_LOGIC: {expr=}, {value_fnc=}, {script_fnc=}, {data=}')
 
 	assert isinstance(data, dict), f'Data must be a dictionary'
 
@@ -74,6 +77,9 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 		# Process the expression recursivelly
 		else:
 
+			if operator == 'LIST':
+				return value_fnc(expr[1])
+
 			if operator == 'VAR':
 				return get_var(data, expr[1])
 			
@@ -86,12 +92,14 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 			# Evaluate all the arguments recursivelly into the list of values
 			values = [json_logic(expr=e, value_fnc=value_fnc, script_fnc=script_fnc, data=data) for e in  expr[1:]]
 
+			#print(f'JSON_LOGIC: {values=}')
+
 			# Use the operator and apply it on values using function defined in OPERATORS
 			return OPERATORS[operator](*values)
 
 if __name__ == '__main__':
 
-	data = {"param1" : 10, "param2": "Hello", "param3": 0, "param_list": [1,2,3,4]}
+	data = {"param1" : 10, "param2": "Hello", "param3": 0, "param_list": [1,2,3,4,10]}
 	#expression = ["AND", "1==1", ["OR", "1==2", "1==1"]]
 	#expression = ["and", "1==1", "1==1", "1==1", "2==3"]
 	#expression = ["oneOf", "1==1", "1==1", "1==1", "2==3"]
@@ -122,9 +130,22 @@ if __name__ == '__main__':
 			["SCRIPT", "script.name.4", "script.args.4"]
 		]
 	]
-	expression = ["IN", 5, ["VAR", "param_list"]]
-
 	expression = ["==", ["VAR", "param3"], 0]
+
+	expression = ["IN", 5, ["VAR", "param_list"]]
+	
+	expression = ["IN", ["VAR", "param1"], ["VAR", "param_list"]]
+
+	#expression = ["IN", ["VAR", "param1"], [1,2,3,4,5,6,7,8,9,10]] # not supported now
+	#expression = [1,2,3,4,5,6,7,8,9,10] # not supported now
+	expression = ["VAR", "param1"]	#ok
+	expression = ["VAR", "param_list"] #ok
+	expression = ["VAR", [1,2,3]]  #returns None because it is not in data
+
+	expression = ["LIST", [1,2,3]]  #returns the list that is not part of data!!!
+	expression = ["IN", ["VAR", "param1"], ["LIST", [1,2,3,10]] ] # works
+
+
 
 	print(f'Evaluating expression {expression} \n')
 	print(f'Final result is {json_logic(expr=expression, value_fnc=lambda x: x, script_fnc=lambda *args: print(*args), data=data)}')

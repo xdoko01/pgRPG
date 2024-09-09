@@ -1,6 +1,6 @@
-''' Module implementing DO_PARALLEL command 
+''' Module implementing TEST_CAN_HEAR command 
 
-For tests call python -m pyrpg.core.commands.commands.new.do_parallel -v
+For tests call python -m pyrpg.core.commands.commands.new.test_can_hear -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from functools import reduce
+from pyrpg.core.ecs.components.new.can_hear import CanHear
 
 def init(
         # Mandatory attributes that must be always present
@@ -48,10 +48,8 @@ def init(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        commands,
-        returns,
-        ticks=None,
-        defaults=None,
+        entities,
+        out_bb_key=None,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -63,29 +61,17 @@ def init(
 
     Parameters:
 
-        :param commands: list of commands that should be executed in one click
-        :type commands: list
+        :param entities: list of entities that we want to test for hearing
+        :type entities: list
 
-        :param returns: mapping of results of individual commands to the overall result of parallel command
-        :type returns: dict
-
-        :param ticks: specifies if the command should run every tick or every x-tick only
-        :type ticks: list
-
-        :param defaults: specifies the default return value if the command is not called during this tick
-        :type defaults: str ("SUCCESS", "FAILURE", "RUNNING")
+        :param out_bb_key: blackboard key to which to write the entity heard (optional)
+        :type out_bb_key: str
     '''
 
     logger.debug(f'{entity_id=}. Starting init')
 
-    # Store functions for calling the commands
-    ctx.locals.add('exec_cmd_fnc', ecs_mng._game_functions['FNC_EXEC_CMD'])
-    ctx.locals.add('exec_cmd_init_fnc', ecs_mng._game_functions['FNC_EXEC_CMD_INIT'])
-
-    # Call init on all the commands that we want to execute in parallel
-    for command in commands:
-        cmd_name, cmd_params = command
-        ctx.locals.exec_cmd_init_fnc(ecs_mng=ecs_mng, entity_id=entity_id, cmd_ctx=ctx, cmd_name=cmd_name, cmd_params=cmd_params)
+    can_hear_comp = ecs_mng.try_component(entity_id, CanHear)
+    ctx.locals.add('_can_hear_comp', can_hear_comp)
 
     logger.debug(f'{entity_id=}. Locals initiated: {ctx.locals=}')
 
@@ -97,10 +83,8 @@ def process(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
-        commands,
-        returns,
-        ticks=None,
-        defaults=None,
+        entities,
+        out_bb_key=None,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> CommandStatus:
@@ -113,58 +97,33 @@ def process(
     'private' attributes are passed to it by CommandManager.
 
     Parameters:
-        :param commands: list of commands that should be executed in one click
-        :type commands: list
+        :param entities: list of entities that we want to test for hearing
+        :type entities: list
 
-        :param returns: mapping of results of individual commands to the overall result of parallel command
-        :type returns: dict
-
-        :param ticks: specifies if the command should run every tick or every x-tick only
-        :type ticks: list
-
-        :param defaults: specifies the default return value if the command is not called during this tick
-        :type defaults: str ("SUCCESS", "FAILURE", "RUNNING")
-
+        :param out_bb_key: blackboard key to which to write the entity heard (optional)
+        :type out_bb_key: str
+        
         :returns: CommandStatus
     '''
 
     # Comment out, if you want see the stats about the command
     logger.debug(f'{ctx=}')
 
-    # Command must run with context, else does not make sense
-    assert ctx is not None, f'Command cannot run without context.'
-    
-    # Execute every command and store the result in the list
-    cmd_results = []
-    for cmd_ord, command in enumerate(commands):
+    # Check if Can See component still exists - if not return FAILURE
+    if not ctx.locals._can_hear_comp: 
+        logger.debug(f'{entity_id=}. Entity does not have CanHear componment. Ending with FAILURE.')
+        return CommandStatus.FAILURE
 
-        # Run every x tick
-        if ctx.tick_count % (ticks[cmd_ord] if (ticks and ticks[cmd_ord]) else 1) == 0:
-            cmd_name, cmd_params = command
-            res = ctx.locals.exec_cmd_fnc(ecs_mng=ecs_mng, entity_id=entity_id, cmd_name=cmd_name, cmd_params=cmd_params, cmd_ctx=ctx)
-            cmd_results.append(res)
-        else:
-            # if its not time right tick, return the default
-            cmd_results.append(CommandStatus[defaults[cmd_ord]])
-    
-    logger.debug(f'{entity_id=}. Result of commands is {cmd_results=}. ')
+    # Check if entity is seen
+    for e in entities:
+        if e in ctx.locals._can_hear_comp.ent_within_earshot:
+            ctx.globals.add(out_bb_key, e)
 
-    # Return the final do_parallel result based on results parameter
-    
-    # 1. Only evaluate the results if any of commands returns something else than RUNNING
-    if all(cmd_results) == CommandStatus.RUNNING:
-        logger.debug(f'{entity_id=}. All commands are still RUNNING. Returning Running') 
-        return CommandStatus.RUNNING
+            logger.debug(f'{entity_id=}. Entity {e=} heard. Ending with SUCCESS.')
+            return CommandStatus.SUCCESS
 
-    # 2.Re-cast the results to the string representation -> e.g. CommandsStatus.FAILURE, CommandStatus.SUCCESS to 'FS'
-    cmd_results = reduce(lambda x, y: x+y, map(lambda cs: cs.value[0], cmd_results))
-    
-    # 3. find the exact result in the returns dict
-    res = returns.get(cmd_results)
-
-    # 4. if no exact result found, try to match with the substituting X character
-    logger.debug(f'{entity_id=}. FOund the record in results {res=}. Returning {CommandStatus[res]}')
-    return CommandStatus[res]
+    # If not seen, end with FAILURE
+    return CommandStatus.FAILURE
 
 if __name__ == '__main__':
 

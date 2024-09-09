@@ -33,7 +33,10 @@ def main(argv):
     # 12_ai
     #filepath = 'new/tests/12_ai/test_entity_seen.jsonc' - old, does not work, fix it
     #filepath = 'new/tests/12_ai/move_between_2_points.jsonc'
-    filepath = 'new/tests/12_ai/guard_and_fight_back_if_ambushed_using_events.jsonc'
+    filepath = 'new/tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_template.jsonc'
+    #filepath = 'new/tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_events.jsonc'
+    #filepath = 'new/tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear.jsonc'
+    #filepath = 'new/tests/12_ai/guard_and_fight_back_if_ambushed_using_events.jsonc'
     #filepath = 'new/tests/12_ai/guard_and_fight_back_if_ambushed.jsonc'
     #filepath = 'new/tests/12_ai/guard_and_attack_on_sight.jsonc'
 
