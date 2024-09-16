@@ -6,14 +6,14 @@
 	"description": "Schema validating the Damaging component.",
 
 	"examples" : [
-		{"type" : "new.damaging:Damaging", "params" : {"damage" : 1}}
+		{"type" : "damaging:Damaging", "params" : {"damage" : 1}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.damaging:Damaging" ]
+			"enum": [ "damaging:Damaging" ]
 		},
 		"params": {
 			"title": "Component parameters",

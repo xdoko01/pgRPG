@@ -6,14 +6,14 @@
 	"description": "Schema validating the Destroy On Collision component.",
 
 	"examples" : [
-		{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 1000}}
+		{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 1000}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.destroy_on_collision:DestroyOnCollision" ]
+			"enum": [ "destroy_on_collision:DestroyOnCollision" ]
 		},
 		"params": {
 			"title": "Component parameters",

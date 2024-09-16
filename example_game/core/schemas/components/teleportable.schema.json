@@ -6,15 +6,15 @@
 	"description": "Schema validating the Teleportable component.",
 
 	"examples" : [
-		{"type" : "new.teleportable:Teleportable", "params" : {}},
-		{"type" : "new.teleportable:Teleportable", "params" : {"keys" : ["golden_key", 23]}}
+		{"type" : "teleportable:Teleportable", "params" : {}},
+		{"type" : "teleportable:Teleportable", "params" : {"keys" : ["golden_key", 23]}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.teleportable:Teleportable" ]
+			"enum": [ "teleportable:Teleportable" ]
 		},
 		"params": {
 			"title": "Component parameters",

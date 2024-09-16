@@ -6,14 +6,14 @@
 	"description": "Schema validating the SoundFXOnGeneration component.",
 
 	"examples" : [
-		{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "ouch.mp3"}}
+		{"type" : "sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "ouch.mp3"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.sound_fx_on_generation:SoundFXOnGeneration" ]
+			"enum": [ "sound_fx_on_generation:SoundFXOnGeneration" ]
 		},
 		"params": {
 			"title": "Component parameters",

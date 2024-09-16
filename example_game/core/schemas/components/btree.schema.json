@@ -8,7 +8,7 @@
 
 	"examples" : [
 		{
-			"type" : "new.btree:BTree", 
+			"type" : "btree:BTree", 
 			"params" : {
 				"blackboard": {
 				},
@@ -33,7 +33,7 @@
 			"title": "BTree Component",
 			"description": "Assigns an AI in a form of BTree to the entity",
 			"markdownDescription": "Assigns an AI in a form of BTree to the entity",
-			"enum": [ "new.btree:BTree" ]
+			"enum": [ "btree:BTree" ]
 		},
 		"params": {
 			"title": "BTree Component parameters",

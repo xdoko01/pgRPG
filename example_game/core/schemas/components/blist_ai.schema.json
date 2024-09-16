@@ -7,9 +7,9 @@
 	"markdownDescription": "Assigns an AI in a form of a list of commands to the entity",
 
 	"examples" : [
-		{"type" : "new.blist_ai:BListAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+		{"type" : "blist_ai:BListAI", "params" : {"blackboard": {}, "cmd_list" : []}},
 		{
-			"type" : "new.blist_ai:BListAI", 
+			"type" : "blist_ai:BListAI", 
 			"params" : {
 				"blackboard": {}, 
 				"cmd_list": [

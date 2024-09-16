@@ -7,7 +7,7 @@
 
 	"examples" : [
 		{
-			"type" : "new.debug:Debug", 
+			"type" : "debug:Debug", 
 			"params" : {
 				"collision" : {
 					"color" : [125, 125, 125], 
@@ -25,7 +25,7 @@
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.debug:Debug" ]
+			"enum": [ "debug:Debug" ]
 		},
 		"params": {
 			"title": "Component parameters",

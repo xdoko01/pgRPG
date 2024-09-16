@@ -6,15 +6,15 @@
 	"description": "Schema validating the HasScore component.",
 
 	"examples" : [
-		{"type" : "new.has_score:HasScore", "params" : {"score" : 10}},
-		{"type" : "new.has_score:HasScore", "params" : {}}
+		{"type" : "has_score:HasScore", "params" : {"score" : 10}},
+		{"type" : "has_score:HasScore", "params" : {}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.has_score:HasScore" ]
+			"enum": [ "has_score:HasScore" ]
 		},
 		"params": {
 			"title": "Component parameters",

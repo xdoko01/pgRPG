@@ -6,14 +6,14 @@
 	"description": "Schema validating the Destroy On No Health component.",
 
 	"examples" : [
-		{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 1000}}
+		{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 1000}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.destroy_on_no_health:DestroyOnNoHealth" ]
+			"enum": [ "destroy_on_no_health:DestroyOnNoHealth" ]
 		},
 		"params": {
 			"title": "Component parameters",

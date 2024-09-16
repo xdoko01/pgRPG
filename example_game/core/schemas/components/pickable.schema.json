@@ -6,15 +6,15 @@
 	"description": "Schema validating the Pickable component.",
 
 	"examples" : [
-		{"type" : "new.pickable:Pickable", "params" : {}},
-		{"type" : "new.pickable:Pickable", "params" : {"category": "items.coins.golden"}}
+		{"type" : "pickable:Pickable", "params" : {}},
+		{"type" : "pickable:Pickable", "params" : {"category": "items.coins.golden"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.pickable:Pickable" ]
+			"enum": [ "pickable:Pickable" ]
 		},
 		"params": {
 			"title": "Component parameters",

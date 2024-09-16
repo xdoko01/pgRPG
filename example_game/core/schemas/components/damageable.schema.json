@@ -6,14 +6,14 @@
 	"description": "Schema validating the Damageable component.",
 
 	"examples" : [
-		{"type" : "new.damageable:Damageable", "params" : {"health" : 100}}
+		{"type" : "damageable:Damageable", "params" : {"health" : 100}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.damageable:Damageable" ]
+			"enum": [ "damageable:Damageable" ]
 		},
 		"params": {
 			"title": "Component parameters",

@@ -6,14 +6,14 @@
 	"description": "Schema validating the SoundFXOnNoHealth component.",
 
 	"examples" : [
-		{"type" : "new.sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "dead.wav"}}
+		{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "dead.wav"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.sound_fx_on_no_health:SoundFXOnNoHealth" ]
+			"enum": [ "sound_fx_on_no_health:SoundFXOnNoHealth" ]
 		},
 		"params": {
 			"title": "Component parameters",

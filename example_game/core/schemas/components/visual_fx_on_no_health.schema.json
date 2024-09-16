@@ -6,14 +6,14 @@
 	"description": "Schema validating the VisualFXOnNoHealth component.",
 
 	"examples" : [
-		{"type" : "new.visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"ttl" : 1000}}
+		{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"ttl" : 1000}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.visual_fx_on_no_health:VisualFXOnNoHealth" ]
+			"enum": [ "visual_fx_on_no_health:VisualFXOnNoHealth" ]
 		},
 		"params": {
 			"title": "Component parameters",

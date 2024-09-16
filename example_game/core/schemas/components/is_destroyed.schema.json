@@ -6,14 +6,14 @@
 	"description": "Schema validating the IsDestroyed component.",
 
 	"examples" : [
-		{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 1000}}
+		{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 1000}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.is_destroyed:IsDestroyed" ]
+			"enum": [ "is_destroyed:IsDestroyed" ]
 		},
 		"params": {
 			"title": "Component parameters",

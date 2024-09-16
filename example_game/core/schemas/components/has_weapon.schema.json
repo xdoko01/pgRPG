@@ -6,9 +6,9 @@
 	"description": "Schema validating the HasWeapon component.",
 
 	"examples" : [
-		{"type" : "new.has_weapon:HasWeapon", "params" : {}},
+		{"type" : "has_weapon:HasWeapon", "params" : {}},
 		{
-			"type" : "new.has_weapon:HasWeapon", 
+			"type" : "has_weapon:HasWeapon", 
 			"params" : {
 				"weapons" : {
 					"sword" : {"weapon" : "long_sword", "generator" : null},
@@ -22,7 +22,7 @@
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.has_weapon:HasWeapon" ]
+			"enum": [ "has_weapon:HasWeapon" ]
 		},
 		"params": {
 			"title": "Component parameters",

@@ -6,15 +6,15 @@
 	"description": "Schema validating the HasInventory component.",
 
 	"examples" : [
-        {"type" : "new.has_inventory:HasInventory", "params" : {}},
-        {"type" : "new.has_inventory:HasInventory", "params" : {"inventory" : ["key", "other_key", "money", 4]} }
+        {"type" : "has_inventory:HasInventory", "params" : {}},
+        {"type" : "has_inventory:HasInventory", "params" : {"inventory" : ["key", "other_key", "money", 4]} }
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.has_inventory:HasInventory" ]
+			"enum": [ "has_inventory:HasInventory" ]
 		},
 		"params": {
 			"title": "Component parameters",

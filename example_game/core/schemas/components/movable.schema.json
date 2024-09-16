@@ -6,16 +6,16 @@
 	"description": "Schema validating the Movable component.",
 
 	"examples" : [
-		{"type" : "new.movable:Movable", "params" : {"velocity" : 10}},
-		{"type" : "new.movable:Movable", "params" : {"velocity" : 5, "accelerate" : 2}},
-		{"type" : "new.movable:Movable", "params" : {"velocity" : 50, "accelerate" : -2}}
+		{"type" : "movable:Movable", "params" : {"velocity" : 10}},
+		{"type" : "movable:Movable", "params" : {"velocity" : 5, "accelerate" : 2}},
+		{"type" : "movable:Movable", "params" : {"velocity" : 50, "accelerate" : -2}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.movable:Movable" ]
+			"enum": [ "movable:Movable" ]
 		},
 		"params": {
 			"title": "Component parameters",

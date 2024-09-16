@@ -6,15 +6,15 @@
 	"description": "Schema validating the CanSee component.",
 
 	"examples" : [
-		{"type" : "new.can_see:CanSee", "params" : {"angle": 90, "distance_px": 200}},
-		{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_tiles" : 20}}
+		{"type" : "can_see:CanSee", "params" : {"angle": 90, "distance_px": 200}},
+		{"type" : "can_see:CanSee", "params" : {"angle": 120, "distance_tiles" : 20}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.can_see:CanSee" ]
+			"enum": [ "can_see:CanSee" ]
 		},
 		"params": {
 			"title": "Component parameters",

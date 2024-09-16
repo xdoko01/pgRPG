@@ -6,14 +6,14 @@
 	"description": "Schema validating the WeaponInUse component.",
 
 	"examples" : [
-		{"type" : "new.weapon_in_use:WeaponInUse", "params" : {"type" : "bow"}}
+		{"type" : "weapon_in_use:WeaponInUse", "params" : {"type" : "bow"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.weapon_in_use:WeaponInUse" ]
+			"enum": [ "weapon_in_use:WeaponInUse" ]
 		},
 		"params": {
 			"title": "Component parameters",

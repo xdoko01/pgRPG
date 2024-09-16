@@ -6,15 +6,15 @@
 	"description": "Schema validating the ScorableOnDamage component.",
 
 	"examples" : [
-		{"type" : "new.scorable_on_damage:ScorableOnDamage", "params" : {"score" : 10}},
-		{"type" : "new.scorable_on_damage:ScorableOnDamage", "params" : {}}
+		{"type" : "scorable_on_damage:ScorableOnDamage", "params" : {"score" : 10}},
+		{"type" : "scorable_on_damage:ScorableOnDamage", "params" : {}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.scorable_on_damage:ScorableOnDamage" ]
+			"enum": [ "scorable_on_damage:ScorableOnDamage" ]
 		},
 		"params": {
 			"title": "Component parameters",

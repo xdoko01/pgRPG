@@ -7,7 +7,7 @@
 
 	"examples" : [
 		{
-			"type" : "new.factory:Factory", 
+			"type" : "factory:Factory", 
 			"params" : {
 				"prescription" : {
 					"templates" : ["sword_swing"],
@@ -24,11 +24,11 @@
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.factory:Factory" ]
+			"enum": [ "factory:Factory" ]
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the new.factory:Factory component class - 'prescription', 'max_units'.",
+			"description" : "Parameters of the factory:Factory component class - 'prescription', 'max_units'.",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
 			"required": ["prescription"],

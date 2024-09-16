@@ -6,14 +6,14 @@
 	"description": "Schema validating the VisualFXOnCollision component.",
 
 	"examples" : [
-		{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"ttl" : 1000}}
+		{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"ttl" : 1000}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.visual_fx_on_collision:VisualFXOnCollision" ]
+			"enum": [ "visual_fx_on_collision:VisualFXOnCollision" ]
 		},
 		"params": {
 			"title": "Component parameters",

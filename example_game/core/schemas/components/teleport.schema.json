@@ -6,15 +6,15 @@
 	"description": "Schema validating the Position component.",
 
 	"examples" : [
-        {"type" : "new.teleport:Teleport", "params" : {"dest_x" : 0, "dest_y" : 0, "dest_map" : "test_map"}},
-        {"type" : "new.teleport:Teleport", "params" : {"tile_dest_x" : 0, "tile_dest_y" : 0, "dest_map" : "test_map"}}
+        {"type" : "teleport:Teleport", "params" : {"dest_x" : 0, "dest_y" : 0, "dest_map" : "test_map"}},
+        {"type" : "teleport:Teleport", "params" : {"tile_dest_x" : 0, "tile_dest_y" : 0, "dest_map" : "test_map"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.teleport:Teleport" ]
+			"enum": [ "teleport:Teleport" ]
 		},
 		"params": {
 			"title": "Component parameters",

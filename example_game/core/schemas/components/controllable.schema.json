@@ -6,9 +6,9 @@
 	"description": "Schema validating the Controllable component.",
 
 	"examples" : [
-		{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "key_controls_1"}},
+		{"type" : "controllable:Controllable", "params" :  {"key_profile" : "key_controls_1"}},
 		{
-			"type" : "new.controllable:Controllable", 
+			"type" : "controllable:Controllable", 
 			"params" :  {
 				"key_profile" : "key_controls_1",
 				"control_keys" : {
@@ -32,7 +32,7 @@
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.controllable:Controllable" ]
+			"enum": [ "controllable:Controllable" ]
 		},
 		"params": {
 			"title": "Component parameters",

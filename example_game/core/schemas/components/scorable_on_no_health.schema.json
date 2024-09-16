@@ -6,15 +6,15 @@
 	"description": "Schema validating the ScorableOnNoHealth component.",
 
 	"examples" : [
-		{"type" : "new.scorable_on_no_health:ScorableOnNoHealth", "params" : {"score" : 10}},
-		{"type" : "new.scorable_on_no_health:ScorableOnNoHealth", "params" : {}}
+		{"type" : "scorable_on_no_health:ScorableOnNoHealth", "params" : {"score" : 10}},
+		{"type" : "scorable_on_no_health:ScorableOnNoHealth", "params" : {}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.scorable_on_no_health:ScorableOnNoHealth" ]
+			"enum": [ "scorable_on_no_health:ScorableOnNoHealth" ]
 		},
 		"params": {
 			"title": "Component parameters",

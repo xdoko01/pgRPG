@@ -6,14 +6,14 @@
 	"description": "Schema validating the Weapon component.",
 
 	"examples" : [
-		{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
-		{"type" : "new.weapon:Weapon", "params" : {"type" : "sword"}}	],
+		{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+		{"type" : "weapon:Weapon", "params" : {"type" : "sword"}}	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.weapon:Weapon" ]
+			"enum": [ "weapon:Weapon" ]
 		},
 		"params": {
 			"title": "Component parameters",

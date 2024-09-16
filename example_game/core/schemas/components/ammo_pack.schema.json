@@ -7,7 +7,7 @@
 	"markdownDescription": "Marks entity as ammo pack",
 
 	"examples" : [
-		{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type": "wooden_arrows_pack"}}
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type": "wooden_arrows_pack"}}
 	],
 
 	"required": [ "type", "params"],
@@ -16,7 +16,7 @@
 			"title": "AmmoPack Component",
 			"description": "Marks entity as ammo pack",
 			"markdownDescription": "Marks entity as ammo pack",
-			"enum": [ "new.ammo_pack:AmmoPack" ]
+			"enum": [ "ammo_pack:AmmoPack" ]
 		},
 		"params": {
 			"title": "AmmoPack Component parameters",

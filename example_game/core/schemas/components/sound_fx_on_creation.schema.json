@@ -6,14 +6,14 @@
 	"description": "Schema validating the SoundFXOnCreation component.",
 
 	"examples" : [
-		{"type" : "new.sound_fx_on_creation:SoundFXOnCreation", "params" : {"sound" : "ouch.mp3"}}
+		{"type" : "sound_fx_on_creation:SoundFXOnCreation", "params" : {"sound" : "ouch.mp3"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.sound_fx_on_creation:SoundFXOnCreation" ]
+			"enum": [ "sound_fx_on_creation:SoundFXOnCreation" ]
 		},
 		"params": {
 			"title": "Component parameters",

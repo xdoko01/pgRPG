@@ -7,9 +7,9 @@
 	"markdownDescription": "Assigns an AI as a behavioral tree to the entity",
 
 	"examples" : [
-		{"type" : "new.btree_ai:BTreeAI", "params" : {"blackboard": {}, "cmd_tree" : {}}},
+		{"type" : "btree_ai:BTreeAI", "params" : {"blackboard": {}, "cmd_tree" : {}}},
 		{
-			"type" : "new.btree_ai:BTreeAI", 
+			"type" : "btree_ai:BTreeAI", 
 			"params" : {
 				"blackboard": {}, 
 				"cmd_tree": {
@@ -47,7 +47,7 @@
 			"title": "BTreeAI Component",
 			"description": "Assigns an AI as a behavioral tree to the entity",
 			"markdownDescription": "Assigns an AI as a behavioral tree to the entity",
-			"enum": [ "new.btree_ai:BTreeAI" ]
+			"enum": [ "btree_ai:BTreeAI" ]
 		},
 		"params": {
 			"title": "BTreeAI Component parameters",

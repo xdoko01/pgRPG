@@ -6,16 +6,16 @@
 	"description": "Schema validating the Position component.",
 
 	"examples" : [
-		{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-		{"type" : "new.position:Position", "params" : {"tile_x" : 20, "tile_y" : 5, "map" : "test_arena_sand"}},
-		{"type" : "new.position:Position", "params" : {"tile_x" : 20, "y" : 250, "dir_name": "left", "map" : "test_arena_sand"}}
+		{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+		{"type" : "position:Position", "params" : {"tile_x" : 20, "tile_y" : 5, "map" : "test_arena_sand"}},
+		{"type" : "position:Position", "params" : {"tile_x" : 20, "y" : 250, "dir_name": "left", "map" : "test_arena_sand"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.position:Position" ]
+			"enum": [ "position:Position" ]
 		},
 		"params": {
 			"title": "Component parameters",

@@ -6,14 +6,14 @@
 	"description": "Schema validating the HasTargetPosition component.",
 
 	"examples" : [
-		{"type" : "new.has_target_position:HasTargetPosition", "params" : {"targets": [[10,10,5], [20,10,5]]}}
+		{"type" : "has_target_position:HasTargetPosition", "params" : {"targets": [[10,10,5], [20,10,5]]}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.has_target_position:HasTargetPosition" ]
+			"enum": [ "has_target_position:HasTargetPosition" ]
 		},
 		"params": {
 			"title": "Component parameters",

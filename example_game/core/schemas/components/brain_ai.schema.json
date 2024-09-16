@@ -7,10 +7,10 @@
 	"markdownDescription": "Assigns an AI to the entity",
 
 	"examples" : [
-		{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
-		{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_tree" : []}},
+		{"type" : "brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+		{"type" : "brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_tree" : []}},
 		{
-			"type" : "new.brain_ai:BrainAI", 
+			"type" : "brain_ai:BrainAI", 
 			"params" : {
 				"blackboard": {}, 
 				"cmd_list": [
@@ -28,7 +28,7 @@
 			}
 		},
 		{
-			"type" : "new.brain_ai:BrainAI", 
+			"type" : "brain_ai:BrainAI", 
 			"params" : {
 				"blackboard": {}, 
 				"cmd_tree": {
@@ -66,7 +66,7 @@
 			"title": "BrainAI Component",
 			"description": "Assigns an AI to the entity",
 			"markdownDescription": "Assigns an AI to the entity",
-			"enum": [ "new.brain_ai:BrainAI" ]
+			"enum": [ "brain_ai:BrainAI" ]
 		},
 		"params": {
 			"title": "BrainAI Component parameters",

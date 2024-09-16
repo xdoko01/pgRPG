@@ -6,15 +6,15 @@
 	"description": "Schema validating the RenderableModel component.",
 
 	"examples" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "darkfemale.json"}},
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "darkfemale.json", "action" : "idle"}}
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "darkfemale.json"}},
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "darkfemale.json", "action" : "idle"}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.renderable_model:RenderableModel" ]
+			"enum": [ "renderable_model:RenderableModel" ]
 		},
 		"params": {
 			"title": "Component parameters",

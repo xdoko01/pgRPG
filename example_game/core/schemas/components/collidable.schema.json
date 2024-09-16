@@ -6,16 +6,16 @@
 	"description": "Schema validating the Collidable component.",
 
 	"examples" : [
-		{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
-		{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10}},
-		{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10, "allowlist" : ["player"]}}
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10}},
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10, "allowlist" : ["player"]}}
 	],
 
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.collidable:Collidable" ]
+			"enum": [ "collidable:Collidable" ]
 		},
 		"params": {
 			"title": "Component parameters",

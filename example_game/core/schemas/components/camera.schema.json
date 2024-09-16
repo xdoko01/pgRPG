@@ -7,9 +7,9 @@
 	"markdownDescription": "Assigns screen to the entity",
 
 	"examples" : [
-		{"type" : "new.camera:Camera", "params" : {"always_center" : false}},
-		{"type" : "new.camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200}},
-		{"type" : "new.camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200,	"screen_pos_x": 0, "screen_pos_y": 0}}
+		{"type" : "camera:Camera", "params" : {"always_center" : false}},
+		{"type" : "camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200}},
+		{"type" : "camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200,	"screen_pos_x": 0, "screen_pos_y": 0}}
 	],
 
 	"required": [ "type", "params"],
@@ -18,7 +18,7 @@
 			"title": "Camera Component",
 			"description": "Assigns screen to the entity",
 			"markdownDescription": "Assigns screen to the entity",
-			"enum": ["new.camera:Camera"]
+			"enum": ["camera:Camera"]
 		},
 		"params": {
 			"title": "Camera Component Parameters",

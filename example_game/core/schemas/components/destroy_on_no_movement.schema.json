@@ -13,7 +13,7 @@
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.destroy_on_no_movement:DestroyOnNoMovement" ]
+			"enum": [ "destroy_on_no_movement:DestroyOnNoMovement" ]
 		},
 		"params": {
 			"title": "Component parameters",
