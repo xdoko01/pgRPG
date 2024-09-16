@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import pygame # for pygame.QUIT, pygame.KEYDOWN
-from pyrpg.core.config import KEYS
+from pyrpg.core.config.keys import KEYS
 
 from pyrpg.core.config.states import State
 from pyrpg.core.managers.gui_manager import GUIManager
@@ -25,7 +25,7 @@ from pyrpg.core.managers.pathfind_manager import PathfindManager
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
 from pathlib import Path
-from pyrpg.core.config import FILEPATHS # for SCENE_PATH
+from pyrpg.core.config.filepaths import FILEPATHS # for SCENE_PATH
 from pyrpg.core.events.event import Event
 from pyrpg.functions import get_dict_from_file, get_dict_value, get_coll_value
 
@@ -268,7 +268,7 @@ class Game:
     def exit_game(self) -> None:
         self._clear_game()
 
-    def run(self, key_events, key_pressed, dt, debug):
+    def run(self, key_events, key_pressed, dt, debug: bool=False) -> State:
         # Check for End Game
         for event in key_events:
             if event.type == pygame.QUIT:

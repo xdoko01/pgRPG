@@ -40,10 +40,10 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
+from core.components.position import Position # To work with components in commands (remove search add ...)
 from .move_to import process as cmd_move_to # import other existing command
 from .move_to import init as cmd_move_to_init # import other existing command
-from pyrpg.core.config.config import TILE_RES
+from pyrpg.core.config.game import GAME # for TILE_RES_PX
 
 def init(
         # Mandatory attributes that must be always present
@@ -191,7 +191,7 @@ def process(
         return CommandStatus.FAILURE
 
     # Check if target reached
-    proximity_px = proximity_tl * TILE_RES
+    proximity_px = proximity_tl * GAME["TILE_RES_PX"]
     if abs(ctx.locals._tar_pos.x - ctx.locals._ent_pos.x) <= proximity_px and abs(ctx.locals._tar_pos.y - ctx.locals._ent_pos.y) <= proximity_px:
         return CommandStatus.SUCCESS
 

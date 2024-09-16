@@ -3,7 +3,7 @@ import logging
 from importlib import import_module
 
 from pyrpg.core.events.event import Event
-from pyrpg.core.config import MODULEPATHS # for SCRIPT_MODULE_PATH - Path to the modules containing scripts
+from pyrpg.core.config.modulepaths import MODULEPATHS # for SCRIPT_MODULE_PATH - Path to the modules containing scripts
 from pyrpg.functions import translate, json_logic
 
 # Create logger

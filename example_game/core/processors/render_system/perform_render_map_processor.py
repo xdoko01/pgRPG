@@ -9,7 +9,7 @@ from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 from core.components.position import Position
 from core.components.camera import Camera
 
-from pyrpg.core.config import GAME # for TILE_RES_PX
+from pyrpg.core.config.game import GAME # for TILE_RES_PX
 
 # Logger init
 logger = logging.getLogger(__name__)

@@ -8,7 +8,7 @@ from pyrpg.functions.wait import wait # import wait function
 import pyrpg.utils.dialog as dialog # import display_dialog function
 
 import pygame
-from pyrpg.core.config.keys import K_SUBMIT
+from pyrpg.core.config.keys import KEYS # for K_SUBMIT
 
 from pyrpg.main import main
 
@@ -58,7 +58,7 @@ def script_show_dlg_window(event, *args, **kwargs):
         pygame.display.update()
 
         # Until key is pressed - switch to the next frame when pressed
-        wait(K_SUBMIT, pygame.K_ESCAPE)
+        wait(KEYS["K_SUBMIT"], pygame.K_ESCAPE)
 
     # Return success
     return 0

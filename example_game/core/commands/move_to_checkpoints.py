@@ -40,10 +40,9 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
+from core.components.position import Position # To work with components in commands (remove search add ...)
 from .move_to import process as cmd_move_to # import other existing command
 from .move_to import init as cmd_move_to_init # import other existing command
-from pyrpg.core.config.config import TILE_RES
 
 def init(
         # Mandatory attributes that must be always present

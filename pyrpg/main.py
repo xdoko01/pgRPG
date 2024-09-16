@@ -12,11 +12,9 @@
 
 # Init logging config
 import logging
-import pyrpg.core.config.logging
+import pyrpg.core.config.logging # all logging initiation done here
 
-#import logging
-
-# Initiate logging of module
+# Initiate logging of main module
 logger = logging.getLogger(__name__)
 
 # Get process object to determine info about python process (mem usage etc.)
@@ -28,11 +26,9 @@ python_process = psutil.Process(os.getpid())
 import pygame
 
 # Initiate keys used for the console toggle anywhere in the game
-##from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
+from pyrpg.core.config.keys import KEYS # for K_CONSOLE_TOGGLE
 
-##from pyrpg.core.config import CONFIG["DEBUG"]
-
-##from pyrpg.core.config.display import DISPLAY_MAX_FPS
+from pyrpg.core.config.display import DISPLAY # for MAX_FPS
 
 from pyrpg.core.config.states import State
 
@@ -44,7 +40,6 @@ def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
     '''Create instance of main game class and remember it in 
     form of global variable so that console can use it'''
 
-    global main
 
     """
     # Load all configurations based on the config file
@@ -61,6 +56,7 @@ def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
     """
     
     # Start the engine
+    global main
     main = Main(console=console, filepath=scene_file, timed=timed)
     logger.info(f'Instance of Main class created as "{main}".')
 
@@ -85,7 +81,7 @@ class Main:
 
         # Manager of GUI window and related
         from pyrpg.core.managers.gui_manager import GUIManager
-        from pyrpg.core.config import DISPLAY 
+        from pyrpg.core.config.display import DISPLAY 
         self.gui_manager = GUIManager(
             DISPLAY["WIDTH"], 
             DISPLAY["HEIGHT"], 
@@ -166,8 +162,8 @@ class Main:
         # big dt and as a consequence the first movement with
         # the first frame is too big.
         # Calculate the first dt directly
-        self.gui_manager.clock.tick(DISPLAY_MAX_FPS)
-        dt = 1000 / DISPLAY_MAX_FPS # ms
+        self.gui_manager.clock.tick(DISPLAY["MAX_FPS"])
+        dt = 1000 / DISPLAY["MAX_FPS"] # ms
 
         while True:
             
@@ -182,7 +178,7 @@ class Main:
                     self.state_manager.change_state(State.EXIT_GAME_DIALOG)
 
                 if event.type == pygame.KEYUP:
-                    if event.key == K_CONSOLE_TOGGLE and self.console:
+                    if event.key == KEYS["K_CONSOLE_TOGGLE"] and self.console:
                         if self.console.toggle():
                             self.gui_manager.save_screen()
                             logger.info(f'Entering console')
@@ -193,7 +189,7 @@ class Main:
 
             if self.state_manager.state == State.GAME:
                 #res_state = self.game.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG)
-                self.state_manager.change_state(self.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt, debug=DEBUG))
+                self.state_manager.change_state(self.engine.run(key_events=key_events, key_pressed=key_pressed, dt=dt))
 
             elif self.state_manager.state == State.MAIN_MENU:
                 #res_state = self.main_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt)
@@ -232,7 +228,7 @@ class Main:
             pygame.display.set_caption('FPS: ' + str(int(self.gui_manager.clock.get_fps())))
 
             # Get the time of the frame
-            dt = self.gui_manager.clock.tick(DISPLAY_MAX_FPS)
+            dt = self.gui_manager.clock.tick(DISPLAY["MAX_FPS"])
 
 
     def end_program(self) -> None:

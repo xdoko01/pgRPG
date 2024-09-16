@@ -7,7 +7,7 @@ module tests.
 from math import radians, sin, cos
 
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.config import GAME # for TILE_RES_PX - in order to re-calculate tile distance to px
+from pyrpg.core.config.game import GAME # for TILE_RES_PX - in order to re-calculate tile distance to px
 
 class CanSee(Component):
     ''' Component is holding information about the capability of the

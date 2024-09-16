@@ -1,7 +1,7 @@
 import logging
 
 #from pyrpg.core.config.paths import QUEST_PATH
-from pyrpg.core.config import FILEPATHS
+from pyrpg.core.config.filepaths import FILEPATHS
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
 from pyrpg.core.config.states import State
 from pygame_gui.windows import UIFileDialog

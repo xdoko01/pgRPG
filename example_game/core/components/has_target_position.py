@@ -7,7 +7,7 @@ module tests.
 
 from pyrpg.core.ecs.components.component import Component
 
-from pyrpg.core.config.config import TILE_RES # in order to specify the position in pixel coords
+from pyrpg.core.config.game import GAME # for TILE_RES # in order to specify the position in pixel coords
 
 from collections import namedtuple
 
@@ -56,8 +56,8 @@ class HasTargetPosition(Component):
                     map=target[0],
                     tile_x=target[1],
                     tile_y=target[2],
-                    x=target[1] * TILE_RES + TILE_RES // 2,
-                    y=target[2] * TILE_RES + TILE_RES // 2,
+                    x=target[1] * GAME["TILE_RES_PX"] + GAME["TILE_RES_PX"] // 2,
+                    y=target[2] * GAME["TILE_RES_PX"] + GAME["TILE_RES_PX"] // 2,
                     radius=target[3]
                 )
                 self.targets.append(new_target)

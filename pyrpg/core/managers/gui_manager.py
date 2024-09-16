@@ -13,7 +13,8 @@ import pygame_gui
 from pathlib import Path
 from collections import namedtuple
 from pyrpg.functions.load_animation import load_animation
-from pyrpg.core.config import FILEPATHS, GUI # MENU_BACKGROUND_PATH
+from pyrpg.core.config.filepaths import FILEPATHS # MENU_BACKGROUND_PATH
+from pyrpg.core.config.gui import GUI # MENU_BACKGROUND_PATH
 #from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
 
 from pyrpg.utils.bitmap_font import BitmapFont

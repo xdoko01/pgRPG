@@ -6,7 +6,7 @@ module tests.
 '''
 
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.config.config import TILE_RES # in order to specify the position in tiles coordinates
+from pyrpg.core.config.game import GAME # for TILE_RES # in order to specify the position in tiles coordinates
 
 
 class Teleport(Component):
@@ -57,8 +57,8 @@ class Teleport(Component):
         # Teleport destination - mandatory
         try:
             self.dest_map = kwargs.get('dest_map')
-            self.dest_x = kwargs.get('dest_x', kwargs.get('tile_dest_x', 0) * TILE_RES + (TILE_RES // 2)) # optionally get position based on tile coordinates
-            self.dest_y = kwargs.get('dest_y', kwargs.get('tile_dest_y', 0) * TILE_RES + (TILE_RES // 2)) # optionally get position based on tile coordinates
+            self.dest_x = kwargs.get('dest_x', kwargs.get('tile_dest_x', 0) * GAME["TILE_RES_PX"] + (GAME["TILE_RES_PX"] // 2)) # optionally get position based on tile coordinates
+            self.dest_y = kwargs.get('dest_y', kwargs.get('tile_dest_y', 0) * GAME["TILE_RES_PX"] + (GAME["TILE_RES_PX"] // 2)) # optionally get position based on tile coordinates
             self.key = kwargs.get('key', None)
         except KeyError:
             # Notify component factory that initiation has failed

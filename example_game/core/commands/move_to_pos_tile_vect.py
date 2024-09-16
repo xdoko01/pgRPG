@@ -42,7 +42,7 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 ### Optional imports
 from .move_to_pos_px_vect import process as cmd_move_to_pos_px_vect # import other existing command
 from .move_to_pos_px_vect import init as cmd_move_to_pos_px_vect_init
-from pyrpg.core.config.config import TILE_RES
+from pyrpg.core.config.game import GAME # for TILE_RES_PX
 
 def init(
         # Mandatory attributes that must be always present
@@ -80,7 +80,7 @@ def init(
     '''
 
     # Add new local - position recalculated to px
-    ctx.locals.add('_px_pos', ((pos[0] * TILE_RES) + (TILE_RES // 2), (pos[1] * TILE_RES) + (TILE_RES // 2)))
+    ctx.locals.add('_px_pos', ((pos[0] * GAME["TILE_RES_PX"]) + (GAME["TILE_RES_PX"] // 2), (pos[1] * GAME["TILE_RES_PX"]) + (GAME["TILE_RES_PX"] // 2)))
     
     # Reuse existing init from more general move to px function
     logger.debug(f'Calling move_to_pos_px_init ...')

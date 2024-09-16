@@ -1,8 +1,7 @@
 import logging
 import pyrpg.utils.dialog as dialog
-from pathlib import Path
 
-from pyrpg.core.config import FILEPATHS # for DIALOG_PATH, IMAGE_PATH, FONT_PATH
+from pyrpg.core.config.filepaths import FILEPATHS, Path # for DIALOG_PATH, IMAGE_PATH, FONT_PATH
 from pyrpg.functions.get_dict_from_json import get_dict_from_json
 
 # Create logger

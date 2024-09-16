@@ -1,8 +1,8 @@
 import logging
 
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config import FILEPATHS # for ENTITY_PATH
-from pyrpg.core.config import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
+from pyrpg.core.config.filepaths import FILEPATHS # for ENTITY_PATH
+from pyrpg.core.config.modulepaths import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
 
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.functions import get_class_from_def

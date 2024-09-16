@@ -1,7 +1,8 @@
 '''
 For tests call python -m pyrpg.core.maps.map -v
 '''
-from pyrpg.core.config import GAME, FILEPATHS # for TILE_RES_PX, MAP_PATH
+from pyrpg.core.config.game import GAME # for TILE_RES_PX
+from pyrpg.core.config.filepaths import FILEPATHS # MAP_PATH
 
 import pygame
 from pytmx.util_pygame import load_pygame

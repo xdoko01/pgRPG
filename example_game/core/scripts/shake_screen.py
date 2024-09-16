@@ -1,5 +1,5 @@
-import pyrpg.core.ecs.components as components
-import pyrpg.core.ecs.processors as processors
+import core.components as components
+import core.processors as processors
 
 import pygame
 import random

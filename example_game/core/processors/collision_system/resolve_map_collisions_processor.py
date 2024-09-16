@@ -6,10 +6,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.collidable import Collidable
+from core.components.position import Position
+from core.components.collidable import Collidable
 
-from pyrpg.core.config.config import TILE_RES
+from pyrpg.core.config.game import GAME # for TILE_RES_PX
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -66,10 +66,10 @@ class ResolveMapCollisionsProcessor(Processor):
             collision_map = self.maps.get(pos_moved.map)
 
             # NEW check collisions by function collision_map.check_collision(((int(pos_moved.x - coll_moved.x) // 64),(int(pos_moved.y - coll_moved.y) // 64)))
-            if (collision_map.check_collision((int(pos_moved.x + coll_moved.dx - coll_moved.x) // TILE_RES), (int(pos_moved.y + coll_moved.dy - coll_moved.y) // TILE_RES)) or 
-                collision_map.check_collision((int(pos_moved.x + coll_moved.dx - coll_moved.x) // TILE_RES), (int(pos_moved.y + coll_moved.dy + coll_moved.y) // TILE_RES)) or
-                collision_map.check_collision((int(pos_moved.x + coll_moved.dx + coll_moved.x) // TILE_RES), (int(pos_moved.y + coll_moved.dy - coll_moved.y) // TILE_RES)) or
-                collision_map.check_collision((int(pos_moved.x + coll_moved.dx + coll_moved.x) // TILE_RES), (int(pos_moved.y + coll_moved.dy + coll_moved.y) // TILE_RES))):
+            if (collision_map.check_collision((int(pos_moved.x + coll_moved.dx - coll_moved.x) // GAME["TILE_RES_PX"]), (int(pos_moved.y + coll_moved.dy - coll_moved.y) // GAME["TILE_RES_PX"])) or 
+                collision_map.check_collision((int(pos_moved.x + coll_moved.dx - coll_moved.x) // GAME["TILE_RES_PX"]), (int(pos_moved.y + coll_moved.dy + coll_moved.y) // GAME["TILE_RES_PX"])) or
+                collision_map.check_collision((int(pos_moved.x + coll_moved.dx + coll_moved.x) // GAME["TILE_RES_PX"]), (int(pos_moved.y + coll_moved.dy - coll_moved.y) // GAME["TILE_RES_PX"])) or
+                collision_map.check_collision((int(pos_moved.x + coll_moved.dx + coll_moved.x) // GAME["TILE_RES_PX"]), (int(pos_moved.y + coll_moved.dy + coll_moved.y) // GAME["TILE_RES_PX"]))):
 
                 # Fix position for the entity that has moved
                 pos_moved.x = pos_moved.lastx

@@ -1,7 +1,7 @@
 import logging
 
 import pyrpg.core.events.event as event # for creation of QUEST_START, QUEST_FINISH, PHASE_START, PHASE_FINISH events
-from pyrpg.core.config.paths import QUEST_PATH
+from pyrpg.core.config.filepaths import FILEPATHS # for SCENE_PATH
 from pyrpg.functions import get_dict_from_json, get_dict_from_yaml, get_dict_value
 
 from pathlib import Path
@@ -37,7 +37,7 @@ class QuestManager:
         quest_extension = quest_filepath.suffix
 
         # Check if path to the quest is absolute or relative and construct the full path to the file
-        quest_filepath = quest_filepath if quest_filepath.is_absolute() else QUEST_PATH / quest_filepath
+        quest_filepath = quest_filepath if quest_filepath.is_absolute() else FILEPATHS["SCENE_PATH"] / quest_filepath
 
         # Open the quest file
         try:

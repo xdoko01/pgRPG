@@ -54,7 +54,7 @@ import pygame
 import functools # for cache decorator
 import json # necessary to parse json files
 import ctypes # to show number of references to an instance
-import pyrpg.core.config.config as config # for model path
+from pyrpg.core.config.filepaths import FILEPATHS # for model path
 
 @functools.lru_cache(maxsize=32)#@Memoize
 class Model(object):
