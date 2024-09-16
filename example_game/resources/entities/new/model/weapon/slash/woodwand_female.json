@@ -1,7 +1,0 @@
-{
-	"id" : "weapon_slash_woodwand_female_model",
-	"templates" : ["new/model/weapon/slash"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/slash/weapon_slash_woodwand_female.json"}}
-	]
-}

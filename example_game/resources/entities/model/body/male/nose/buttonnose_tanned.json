@@ -1,0 +1,7 @@
+{
+"id" : "male_nose_buttonnose_tanned_model",
+"templates" : ["model/body/male/nose"],
+"components" : [
+{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/nose/buttonnose_tanned.json}}
+]
+}

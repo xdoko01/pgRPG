@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_torso_corset_black_model",
+	"templates" : ["model/wearable/female/torso"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/torso/corset/black.json}}
+	]
+}

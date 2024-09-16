@@ -1,7 +1,0 @@
-{
-	"id" : "orc_male_model",
-	"templates" : ["original/model/character"],
-	"components" : [
-		{"type" : "original.renderable_model:RenderableModel", "params" : {"model" : "orcmale.json"}}
-	]
-}

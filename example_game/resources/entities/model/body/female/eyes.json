@@ -1,0 +1,6 @@
+{
+	"id" : "female_eyes_model",
+	"templates" : ["model/body/female"],
+	"components" : [
+	]
+}

@@ -1,0 +1,6 @@
+{
+	"id" : "wearable_male_torso_model",
+	"templates" : ["model/wearable/male"],
+	"components" : [
+	]
+}

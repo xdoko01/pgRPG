@@ -1,7 +1,0 @@
-{
-"id" : "male_hair_ponytail_gray2_model",
-"templates" : ["new/model/body/male/hair"],
-"components" : [
-	{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/ponytail/gray2.json}}
-	]
-}

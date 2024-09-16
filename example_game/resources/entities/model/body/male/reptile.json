@@ -1,0 +1,6 @@
+{
+	"id" : "male_reptile_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

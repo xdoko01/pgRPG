@@ -1,7 +1,0 @@
-{
-	"id" : "20",
-	"templates" : ["new/model/effect"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/effect/score_20.json"}}
-	]
-}

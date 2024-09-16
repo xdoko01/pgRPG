@@ -1,8 +1,0 @@
-{
-	"id" : "pants",
-	"templates" : ["original/thing/wearable"],
-	"components" : [
-		{"type" : "original.wearable:Wearable", "params" : {"bodypart" : "legs"}},
-		{"type" : "original.pickable:Pickable", "params" : {}}
-	]
-}

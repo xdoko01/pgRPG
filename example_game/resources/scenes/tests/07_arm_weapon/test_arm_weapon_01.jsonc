@@ -24,12 +24,12 @@
 	// What processors to load
 	"processors" : [
 		// For commands
-		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
-		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
-		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// For animation
 		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
@@ -52,22 +52,22 @@
 		["new.arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
 
 		// For displaying
-		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["new.render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
-		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["new.render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
-		["new.render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
-		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the quest - after first game screen is generated
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "WEAPON_ARMED"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "WEAPON_ARMED"]}],
 
 		// For clearing of processing of movements and collisions and pickups
-		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 
@@ -154,25 +154,25 @@
 		// Weapon that will be picked up and armed
 		{
 			"id" : "weapon01",
-			"templates" : ["new/model/weapon/shoot/bow_recurved_red"],
+			"templates" : ["model/weapon/shoot/bow_recurved_red"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
 				{"type" : "new.pickable:Pickable", "params" : {}},
 				{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
-				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 350, "map" : "test_arena_sand"}}
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 350, "map" : "test_arena_sand"}}
 			]
 		},
 
 		{
 			"id" : "weapon02",
-			"templates" : ["new/model/weapon/slash/axe1"],
+			"templates" : ["model/weapon/slash/axe1"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "sword", "max_projectiles" : 1}},
 				{"type" : "new.pickable:Pickable", "params" : {}},
 				{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 10}},
-				{"type" : "new.position:Position", "params" : {"x" : 200, "y" : 350, "map" : "test_arena_sand"}}
+				{"type" : "position:Position", "params" : {"x" : 200, "y" : 350, "map" : "test_arena_sand"}}
 			]
 		},
 
@@ -191,10 +191,10 @@
 				// Can arm weapon
 				{"type" : "new.has_weapon:HasWeapon", "params" : {}},
 
-				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
 	],
@@ -218,7 +218,7 @@
 				"id": "ev_quest_start",
 				"actions": 	[
 					"SCRIPT",
-					"new.show_msg_window", 
+					"show_msg_window", 
 					{
 						"title": "%filepath",
 						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"

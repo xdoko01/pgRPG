@@ -1,0 +1,7 @@
+{
+	"id" : "male_wound_wound_ribs_model",
+	"templates" : ["model/body/male/wound"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/wound/wound_ribs.json}}
+	]
+}

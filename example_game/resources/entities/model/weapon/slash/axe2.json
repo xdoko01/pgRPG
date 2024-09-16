@@ -1,0 +1,7 @@
+{
+	"id" : "weapon_slash_axe2_model",
+	"templates" : ["model/weapon/slash"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/slash/weapon_slash_axe2.json"}}
+	]
+}

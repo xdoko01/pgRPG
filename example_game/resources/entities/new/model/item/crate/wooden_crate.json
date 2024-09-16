@@ -1,8 +1,0 @@
-{
-	"id" : "wooden_crate_model",
-	"templates" : ["new/model/item/crate"],
-
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/item/crate_wooden.json"}}
-	]
-}

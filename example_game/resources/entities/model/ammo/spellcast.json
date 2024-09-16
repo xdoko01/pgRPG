@@ -1,0 +1,6 @@
+{
+	"id" : "spellcast_model",
+	"templates" : ["model/ammo"],
+	"components" : [
+	]
+}

@@ -1,0 +1,6 @@
+{
+	"id" : "child_orc_model",
+	"templates" : ["model/body/child"],
+	"components" : [
+	]
+}

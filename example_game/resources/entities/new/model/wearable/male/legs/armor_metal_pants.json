@@ -1,7 +1,0 @@
-{
-	"id" : "wearable_male_legs_armor_metal_pants_model",
-	"templates" : ["new/model/wearable/male/legs"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/legs/armor/metal_pants.json}}
-	]
-}

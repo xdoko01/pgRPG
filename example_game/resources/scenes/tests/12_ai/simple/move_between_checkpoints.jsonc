@@ -24,14 +24,14 @@
 	// What processors to load
 	"processors" : [
 		// For commands
-		["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
-		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// Calculate path
-		["new.command_system.perform_pathfinding_calculation_processor:PerformPathfindingCalculationProcessor", {"max_no_of_calcs": 100}],
+		["command_system.perform_pathfinding_calculation_processor:PerformPathfindingCalculationProcessor", {"max_no_of_calcs": 100}],
 		
 		// For movement
-		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 		
 		// For animation
 		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
@@ -53,27 +53,27 @@
 
 
 		// For displaying
-		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["new.render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
-		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["new.render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
-		["new.render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
-		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the quest - after first game screen is generated
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
 
 		// Removal of obsolete flags
-		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
 		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
-		["new.movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}]
+		["movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}]
 	],
 
 	// What maps to load
@@ -95,15 +95,15 @@
 			],
 			"components" : [
 				{"type" : "new.debug:Debug", "params": {"info": {"name" : "NPC"}}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}}
 			]
 		},
 
 		{
 			"id" : "wooden_bow",
-			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
@@ -112,7 +112,7 @@
 		// wooden_arrows_pack AmmoPack is Factory for generation of arrows
 		{
 			"id" : "wooden_arrows_pack",
-			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
 				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
@@ -120,7 +120,7 @@
 					"params" : {
 						"prescription" : {
 							"id": "wooden_arrows_pack_arrow",
-							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 								
@@ -135,7 +135,7 @@
 				
 								//{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 
-								{"type" : "new.movable:Movable", "params" :  {"velocity" : 300, "accelerate" : -3}},
+								{"type" : "movable:Movable", "params" :  {"velocity" : 300, "accelerate" : -3}},
 								//{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
@@ -151,7 +151,7 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/brown"],
+			"templates" : ["model/body/male/human/brown"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 
@@ -189,9 +189,9 @@
 					}
 				},
 
-				{"type" : "new.position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
 	],
@@ -204,7 +204,7 @@
 				"id": "ev_quest_start",
 				"actions": 	[
 					"SCRIPT",
-					"new.show_msg_window", 
+					"show_msg_window", 
 					{
 						"title": "%filepath",
 						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"

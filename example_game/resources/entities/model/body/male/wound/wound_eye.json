@@ -1,0 +1,7 @@
+{
+	"id" : "male_wound_wound_eye_model",
+	"templates" : ["model/body/male/wound"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/wound/wound_eye.json}}
+	]
+}

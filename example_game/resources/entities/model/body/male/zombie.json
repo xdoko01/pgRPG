@@ -1,0 +1,6 @@
+{
+	"id" : "male_zombie_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

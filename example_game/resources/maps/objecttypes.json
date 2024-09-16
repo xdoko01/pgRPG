@@ -46,10 +46,10 @@
         "storageType": "string",
         "type": "enum",
         "values": [
-            "new/model/body/male/human/white",
-            "new/model/body/male/human/olive",
-            "new/model/body/male/human/peach",
-            "new/model/body/male/human/light"
+            "model/body/male/human/white",
+            "model/body/male/human/olive",
+            "model/body/male/human/peach",
+            "model/body/male/human/light"
         ],
         "valuesAsFlags": true
     }

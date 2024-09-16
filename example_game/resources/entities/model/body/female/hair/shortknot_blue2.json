@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_shortknot_blue2_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/shortknot/blue2.json}}
+	]
+}

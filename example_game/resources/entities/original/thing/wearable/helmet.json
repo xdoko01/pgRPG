@@ -1,8 +1,0 @@
-{
-	"id" : "helmet",
-	"templates" : ["original/thing/wearable"],
-	"components" : [
-		{"type" : "original.wearable:Wearable", "params" : {"bodypart" : "head"}},
-		{"type" : "original.pickable:Pickable", "params" : {}}
-	]
-}

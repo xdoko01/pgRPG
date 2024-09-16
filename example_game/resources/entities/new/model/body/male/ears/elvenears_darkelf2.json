@@ -1,7 +1,0 @@
-{
-	"id" : "male_ears_elvenears_darkelf2_model",
-	"templates" : ["new/model/body/male/ears"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/ears/elvenears_darkelf2.json"}}
-	]
-}

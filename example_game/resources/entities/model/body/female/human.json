@@ -1,0 +1,6 @@
+{
+	"id" : "female_human_model",
+	"templates" : ["model/body/female"],
+	"components" : [
+	]
+}

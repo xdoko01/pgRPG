@@ -1,0 +1,7 @@
+{
+	"id" : "weapon_shoot_bow_recurved_wooden_model",
+	"templates" : ["model/weapon/shoot"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/shoot/weapon_shoot_bow_recurved_wooden.json"}}
+	]
+}

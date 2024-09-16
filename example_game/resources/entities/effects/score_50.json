@@ -1,0 +1,8 @@
+{
+	"id" : "score_50_effect",
+	"templates" : ["effects"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/effect/score_50.json"}},
+		{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 1000}}
+	]
+}

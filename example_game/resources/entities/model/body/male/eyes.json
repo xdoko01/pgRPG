@@ -1,0 +1,6 @@
+{
+	"id" : "male_eyes_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

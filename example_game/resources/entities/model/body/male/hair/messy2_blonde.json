@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_messy2_blonde_model",
+"templates" : ["model/body/male/hair"],
+"components" : [
+	{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/messy2/blonde.json}}
+	]
+}

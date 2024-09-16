@@ -1,0 +1,7 @@
+{
+	"id" : "child_elf_dark_model",
+	"templates" : ["model/body/child/elf"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/child/body_child_elf_dark.json"}}
+	]
+}

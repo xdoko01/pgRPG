@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_torso_shirts_teal_longsleeve_model",
+	"templates" : ["model/wearable/male/torso"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/shirts/teal_longsleeve.json}}
+	]
+}

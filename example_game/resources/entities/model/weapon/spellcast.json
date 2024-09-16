@@ -1,0 +1,6 @@
+{
+	"id" : "weapon_spellcast_model",
+	"templates" : ["model/weapon"],
+	"components" : [
+	]
+}

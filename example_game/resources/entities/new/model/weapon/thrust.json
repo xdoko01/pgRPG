@@ -1,6 +1,0 @@
-{
-	"id" : "weapon_thrust_model",
-	"templates" : ["new/model/weapon"],
-	"components" : [
-	]
-}

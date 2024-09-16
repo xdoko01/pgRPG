@@ -1,0 +1,6 @@
+{
+	"id" : "wearable_female_feet_model",
+	"templates" : ["model/wearable/female"],
+	"components" : [
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "wooden_arrows_pack_model",
+	"templates" : ["model/ammo_pack/shoot"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/ammo_pack/shoot/wooden_arrows_pack.json"}}
+	]
+}

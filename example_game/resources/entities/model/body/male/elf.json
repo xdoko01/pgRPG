@@ -1,0 +1,6 @@
+{
+	"id" : "male_elf_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

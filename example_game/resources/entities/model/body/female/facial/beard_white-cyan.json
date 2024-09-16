@@ -1,0 +1,7 @@
+{
+	"id" : "female_facial_beard_white-cyan_model",
+	"templates" : ["model/body/female/facial"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/beard/white-cyan.json}}
+	]
+}

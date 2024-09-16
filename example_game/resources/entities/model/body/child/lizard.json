@@ -1,0 +1,6 @@
+{
+	"id" : "child_lizard_model",
+	"templates" : ["model/body/child"],
+	"components" : [
+	]
+}

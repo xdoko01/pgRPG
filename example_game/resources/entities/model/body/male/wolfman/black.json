@@ -1,0 +1,7 @@
+{
+	"id" : "male_wolfman_black_model",
+	"templates" : ["model/body/male/wolfman"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/body_male_wolfman_black.json"}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "male_ears_bigears_dark2_model",
+	"templates" : ["model/body/male/ears"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/ears/bigears_dark2.json"}}
+	]
+}

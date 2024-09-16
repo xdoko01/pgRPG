@@ -76,7 +76,7 @@
 
 		{
 			"id" : "long_spear",
-			"templates" : ["new/model/weapon/thrust/spear"],
+			"templates" : ["model/weapon/thrust/spear"],
 			"components" : [
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
 			]
@@ -86,7 +86,7 @@
 		// Dagger
 		{
 			"id" : "sword_generator",
-			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
 				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				{
@@ -123,7 +123,7 @@
 
 		{
 			"id" : "long_sword",
-			"templates" : ["new/model/weapon/slash/dagger"],
+			"templates" : ["model/weapon/slash/dagger"],
 			"components" : [
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
 			]
@@ -133,14 +133,14 @@
 		// wooden_arrows_pack AmmoPack is Factory for generation of arrows
 		{
 			"id" : "wooden_arrows_pack",
-			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
 				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
 					"type" : "new.factory:Factory", 
 					"params" : {
 						"prescription" : {
-							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
@@ -150,7 +150,7 @@
 
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 
-								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
+								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
@@ -168,7 +168,7 @@
 
 		{
 			"id" : "wooden_bow",
-			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
@@ -183,7 +183,7 @@
 					"type" : "new.factory:Factory", 
 					"params" : {
 						"prescription" : {
-							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
@@ -193,7 +193,7 @@
 
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 50}},
 
-								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500}},
+								{"type" : "movable:Movable", "params" :  {"velocity" : 500}},
 								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
@@ -218,7 +218,7 @@
 
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white", "t_tile_pos(10, 10, test_arena_sand)"],
+			"templates" : ["model/body/male/human/white", "t_tile_pos(10, 10, test_arena_sand)"],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -232,7 +232,7 @@
 					}
 				},
 
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
 						"left" : [["new_move_add", {"moves" : ["left"]}]],
 						"right": [["new_move_add", {"moves" : ["right"]}]],
@@ -259,15 +259,15 @@
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 10000}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 5000}},
 
-				//{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				//{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		},
 		// Dagger for NPC01
 		{
 			"id" : "sword_generator_npc01",
-			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
 				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				{
@@ -303,7 +303,7 @@
 		},
 		{
 			"id" : "long_sword_npc01",
-			"templates" : ["new/model/weapon/slash/dagger"],
+			"templates" : ["model/weapon/slash/dagger"],
 			"components" : [
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
 			]
@@ -311,7 +311,7 @@
 
 		{
 			"id" : "NPC01",
-			"templates" : ["new/model/body/special/minotaur",  "t_tile_pos(3, 20, test_arena_sand)"],
+			"templates" : ["model/body/special/minotaur",  "t_tile_pos(3, 20, test_arena_sand)"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 
@@ -337,20 +337,20 @@
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 
 
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "wooden_arrows_pack_npc02",
-			"templates" : ["new/model/ammo_pack/shoot/wooden_arrows_pack"],
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
 				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
 					"type" : "new.factory:Factory", 
 					"params" : {
 						"prescription" : {
-							"templates" : ["new/model/ammo/shoot/wooden_arrow"],
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "new.debug:Debug", "params" : {}},
 
@@ -360,7 +360,7 @@
 
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 
-								{"type" : "new.movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
+								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
@@ -378,7 +378,7 @@
 
 		{
 			"id" : "wooden_bow_npc02",
-			"templates" : ["new/model/weapon/shoot/bow_wooden_big"],
+			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
@@ -401,7 +401,7 @@
 				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 50}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 50}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
@@ -416,7 +416,7 @@
 				{"type" : "new.debug:Debug", "params" : {}},
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		}
@@ -436,7 +436,7 @@
 					],
 					["SEQ",
 
-						["SCRIPT", "new.show_msg_window", {"html_text" : " NPC01 and NPC02 destroyed"}],
+						["SCRIPT", "show_msg_window", {"html_text" : " NPC01 and NPC02 destroyed"}],
 						[
 							"SCRIPT", 
 							"new.show_confirm_dlg", 
@@ -461,7 +461,7 @@
 					"IF",
 					["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "player01"}], false],
 					["SEQ",
-							["SCRIPT", "new.show_msg_window", {"html_text" : "You died"}],
+							["SCRIPT", "show_msg_window", {"html_text" : "You died"}],
 							[
 								"SCRIPT", 
 								"new.show_confirm_dlg", 

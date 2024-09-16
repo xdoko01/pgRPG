@@ -1,7 +1,0 @@
-{
-	"id" : "male_facial_frenchstache_gold_model",
-	"templates" : ["new/model/body/male/facial"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/facial/frenchstache/frenchstache_gold.json"}}
-	]
-}

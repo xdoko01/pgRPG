@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_jewfro_gray2_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/jewfro/gray2.json}}
+	]
+}

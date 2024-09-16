@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_torso_back_wings_model",
+	"templates" : ["model/wearable/male/torso"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/back/wings.json}}
+	]
+}

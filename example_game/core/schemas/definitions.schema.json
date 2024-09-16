@@ -17,7 +17,7 @@
 			"title": "Template String definition",
 			"description": "String representation of a template with or without parameters",
 			"examples": [
-				"new/model/body/special/minotaur",  
+				"model/body/special/minotaur",  
 				"t_tile_pos(0, 0, test_arena_sand)"
 			],
 
@@ -122,7 +122,7 @@
 		"entity_model_file": {
 			"title": "Render Model of Entity",
 			"description": "JSON file in MODEL_PATH.",
-			"examples": ["dark_male.json", "new/model/white_male.json"],
+			"examples": ["dark_male.json", "model/white_male.json"],
 
 			"type": "string",
 			"pattern": ".json$"

@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_legs_armor_golden_greaves_model",
+	"templates" : ["model/wearable/male/legs"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/legs/armor/golden_greaves.json}}
+	]
+}

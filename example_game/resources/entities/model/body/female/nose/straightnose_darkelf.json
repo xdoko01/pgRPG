@@ -1,0 +1,7 @@
+{
+	"id" : "female_nose_straightnose_darkelf_model",
+	"templates" : ["model/body/female/nose"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/nose/straightnose_darkelf.json}}
+	]
+}

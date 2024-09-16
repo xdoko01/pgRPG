@@ -1,0 +1,7 @@
+{
+"id" : "female_ears_elvenears_light_model",
+"templates" : ["model/body/female/ears"],
+"components" : [
+{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/ears/elvenears_light.json}}
+]
+}

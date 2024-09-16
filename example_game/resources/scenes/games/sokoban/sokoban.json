@@ -206,7 +206,7 @@
 		},
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
+			"templates" : ["model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
 			"components" : [
 
 				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -220,7 +220,7 @@
 				},
 
 				{
-					"type" : "new.controllable:Controllable", 
+					"type" : "controllable:Controllable", 
 					"params" :  {
 						"key_profile" : "default",
 						"control_cmds" : {

@@ -1,7 +1,0 @@
-{
-	"id" : "wearable_female_head_facial_patch_model",
-	"templates" : ["new/model/wearable/female/head"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/head/facial/patch.json}}
-	]
-}

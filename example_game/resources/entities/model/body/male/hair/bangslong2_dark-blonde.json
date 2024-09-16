@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_bangslong2_dark-blonde_model",
+"templates" : ["model/body/male/hair"],
+"components" : [
+	{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/bangslong2/dark-blonde.json}}
+	]
+}

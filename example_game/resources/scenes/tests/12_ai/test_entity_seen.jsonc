@@ -23,12 +23,12 @@
 	// What processors to load
 	"processors" : [
 		// For commands
-		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["new.command_system.generate_command_from_btree_processor:GenerateCommandFromBTreeProcessor", {}],
-		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.generate_command_from_btree_processor:GenerateCommandFromBTreeProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
-		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// For animation
 		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
@@ -44,19 +44,19 @@
 		["new.sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
 
 		// For displaying
-		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the quest - after first game screen is generated
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
 
 		// For clearing of processing of movements and collisions
-		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 
 	],
@@ -121,12 +121,12 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/white"],
+			"templates" : ["model/body/male/human/white"],
 			"components" : [
 				{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
 				{"type" : "new.debug:Debug", "params" : {}},
 
-				{"type" : "new.controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
 					"control_cmds" : {
 						"left" : [["move_dir_add", {"moves" : ["left"]}]],
 						"right": [["move_dir_add", {"moves" : ["right"]}]],
@@ -136,8 +136,8 @@
 					}
 				},
 
-				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{
 					"type" : "new.collidable:Collidable", 
 					"params" :  {
@@ -145,12 +145,12 @@
 						"dx" : 0, "dy" : 8,
 						"accept_pos_fix_from_denylist" : []//["ALL"] // no one can move the player
 					}},
-				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		},
 		{
 			"id" : "NPC01",
-			"templates" : ["new/model/body/male/skeleton/white"],
+			"templates" : ["model/body/male/skeleton/white"],
 			"components" : [
 				{"type" : "new.debug:Debug", "params" : {}},
 
@@ -225,8 +225,8 @@
 					}
 				},
 
-				{"type" : "new.position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {
 					"x" : 15, 
 					"y" : 27, 
@@ -238,7 +238,7 @@
 		},
 		{
 			"id" : "NPC02",
-			"templates" : ["new/model/body/male/skeleton/green"],
+			"templates" : ["model/body/male/skeleton/green"],
 			"components" : [
 				{
 					"type" : "new.debug:Debug",
@@ -256,14 +256,14 @@
 					[0, 	"goto", {}]
 				]}},
 
-				{"type" : "new.position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC03",
-			"templates" : ["new/model/body/male/skeleton/grey"],
+			"templates" : ["model/body/male/skeleton/grey"],
 			"components" : [
 				{
 					"type" : "new.debug:Debug",
@@ -281,14 +281,14 @@
 					[0, 	"goto", {}]
 				]}},
 
-				{"type" : "new.position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC04",
-			"templates" : ["new/model/body/male/zombie/green"],
+			"templates" : ["model/body/male/zombie/green"],
 			"components" : [
 				{
 					"type" : "new.debug:Debug",
@@ -307,14 +307,14 @@
 				]}},
 
 
-				{"type" : "new.position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC05",
-			"templates" : ["new/model/body/male/wolfman/gold"],
+			"templates" : ["model/body/male/wolfman/gold"],
 			"components" : [
 				{
 					"type" : "new.debug:Debug",
@@ -332,8 +332,8 @@
 					[0, 	"goto", {}]
 				]}},
 				
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
 														"y" : 27,
 														"dx" : 0,
@@ -361,7 +361,7 @@
 				"id": "ev_quest_start",
 				"actions": 	[
 					"SCRIPT",
-					"new.show_msg_window", 
+					"show_msg_window", 
 					{
 						"title": "%filepath",
 						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"

@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_feet_armor_golden_boots_model",
+	"templates" : ["model/wearable/female/feet"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/feet/armor/golden_boots.json}}
+	]
+}

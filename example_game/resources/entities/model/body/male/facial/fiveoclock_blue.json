@@ -1,0 +1,7 @@
+{
+	"id" : "male_facial_fiveoclock_blue_model",
+	"templates" : ["model/body/male/facial"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/facial/fiveoclock/fiveoclock_blue.json"}}
+	]
+}

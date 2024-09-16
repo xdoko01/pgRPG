@@ -1,0 +1,7 @@
+{
+"id" : "female_eyes_green_model",
+"templates" : ["model/body/female/eyes"],
+"components" : [
+{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/eyes/green.json}}
+]
+}

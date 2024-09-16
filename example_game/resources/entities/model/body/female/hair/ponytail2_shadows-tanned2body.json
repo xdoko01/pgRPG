@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_ponytail2_shadows-tanned2body_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/ponytail2/shadows-tanned2body.json}}
+	]
+}

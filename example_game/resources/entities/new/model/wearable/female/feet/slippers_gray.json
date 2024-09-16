@@ -1,7 +1,0 @@
-{
-	"id" : "wearable_female_feet_slippers_gray_model",
-	"templates" : ["new/model/wearable/female/feet"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/feet/slippers/gray.json}}
-	]
-}

@@ -1,7 +1,0 @@
-{
-"id" : "female_wound_wound_mounth_model",
-"templates" : ["new/model/body/female/wound"],
-"components" : [
-{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/wound/wound_mounth.json}}
-]
-}

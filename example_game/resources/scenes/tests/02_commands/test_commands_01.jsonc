@@ -24,26 +24,26 @@
 	// What processors to load
 	"processors" : [
 		// For commands
-		["new.command_system.generate_command_from_blist_processor:GenerateCommandFromBListProcessor", {}],
-		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+		["command_system.generate_command_from_blist_processor:GenerateCommandFromBListProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
-		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 		
 		// For displaying
-		["new.render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["new.render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["new.render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["new.render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["new.render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["new.render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["new.render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the quest - after first game screen is generated
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
 
 		// For processing input and movements
-		["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
 	],
 
 	// What maps to load
@@ -59,7 +59,7 @@
 	"entities" : [
 		{
 			"id" : "player01",
-			"templates" : ["new/model/body/male/human/brown"],
+			"templates" : ["model/body/male/human/brown"],
 			"components" : [
 
 				{
@@ -81,9 +81,9 @@
 					}
 				},
 
-				{"type" : "new.position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
 	],
@@ -96,7 +96,7 @@
 				"id": "ev_quest_start",
 				"actions": 	[
 					"SCRIPT",
-					"new.show_msg_window", 
+					"show_msg_window", 
 					{
 						"title": "%filepath",
 						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"

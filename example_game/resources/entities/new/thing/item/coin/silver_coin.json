@@ -1,9 +1,0 @@
-{
-	"id" : "silver_coin",
-	"templates" : ["new/thing/item/coin", "new/model/item/coin/silver_coin"],
-	"components" : [
-
-		{"type" : "new.scorable_on_pickup:ScorableOnPickup", "params" : {"score" : 20}}
-
-	]
-}

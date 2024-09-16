@@ -1,0 +1,8 @@
+{
+	"id" : "iron_arrow_model",
+	"templates" : ["model/ammo/shoot"],
+
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/ammo/shoot/iron_arrow.json"}}
+	]
+}

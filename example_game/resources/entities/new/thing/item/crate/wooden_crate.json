@@ -1,6 +1,0 @@
-{
-	"id" : "wooden_crate",
-	"templates" : ["new/thing/item/crate", "new/model/item/crate/wooden_crate"],
-	"components" : [
-	]
-}

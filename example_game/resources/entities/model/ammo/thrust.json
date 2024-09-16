@@ -1,0 +1,6 @@
+{
+	"id" : "thrust_model",
+	"templates" : ["model/ammo"],
+	"components" : [
+	]
+}

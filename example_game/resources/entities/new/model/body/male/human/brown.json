@@ -1,7 +1,0 @@
-{
-	"id" : "male_human_brown_model",
-	"templates" : ["new/model/body/male/human"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/body_male_human_brown.json"}}
-	]
-}

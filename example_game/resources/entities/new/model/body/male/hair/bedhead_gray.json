@@ -1,7 +1,0 @@
-{
-"id" : "male_hair_bedhead_gray_model",
-"templates" : ["new/model/body/male/hair"],
-"components" : [
-	{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/bedhead/gray.json}}
-	]
-}

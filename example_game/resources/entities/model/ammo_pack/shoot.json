@@ -1,0 +1,6 @@
+{
+	"id" : "shoot_ammo_pack_model",
+	"templates" : ["model/ammo_pack"],
+	"components" : [
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_legs_skirt_robe_model",
+	"templates" : ["model/wearable/female/legs"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/legs/skirt/robe.json}}
+	]
+}
