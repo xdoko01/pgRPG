@@ -6,8 +6,8 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.position import Position
+from core.components.camera import Camera
+from core.components.position import Position
 
 # Logger init
 logger = logging.getLogger(__name__)

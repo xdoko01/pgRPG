@@ -1,5 +1,5 @@
 # Path to the pyrpg engine module
-pyrpg_path = '../pyrpg'
+pyrpg_path = "../pyrpg"
 
 # Bring pyrpg package onto the path
 import sys, os, getopt
@@ -7,15 +7,13 @@ from pathlib import Path
 
 sys.path.append(os.path.abspath(Path(pyrpg_path)))
 
-# Now do your import
-from pyrpg.main import init
 
 def main(argv):
     '''Run the game using the CLI arguments'''
 
     console = True
     scene_file = None
-    config_file = Path("config.json")
+    config_file = "example_game/config.jsonc"
 
     # Games
     #scene_file = 'games/kill_all/kill_all_level01.json'
@@ -28,7 +26,7 @@ def main(argv):
     # 12_ai
     #scene_file = 'tests/12_ai/test_entity_seen.jsonc' - old, does not work, fix it
     #scene_file = 'tests/12_ai/move_between_2_points.jsonc'
-    scene_file = 'tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_template.jsonc'
+    #scene_file = 'tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_template.jsonc'
     #scene_file = 'tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_events.jsonc'
     #scene_file = 'tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear.jsonc'
     #scene_file = 'tests/12_ai/guard_and_fight_back_if_ambushed_using_events.jsonc'
@@ -113,7 +111,7 @@ def main(argv):
 
     # 00_render
     #scene_file = 'tests/00_render/test_render_02.jsonc'
-    #scene_file = 'tests/00_render/test_render_01.jsonc'
+    scene_file = 'tests/00_render/test_render_01.jsonc'
 
 
     usage_info = '''
@@ -162,8 +160,15 @@ EXAMPLES
 
     print(f'Starting with the following arguments:\n{console=}\n{scene_file=}\n{config_file=}')
 
+
+    # Load all configurations based on the config file. Must be here so that the main module can already use logging functionality
+    # that is based on config files.
+    import pyrpg.core.config as config
+    config.load(config_file=config_file)
+
+    # Start the game
     from pyrpg.main import init
-    init(console=console, scene_file=scene_file, config_file=config_file timed=False)
+    init(console=console, scene_file=scene_file, timed=False)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

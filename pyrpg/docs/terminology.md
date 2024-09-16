@@ -39,3 +39,9 @@ Unique string representing the entity. One entity alias belongs to max one entit
 # load / create
  - load 
  - create when returning some real object instance as result
+
+# Other Unsorted
+ - use "" rather than ''
+ - use CAPITALS for global environments
+ - use space after the comment # comment """ Comment."""
+ 

@@ -1,7 +1,9 @@
 import logging
 
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config.paths import ENTITY_PATH
+from pyrpg.core.config import FILEPATHS # for ENTITY_PATH
+from pyrpg.core.config import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
+
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.functions import get_class_from_def
 from pyrpg.functions import translate # for creation of the component
@@ -10,9 +12,6 @@ from pyrpg.functions import get_dict_params # for filling of template with varia
 
 # Create logger
 logger = logging.getLogger(__name__)
-
-COMPONENTS_PCKG = 'pyrpg.core.ecs.components'
-PROCESSORSS_PCKG = 'pyrpg.core.ecs.processors'
 
 class ECSManager:
     '''Encapsulates functionalities needed to create, maintain and remove components
@@ -54,7 +53,7 @@ class ECSManager:
     ## PROCESSORS - START
     #####################
     def get_proc_class_from_def(self, proc_class_def):
-        return get_class_from_def(proc_class_def, PROCESSORSS_PCKG)
+        return get_class_from_def(proc_class_def, MODULEPATHS["PROCESSOR_MODULE_PATH"])
 
     def load_processor(self, processor_def: list) -> None:
         '''Takes processor definition and registers
@@ -172,7 +171,7 @@ class ECSManager:
         :return: Returns reference to the component class.
         :raises: ValueException, if component class cannot be identified
         '''
-        return get_class_from_def(comp_class_def, COMPONENTS_PCKG)
+        return get_class_from_def(comp_class_def, MODULEPATHS["COMPONENT_MODULE_PATH"])
 
     def create_component_from_def(self, component_def: dict) -> Component:
         '''Returns new instance of component created.
@@ -368,7 +367,7 @@ class ECSManager:
 
             # Get the template data
             logger.info(f'**Preparing entity data from template ""{template_id}"".')
-            template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
+            template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=FILEPATHS["ENTITY_PATH"])
 
             # Create all entities from the template
             logger.info(f'**Creating components from template ""{template_id}"".')

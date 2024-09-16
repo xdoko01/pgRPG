@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import pygame # for pygame.QUIT, pygame.KEYDOWN
-import pyrpg.core.config.keys as keys
+from pyrpg.core.config import KEYS
 
 from pyrpg.core.config.states import State
 from pyrpg.core.managers.gui_manager import GUIManager
@@ -25,7 +25,7 @@ from pyrpg.core.managers.pathfind_manager import PathfindManager
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
 from pathlib import Path
-from pyrpg.core.config.paths import QUEST_PATH
+from pyrpg.core.config import FILEPATHS # for SCENE_PATH
 from pyrpg.core.events.event import Event
 from pyrpg.functions import get_dict_from_file, get_dict_value, get_coll_value
 
@@ -156,7 +156,7 @@ class Game:
         '''
 
         # Read the quest definition from a file
-        quest_def = get_dict_from_file(filepath=Path(filepath), dir=QUEST_PATH)
+        quest_def = get_dict_from_file(filepath=Path(filepath), dir=FILEPATHS["SCENE_PATH"])
 
         # Translate quest definition into the game objects
         quest = self.load_quest_from_def(quest_def)
@@ -279,9 +279,9 @@ class Game:
                     #self.gui_manager.save_screen()
                     logger.info(f'Leaving to main menu')
                     return State.MAIN_MENU
-                elif event.key == keys.K_SAVE_GAME:
+                elif event.key == KEYS["K_SAVE_GAME"]:
                     pass
-                elif event.key == keys.K_LOAD_GAME:
+                elif event.key == KEYS["K_LOAD_GAME"]:
                     pass
 
         # maps and quests added in order that command can be informed about quest to change the phase

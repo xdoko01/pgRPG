@@ -1,39 +1,24 @@
+
+from pyrpg.core.config import KEYS, show
 import pygame
 
-def translate_key_from_str(key_string):
-	''' Returns code of the key
-	'''
+def _trans_key_from_str(key_string):
+	""" Returns pygame code of the key.
+	"""
 	return eval('pygame.' + key_string) if key_string is not None else pygame.K_CLEAR # Clear key should not be currently supported so ideal to use
 
-''' If some part of game requests controlling by the keyboard, it can import
-keys module and reference the module variable holding the key value based on
-default or json configuration.
-
-E.g.
-import pyrpg.core.config.keys as keys
-player_1_up_key = keys.K_PROFILE['player1']['up']
-'''
-
-# Load definition of keyboard keys from config
-from .config import KEYS
-
-# Dictionary holding all key profiles for moving of characters
-K_PROFILE = {}
 
 # Iterate through key schemas defined in config file and assign the keyboard keys
-for key_profile in KEYS.get('key_profiles', []):
-	K_PROFILE.update({key_profile : {k: translate_key_from_str(v) for k, v in KEYS[key_profile].items()}})
+k_profile = dict()
+for key_profile in KEYS.copy().get('KEY_PROFILES', []):
+	k_profile.update({key_profile: {k: _trans_key_from_str(v) for k, v in KEYS[key_profile].items()}})
+KEYS["K_PROFILE"] = k_profile
 
-# Game management hot keys
-K_CONSOLE_TOGGLE = translate_key_from_str(KEYS['console_toggle'])
-K_SAVE_GAME = translate_key_from_str(KEYS['save_game'])
-K_LOAD_GAME = translate_key_from_str(KEYS['load_game'])
-K_PAUSE_GAME = translate_key_from_str(KEYS['pause_game'])
+# Clear the original pre-conversion config
+for profile in KEYS["KEY_PROFILES"]: del(KEYS[profile])
+del(KEYS["KEY_PROFILES"])
 
+# Convert the rest of the keys
+for k,v in KEYS.items(): KEYS[k] = _trans_key_from_str(v) if k not in ("K_PROFILE") else KEYS[k]
 
-# Game menu navigation keys
-K_NAV_UP = translate_key_from_str(KEYS['nav_up'])
-K_NAV_DOWN = translate_key_from_str(KEYS['nav_down'])
-K_NAV_LEFT = translate_key_from_str(KEYS['nav_left'])
-K_NAV_RIGHT = translate_key_from_str(KEYS['nav_right'])
-K_SUBMIT = translate_key_from_str(KEYS['submit'])
+show(KEYS)

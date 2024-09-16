@@ -15,7 +15,7 @@ from pyrpg.core.ecs.components.component import Component
 
 from pyrpg.core.commands import cmd_factory, CommandGeneratorMock
 from pyrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
-from pyrpg.core.config.paths import BTREE_PATH
+from pyrpg.core.config import FILEPATHS # for BTREE_PATH
 
 from pyrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError
 
@@ -108,19 +108,19 @@ class BrainAI(Component):
         # Create AI generator
         if kwargs.get('cmd_tree') is not None:
             try:
-                self.generator = BTree(tree_def=kwargs, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+                self.generator = BTree(tree_def=kwargs, cmd_factory=cmd_factory, template_path=FILEPATHS["BTREE_PATH"], val_check=True)
             except InvalidBehaviorTreeError:
                 logger.error(f'The Behavior Tree is invalid. Substituing with default behavior.')
-                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=FILEPATHS["BTREE_PATH"], val_check=True)
         elif kwargs.get('cmd_list') is not None:
             try:
                 self.generator = BList(list_def=kwargs, cmd_factory=cmd_factory)
             except InvalidBehaviorListError:
                 logger.error(f'The Behavior List is invalid. Substituing with default behavior.')
-                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=FILEPATHS["BTREE_PATH"], val_check=True)
         else:
             logger.error(f'The Behavior is invalid. Substituing with default behavior.')
-            self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+            self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=FILEPATHS["BTREE_PATH"], val_check=True)
 
 # Mock component for usage in tests
 @dataclass

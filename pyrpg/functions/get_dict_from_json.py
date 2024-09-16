@@ -15,6 +15,6 @@ def get_dict_from_json(filepath: Path) -> dict:
     try:
         with open(filepath, 'r') as json_file:
             json_data = json_file.read()
-            return json.loads(re.sub("//.*","", json_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
+            return json.loads(re.sub("[^:]//.*","", json_data, flags=re.MULTILINE)) # Remove C-style comments before processing JSON
     except FileNotFoundError:
         raise

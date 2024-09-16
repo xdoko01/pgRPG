@@ -6,10 +6,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.render_data_from_parent import RenderDataFromParent
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
-from pyrpg.core.ecs.components.new.weapon import Weapon
+from core.components.render_data_from_parent import RenderDataFromParent
+from core.components.camera import Camera
+from core.components.renderable_model import RenderableModel
+from core.components.weapon import Weapon
 
 # For filtering only entities with position on the cameras
 from ..functions import filter_only_visible_on_camera

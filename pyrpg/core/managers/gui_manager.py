@@ -1,4 +1,5 @@
-'''Contains GUI components for the menus and the game'''
+""" Contains GUI components for the menus and the game.
+"""
 
 # Initiate logging
 import logging
@@ -12,15 +13,15 @@ import pygame_gui
 from pathlib import Path
 from collections import namedtuple
 from pyrpg.functions.load_animation import load_animation
-from pyrpg.core.config.paths import MENU_BACKGROUND_PATH
-from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
+from pyrpg.core.config import FILEPATHS, GUI # MENU_BACKGROUND_PATH
+#from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
 
 from pyrpg.utils.bitmap_font import BitmapFont
-from pyrpg.core.config.paths import FONT_PATH
+#from pyrpg.core.config.paths import FONT_PATH
 
 
-Dim = namedtuple('Dim', ['width', 'height'])
-Pos = namedtuple('Pos', ['x', 'y'])
+Dim = namedtuple("Dim", ["width", "height"])
+Pos = namedtuple("Pos", ["x", "y"])
 
 class GUIManager:
 
@@ -54,16 +55,16 @@ class GUIManager:
         self.screen_copy = pygame.Surface(self._res)
         self.window_manager = pygame_gui.UIManager(self._res)
 
-        self.background_animation = load_animation(MENU_BACKGROUND_PATH, resize=self._res)
-        self.background_animation_delay = MENU_BACKGROUND_ANIMATION_DELAY
+        self.background_animation = load_animation(FILEPATHS["MENU_BACKGROUND_PATH"], resize=self._res)
+        self.background_animation_delay = GUI["MENU_BACKGROUND_ANIMATION_DELAY_MS"]
         self.background_animation_last_image = 0
         self.background_animation_last_time = pygame.time.get_ticks()
         self.background_animation_frames = len(self.background_animation)
 
         # Font
-        self.font = BitmapFont(FONT_PATH /'good_neighbours_font.json')
+        self.font = BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
 
-        logger.info(f'GUIManager initiated.')
+        logger.info(f"GUIManager initiated.")
 
     def process_events(self, event) -> None:
         self.window_manager.process_events(event)
@@ -92,21 +93,21 @@ class GUIManager:
         self.blit_image(self.background_animation[self.background_animation_last_image])
 
     def flip(self):
-        '''Trigger displaying on the screen'''
+        """ Trigger displaying on the screen.
+        """
         pygame.display.flip()
 
     def save_screen(self, flip_before_copy=False):
-        ''' Parameter is used to force displaying everything on screen.
+        """ Parameter is used to force displaying everything on screen.
         Was prepared due to PHASE start of the first quest that was processed
-        before anything was blitted on the screen
-        '''
+        before anything was blitted on the screen.
+        """
 
         if flip_before_copy: self.flip()
 
         self.screen_copy = self.window.copy()
-        logger.info(f'Screen has been copied')
+        logger.info(f"Screen has been copied")
 
 
 if __name__ == '__main__':
-
     gui = GUIManager(640, 480, 32)

@@ -12,9 +12,9 @@
 
 # Init logging config
 import logging
-import logging.config
-from pyrpg.core.config.config import LOGGING
-logging.config.dictConfig(LOGGING)
+import pyrpg.core.config.logging
+
+#import logging
 
 # Initiate logging of module
 logger = logging.getLogger(__name__)
@@ -28,24 +28,40 @@ python_process = psutil.Process(os.getpid())
 import pygame
 
 # Initiate keys used for the console toggle anywhere in the game
-from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
+##from pyrpg.core.config.keys import K_CONSOLE_TOGGLE
 
-from pyrpg.core.config.config import DEBUG
+##from pyrpg.core.config import CONFIG["DEBUG"]
 
-from pyrpg.core.config.display import DISPLAY_MAX_FPS
+##from pyrpg.core.config.display import DISPLAY_MAX_FPS
 
 from pyrpg.core.config.states import State
+
 
 # Via this global variable, console can access all game properties
 main = None
 
-def init(console: bool=True, filepath: str=None, timed: bool=False) -> None:
+def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
     '''Create instance of main game class and remember it in 
     form of global variable so that console can use it'''
 
     global main
 
-    main = Main(console=console, filepath=filepath, timed=timed)
+    """
+    # Load all configurations based on the config file
+    import pyrpg.core.config as config
+    config.load(config_file=config_file)
+    """
+
+    """
+    # Init logging
+    import logging
+    import logging.config
+    logging.config.dictConfig(config.LOGGING)
+    logger = logging.getLogger(__name__)
+    """
+    
+    # Start the engine
+    main = Main(console=console, filepath=scene_file, timed=timed)
     logger.info(f'Instance of Main class created as "{main}".')
 
     logger.info(f'Starting the main loop.')
@@ -69,8 +85,14 @@ class Main:
 
         # Manager of GUI window and related
         from pyrpg.core.managers.gui_manager import GUIManager
-        from pyrpg.core.config.display import DISPLAY_BITDEPTH, DISPLAY_FULLSCREEN, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_GUI_WINDOW_RATIO
-        self.gui_manager = GUIManager(DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_BITDEPTH, DISPLAY_FULLSCREEN, DISPLAY_GUI_WINDOW_RATIO)
+        from pyrpg.core.config import DISPLAY 
+        self.gui_manager = GUIManager(
+            DISPLAY["WIDTH"], 
+            DISPLAY["HEIGHT"], 
+            DISPLAY["BITDEPTH"], 
+            DISPLAY["FULLSCREEN"], 
+            DISPLAY["GUI_WINDOW_RATIO"]
+        )
 
         # Prepare console
         import pyrpg.core.managers.console_manager as console_manager
@@ -120,6 +142,10 @@ class Main:
         else:
             self.state_manager.change_state(State.MAIN_MENU)
             logger.info(f'Starting into the main menu.')
+
+        # Reference to game to itself
+        global main
+        main = self
 
     def init_game(self, filepath):
         # Show loading screen here

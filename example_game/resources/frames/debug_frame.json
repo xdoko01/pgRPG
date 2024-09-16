@@ -1,5 +1,5 @@
 {
-    "frame_image" : "pyrpg/resources/images/debug_frame.png",
+    "frame_image" : "example_game/resources/images/debug_frame.png",
     "frame_color" : "#FF0000",
 	"colorkey" : "#FF00FF",
     "separator_color" : "#7F7F7F",

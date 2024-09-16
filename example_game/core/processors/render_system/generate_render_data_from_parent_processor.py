@@ -6,11 +6,11 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
-from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
-from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
-from pyrpg.core.ecs.components.new.render_data_from_parent import RenderDataFromParent
+from core.components.position import Position
+from core.components.renderable_model import RenderableModel
+from core.components.has_weapon import HasWeapon
+from core.components.weapon_in_use import WeaponInUse
+from core.components.render_data_from_parent import RenderDataFromParent
 
 # Logger init
 logger = logging.getLogger(__name__)

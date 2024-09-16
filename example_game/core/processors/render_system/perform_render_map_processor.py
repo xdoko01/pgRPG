@@ -6,10 +6,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.camera import Camera
+from core.components.position import Position
+from core.components.camera import Camera
 
-from pyrpg.core.config.config import TILE_RES
+from pyrpg.core.config import GAME # for TILE_RES_PX
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class PerformRenderMapProcessor(Processor):
             for layer in map.tmxdata.visible_tile_layers:
 
                 for x, y, tile in map.get_tile_images_by_rect(layer, camera.map_screen_rect): # is this needed - can we simplify this?
-                    camera.screen.blit(tile, camera.apply((x * TILE_RES, y * TILE_RES)))
+                    camera.screen.blit(tile, camera.apply((x * GAME["TILE_RES_PX"], y * GAME["TILE_RES_PX"])))
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

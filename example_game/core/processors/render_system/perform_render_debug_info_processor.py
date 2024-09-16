@@ -7,26 +7,26 @@ import pygame   # for pygame.time, pygame.font and pygame.Color
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.debug import Debug
-from pyrpg.core.ecs.components.new.has_inventory import HasInventory
-from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
-from pyrpg.core.ecs.components.new.movable import Movable
-from pyrpg.core.ecs.components.new.collidable import Collidable
-from pyrpg.core.ecs.components.new.damageable import Damageable
-from pyrpg.core.ecs.components.new.has_score import HasScore
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI
-from pyrpg.core.ecs.components.new.can_see import CanSee
-from pyrpg.core.ecs.components.new.can_hear import CanHear
+from core.components.position import Position
+from core.components.camera import Camera
+from core.components.debug import Debug
+from core.components.has_inventory import HasInventory
+from core.components.renderable_model import RenderableModel
+from core.components.movable import Movable
+from core.components.collidable import Collidable
+from core.components.damageable import Damageable
+from core.components.has_score import HasScore
+from core.components.brain_ai import BrainAI
+from core.components.can_see import CanSee
+from core.components.can_hear import CanHear
 
 from ..functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
 from ..functions import get_view_points # for drawing of arrows
 
-from pyrpg.core.config.fonts import GAME_DEBUG_FONT # for the debug font
-from pyrpg.core.config.frames import GAME_DEBUG_FRAME # for the debug frame
-from pyrpg.core.config.config import TILE_RES
+from pyrpg.core.config.fonts import FONTS # for GAME_DEBUG_FONT 
+from pyrpg.core.config.frames import FRAMES # for the debug frame
+from pyrpg.core.config import GAME # for TILE_RES_PX
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 
@@ -88,7 +88,7 @@ class PerformRenderDebugInfoProcessor(Processor):
 
             # Get position and model status info
             for _, (position, debug, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, RenderableModel)):
-                debug.info.update({'position' : f'(px=({int(position.x)},{int(position.y)}), tl=({int(position.x)//TILE_RES},{int(position.y)//TILE_RES}), dir={position.dir_name}'})
+                debug.info.update({'position' : f'(px=({int(position.x)},{int(position.y)}), tl=({int(position.x)//GAME["TILE_RES_PX"]},{int(position.y)//GAME["TILE_RES_PX"]}), dir={position.dir_name}'})
                 debug.info.update({'action' : renderable.action})
 
             # Get AIBrain info
@@ -120,7 +120,7 @@ class PerformRenderDebugInfoProcessor(Processor):
             # Show debug information to all entities with AIBrain component and ctx.locals._path variable existing
             for _, (position, debug, movable, brain) in self.world.get_components(Position, Debug, Movable, BrainAI):
 
-                tile_to_px = lambda t_pos: (t_pos[0]*TILE_RES + TILE_RES // 2, t_pos[1]*TILE_RES + TILE_RES // 2)
+                tile_to_px = lambda t_pos: (t_pos[0]*GAME["TILE_RES_PX"] + GAME["TILE_RES_PX"] // 2, t_pos[1]*GAME["TILE_RES_PX"] + GAME["TILE_RES_PX"] // 2)
 
                 try:
                     # Skip in case path is not yet calculated
@@ -162,7 +162,7 @@ class PerformRenderDebugInfoProcessor(Processor):
 
                         # Print point coordinates
                         camera.screen.blit(
-                            GAME_DEBUG_FONT.render(
+                            FONTS["GAME_DEBUG_FONT"].render(
                                 pformat((round(brain.generator.bb.locals._path[i][0]), round(brain.generator.bb.locals._path[i][1])))
                             ), 
                             (point[0], point[1] - 5)
@@ -278,8 +278,8 @@ class PerformRenderDebugInfoProcessor(Processor):
                 if abs(x - pos_cam_x) < 30 and abs(y - pos_cam_y) < 30:
 
                     # Blit debug text info gathered above - except brain process
-                    text_surf = GAME_DEBUG_FONT.render(pformat(debug.info)) # Text to Surface
-                    frame_surf = GAME_DEBUG_FRAME.render(text_surf) # Frame the debug text to surface
+                    text_surf = FONTS["GAME_DEBUG_FONT"].render(pformat(debug.info)) # Text to Surface
+                    frame_surf = FRAMES["GAME_DEBUG_FRAME"].render(text_surf) # Frame the debug text to surface
                     
                     camera.screen.blit(
                         frame_surf,

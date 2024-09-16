@@ -1,4 +1,4 @@
-from pyrpg.core.config.config import MSG_EVENT_FORMAT # for the format of event messages
+from pyrpg.core.config import MESSAGES # for the format of event messages
 
 class Event:
 	''' Class encapsulating event sent by event dispatcher
@@ -28,7 +28,7 @@ class Event:
 		'''
 
 		# Get the event msg format - from config files - it is ok not to fill any parameter
-		event_msg_format = MSG_EVENT_FORMAT.get(self.event_type, ['', []])
+		event_msg_format = MESSAGES["ON_EVENT"].get(self.event_type, ['', []])
 		
 		# Decode the message
 		return event_msg_format[0].format(*[engine.entity_to_alias.get(getattr(self, var_name)) for var_name in event_msg_format[1]])

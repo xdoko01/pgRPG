@@ -7,8 +7,10 @@ module tests.
 
 import pygame
 import pyrpg.core.models as model # For cached animated model in RenderableModel entity
-import pyrpg.core.config.config as config # For TILE_RES
-from pyrpg.core.config.paths import Path, MODEL_PATH
+
+from  pyrpg.core.config import GAME # For TILE_RES
+from pyrpg.core.config import FILEPATHS # For MODEL_PATH
+from pathlib import Path
 from pyrpg.core.ecs.components.component import Component
 
 class RenderableModel(Component):
@@ -59,9 +61,9 @@ class RenderableModel(Component):
         # Initiate new model
         try:
             #self.model = model.load_model(str(MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
-            self.model = model.load_model(MODEL_PATH / Path(model_file), (config.TILE_RES, config.TILE_RES))
+            self.model = model.load_model(FILEPATHS["MODEL_PATH"] / Path(model_file), (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
         except:
-            print(f'Something went wrong during initiation of the model "{MODEL_PATH / Path(model_file)}"')
+            print(f'Something went wrong during initiation of the model "{FILEPATHS["MODEL_PATH"] / Path(model_file)}"')
             # Notify component factory that initiation has failed
             raise ValueError
 
@@ -130,7 +132,7 @@ class RenderableModel(Component):
         '''
         try:
             #self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
-            self.model = model.load_model(MODEL_PATH / model_file, (config.TILE_RES, config.TILE_RES))
+            self.model = model.load_model(FILEPATHS["MODEL_PATH"] / model_file, (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
 
         except:
             raise ValueError

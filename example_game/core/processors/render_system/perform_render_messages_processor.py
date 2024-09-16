@@ -5,8 +5,7 @@ import logging
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
-from pyrpg.core.config.fonts import GAME_MSG_FONT # used font
-from pyrpg.core.config.config import MSG_DEFAULT_TTL # default TTL
+from pyrpg.core.config.fonts import FONTS # for GAME_MSG_FONT 
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -82,7 +81,7 @@ class PerformRenderMessagesProcessor(Processor):
         for msg in messages:
 
             # Generate surface for blitting
-            msg_surf = GAME_MSG_FONT.render(msg.text, align=self.align)
+            msg_surf = FONTS["GAME_MSG_FONT"].render(msg.text, align=self.align)
 
             # Blit the surface
             self.window.blit(msg_surf, (pos[0], pos[1]))

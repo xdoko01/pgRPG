@@ -7,7 +7,7 @@ module tests.
 from math import radians, sin, cos
 
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.config.config import TILE_RES # in order to re-calculate tile distance to px
+from pyrpg.core.config import GAME # for TILE_RES_PX - in order to re-calculate tile distance to px
 
 class CanSee(Component):
     ''' Component is holding information about the capability of the
@@ -55,7 +55,7 @@ class CanSee(Component):
         self.cos_angle = cos(self.angle_rad_div2)
 
         # Get the distance in px - mandatory
-        self.distance = kwargs.get('distance_px', kwargs.get('distance_tiles', 10) * TILE_RES)
+        self.distance = kwargs.get('distance_px', kwargs.get('distance_tiles', 10) * GAME["TILE_RES_PX"])
 
         # Get the list of entities in sight - optional
         self.ent_in_sight = set(kwargs.get('ent_in_sight', []))

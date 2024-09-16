@@ -6,7 +6,7 @@ module tests.
 '''
 from dataclasses import dataclass
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.config.config import TILE_RES # in order to specify the position in tiles coordinates
+from pyrpg.core.config import GAME # for TILE_RES_PX - in order to specify the position in tiles coordinates
 
 # TODO - is self.direction necessary? is not enough dir_name?
 class Position(Component):
@@ -77,8 +77,8 @@ class Position(Component):
 
         # Coordinates in the world
         try:
-            self.x = kwargs.get('x', kwargs.get('tile_x', 0) * TILE_RES + TILE_RES // 2) # either position in pixels or tiles must be specified
-            self.y = kwargs.get('y', kwargs.get('tile_y', 0) * TILE_RES + TILE_RES // 2) # either position in pixels or tiles must be specified
+            self.x = kwargs.get('x', kwargs.get('tile_x', 0) * GAME["TILE_RES_PX"] + GAME["TILE_RES_PX"] // 2) # either position in pixels or tiles must be specified
+            self.y = kwargs.get('y', kwargs.get('tile_y', 0) * GAME["TILE_RES_PX"] + GAME["TILE_RES_PX"] // 2) # either position in pixels or tiles must be specified
             self.map = kwargs.get('map')
             self.dir_name = kwargs.get('dir_name', 'down')
         except KeyError:
@@ -114,7 +114,7 @@ class Position(Component):
 
     def get_tile(self) -> tuple:
         '''Get tile coordinates'''
-        return (self.x // TILE_RES, self.y // TILE_RES)
+        return (self.x // GAME["TILE_RES_PX"], self.y // GAME["TILE_RES_PX"])
 
     def set_direction(self, dir_name):
         '''
@@ -141,7 +141,7 @@ class PositionMock:
     direction: tuple = (0,1),
     dir_name: str = 'down',
     set_direction = lambda self,dir: None
-    get_tile = lambda self: (self.x // TILE_RES, self.y // TILE_RES)
+    get_tile = lambda self: (self.x // GAME["TILE_RES_PX"], self.y // GAME["TILE_RES_PX"])
 
 
 if __name__ == '__main__':

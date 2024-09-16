@@ -1,7 +1,8 @@
 import logging
 import pyrpg.utils.dialog as dialog
+from pathlib import Path
 
-from pyrpg.core.config.paths import Path, DIALOG_PATH, IMAGE_PATH, FONT_PATH
+from pyrpg.core.config import FILEPATHS # for DIALOG_PATH, IMAGE_PATH, FONT_PATH
 from pyrpg.functions.get_dict_from_json import get_dict_from_json
 
 # Create logger
@@ -29,7 +30,7 @@ class DialogManager():
 
             # Read the json file with dialog definition
             try:
-                dlg_file = Path(DIALOG_PATH / Path(dlg_template + '.json'))
+                dlg_file = Path(FILEPATHS["DIALOG_PATH"] / Path(dlg_template + '.json'))
                 dlg_data = get_dict_from_json(dlg_file)
             except FileNotFoundError:
                 logger.error(f'Dialog file "{dlg_file}" not found.')
@@ -64,7 +65,7 @@ class DialogManager():
         new_dlg_data = { **new_dlg_data, **dialog_def }
 
         # Now there is time to make surfaces and register the data object
-        new_dlg_obj = dialog.prepare_dlg_obj_from_data(new_dlg_data, img_path=IMAGE_PATH, font_path=FONT_PATH)
+        new_dlg_obj = dialog.prepare_dlg_obj_from_data(new_dlg_data, img_path=FILEPATHS["IMAGE_PATH"], font_path=FILEPATHS["FONT_PATH"])
 
         # Store the dialog
         self._dialogs.update({new_dlg_id : new_dlg_obj})

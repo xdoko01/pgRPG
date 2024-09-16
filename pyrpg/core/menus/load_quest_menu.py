@@ -1,6 +1,7 @@
 import logging
 
-from pyrpg.core.config.paths import QUEST_PATH
+#from pyrpg.core.config.paths import QUEST_PATH
+from pyrpg.core.config import FILEPATHS
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
 from pyrpg.core.config.states import State
 from pygame_gui.windows import UIFileDialog
@@ -11,7 +12,8 @@ from .menu import Menu
 logger = logging.getLogger(__name__)
 
 class LoadQuestMenu(Menu):
-    '''Class implementing the load quest dialog'''
+    """ Class implementing the 'Load Scenes Menu' dialog.
+    """
 
     def __init__(self, gui_manager, state_manager, init_game_fnc) -> None:
         self.gui_manager = gui_manager
@@ -19,21 +21,21 @@ class LoadQuestMenu(Menu):
 
         self.init_game_fnc = init_game_fnc
 
-        self.last_quest_path = QUEST_PATH
+        self.last_quest_path = FILEPATHS["SCENE_PATH"]
         self.load_quest_window = None
 
-        logger.info(f'Load quest menu window initiated')
+        logger.info(f"Load Scenes Menu dialog initiated.")
 
     def show(self) -> None:
         self.load_quest_window = UIFileDialog(
                 rect=Rect(self.gui_manager._gui_dlg_start, self.gui_manager._gui_dlg_dim),
                 manager=self.gui_manager.window_manager,
-                window_title='Load quest',
+                window_title="Load Scene",
                 initial_file_path=self.last_quest_path,
                 allow_existing_files_only=False,
                 allow_picking_directories=False)
 
-        logger.info(f'Load quest menu window created')
+        logger.info(f"Load Scenes Menu dialog created.")
 
     def hide(self):
         raise NotImplementedError
@@ -46,12 +48,12 @@ class LoadQuestMenu(Menu):
 
         for event in key_events:
             if event.type == UI_FILE_DIALOG_PATH_PICKED:
-                logger.info(f'Loading game file "{event.text}".')
+                logger.info(f"Loading scene file '{event.text}''.")
                 self.init_game_fnc(event.text)
                 self.last_quest_path = event.text
                 return State.GAME
             elif event.type == UI_WINDOW_CLOSE and self.state_manager.prev_game_state:
-                logger.info(f'Closing load quest window')
+                logger.info(f"Closing Load Scenes Menu Dialog.")
                 return self.state_manager.prev_game_state
 
             self.gui_manager.process_events(event)

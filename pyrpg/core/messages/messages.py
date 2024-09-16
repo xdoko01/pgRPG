@@ -1,5 +1,5 @@
 import pygame
-from pyrpg.core.config.config import MSG_DEFAULT_TTL # default TTL
+from pyrpg.core.config import MESSAGES # for DEFAULT_TTL_MS
 
 class Message:
     ''' Class representing game message displayed to the players
@@ -22,7 +22,7 @@ class Message:
         '''
 
         self.text = text
-        self.ttl = ttl if ttl else MSG_DEFAULT_TTL
+        self.ttl = ttl if ttl else MESSAGES["DEFAULT_TTL_MS"]
         self.pos = pos
         self.created = pygame.time.get_ticks()
 
