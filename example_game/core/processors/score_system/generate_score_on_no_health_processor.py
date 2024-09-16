@@ -7,10 +7,10 @@ from pyrpg.core.ecs.components.new import scorable_on_no_health
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
-from pyrpg.core.ecs.components.new.scorable_on_no_health import ScorableOnNoHealth
-from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
-from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
+from core.components.flag_was_damaged_by import FlagWasDamagedBy
+from core.components.scorable_on_no_health import ScorableOnNoHealth
+from core.components.flag_has_no_health import FlagHasNoHealth
+from core.components.flag_has_scored import FlagHasScored
 
 # Logger init
 logger = logging.getLogger(__name__)

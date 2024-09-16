@@ -6,9 +6,9 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.teleport import Teleport
-from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
-from pyrpg.core.ecs.components.new.flag_is_about_to_be_teleported_by import FlagIsAboutToBeTeleportedBy
+from core.components.teleport import Teleport
+from core.components.flag_has_collided import FlagHasCollided
+from core.components.flag_is_about_to_be_teleported_by import FlagIsAboutToBeTeleportedBy
 
 # Logger init
 logger = logging.getLogger(__name__)

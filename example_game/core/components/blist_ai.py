@@ -1,7 +1,7 @@
 ''' Module "pyrpg.core.ecs.components.blist_ai" contains
 BListAI component implemented as a BList class.
 
-Use 'python -m pyrpg.core.ecs.components.new.blist_ai -v' to run
+Use 'python -m core.components.blist_ai -v' to run
 module tests.
 '''
 import logging

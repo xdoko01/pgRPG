@@ -6,12 +6,12 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.has_inventory import HasInventory
-from pyrpg.core.ecs.components.new.flag_was_picked_by import FlagWasPickedBy
-from pyrpg.core.ecs.components.new.flag_has_picked import FlagHasPicked
-from pyrpg.core.ecs.components.new.flag_is_about_to_pick_entity import FlagIsAboutToPickEntity
+from core.components.position import Position
+from core.components.camera import Camera
+from core.components.has_inventory import HasInventory
+from core.components.flag_was_picked_by import FlagWasPickedBy
+from core.components.flag_has_picked import FlagHasPicked
+from core.components.flag_is_about_to_pick_entity import FlagIsAboutToPickEntity
 
 from pyrpg.functions.dict_utils import add_dict_value, get_dict_value
 

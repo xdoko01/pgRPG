@@ -9,10 +9,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.can_see import CanSee
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
+from core.components.position import Position
+from core.components.can_see import CanSee
+from core.components.camera import Camera
+from core.components.renderable_model import RenderableModel
 
 from ..functions import filter_only_in_view_angle_of_ent, filter_only_within_distance_from_ent
 from ..functions import filter_only_visible_on_camera

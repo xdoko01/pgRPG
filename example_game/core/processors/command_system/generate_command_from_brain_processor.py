@@ -6,7 +6,7 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI
+from core.components.brain_ai import BrainAI
 
 # Logger init
 logger = logging.getLogger(__name__)

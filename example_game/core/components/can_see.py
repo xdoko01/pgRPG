@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.new.can_see" contains
+''' Module "core.components.can_see" contains
 CanSee component implemented as a CanSee class.
 
-Use 'python -m pyrpg.core.ecs.components.new.can_see -v' to run
+Use 'python -m core.components.can_see -v' to run
 module tests.
 '''
 from math import radians, sin, cos

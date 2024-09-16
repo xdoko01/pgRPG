@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.position import Position # To work with components in commands (remove search add ...)
+from core.components.position import Position # To work with components in commands (remove search add ...)
 from .move_to_pos_tile import process as cmd_move_to_pos_tile # import other existing command
 from .move_to_pos_tile import init as cmd_move_to_pos_tile_init # import other existing command
 
@@ -135,7 +135,7 @@ def process(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+        >>> from core.components.position import PositionMock
 
         >>> ctx_mock = CommandContextMock()
         >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock, pos=[10,10])

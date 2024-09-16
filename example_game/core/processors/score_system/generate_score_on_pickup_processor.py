@@ -6,9 +6,9 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_was_picked_by import FlagWasPickedBy
-from pyrpg.core.ecs.components.new.scorable_on_pickup import ScorableOnPickup
-from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
+from core.components.flag_was_picked_by import FlagWasPickedBy
+from core.components.scorable_on_pickup import ScorableOnPickup
+from core.components.flag_has_scored import FlagHasScored
 
 # Logger init
 logger = logging.getLogger(__name__)

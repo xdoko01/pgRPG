@@ -6,8 +6,8 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
-from pyrpg.core.ecs.components.new.has_score import HasScore
+from core.components.flag_has_scored import FlagHasScored
+from core.components.has_score import HasScore
 
 # For creation of events
 from pyrpg.core.events.event import Event

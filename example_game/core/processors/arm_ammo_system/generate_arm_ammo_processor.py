@@ -6,10 +6,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.ammo_pack import AmmoPack
-from pyrpg.core.ecs.components.new.factory import Factory
-from pyrpg.core.ecs.components.new.flag_was_picked_by import FlagWasPickedBy
-from pyrpg.core.ecs.components.new.flag_is_about_to_arm_ammo import FlagIsAboutToArmAmmo
+from core.components.ammo_pack import AmmoPack
+from core.components.factory import Factory
+from core.components.flag_was_picked_by import FlagWasPickedBy
+from core.components.flag_is_about_to_arm_ammo import FlagIsAboutToArmAmmo
 
 # Logger init
 logger = logging.getLogger(__name__)

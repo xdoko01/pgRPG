@@ -7,11 +7,11 @@ import pygame # for pygame.time.get_ticks()
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.movable import Movable
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
-from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack
-from pyrpg.core.ecs.components.new.flag_has_stopped_movement import FlagHasStoppedMovement
+from core.components.position import Position
+from core.components.movable import Movable
+from core.components.flag_do_move import FlagDoMove
+from core.components.flag_do_attack import FlagDoAttack
+from core.components.flag_has_stopped_movement import FlagHasStoppedMovement
 
 # Logger init
 logger = logging.getLogger(__name__)

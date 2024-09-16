@@ -139,7 +139,7 @@ def process(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+        >>> from core.components.position import PositionMock
 
         >>> ctx_mock = CommandContextMock()
 

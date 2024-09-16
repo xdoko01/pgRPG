@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.new.has_target_position" contains
+''' Module "core.components.has_target_position" contains
 HasTargetPosition component implemented as a HasTargetPosition class.
 
-Use 'python -m pyrpg.core.ecs.components.new.has_target_position -v' to run
+Use 'python -m core.components.has_target_position -v' to run
 module tests.
 '''
 

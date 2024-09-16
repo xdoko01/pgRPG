@@ -6,9 +6,9 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.pickable import Pickable
-from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
-from pyrpg.core.ecs.components.new.flag_is_about_to_pick_entity import FlagIsAboutToPickEntity
+from core.components.pickable import Pickable
+from core.components.flag_has_collided import FlagHasCollided
+from core.components.flag_is_about_to_pick_entity import FlagIsAboutToPickEntity
 
 # Logger init
 logger = logging.getLogger(__name__)

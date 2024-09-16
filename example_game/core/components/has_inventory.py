@@ -1,7 +1,7 @@
 ''' Module "pyrpg.core.ecs.components.has_inventory" contains
 HasInventory component implemented as a HasInventory class.
 
-Use 'python -m pyrpg.core.ecs.components.new.has_inventory -v' to run
+Use 'python -m core.components.has_inventory -v' to run
 module tests.
 '''
 

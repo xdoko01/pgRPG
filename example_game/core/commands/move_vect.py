@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager, ECSManagerMock
 from pyrpg.core.commands import CommandContext, CommandContextMock, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
+from core.components.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
 
 def init(
         # Mandatory attributes that must be always present

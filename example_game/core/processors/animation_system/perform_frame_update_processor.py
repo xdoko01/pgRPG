@@ -6,10 +6,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
-from pyrpg.core.ecs.components.new.flag_is_animation_action_frame import FlagIsAnimationActionFrame
+from core.components.camera import Camera
+from core.components.position import Position
+from core.components.renderable_model import RenderableModel
+from core.components.flag_is_animation_action_frame import FlagIsAnimationActionFrame
 
 # Support functions
 from ..functions import filter_only_visible_on_camera

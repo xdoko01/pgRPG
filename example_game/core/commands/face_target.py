@@ -40,8 +40,8 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
-from pyrpg.core.ecs.components.new.position import Position
+from core.components.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
+from core.components.position import Position
 
 sign = lambda x: -1 if x<0 else (1 if x>0 else 0)
 

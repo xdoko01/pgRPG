@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
+from core.components.flag_do_move import FlagDoMove # To work with components in commands (remove search add ...)
 from .move_dir import process as cmd_move_dir # import other existing command
 
 # DO NOT REMOVE - Mandatory function
@@ -131,7 +131,7 @@ def process(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMoveMock
+        >>> from core.components.flag_do_move import FlagDoMoveMock
 
         >>> ecs_mng_mock = ECSManagerMock()
 

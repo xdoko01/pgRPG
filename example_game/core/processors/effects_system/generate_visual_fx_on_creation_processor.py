@@ -7,9 +7,9 @@ import copy
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.visual_fx_on_creation import VisualFXOnCreation
-from pyrpg.core.ecs.components.new.flag_generated_from_factory import FlagGeneratedFromFactory
+from core.components.position import Position
+from core.components.visual_fx_on_creation import VisualFXOnCreation
+from core.components.flag_generated_from_factory import FlagGeneratedFromFactory
 
 # Logger init
 logger = logging.getLogger(__name__)

@@ -13,8 +13,8 @@ import pygame_gui
 from pathlib import Path
 from collections import namedtuple
 from pyrpg.functions.load_animation import load_animation
-from pyrpg.core.config.filepaths import FILEPATHS # MENU_BACKGROUND_PATH
-from pyrpg.core.config.gui import GUI # MENU_BACKGROUND_PATH
+from pyrpg.core.config.filepaths import MENU_BACKGROUND_PATH # MENU_BACKGROUND_PATH
+from pyrpg.core.config.gui import GUI
 #from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
 
 from pyrpg.utils.bitmap_font import BitmapFont
@@ -56,14 +56,15 @@ class GUIManager:
         self.screen_copy = pygame.Surface(self._res)
         self.window_manager = pygame_gui.UIManager(self._res)
 
-        self.background_animation = load_animation(FILEPATHS["MENU_BACKGROUND_PATH"], resize=self._res)
+        self.background_animation = load_animation(MENU_BACKGROUND_PATH, resize=self._res)
         self.background_animation_delay = GUI["MENU_BACKGROUND_ANIMATION_DELAY_MS"]
         self.background_animation_last_image = 0
         self.background_animation_last_time = pygame.time.get_ticks()
         self.background_animation_frames = len(self.background_animation)
 
         # Font
-        self.font = BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
+        from pyrpg.core.config.fonts import FONTS # for GUI_MANAGER_FONT
+        self.font = FONTS["GUI_MANAGER_FONT"] #BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
 
         logger.info(f"GUIManager initiated.")
 

@@ -1,7 +1,7 @@
 ''' Module "pyrpg.core.ecs.components.btree" contains
 BTree component implemented as a BTree class.
 
-Use 'python -m pyrpg.core.ecs.components.new.btree_ai -v' to run
+Use 'python -m core.components.btree_ai -v' to run
 module tests.
 '''
 import logging
@@ -14,7 +14,7 @@ from pyrpg.core.ecs.components.component import Component
 from pyrpg.core.commands import cmd_factory
 from pyrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
 
-from pyrpg.core.config.filepaths import FILEPATHS # for BTREE_PATH
+from pyrpg.core.config.filepaths import BTREE_PATH # for BTREE_PATH
 
 
 class BTreeAI(Component):
@@ -100,7 +100,7 @@ class BTreeAI(Component):
             self.generator = BTree(
                 tree_def=kwargs, 
                 cmd_factory=cmd_factory, 
-                template_path=FILEPATHS["BTREE_PATH"], 
+                template_path=BTREE_PATH, 
                 val_check=True
             )
 
@@ -110,7 +110,7 @@ class BTreeAI(Component):
             self.generator = BTree(
                 tree_def=BTreeAI.FAILSAFE_TREE, 
                 cmd_factory=cmd_factory, 
-                template_path=FILEPATHS["BTREE_PATH"], 
+                template_path=BTREE_PATH, 
                 val_check=True
             )
 

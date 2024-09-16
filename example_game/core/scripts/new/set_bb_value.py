@@ -5,7 +5,7 @@ XXXX
 '''
 
 from pyrpg.main import main
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI
+from core.components.brain_ai import BrainAI
 from pyrpg.functions.str_utils import translate_str
 
 

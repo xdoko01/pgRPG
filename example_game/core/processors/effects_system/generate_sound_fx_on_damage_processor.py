@@ -6,8 +6,8 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.sound_fx_on_damage import SoundFXOnDamage
-from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
+from core.components.sound_fx_on_damage import SoundFXOnDamage
+from core.components.flag_was_damaged_by import FlagWasDamagedBy
 
 # Logger init
 logger = logging.getLogger(__name__)

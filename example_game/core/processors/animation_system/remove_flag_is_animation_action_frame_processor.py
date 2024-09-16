@@ -6,7 +6,7 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_is_animation_action_frame import FlagIsAnimationActionFrame
+from core.components.flag_is_animation_action_frame import FlagIsAnimationActionFrame
 
 # Logger init
 logger = logging.getLogger(__name__)

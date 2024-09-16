@@ -7,7 +7,7 @@ from pygame.time import get_ticks
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
+from core.components.is_destroyed import IsDestroyed
 
 # For creation of events
 from pyrpg.core.events.event import Event 

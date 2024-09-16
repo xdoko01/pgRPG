@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
+from core.components.flag_was_damaged_by import FlagWasDamagedBy
 
 def init(
         # Mandatory attributes that must be always present

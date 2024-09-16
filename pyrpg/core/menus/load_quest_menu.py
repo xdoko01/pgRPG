@@ -1,7 +1,7 @@
 import logging
 
 #from pyrpg.core.config.paths import QUEST_PATH
-from pyrpg.core.config.filepaths import FILEPATHS
+from pyrpg.core.config.filepaths import SCENE_PATH # for SCENE_PATH
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
 from pyrpg.core.config.states import State
 from pygame_gui.windows import UIFileDialog
@@ -21,7 +21,7 @@ class LoadQuestMenu(Menu):
 
         self.init_game_fnc = init_game_fnc
 
-        self.last_quest_path = FILEPATHS["SCENE_PATH"]
+        self.last_quest_path = SCENE_PATH
         self.load_quest_window = None
 
         logger.info(f"Load Scenes Menu dialog initiated.")

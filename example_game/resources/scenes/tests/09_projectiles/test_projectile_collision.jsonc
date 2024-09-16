@@ -1,5 +1,5 @@
 {
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basic data
 	"id" : "test_projectile_collision",

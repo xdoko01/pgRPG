@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.new.can_hear" contains
+''' Module "core.components.can_hear" contains
 CanHear component implemented as a CanHear class.
 
-Use 'python -m pyrpg.core.ecs.components.new.can_hear -v' to run
+Use 'python -m core.components.can_hear -v' to run
 module tests.
 '''
 

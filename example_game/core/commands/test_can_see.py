@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.can_see import CanSee
+from core.components.can_see import CanSee
 
 def init(
         # Mandatory attributes that must be always present

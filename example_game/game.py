@@ -110,8 +110,8 @@ def main(argv):
     #scene_file = 'tests/01_movements/test_movement_01.jsonc'
 
     # 00_render
-    #scene_file = 'tests/00_render/test_render_02.jsonc'
-    scene_file = 'tests/00_render/test_render_01.jsonc'
+    scene_file = 'tests/00_render/test_render_02.jsonc'
+    #scene_file = 'tests/00_render/test_render_01.jsonc'
 
 
     usage_info = '''

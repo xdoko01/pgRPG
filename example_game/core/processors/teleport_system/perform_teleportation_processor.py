@@ -6,11 +6,11 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.teleportable import Teleportable
-from pyrpg.core.ecs.components.new.flag_was_teleported_by import FlagWasTeleportedBy
-from pyrpg.core.ecs.components.new.flag_has_teleported import FlagHasTeleported
-from pyrpg.core.ecs.components.new.flag_is_about_to_be_teleported_by import FlagIsAboutToBeTeleportedBy
+from core.components.position import Position
+from core.components.teleportable import Teleportable
+from core.components.flag_was_teleported_by import FlagWasTeleportedBy
+from core.components.flag_has_teleported import FlagHasTeleported
+from core.components.flag_is_about_to_be_teleported_by import FlagIsAboutToBeTeleportedBy
 
 # For creation of events
 from pyrpg.core.events.event import Event 

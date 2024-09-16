@@ -9,7 +9,7 @@ import logging
 # Create logger
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.config.keys import K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
+from pyrpg.core.config.keys import KEYS # for K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.core.commands import cmd_factory
 
@@ -73,7 +73,7 @@ class Controllable(Component):
 
         # Get keyboard key scheme for players based on configuration
         # Use 'default' if no scheme is passed
-        key_profile = kwargs.get("key_profile", "default")
+        key_profile = kwargs.get("key_profile", "DEFAULT")
 
         # Control keys definition - keyboard arrows + 'z' key for attack
         #default_keys = {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274, 'attack' : 122}
@@ -81,17 +81,17 @@ class Controllable(Component):
 
         # Control commands definition
         default_cmds = {
-            'left' : [('move_dir', {'moves' : ['left']})],
-            'right': [('move_dir', {'moves' : ['right']})],
-            'up' : [('move_dir', {'moves' : ['up']})],
-            'down' : [('move_dir', {'moves' : ['down']})],
-            'attack' : [('attack', {})]
+            'LEFT' : [('move_dir', {'moves' : ['left']})],
+            'RIGHT': [('move_dir', {'moves' : ['right']})],
+            'UP' : [('move_dir', {'moves' : ['up']})],
+            'DOWN' : [('move_dir', {'moves' : ['down']})],
+            'ATTACK' : [('attack', {})]
         }
 
         control_cmds = kwargs.get("control_cmds", default_cmds)
 
         try:
-            assert key_profile in K_PROFILE.keys(), f'Key scheme "{key_profile}" is not defined in the config.'
+            assert key_profile in KEYS["K_PROFILE"].keys(), f'Key scheme "{key_profile}" is not defined in the config.'
             assert isinstance(control_keys, dict), f'Control keys must be passed in a form of dictionary.'
             assert isinstance(control_cmds, dict), f'Control cmds must be passed in a form of dictionary.'
 
@@ -103,7 +103,7 @@ class Controllable(Component):
             raise ValueError
 
         # Load key scheme if passed as an argument else load default scheme
-        self.control_keys = K_PROFILE[key_profile]
+        self.control_keys = KEYS["K_PROFILE"][key_profile]
 
         # If additionally specific keys are passed, override the configuration with those keys
         self.control_keys = {**self.control_keys, **control_keys}
@@ -126,11 +126,11 @@ class Controllable(Component):
         '''
         self.backup_control_cmds = self.control_cmds
         self.control_cmds = {
-            'left' : [],
-            'right': [],
-            'up' : [],
-            'down' : [],
-            'attack' : []
+            'LEFT' : [],
+            'RIGHT': [],
+            'UP' : [],
+            'DOWN' : [],
+            'ATTACK' : []
         }
 
     def restore_input(self):

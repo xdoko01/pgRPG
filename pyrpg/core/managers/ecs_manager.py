@@ -1,7 +1,7 @@
 import logging
 
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config.filepaths import FILEPATHS # for ENTITY_PATH
+from pyrpg.core.config.filepaths import ENTITY_PATH # for ENTITY_PATH
 from pyrpg.core.config.modulepaths import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
 
 from pyrpg.core.ecs.components.component import Component
@@ -367,7 +367,7 @@ class ECSManager:
 
             # Get the template data
             logger.info(f'**Preparing entity data from template ""{template_id}"".')
-            template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=FILEPATHS["ENTITY_PATH"])
+            template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
 
             # Create all entities from the template
             logger.info(f'**Creating components from template ""{template_id}"".')
@@ -531,14 +531,14 @@ class ECSManagerMock:
     try_component = lambda self,e,c: None
 
     def try_component(self, entity, comp):
-        from pyrpg.core.ecs.components.new.position import Position, PositionMock
+        from core.components.position import Position, PositionMock
         if comp == Position:
             return PositionMock(x=0,y=0)
         else:
             return None
 
     def component_for_entity(self, entity, comp):
-        from pyrpg.core.ecs.components.new.position import Position, PositionMock
+        from core.components.position import Position, PositionMock
         if comp == Position:
             return PositionMock(x=0,y=0)
         else:

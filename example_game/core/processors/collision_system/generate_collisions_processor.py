@@ -11,10 +11,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.collidable import Collidable
-from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
+from core.components.camera import Camera
+from core.components.position import Position
+from core.components.collidable import Collidable
+from core.components.flag_has_collided import FlagHasCollided
 
 # For creation of events
 from pyrpg.core.events.event import Event

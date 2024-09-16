@@ -6,9 +6,9 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.destroy_on_collision import DestroyOnCollision
-from pyrpg.core.ecs.components.new.flag_has_collided import FlagHasCollided
-from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
+from core.components.destroy_on_collision import DestroyOnCollision
+from core.components.flag_has_collided import FlagHasCollided
+from core.components.is_destroyed import IsDestroyed
 
 
 # Logger init

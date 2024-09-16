@@ -1,6 +1,6 @@
 {
 	// JSON Schema for validation of the game parameters
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basic data
 	"id" : "guard_fight_back_if_ambushed_and_attack_on_sight_or_hear",

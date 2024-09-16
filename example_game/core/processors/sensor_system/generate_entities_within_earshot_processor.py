@@ -9,10 +9,10 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.can_hear import CanHear
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
+from core.components.position import Position
+from core.components.can_hear import CanHear
+from core.components.camera import Camera
+from core.components.flag_do_move import FlagDoMove
 
 from ..functions import filter_only_within_distance_from_ent
 from ..functions import filter_only_visible_on_camera

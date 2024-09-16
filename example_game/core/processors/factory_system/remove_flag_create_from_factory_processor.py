@@ -6,7 +6,7 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_create_from_factory import FlagCreateFromFactory
+from core.components.flag_create_from_factory import FlagCreateFromFactory
 
 # Logger init
 logger = logging.getLogger(__name__)

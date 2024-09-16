@@ -6,8 +6,8 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.has_target_position import HasTargetPosition
+from core.components.position import Position
+from core.components.has_target_position import HasTargetPosition
 
 # For creation of events
 from pyrpg.core.events.event import Event

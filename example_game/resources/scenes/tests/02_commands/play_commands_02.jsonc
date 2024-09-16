@@ -1,6 +1,6 @@
 {
 	// JSON Schema for validation of the game parameters
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basic data
 	"id" : "play_commands_02",

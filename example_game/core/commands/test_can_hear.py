@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.can_hear import CanHear
+from core.components.can_hear import CanHear
 
 def init(
         # Mandatory attributes that must be always present

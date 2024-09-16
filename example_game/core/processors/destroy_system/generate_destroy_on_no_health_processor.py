@@ -6,15 +6,15 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
-from pyrpg.core.ecs.components.new.destroy_on_no_health import DestroyOnNoHealth
-from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI
-from pyrpg.core.ecs.components.new.btree_ai import BTreeAI
-from pyrpg.core.ecs.components.new.blist_ai import BListAI
-from pyrpg.core.ecs.components.new.collidable import Collidable
-from pyrpg.core.ecs.components.new.movable import Movable
-from pyrpg.core.ecs.components.new.controllable import Controllable
+from core.components.flag_has_no_health import FlagHasNoHealth
+from core.components.destroy_on_no_health import DestroyOnNoHealth
+from core.components.is_destroyed import IsDestroyed
+from core.components.brain_ai import BrainAI
+from core.components.btree_ai import BTreeAI
+from core.components.blist_ai import BListAI
+from core.components.collidable import Collidable
+from core.components.movable import Movable
+from core.components.controllable import Controllable
 
 
 # For creation of events

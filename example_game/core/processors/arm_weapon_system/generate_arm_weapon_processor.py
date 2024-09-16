@@ -6,9 +6,9 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.weapon import Weapon
-from pyrpg.core.ecs.components.new.flag_was_picked_by import FlagWasPickedBy
-from pyrpg.core.ecs.components.new.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
+from core.components.weapon import Weapon
+from core.components.flag_was_picked_by import FlagWasPickedBy
+from core.components.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
 
 # Logger init
 logger = logging.getLogger(__name__)

@@ -42,7 +42,7 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 ### Optional imports
 from .move_to_pos_px_vect import process as cmd_move_to_pos_px_vect # import other existing command
 from .move_to_pos_px_vect import init as cmd_move_to_pos_px_vect_init
-from pyrpg.core.ecs.components.new.position import Position
+from core.components.position import Position
 
 def init(
         # Mandatory attributes that must be always present
@@ -135,7 +135,7 @@ def process(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> from pyrpg.core.ecs.components.new.position import PositionMock
+        >>> from core.components.position import PositionMock
 
         >>> ctx_mock = CommandContextMock()
 

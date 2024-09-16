@@ -6,9 +6,9 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
-from pyrpg.core.ecs.components.new.scorable_on_damage import ScorableOnDamage
-from pyrpg.core.ecs.components.new.flag_has_scored import FlagHasScored
+from core.components.flag_was_damaged_by import FlagWasDamagedBy
+from core.components.scorable_on_damage import ScorableOnDamage
+from core.components.flag_has_scored import FlagHasScored
 
 # Logger init
 logger = logging.getLogger(__name__)

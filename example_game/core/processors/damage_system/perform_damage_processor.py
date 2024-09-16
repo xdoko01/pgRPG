@@ -6,11 +6,11 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.damageable import Damageable
-from pyrpg.core.ecs.components.new.flag_has_no_health import FlagHasNoHealth
-from pyrpg.core.ecs.components.new.flag_was_damaged_by import FlagWasDamagedBy
-from pyrpg.core.ecs.components.new.flag_has_damaged import FlagHasDamaged
-from pyrpg.core.ecs.components.new.flag_is_about_to_be_damaged_by import FlagIsAboutToBeDamagedBy
+from core.components.damageable import Damageable
+from core.components.flag_has_no_health import FlagHasNoHealth
+from core.components.flag_was_damaged_by import FlagWasDamagedBy
+from core.components.flag_has_damaged import FlagHasDamaged
+from core.components.flag_is_about_to_be_damaged_by import FlagIsAboutToBeDamagedBy
 
 # For creation of events
 from pyrpg.core.events.event import Event 

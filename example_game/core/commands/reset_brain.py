@@ -40,7 +40,7 @@ from pyrpg.core.managers.ecs_manager import ECSManager
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.core.ecs.components.new.brain_ai import BrainAI # To work with components in commands (remove search add ...)
+from core.components.brain_ai import BrainAI # To work with components in commands (remove search add ...)
 
 def init(
         # Mandatory attributes that must be always present
@@ -107,7 +107,7 @@ def process(
         -------------
         >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
         >>> from pyrpg.core.commands import CommandContextMock
-        >>> from pyrpg.core.ecs.components.new.brain_ai import BrainAIMock
+        >>> from core.components.brain_ai import BrainAIMock
 
         >>> ctx_mock = CommandContextMock()
         >>> init(ecs_mng=ECSManagerMock(), entity_id=1, ctx=ctx_mock)

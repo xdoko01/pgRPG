@@ -6,11 +6,11 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.has_weapon import HasWeapon
-from pyrpg.core.ecs.components.new.has_inventory import HasInventory
-from pyrpg.core.ecs.components.new.flag_was_armed_as_ammo_by import FlagWasArmedAsAmmoBy
-from pyrpg.core.ecs.components.new.flag_is_about_to_arm_ammo import FlagIsAboutToArmAmmo
-from pyrpg.core.ecs.components.new.flag_has_armed_ammo import FlagHasArmedAmmo
+from core.components.has_weapon import HasWeapon
+from core.components.has_inventory import HasInventory
+from core.components.flag_was_armed_as_ammo_by import FlagWasArmedAsAmmoBy
+from core.components.flag_is_about_to_arm_ammo import FlagIsAboutToArmAmmo
+from core.components.flag_has_armed_ammo import FlagHasArmedAmmo
 
 # For creation of events
 from pyrpg.core.events.event import Event

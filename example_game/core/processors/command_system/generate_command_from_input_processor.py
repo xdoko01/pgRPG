@@ -6,7 +6,7 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.controllable import Controllable
+from core.components.controllable import Controllable
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -106,7 +106,7 @@ class GenerateCommandFromInputProcessor(Processor):
         # Get all entities that are controllable - not necesserilly moveable as the input can be for static entity theoretically
         for ent, (control) in self.world.get_component(Controllable):
 
-            for cmd_str in ['up', 'down', 'left', 'right', 'attack']:
+            for cmd_str in ['UP', 'DOWN', 'LEFT', 'RIGHT', 'ATTACK']:
                 
                 # Check if the assigned key for the command was pressed
                 if keys[control.control_keys.get(cmd_str)]:

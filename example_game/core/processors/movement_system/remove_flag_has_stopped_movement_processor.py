@@ -6,7 +6,7 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_has_stopped_movement import FlagHasStoppedMovement
+from core.components.flag_has_stopped_movement import FlagHasStoppedMovement
 
 # Logger init
 logger = logging.getLogger(__name__)

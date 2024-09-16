@@ -6,13 +6,13 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.flag_create_from_factory import FlagCreateFromFactory
-from pyrpg.core.ecs.components.new.flag_generated_from_factory import FlagGeneratedFromFactory
-from pyrpg.core.ecs.components.new.factory import Factory
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.flag_adjust_collidable import FlagAdjustCollidable
-from pyrpg.core.ecs.components.new.flag_adjust_movement import FlagAdjustMovement
-from pyrpg.core.ecs.components.new.flag_adjust_damaging import FlagAdjustDamaging
+from core.components.flag_create_from_factory import FlagCreateFromFactory
+from core.components.flag_generated_from_factory import FlagGeneratedFromFactory
+from core.components.factory import Factory
+from core.components.position import Position
+from core.components.flag_adjust_collidable import FlagAdjustCollidable
+from core.components.flag_adjust_movement import FlagAdjustMovement
+from core.components.flag_adjust_damaging import FlagAdjustDamaging
 
 
 # Logger init

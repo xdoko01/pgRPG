@@ -6,13 +6,13 @@ import logging
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
 # Used components
-from pyrpg.core.ecs.components.new.camera import Camera
-from pyrpg.core.ecs.components.new.position import Position
-from pyrpg.core.ecs.components.new.renderable_model import RenderableModel
-from pyrpg.core.ecs.components.new.flag_do_attack import FlagDoAttack
-from pyrpg.core.ecs.components.new.weapon_in_use import WeaponInUse
-from pyrpg.core.ecs.components.new.flag_do_move import FlagDoMove
-from pyrpg.core.ecs.components.new.is_destroyed import IsDestroyed
+from core.components.camera import Camera
+from core.components.position import Position
+from core.components.renderable_model import RenderableModel
+from core.components.flag_do_attack import FlagDoAttack
+from core.components.weapon_in_use import WeaponInUse
+from core.components.flag_do_move import FlagDoMove
+from core.components.is_destroyed import IsDestroyed
 
 
 # Support functions

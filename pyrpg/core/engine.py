@@ -24,8 +24,7 @@ from pyrpg.core.managers.pathfind_manager import PathfindManager
 
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
-from pathlib import Path
-from pyrpg.core.config.filepaths import FILEPATHS # for SCENE_PATH
+from pyrpg.core.config.filepaths import SCENE_PATH, Path # for SCENE_PATH
 from pyrpg.core.events.event import Event
 from pyrpg.functions import get_dict_from_file, get_dict_value, get_coll_value
 
@@ -156,7 +155,7 @@ class Game:
         '''
 
         # Read the quest definition from a file
-        quest_def = get_dict_from_file(filepath=Path(filepath), dir=FILEPATHS["SCENE_PATH"])
+        quest_def = get_dict_from_file(filepath=Path(filepath), dir=SCENE_PATH)
 
         # Translate quest definition into the game objects
         quest = self.load_quest_from_def(quest_def)
