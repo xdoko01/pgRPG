@@ -5,7 +5,7 @@
 	"objective" : "Push all the boxes on the marked spots.",
 
 	// What quests need to be loaded before this one
-	"prereqs" : ["new/games/sokoban/sokoban_new_level01.json"],
+	"prereqs" : ["games/sokoban/sokoban_new_level01.json"],
 
 	"cleanup" : {
 		"processors": [],
@@ -28,10 +28,10 @@
 		{
 			"id": "t_crate",
 
-			"templates": ["new/thing/item/crate/wooden_crate"],
+			"templates": ["thing/item/crate/wooden_crate"],
 			
 			"components": [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				
 				{
 					"type" : "new.has_target_position:HasTargetPosition", 
@@ -48,7 +48,7 @@
 				},
 
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {
+				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 30, 
 					"y" : 30, 
 					"position_fix_walkaround_mode" : false // can be pushed only straight

@@ -33,7 +33,7 @@ class GenerateCommandFromBListProcessor(Processor):
     '''
 
     PREREQ = ['allOf',
-        'new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
+        'command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 
     def __init__(self, FNC_ADD_COMMAND, *args, **kwargs):

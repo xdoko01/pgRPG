@@ -1,5 +1,5 @@
 {
 	"id" : "ammo",
-	"templates" : ["new/thing"],
+	"templates" : ["thing"],
 	"components" : []
 }

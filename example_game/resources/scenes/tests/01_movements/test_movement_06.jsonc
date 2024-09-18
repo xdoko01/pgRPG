@@ -67,13 +67,13 @@
 				// - diagonal is allowed
 				// - multiple command / multiple direction upon keypress
 				/////////////////////////////////////////////////////////
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
 					"control_cmds" : {
-						"left" : [["move_dir_add", {"moves" : ["left", "left"]}], ["move_dir_add", {"moves" : ["up", "up"]}]],
-						"right": [["move_dir_add", {"moves" : ["right", "right"]}], ["move_dir_add", {"moves" : ["down", "down"]}]],
-						"up" : [["move_dir_add", {"moves" : ["up", "up"]}], ["move_dir_add", {"moves" : ["right", "right"]}]],
-						"down" : [["move_dir_add", {"moves" : ["down", "down"]}], ["move_dir_add", {"moves" : ["left", "left"]}]],
-						"attack" : []}
+						"LEFT": [["move_dir_add", {"moves" : ["left", "left"]}], ["move_dir_add", {"moves" : ["up", "up"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right", "right"]}], ["move_dir_add", {"moves" : ["down", "down"]}]],
+						"UP": [["move_dir_add", {"moves" : ["up", "up"]}], ["move_dir_add", {"moves" : ["right", "right"]}]],
+						"DOWN": [["move_dir_add", {"moves" : ["down", "down"]}], ["move_dir_add", {"moves" : ["left", "left"]}]],
+						"ATTACK": []}
 					}
 				},
 

@@ -28,7 +28,7 @@
 			"title": "Template List definition",
 			"description": "List representation of a template with or without parameters",
 			"examples": [
-				["new/_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in": []}]
+				["_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in": []}]
 			],
 
 			"type": "array",

@@ -93,8 +93,8 @@
 			],
 			"components" : [
 
-				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
 				// In order to animate attack, some weapom must be in use
 				{"type" : "new.has_weapon:HasWeapon", "params" : {

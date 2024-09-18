@@ -66,13 +66,13 @@
 				// - diagonal not allowed
 				// - single command / single direction upon keypress
 				/////////////////////////////////////////////////////////
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
 					"control_cmds" : {
-						"left" : [["move_dir_add", {"moves" : ["left"]}]],
-						"right": [["move_dir_add", {"moves" : ["right"]}]],
-						"up" : [["move_dir_add", {"moves" : ["up"]}]],
-						"down" : [["move_dir_add", {"moves" : ["down"]}]],
-						"attack":[]}
+						"LEFT" : [["move_dir_add", {"moves" : ["left"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+						"UP" : [["move_dir_add", {"moves" : ["up"]}]],
+						"DOWN" : [["move_dir_add", {"moves" : ["down"]}]],
+						"ATTACK":[]}
 					}
 				},
 

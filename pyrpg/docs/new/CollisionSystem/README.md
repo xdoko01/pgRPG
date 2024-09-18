@@ -158,7 +158,7 @@ To achieve the above, we would need to introduce the following configuration.
     },
 
     {
-      "type" : "new.collidable:Collidable", 
+      "type" : "collidable:Collidable", 
       "params" :  {
         "x" : 100, 
         "y" : 100, 
@@ -192,7 +192,7 @@ To achieve the above, we would need to introduce the following configuration.
     },
 
     {
-      "type" : "new.collidable:Collidable", 
+      "type" : "collidable:Collidable", 
       "params" :  {
         "x" : 15, "y" : 27, 
         "dx" : 0, "dy" : 8,
@@ -225,7 +225,7 @@ To achieve the above, we would need to introduce the following configuration.
     },
 
     {
-      "type" : "new.collidable:Collidable", 
+      "type" : "collidable:Collidable", 
       "params" :  {
         "x" : 15, "y" : 27, "dx" : 0, "dy" : 8,
         "accept_pos_fix_from_denylist" : []  // this is also default value so can be omitted
@@ -258,7 +258,7 @@ In such case, we need to set following parameters on the `Collidable` component 
     },
 
     {
-      "type" : "new.collidable:Collidable", 
+      "type" : "collidable:Collidable", 
       "params" :  {
         "x" : 15, "y" : 15, 
         "dx" : 0, "dy" : 8,
@@ -293,7 +293,7 @@ The Player as the entity controlled by the real person does not need to be pushe
     },
 
     {
-      "type" : "new.collidable:Collidable", 
+      "type" : "collidable:Collidable", 
       "params" :  {
         "x" : 15, "y" : 27, 
         "dx" : 0, "dy" : 8,

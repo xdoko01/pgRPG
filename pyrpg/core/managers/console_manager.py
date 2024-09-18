@@ -19,9 +19,12 @@ def init():
     #from pyrpg.core.config.display import DISPLAY_WIDTH
     #from pyrpg.core.config.lua import LUA_RUNTIME
 
+    # Reference to program module that will be called from within the console
+    from importlib import import_module
+
     # Load the console from utils
     console = Console(
-        app=CONSOLE["CLI_MODULE"],
+        app=import_module(CONSOLE["CLI_MODULE"]),
         lua_runtime=None,
         width=DISPLAY["WIDTH"],
         config=CONSOLE

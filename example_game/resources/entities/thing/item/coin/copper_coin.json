@@ -1,6 +1,6 @@
 {
 	"id" : "copper_coin",
-	"templates" : ["new/thing/item/coin", "model/item/coin/copper_coin"],
+	"templates" : ["thing/item/coin", "model/item/coin/copper_coin"],
 	"components" : [
 
 		{"type" : "new.scorable_on_pickup:ScorableOnPickup", "params" : {"score" : 5}}

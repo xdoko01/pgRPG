@@ -1,6 +1,6 @@
 {
 	"id" : "body_model",
-	"templates" : ["new/model"],
+	"templates" : ["model"],
 	"components" : [
 	]
 }

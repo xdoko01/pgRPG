@@ -126,10 +126,10 @@
 			],
 
 			"components" : [
-				{"type" : "new.debug:Debug", "params": {"info": {"name" : "NPC"}}},
+				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 50}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 
@@ -145,7 +145,7 @@
 				{"type" : "new.can_hear:CanHear", "params" : {"distance_tiles": 5}},
 
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 
 						"blackboard": {
@@ -245,7 +245,7 @@
 				"new/controls/default"
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				{"type" : "new.has_weapon:HasWeapon", "params" : {
 					"weapons" : {
@@ -253,7 +253,7 @@
 					}
 				}},
 
-				{"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
 				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
@@ -289,10 +289,10 @@
 							"id": "wooden_arrows_pack_arrow",
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 								
 								{
-									"type" : "new.brain_ai:BrainAI",
+									"type" : "brain_ai:BrainAI",
 									"params" : {
 										"cmd_list" : [
 											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
@@ -302,7 +302,7 @@
 				
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -2}},
-								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
@@ -327,10 +327,10 @@
 							"id": "wooden_arrows_pack_arrow",
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 								
 								{
-									"type" : "new.brain_ai:BrainAI",
+									"type" : "brain_ai:BrainAI",
 									"params" : {
 										"cmd_list" : [
 											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
@@ -340,7 +340,7 @@
 				
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -2}},
-								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								

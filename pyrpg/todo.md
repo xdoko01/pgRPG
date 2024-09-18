@@ -1,3 +1,6 @@
+  - [x] The configurations are not properly merged when merging nested dictionaries - fix needed
+  - [x] Implement logger also for the configurations
+
 # To Do
  
   - [ ] `do_parallel` to support skipping of cycles so that some commands run once per some amount of ticks and meanwhile return some default value

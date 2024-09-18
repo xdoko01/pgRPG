@@ -68,7 +68,7 @@
 			"components" : [
 
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 
 						"blackboard": {

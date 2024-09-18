@@ -1,6 +1,6 @@
 {
 	"id" : "wooden_arrows_pack",
-	"templates" : ["new/thing/ammo_pack/shoot", "model/ammo_pack/shoot/wooden_arrows_pack"],
+	"templates" : ["thing/ammo_pack/shoot", "model/ammo_pack/shoot/wooden_arrows_pack"],
 	"components" : [
 		{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 		
@@ -9,7 +9,7 @@
 			"params" : {
 				"prescription" : {
 					"id" : "wooden_arrow",
-					"templates" : ["new/thing/ammo/shoot/wooden_arrow"],
+					"templates" : ["thing/ammo/shoot/wooden_arrow"],
 					"components" : []
 				}
 			}

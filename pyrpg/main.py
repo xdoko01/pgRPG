@@ -12,9 +12,6 @@
 
 # Init logging config
 import logging
-import pyrpg.core.config.logging # all logging initiation done here
-
-# Initiate logging of main module
 logger = logging.getLogger(__name__)
 
 # Get process object to determine info about python process (mem usage etc.)
@@ -39,22 +36,7 @@ main = None
 def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
     '''Create instance of main game class and remember it in 
     form of global variable so that console can use it'''
-
-
-    """
-    # Load all configurations based on the config file
-    import pyrpg.core.config as config
-    config.load(config_file=config_file)
-    """
-
-    """
-    # Init logging
-    import logging
-    import logging.config
-    logging.config.dictConfig(config.LOGGING)
-    logger = logging.getLogger(__name__)
-    """
-    
+  
     # Start the engine
     global main
     main = Main(console=console, filepath=scene_file, timed=timed)
@@ -83,11 +65,12 @@ class Main:
         from pyrpg.core.managers.gui_manager import GUIManager
         from pyrpg.core.config.display import DISPLAY 
         self.gui_manager = GUIManager(
-            DISPLAY["WIDTH"], 
-            DISPLAY["HEIGHT"], 
-            DISPLAY["BITDEPTH"], 
-            DISPLAY["FULLSCREEN"], 
-            DISPLAY["GUI_WINDOW_RATIO"]
+            window=DISPLAY["WINDOW"],
+            width=DISPLAY["WIDTH"], 
+            height=DISPLAY["HEIGHT"], 
+            depth=DISPLAY["BITDEPTH"], 
+            full=DISPLAY["FULLSCREEN"], 
+            ratio=DISPLAY["GUI_WINDOW_RATIO"]
         )
 
         # Prepare console

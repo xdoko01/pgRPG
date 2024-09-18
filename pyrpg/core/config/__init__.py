@@ -1,6 +1,12 @@
-from pathlib import Path
+
+# Initiate pygame
+# This is very early statement because this package is imported before the game is started. 
+# It ensures that pygame timer is available and also screen can be initialized using DISPLAY configuration.
+import pygame
+pygame.init()
 
 # Where config defaults are stored
+from pathlib import Path
 PYRPG_DEFAULT_CONFIG_FILEPATH = Path("pyrpg/core/config/defaults.jsonc")
 
 # Where game configs are stored
@@ -19,9 +25,10 @@ MODULEPATHS = dict()
 FONTS = dict()
 FRAMES = dict()
 
-def show(config):
+def show(text: str, config: any) -> None:
+    """Print nicely any config variable."""
     import pprint
-    print(f'PRINTING ...')
+    print(f'{text}')
     pprint.pprint(config)
 
 def reload() -> None:
@@ -40,63 +47,97 @@ def load(config_file: str) -> None:
     # We want to remember the location of config file
     global CONFIG_FILEPATH
     CONFIG_FILEPATH = Path(config_file)
-    show(CONFIG_FILEPATH)
+    show("CONFIG_FILEPATH config", CONFIG_FILEPATH)
 
     # Read specific GAME config and basic PYRPG config for further merging
     from pyrpg.functions import get_dict_from_file
     game_config_data = get_dict_from_file(filepath=CONFIG_FILEPATH) 
     pyrpg_config_data = get_dict_from_file(filepath=PYRPG_DEFAULT_CONFIG_FILEPATH)
 
-    # Process LOGGING
+    # Process LOGGING - goes first in order to have logging for all config modules
     global LOGGING
     LOGGING = _prep_conf_logging(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="LOGGING"))
+    import pyrpg.core.config.logging as l
+    l.init(game_path=game_config_data["FILEPATHS"]["GAME_PATH"])
+    show("LOGGING config:", LOGGING)
 
     # Process FILEPATHS - take every path and add the game directory to it
+    # Must go first as paths are used in other configurations
     global FILEPATHS
     FILEPATHS = _prep_conf_filepaths(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="FILEPATHS"))
+    import pyrpg.core.config.filepaths as fp
+    fp.init()
+    fp.convert_dict_conf_to_vars()
+    #show("FILEPATHS config:", FILEPATHS)
 
-    # Process DISPLAY
+    # Process DISPLAY - initiate pygame screen
     global DISPLAY
     DISPLAY =_prep_conf_display(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="DISPLAY"))
-
-    # Process CONSOLE
-    global CONSOLE
-    CONSOLE =_prep_conf_console(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="CONSOLE"))
+    import pyrpg.core.config.display as d
+    d.init()
+    d.convert_dict_conf_to_vars()
+    #show("DISPLAY config", DISPLAY)
 
     # Process KEYS
     global KEYS
     KEYS =_prep_conf_keys(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="KEYS"))
+    import pyrpg.core.config.keys as k
+    k.init()
+    k.convert_dict_conf_to_vars()
+    #show("KEYS config", KEYS)
 
     # Process GUI
     global GUI
     GUI =_prep_conf_gui(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="GUI"))
+    #show("GUI config", GUI)
 
     # Process GAME
     global GAME
     GAME =_prep_conf_game(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="GAME"))
+    #show("GAME config", GAME)
 
     # Process MESSAGES
     global MESSAGES
     MESSAGES =_prep_conf_msgs(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="MESSAGES"))
+    #show("MESSAGES config", MESSAGES)
 
     # Process MODULEPATHS
     global MODULEPATHS
     MODULEPATHS =_prep_conf_modulepaths(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="MODULEPATHS"))
+    #show("MODULEPATHS config", MODULEPATHS)
 
-    # Process FONTS
+    # Process FONTS - needs to have display already initiated
     global FONTS
     FONTS =_prep_conf_fonts(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="FONTS"))
+    import pyrpg.core.config.fonts as fonts
+    fonts.init()
+    fonts.convert_dict_conf_to_vars()
+    #show("FONTS config", FONTS)
 
-    # Process FRAMES
+    # Process FRAMES - needs to have display already initiated
     global FRAMES
     FRAMES =_prep_conf_frames(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="FRAMES"))
+    import pyrpg.core.config.frames as frames
+    frames.init()
+    frames.convert_dict_conf_to_vars()
+    #show("FRAMES config", FRAMES)
+
+    # Process CONSOLE - must be the last because internally it is importing pyrpg.main module that is using some KEYS configurations that 
+    # must be already ready
+    global CONSOLE
+    CONSOLE =_prep_conf_console(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="CONSOLE"))
+    import pyrpg.core.config.console as c
+    c.init()
+    #show("CONSOLE config", CONSOLE)
 
 
 def _merge_conf(default_config: dict, game_config: dict, conf_key: str) -> dict:
     """Merge configs from 2 dictionaries for a given conf key.
     Default config is overwritten by particular game config.
     """
-    return {**default_config.get(conf_key, dict()), **game_config.get(conf_key, dict())}
+    from pyrpg.functions import merge_dicts
+    return merge_dicts(default_config.get(conf_key, dict()), game_config.get(conf_key, dict()))
+    #return {**default_config.get(conf_key, dict()), **game_config.get(conf_key, dict())}
 
 def _prep_conf_filepaths(filepaths_config: dict) -> dict:
     """ Prepare all necessary logging configurations.

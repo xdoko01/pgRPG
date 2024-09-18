@@ -124,7 +124,7 @@
 			],
 			"components" : [
 				{
-					"type" : "new.debug:Debug", 
+					"type" : "debug:Debug", 
 					"params" : {
 						"info" : {
 							"name" : "PLAYER01",
@@ -136,7 +136,7 @@
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{
-					"type" : "new.collidable:Collidable", 
+					"type" : "collidable:Collidable", 
 					"params" :  {
 						"x" : 15, 
 						"y" : 27, 
@@ -152,7 +152,7 @@
 			"templates" : [],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "STONE",
@@ -164,7 +164,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 300, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {
+				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 15, 
 					"y" : 15, 
 					"dx" : 0, 
@@ -179,7 +179,7 @@
 			"templates" : [],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "LAVA"
@@ -189,7 +189,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 300, "y" : 300, "map" : "test_arena_sand"}},
 				//{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {
+				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 100, 
 					"y" : 100, 
 					"dx" : 0, 
@@ -203,7 +203,7 @@
 			"templates" : ["model/body/male/skeleton/white"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC01",
@@ -213,7 +213,7 @@
 				},
 
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"blackboard": {
 							"position_1": [1000, 450],
@@ -231,7 +231,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {
+				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 15, 
 					"y" : 27, 
 					"dx" : 0, 
@@ -245,7 +245,7 @@
 			"templates" : ["model/body/male/skeleton/green"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC02"
@@ -256,7 +256,7 @@
 
 				// Move up - down
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"blackboard": {
 							"position_1": [1000, 450],
@@ -272,7 +272,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -280,7 +280,7 @@
 			"templates" : ["model/body/male/skeleton/grey"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC03"
@@ -290,7 +290,7 @@
 
 				// Move down - up
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [319, 1000]}]},
@@ -302,7 +302,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -310,7 +310,7 @@
 			"templates" : ["model/body/male/zombie/green"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC04"
@@ -320,7 +320,7 @@
 
 				// Move left - right
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [50, 500]}]},
@@ -333,7 +333,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -341,7 +341,7 @@
 			"templates" : ["model/body/male/wolfman/gold"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC05"
@@ -351,7 +351,7 @@
 
 				// Move left - right
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [300, 100]}]},
@@ -363,7 +363,7 @@
 				
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15,
 														"y" : 27,
 														"dx" : 0,
 														"dy" : 8}}

@@ -68,12 +68,12 @@
 				// - program is added to the brain and executed accross several cycles
 				//
 				/////////////////////////////////////////////////////////
-				{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+				{"type" : "brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
 
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
 					"control_cmds" : {
 						// Do 3 circles upon pressing left
-						"left" : [
+						"LEFT": [
 							[
 								"reset_brain", 
 								{
@@ -91,7 +91,7 @@
 							]
 						],
 						
-						"right" : [
+						"RIGHT": [
 							[
 								"reset_brain", 
 								{
@@ -105,7 +105,7 @@
 							]
 						],
 						
-						"up" : [
+						"UP": [
 							[
 								"reset_brain", 
 								{
@@ -119,7 +119,7 @@
 							]
 						],
 						
-						"down" : [
+						"DOWN": [
 							[
 								"reset_brain", 
 								{
@@ -133,7 +133,7 @@
 							]
 						],
 
-						"attack" : []}
+						"ATTACK": []}
 					}
 				},
 

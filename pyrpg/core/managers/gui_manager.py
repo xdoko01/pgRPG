@@ -26,9 +26,9 @@ Pos = namedtuple("Pos", ["x", "y"])
 
 class GUIManager:
 
-    def __init__(self, width: int, height: int, depth: int=32, full: bool=False, ratio: float=1.5) -> None:
+    def __init__(self, window: pygame.Surface, width: int, height: int, depth: int=32, full: bool=False, ratio: float=1.5) -> None:
 
-        pygame.init()
+        ##pygame.init()
 
         # Dimensions of game window
         self._res = Dim(width, height)
@@ -45,11 +45,13 @@ class GUIManager:
             (self._res.height -  self._gui_dlg_dim.height) / 2
         )
 
-        self.window = pygame.display.set_mode(
-                self._res,
-                pygame.FULLSCREEN if full else 0,
-                depth
-        )
+        # At this moment, display is already created during initial configuration
+        self.window = window
+        ##self.window = pygame.display.set_mode(
+        ##        self._res,
+        ##        pygame.FULLSCREEN if full else 0,
+        ##        depth
+        ##)
 
         self.clock = pygame.time.Clock()
 

@@ -130,7 +130,7 @@
 			"id" : "key01",
 			"templates" : [],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}}
+				{"type" : "debug:Debug", "params" : {}}
 			]
 		},
 
@@ -138,7 +138,7 @@
 			"id" : "key02",
 			"templates" : [],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}}
+				{"type" : "debug:Debug", "params" : {}}
 			]
 		},
 
@@ -149,14 +149,14 @@
 				"new/controls/default"
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitating teleportation - Teleportee has the key so it can use teleport that requires this key01
 				{"type" : "new.teleportable:Teleportable", "params" : {"keys" : ["key02"]}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		},
@@ -165,13 +165,13 @@
 			"id" : "teleport01",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg teleportation - no key needed in order to teleport
 				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
 
 				{"type" : "position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		},
 
@@ -179,13 +179,13 @@
 			"id" : "teleport02",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg teleportation - key key01 needed in order to teleport
 				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10, "key" : "key01"}},
 
 				{"type" : "position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		},
 
@@ -193,13 +193,13 @@
 			"id" : "teleport03",
 			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg teleportation - key key02 needed in order to teleport
 				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3, "key" : "key02"}},
 
 				{"type" : "position:Position", "params" : {"x" : 260, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		}
 	],

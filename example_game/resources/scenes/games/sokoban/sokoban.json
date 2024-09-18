@@ -24,8 +24,8 @@
 	"processors" : [
 
 		// For commands
-		["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["new.command_system.perform_command_processor:PerformCommandProcessor", {}],
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
 		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
@@ -119,10 +119,10 @@
 		{
 			"id": "t_crate",
 
-			"templates": ["new/thing/item/crate/wooden_crate"],
+			"templates": ["thing/item/crate/wooden_crate"],
 			
 			"components": [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				
 				{
 					"type" : "new.has_target_position:HasTargetPosition", 
@@ -140,7 +140,7 @@
 				},
 
 				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {
+				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 30, 
 					"y" : 30, 
 					"position_fix_walkaround_mode" : false // can be pushed only straight
@@ -209,10 +209,10 @@
 			"templates" : ["model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
 			"components" : [
 
-				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
 
 				{
-					"type" : "new.collidable:Collidable", 
+					"type" : "collidable:Collidable", 
 					"params" :  {
 						"x" : 30, "y" : 30,
 						"position_fix_walkaround_mode" : false // can pushed only straight
@@ -224,11 +224,11 @@
 					"params" :  {
 						"key_profile" : "default",
 						"control_cmds" : {
-							"left" : [["new_move_noadd", {"moves" : ["left"]}]],
-							"right": [["new_move_noadd", {"moves" : ["right"]}]],
-							"up" : [["new_move_noadd", {"moves" : ["up"]}]],
-							"down" : [["new_move_noadd", {"moves" : ["down"]}]],
-							"attack" : [["none", {}]]
+							"LEFT": [["new_move_noadd", {"moves" : ["left"]}]],
+							"RIGHT": [["new_move_noadd", {"moves" : ["right"]}]],
+							"UP": [["new_move_noadd", {"moves" : ["up"]}]],
+							"DOWN": [["new_move_noadd", {"moves" : ["down"]}]],
+							"ATTACK": [["none", {}]]
 						}
 					}
 				},
@@ -244,7 +244,7 @@
 		{
 			"id" : "player01",
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}}
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}}
 			]
 		},
 
@@ -252,7 +252,7 @@
 		{
 			"id": "crate07",
 			"remove": [
-				{"type": "new.debug:Debug"}
+				{"type": "debug:Debug"}
 			]
 		}
 	],

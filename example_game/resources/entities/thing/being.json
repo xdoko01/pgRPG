@@ -1,6 +1,6 @@
 {
 	"id" : "being",
-	"templates" : ["new/thing"],
+	"templates" : ["thing"],
 	"components" : [
 	]
 }

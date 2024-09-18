@@ -1,5 +1,5 @@
 {
 	"id" : "spellcast_ammo_pack",
-	"templates" : ["new/thing/ammo_pack"],
+	"templates" : ["thing/ammo_pack"],
 	"components" : []
 }

@@ -69,13 +69,13 @@
 				// - by pressing attack button, movement in the same way
 				// - single command / single direction upon keypress
 				/////////////////////////////////////////////////////////
-				{"type" : "new.brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
 					"control_cmds" : {
-						"left" : [["move_dir_add", {"moves" : ["left"]}]],
-						"right": [["move_dir_add", {"moves" : ["right"]}]],
-						"up" : [["move_dir_add", {"moves" : ["up"]}]],
-						"down" : [["move_dir_add", {"moves" : ["down"]}]],
+						"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+						"UP": [["move_dir_add", {"moves" : ["up"]}]],
+						"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
 						"attack" :  [
 							[
 								"reset_brain", 

@@ -1,6 +1,6 @@
 {
 	"id" : "item_model",
-	"templates" : ["new/model"],
+	"templates" : ["model"],
 	"components" : [
 	]
 }

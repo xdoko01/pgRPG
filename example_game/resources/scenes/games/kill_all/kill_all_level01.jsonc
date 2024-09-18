@@ -8,7 +8,7 @@
 	"objective" : "Kill all your enemies",
 
 	// What quests need to be loaded before this one
-	"prereqs" : ["new/games/kill_all/kill_all.jsonc"],
+	"prereqs" : ["games/kill_all/kill_all.jsonc"],
 
 	// What objects need to be cleaned first
 	"cleanup" : {
@@ -49,10 +49,10 @@
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{
-									"type" : "new.collidable:Collidable", 
+									"type" : "collidable:Collidable", 
 									"params" : {
 										"x" : 8, "y" : 8, 
 										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
@@ -95,10 +95,10 @@
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{
-									"type" : "new.collidable:Collidable", 
+									"type" : "collidable:Collidable", 
 									"params" : {
 										"x" : 8, "y" : 8, 
 										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
@@ -142,7 +142,7 @@
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{"type" : "new.brain:Brain", "params" : {"commands" : [
 									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
@@ -151,7 +151,7 @@
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
@@ -185,7 +185,7 @@
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{"type" : "new.brain:Brain", "params" : {"commands" : [
 									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
@@ -194,7 +194,7 @@
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 50}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500}},
-								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
 								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
@@ -221,24 +221,24 @@
 			"templates" : ["model/body/male/human/white", "t_tile_pos(10, 10, test_arena_sand)"],
 			"components" : [
 
-				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
 				{"type" : "new.can_see:CanSee", "params" : {"angle": 60, "distance_px": 300}},
 
 				{
-					"type" : "new.collidable:Collidable", 
+					"type" : "collidable:Collidable", 
 					"params" :  {
 						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
 					}
 				},
 
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
 					"control_cmds" : {
-						"left" : [["new_move_add", {"moves" : ["left"]}]],
-						"right": [["new_move_add", {"moves" : ["right"]}]],
-						"up" : [["new_move_add", {"moves" : ["up"]}]],
-						"down" : [["new_move_add", {"moves" : ["down"]}]],
-						"attack" : [["new_attack", {}]]}
+						"LEFT": [["new_move_add", {"moves" : ["left"]}]],
+						"RIGHT": [["new_move_add", {"moves" : ["right"]}]],
+						"UP": [["new_move_add", {"moves" : ["up"]}]],
+						"DOWN": [["new_move_add", {"moves" : ["down"]}]],
+						"ATTACK": [["new_attack", {}]]}
 					}
 				},
 
@@ -276,10 +276,10 @@
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{
-									"type" : "new.collidable:Collidable", 
+									"type" : "collidable:Collidable", 
 									"params" : {
 										"x" : 16, "y" : 16, 
 										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
@@ -313,7 +313,7 @@
 			"id" : "NPC01",
 			"templates" : ["model/body/special/minotaur",  "t_tile_pos(3, 20, test_arena_sand)"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// Guard, Seek and destroy the player
 				{"type" : "new.brain:Brain", "params" : {"commands" : [
@@ -338,7 +338,7 @@
 
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -352,7 +352,7 @@
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{"type" : "new.brain:Brain", "params" : {"commands" : [
 									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
@@ -361,7 +361,7 @@
 								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
@@ -392,7 +392,7 @@
 			],
 			
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "new.has_weapon:HasWeapon", "params" : {
 					"weapons" : {
 						"bow" : {"weapon" : "wooden_bow_npc02", "generator" : "wooden_arrows_pack_npc02"}
@@ -402,7 +402,7 @@
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 50}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -410,14 +410,14 @@
 			"templates" : [
 				"new/model/body/special/minotaur",  
 				"t_tile_pos(0, 0, test_arena_sand)",
-				["new/_special/guard", {"$path_in": [[0,0],[50,0],[100,0],[150,0],[200,0],[150,0],[100,0],[50,0]], "$list_of_enemies_in":[]}]
+				["_special/guard", {"$path_in": [[0,0],[50,0],[100,0],[150,0],[200,0],[150,0],[100,0],[50,0]], "$list_of_enemies_in":[]}]
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		}
 	],

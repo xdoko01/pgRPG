@@ -106,7 +106,7 @@
 	"entities" : [
 		{
 			"id": "golden_coin01",
-			"templates": ["new/thing/item/coin/golden_coin"],
+			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_arena_sand"}},
@@ -116,7 +116,7 @@
 		},
 		{
 			"id": "golden_coin02",
-			"templates": ["new/thing/item/coin/golden_coin"],
+			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 2, "map" : "test_arena_sand"}},
@@ -126,7 +126,7 @@
 		},
 		{
 			"id": "golden_coin03",
-			"templates": ["new/thing/item/coin/golden_coin"],
+			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 2, "map" : "test_arena_sand"}},
@@ -136,7 +136,7 @@
 		},
 		{
 			"id": "golden_coin04",
-			"templates": ["new/thing/item/coin/golden_coin"],
+			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 2, "map" : "test_arena_sand"}},
@@ -146,7 +146,7 @@
 		},
 		{
 			"id": "golden_coin05",
-			"templates": ["new/thing/item/coin/golden_coin"],
+			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 2, "map" : "test_arena_sand"}},
@@ -156,7 +156,7 @@
 		},
 		{
 			"id": "silver_coin01",
-			"templates": ["new/thing/item/coin/silver_coin"],
+			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 4, "map" : "test_arena_sand"}},
@@ -166,7 +166,7 @@
 		},
 		{
 			"id": "silver_coin02",
-			"templates": ["new/thing/item/coin/silver_coin"],
+			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 4, "map" : "test_arena_sand"}},
@@ -176,7 +176,7 @@
 		},
 		{
 			"id": "silver_coin03",
-			"templates": ["new/thing/item/coin/silver_coin"],
+			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 4, "map" : "test_arena_sand"}},
@@ -186,7 +186,7 @@
 		},
 		{
 			"id": "silver_coin04",
-			"templates": ["new/thing/item/coin/silver_coin"],
+			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 4, "map" : "test_arena_sand"}},
@@ -196,7 +196,7 @@
 		},
 		{
 			"id": "silver_coin05",
-			"templates": ["new/thing/item/coin/silver_coin"],
+			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 4, "map" : "test_arena_sand"}},
@@ -206,7 +206,7 @@
 		},
 		{
 			"id": "copper_coin01",
-			"templates": ["new/thing/item/coin/copper_coin"],
+			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 6, "map" : "test_arena_sand"}},
@@ -216,7 +216,7 @@
 		},
 		{
 			"id": "copper_coin02",
-			"templates": ["new/thing/item/coin/copper_coin"],
+			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 6, "map" : "test_arena_sand"}},
@@ -226,7 +226,7 @@
 		},
 		{
 			"id": "copper_coin03",
-			"templates": ["new/thing/item/coin/copper_coin"],
+			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 6, "map" : "test_arena_sand"}},
@@ -236,7 +236,7 @@
 		},
 		{
 			"id": "copper_coin04",
-			"templates": ["new/thing/item/coin/copper_coin"],
+			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 6, "map" : "test_arena_sand"}},
@@ -246,7 +246,7 @@
 		},
 		{
 			"id": "copper_coin05",
-			"templates": ["new/thing/item/coin/copper_coin"],
+			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 6, "map" : "test_arena_sand"}},
@@ -261,10 +261,10 @@
 			"templates" : ["model/body/male/human/white"],
 			"components" : [
 
-				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
 
 				{
-					"type" : "new.collidable:Collidable", 
+					"type" : "collidable:Collidable", 
 					"params" :  {
 						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8
 					}
@@ -275,11 +275,11 @@
 					"params" :  {
 						"key_profile" : "default",
 						"control_cmds" : {
-							"left" : [["move_dir_add", {"moves" : ["left"]}]],
-							"right": [["move_dir_add", {"moves" : ["right"]}]],
-							"up" : [["move_dir_add", {"moves" : ["up"]}]],
-							"down" : [["move_dir_add", {"moves" : ["down"]}]],
-							"attack" : []
+							"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+							"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+							"UP": [["move_dir_add", {"moves" : ["up"]}]],
+							"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+							"ATTACK": []
 						}
 					}
 				},

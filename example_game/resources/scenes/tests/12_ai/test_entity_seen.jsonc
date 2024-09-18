@@ -124,22 +124,22 @@
 			"templates" : ["model/body/male/human/white"],
 			"components" : [
 				{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "default",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
 					"control_cmds" : {
-						"left" : [["move_dir_add", {"moves" : ["left"]}]],
-						"right": [["move_dir_add", {"moves" : ["right"]}]],
-						"up" : [["move_dir_add", {"moves" : ["up"]}]],
-						"down" : [["move_dir_add", {"moves" : ["down"]}]],
-						"attack" : []}
+						"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+						"UP": [["move_dir_add", {"moves" : ["up"]}]],
+						"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+						"ATTACK": []}
 					}
 				},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{
-					"type" : "new.collidable:Collidable", 
+					"type" : "collidable:Collidable", 
 					"params" :  {
 						"x" : 15, "y" : 27, 
 						"dx" : 0, "dy" : 8,
@@ -152,7 +152,7 @@
 			"id" : "NPC01",
 			"templates" : ["model/body/male/skeleton/white"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// When player is spotted, move
 				//   RepeatUntilFail
@@ -227,7 +227,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {
+				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 15, 
 					"y" : 27, 
 					"dx" : 0, 
@@ -241,7 +241,7 @@
 			"templates" : ["model/body/male/skeleton/green"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC02"
@@ -258,7 +258,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -266,7 +266,7 @@
 			"templates" : ["model/body/male/skeleton/grey"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC03"
@@ -283,7 +283,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -291,7 +291,7 @@
 			"templates" : ["model/body/male/zombie/green"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC04"
@@ -309,7 +309,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
@@ -317,7 +317,7 @@
 			"templates" : ["model/body/male/wolfman/gold"],
 			"components" : [
 				{
-					"type" : "new.debug:Debug",
+					"type" : "debug:Debug",
 					"params" : {
 						"info" : { 
 							"name" : "NPC05"
@@ -334,7 +334,7 @@
 				
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15,
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15,
 														"y" : 27,
 														"dx" : 0,
 														"dy" : 8}}

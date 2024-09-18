@@ -6,24 +6,24 @@
 	"description": "Schema validating the Controllable component.",
 
 	"examples" : [
-		{"type" : "controllable:Controllable", "params" :  {"key_profile" : "key_controls_1"}},
+		{"type" : "controllable:Controllable", "params" :  {"key_profile" : "KEY_CONTROLS_1"}},
 		{
 			"type" : "controllable:Controllable", 
 			"params" :  {
-				"key_profile" : "key_controls_1",
+				"key_profile" : "KEY_CONTROLS_1",
 				"control_keys" : {
-					"left" : 276, 
-					"right": 275, 
-					"up": 273, 
-					"down" : 274, 
-					"attack" : 122
+					"LEFT" : 276, 
+					"RIGHT": 275, 
+					"UP": 273, 
+					"DOWN" : 274, 
+					"ATTACK" : 122
 				},
 				"control_cmds" : {
-					"left" : [["move", {"direction" : "left"}]],
-					"right": [["move", {"direction" : "right"}]],
-					"up" : [["move", {"direction" : "up"}]],
-					"down" : [["move", {"direction" : "down"}]],
-					"attack" : [["attack", {}]]}
+					"LEFT" : [["move", {"direction" : "left"}]],
+					"RIGHT": [["move", {"direction" : "right"}]],
+					"UP" : [["move", {"direction" : "up"}]],
+					"DOWN" : [["move", {"direction" : "down"}]],
+					"ATTACK" : [["attack", {}]]}
 			}
 		}
 	],
@@ -45,8 +45,8 @@
 					"description": "Layout of control keys.",
 					"type": "string",
 					"oneOf":[
-						{"pattern": "^key_controls*"},
-						{"enum": ["default"]}
+						{"pattern": "^KEY_CONTROLS*"},
+						{"enum": ["DEFAULT"]}
 					],
 					"default": "default"
 				},
@@ -54,13 +54,13 @@
 					"title": "Control Keys",
 					"description": "Keys assigned to actions.",
 					"type": "object",
-					"required": ["left", "right", "up", "down", "attack"]
+					"required": ["LEFT", "RIGHT", "UP", "DOWN", "ATTACK"]
 				},
 				"control_cmds" : {
 					"title": "Control Commands",
 					"description": "List of commands assigned to actions.",
 					"type": "object",
-					"required": ["left", "right", "up", "down", "attack"],
+					"required": ["LEFT", "RIGHT", "UP", "DOWN", "ATTACK"],
 					"properties": {
 						"left": {"type": "array", "items": {"$ref": "../command.schema.json"}},
 						"right": {"type": "array", "items": {"$ref": "../command.schema.json"}},

@@ -179,9 +179,9 @@
 			"id" : "ammo01",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
-				{"type" : "new.collidable:Collidable", "params" : {"x" : 20, "y" : 20}},
+				{"type" : "collidable:Collidable", "params" : {"x" : 20, "y" : 20}},
 
 				{
 					"type" : "new.factory:Factory", 
@@ -190,7 +190,7 @@
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}}
+								{"type" : "debug:Debug", "params" : {}}
 							]
 						} 
 					}
@@ -206,10 +206,10 @@
 			"id" : "weapon01",
 			"templates" : ["model/weapon/shoot/bow_wooden"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
 				{"type" : "new.pickable:Pickable", "params" : {}},
-				{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
+				{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 350, "map" : "test_arena_sand"}}
 			]
 		},
@@ -218,10 +218,10 @@
 			"id" : "weapon02",
 			"templates" : ["model/weapon/slash/dagger"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "new.weapon:Weapon", "params" : {"type" : "sword", "max_projectiles" : 1}},
 				{"type" : "new.pickable:Pickable", "params" : {}},
-				{"type" : "new.collidable:Collidable", "params" : {"x" : 10, "y" : 10}},
+				{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}},
 				{"type" : "position:Position", "params" : {"x" : 200, "y" : 350, "map" : "test_arena_sand"}}
 			]
 		},
@@ -233,7 +233,7 @@
 				"new/controls/default" // controls template
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// Can pick up another entity
 				{"type" : "new.has_inventory:HasInventory", "params" : {}},
@@ -243,7 +243,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}

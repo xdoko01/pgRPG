@@ -96,7 +96,7 @@ def main(argv):
     #scene_file = 'tests/02_commands/record_commands.jsonc'
 
     # 01_movements
-    #scene_file = 'tests/01_movements/test_controls_12'
+    scene_file = 'tests/01_movements/test_controls_12'
     #scene_file = 'tests/01_movements/test_movement_11.jsonc'
     #scene_file = 'tests/01_movements/test_movement_10.jsonc'
     #scene_file = 'tests/01_movements/test_movement_09.jsonc'
@@ -107,7 +107,7 @@ def main(argv):
     #scene_file = 'tests/01_movements/test_movement_04.jsonc'
     #scene_file = 'tests/01_movements/test_movement_03.jsonc'
     #scene_file = 'tests/01_movements/test_movement_02.jsonc'
-    scene_file = 'tests/01_movements/test_movement_01.jsonc'
+    #scene_file = 'tests/01_movements/test_movement_01.jsonc'
 
     # 00_render
     #scene_file = 'tests/00_render/test_render_02.jsonc'
@@ -165,6 +165,8 @@ EXAMPLES
     # that is based on config files.
     import pyrpg.core.config as config
     config.load(config_file=config_file)
+    #import pyrpg.core.config.logging # all logging initiation done here
+
 
     # Start the game
     from pyrpg.main import init

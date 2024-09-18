@@ -1,5 +1,5 @@
 {
 	"id" : "wearable",
-	"templates" : ["new/thing"],
+	"templates" : ["thing"],
 	"components" : []
 }

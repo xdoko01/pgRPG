@@ -1,6 +1,6 @@
 {
 	"id" : "golden_coin",
-	"templates" : ["new/thing/item/coin", "model/item/coin/golden_coin"],
+	"templates" : ["thing/item/coin", "model/item/coin/golden_coin"],
 	"components" : [
 
 		{"type" : "new.scorable_on_pickup:ScorableOnPickup", "params" : {"score" : 100}}

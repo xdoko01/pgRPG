@@ -5,4 +5,4 @@
 `py game.main.state_manager.change_state(1)`
 
 *Removes component from entity 8*
-`py game.main.engine.ecs_manager.remove_component({"type": "new.debug:Debug"}, 8)`
+`py game.main.engine.ecs_manager.remove_component({"type": "debug:Debug"}, 8)`

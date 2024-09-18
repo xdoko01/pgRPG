@@ -1,5 +1,8 @@
 from pyrpg.core.states.state import State
 
+# Init logging config
+import logging
+logger = logging.getLogger(__name__)
 
 STATES_GRAPH = {
     State.START_PROGRAM    : [State.MAIN_MENU,  State.GAME],
@@ -15,3 +18,5 @@ STATES_GRAPH = {
 NON_GAME_STATES = [State.CONSOLE, State.START_PROGRAM, State.END_PROGRAM]
 
 START_STATE = State.START_PROGRAM
+
+logger.debug(f"States config initiated.")

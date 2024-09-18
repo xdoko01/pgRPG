@@ -75,11 +75,11 @@
 				"new/controls/default" // controls template
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8, "position_fix_walkaround_mode" : false}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8, "position_fix_walkaround_mode" : false}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		},
@@ -87,20 +87,20 @@
 			"id" : "NPC",
 			"templates" : ["model/body/female/human/brown"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "key_controls_1",
 					"control_cmds" : {
-						"left" : [["move_dir_add", {"moves" : ["left"]}]],
-						"right": [["move_dir_add", {"moves" : ["right"]}]],
-						"up" : [["move_dir_add", {"moves" : ["up"]}]],
-						"down" : [["move_dir_add", {"moves" : ["down"]}]],
-						"attack" : []}
+						"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+						"UP": [["move_dir_add", {"moves" : ["up"]}]],
+						"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+						"ATTACK": []}
 					}
 				},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		}
 

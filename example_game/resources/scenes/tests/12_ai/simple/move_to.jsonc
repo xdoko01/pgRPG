@@ -70,9 +70,9 @@
 			"id" : "player01",
 			"templates" : ["model/body/male/human/brown"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 
 						"blackboard": {

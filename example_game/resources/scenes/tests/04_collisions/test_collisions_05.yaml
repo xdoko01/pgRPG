@@ -21,9 +21,9 @@ cleanup:
 # What processors to load
 processors:
   # For commands
-- ["new.command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}]
-- ["new.command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}]
-- ["new.command_system.perform_command_processor:PerformCommandProcessor", {}]
+- ["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}]
+- ["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}]
+- ["command_system.perform_command_processor:PerformCommandProcessor", {}]
 
   # For movement
 - ["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}]
@@ -104,7 +104,7 @@ entities:
   components:
 
   # Debug component
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: PLAYER01
@@ -124,7 +124,7 @@ entities:
       velocity: 200
 
   # Collidable component
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 27
@@ -147,7 +147,7 @@ entities:
 - id: stone
   templates: []
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: STONE
@@ -168,7 +168,7 @@ entities:
   - type: new.movable:Movable
     params:
       velocity: 100
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 15
@@ -181,7 +181,7 @@ entities:
 - id: LAVA
   templates: []
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: LAVA
@@ -190,7 +190,7 @@ entities:
       x: 300
       y: 300
       map: test_arena_sand
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 100
       y: 100
@@ -200,7 +200,7 @@ entities:
   templates:
   - new/model/body/male/skeleton/white
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: NPC01
@@ -234,7 +234,7 @@ entities:
   - type: new.movable:Movable
     params:
       velocity: 100
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 27
@@ -246,7 +246,7 @@ entities:
   templates:
   - new/model/body/male/skeleton/green
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: NPC02
@@ -278,7 +278,7 @@ entities:
   - type: new.movable:Movable
     params:
       velocity: 100
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 27
@@ -288,7 +288,7 @@ entities:
   templates:
   - new/model/body/male/skeleton/grey
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: NPC03
@@ -313,7 +313,7 @@ entities:
   - type: new.movable:Movable
     params:
       velocity: 100
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 27
@@ -323,7 +323,7 @@ entities:
   templates:
   - new/model/body/male/zombie/green
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: NPC04
@@ -348,7 +348,7 @@ entities:
   - type: new.movable:Movable
     params:
       velocity: 100
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 27
@@ -358,7 +358,7 @@ entities:
   templates:
   - new/model/body/male/wolfman/gold
   components:
-  - type: new.debug:Debug
+  - type: debug:Debug
     params:
       info:
         name: NPC05
@@ -383,7 +383,7 @@ entities:
       x: 100
       y: 100
       map: test_arena_sand
-  - type: new.collidable:Collidable
+  - type: collidable:Collidable
     params:
       x: 15
       y: 27

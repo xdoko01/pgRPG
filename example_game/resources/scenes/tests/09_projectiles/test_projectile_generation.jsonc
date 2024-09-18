@@ -95,10 +95,10 @@
 							"id" : "wooden_arrow",
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
-								{"type" : "new.debug:Debug", "params" : {}},
+								{"type" : "debug:Debug", "params" : {}},
 
 								{
-									"type" : "new.brain_ai:BrainAI",
+									"type" : "brain_ai:BrainAI",
 									"params" : {
 										"cmd_list" : [
 											{"command": ["move_auto", {"duration_ms": 3000}]}
@@ -112,7 +112,7 @@
 								//{"type" : "DeleteOnCollision", "params" : {}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-								{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8}}
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8}}
 							]
 						} 
 					}
@@ -136,8 +136,8 @@
 			],
 			"components" : [
 
-				{"type" : "new.debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
 
 				// Bow is armed and preselected as the active weapon

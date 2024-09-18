@@ -123,11 +123,11 @@
 				"new/controls/default" // controls template
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		},
@@ -135,11 +135,11 @@
 			"id" : "NPC01",
 			"templates" : ["model/body/female/human/brown"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// Move right - left
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [1000, 450]}]},
@@ -151,18 +151,18 @@
 
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC02",
 			"templates" : ["model/body/child/elf/dark"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// Move up - down
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [219, 10]}]},
@@ -174,18 +174,18 @@
 
 				{"type" : "position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC03",
 			"templates" : ["model/body/male/elf/darkgrey"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// Move down - up
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [319, 1000]}]},
@@ -197,18 +197,18 @@
 
 				{"type" : "position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC04",
 			"templates" : ["model/body/male/orc/grassgreen"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// Move left - right
 				{
-					"type" : "new.brain_ai:BrainAI", 
+					"type" : "brain_ai:BrainAI", 
 					"params" : {
 						"cmd_list" : [
 							{"command": ["move_to_pos_px", {"pos": [50, 500]}]},
@@ -220,17 +220,17 @@
 
 				{"type" : "position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "NPC05",
 			"templates" : ["model/body/female/human/olive"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 				
 				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
 		}
 

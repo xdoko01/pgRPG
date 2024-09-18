@@ -199,14 +199,14 @@
         "loggers" : {
 
             // Save all the logs from component classes to the file
-            "pyrpg.core.ecs.components" : {
+            "core.components" : {
                 "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
                 "handlers" : ["null"],  // do not log to file for speed
                 "propagate" : false // Do not send messages from these loggers to parent (root) logger
             },
 
             // Save all the logs from processor classes to the file
-            "pyrpg.core.ecs.processors" : {
+            "core.processors" : {
                 "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
                 "handlers" : ["null"], // do not log to file for speed
                 "propagate" : false // Do not send messages from these loggers to parent (root) logger
@@ -227,7 +227,7 @@
             },
 
             // Save all the logs from command functions to the file
-            "pyrpg.core.commands" : {
+            "core.commands" : {
                 "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
                 "handlers" : ["null"],  // do not log to file for speed
                 "propagate" : false // Do not send messages from these loggers to parent (root) logger

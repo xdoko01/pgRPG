@@ -132,14 +132,14 @@
 				"new/controls/default" // control template
 			],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitating pickup
 				{"type" : "new.has_inventory:HasInventory", "params" :  {}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		},
@@ -147,36 +147,36 @@
 			"id" : "item01",
 			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg pickup
 				{"type" : "new.pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "item02",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg pickup
 				{"type" : "new.pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 140, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		},
 		{
 			"id" : "item03",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.debug:Debug", "params" : {}},
+				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg pickup
 				{"type" : "new.pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 170, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "new.collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		}
 
