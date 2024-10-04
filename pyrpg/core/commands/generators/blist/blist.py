@@ -134,7 +134,8 @@ class BList(CommandGenerator):
                 print(f'{self.commands[cmd_idx]}')
 
     def __str__(self):
-        return f'{self.commands[self.current_cmd_idx]}'
+        '''Info about running command'''
+        return f'{self.commands[self.current_cmd_idx] if self.commands else None}'
 
     def reset(self, new_ai_struct: dict) -> None:
         '''Reset the BList structure and fill it with the new commands.

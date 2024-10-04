@@ -74,14 +74,14 @@
 						"RIGHT": [["move_vect", {"vector" : [5,0],  "entity": "NPC01"}]], // moving other entity
 						"UP": [["move_vect", {"vector" : [0,-5]}]],
 						"DOWN": [["move_vect", {"vector" : [0,5]}]],
-						"attack" :  [
+						"ATTACK" :  [ // move one second in the selected direction
 							[
 								"reset_brain", 
 								{
 									"new_ai_struct" : {
 										"blackboard": {},
 										"cmd_list": [
-											{"line": 0, "type": "Behavior", "command": ["move_auto", {"duration_ms": 100}]}
+											{"line": 0, "type": "Behavior", "command": ["move_auto", {"duration_ms": 1000}]}
 										]
 									}
 								}

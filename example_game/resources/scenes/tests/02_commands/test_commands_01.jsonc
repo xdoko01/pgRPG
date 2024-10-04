@@ -63,7 +63,7 @@
 			"components" : [
 
 				{
-					"type" : "new.blist_ai:BListAI", 
+					"type" : "blist_ai:BListAI", 
 					"params" : {
 						"blackboard": {}, 
 						"cmd_list": [

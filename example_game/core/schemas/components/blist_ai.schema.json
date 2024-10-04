@@ -34,7 +34,7 @@
 			"title": "BListAI Component",
 			"description": "Assigns an AI in a form of a list of commands to the entity",
 			"markdownDescription": "Assigns an AI in a form of a list of commands to the entity",
-			"enum": [ "new.blist_ai:BListAI" ]
+			"enum": [ "blist_ai:BListAI" ]
 		},
 		"params": {
 			"title": "BListAI Component parameters",

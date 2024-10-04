@@ -63,7 +63,7 @@
 			"components" : [
 
 				{
-					"type" : "new.btree_ai:BTreeAI", 
+					"type" : "btree_ai:BTreeAI", 
 					"params" : {
 						"blackboard": {}, 
 						"cmd_tree": {

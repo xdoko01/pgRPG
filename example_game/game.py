@@ -96,7 +96,7 @@ def main(argv):
     #scene_file = 'tests/02_commands/record_commands.jsonc'
 
     # 01_movements
-    scene_file = 'tests/01_movements/test_controls_12'
+    #scene_file = 'tests/01_movements/test_controls_12'
     #scene_file = 'tests/01_movements/test_movement_11.jsonc'
     #scene_file = 'tests/01_movements/test_movement_10.jsonc'
     #scene_file = 'tests/01_movements/test_movement_09.jsonc'

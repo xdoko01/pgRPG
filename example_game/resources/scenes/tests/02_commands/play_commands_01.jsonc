@@ -25,7 +25,7 @@
 	"processors" : [
 		// For commands
 		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["command_system.generate_command_from_file_processor:GenerateCommandFromFileProcessor", {"file" : "pyrpg/resources/quests/new/tests/02_commands/recorded_commands.rec", "mode" : "total_control"}],
+		["command_system.generate_command_from_file_processor:GenerateCommandFromFileProcessor", {"file" : "example_game/resources/scenes/tests/02_commands/recorded_commands.rec", "mode" : "total_control"}],
 		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
 		// For movement
