@@ -68,8 +68,8 @@ def main(argv):
     #scene_file = 'tests/07_arm_weapon/test_arm_weapon_01.json'
 
     # 06_teleportation
-    #scene_file = 'tests/06_teleportation/test_teleportation_02.json'
-    #scene_file = 'tests/06_teleportation/test_teleportation_01.json'
+    scene_file = 'tests/06_teleportation/test_teleportation_02'
+    #scene_file = 'tests/06_teleportation/test_teleportation_01'
 
     # 05_pickup
     #scene_file = 'tests/05_pickup/test_pickup_01.jsonc'

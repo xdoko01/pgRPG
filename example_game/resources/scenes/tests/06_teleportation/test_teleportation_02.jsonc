@@ -5,8 +5,8 @@
 	// Basic data
 	"id" : "test_teleportation_02",
 	"title" : "Teleportation with Key Test",
-	"description" : "Test new teleportation processors",
-	"objective" : "POC of the new teleportation system",
+	"description" : "Test teleportation processors",
+	"objective" : "POC of the teleportation system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
