@@ -26,7 +26,7 @@
 		
 		// Remove all the components that can be generated from commands here - movement, attack, ...
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 
 		// COMMAND SYSTEM
 		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -41,13 +41,13 @@
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// ANIMATION SYSTEM
-		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// PROJECTILE GENERATION
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
@@ -56,7 +56,7 @@
 		["movement_system.remove_flag_adjust_movement_processor:RemoveFlagAdjustMovementProcessor", {}],
 		["new.damage_system.remove_flag_adjust_damaging_processor:RemoveFlagAdjustDamagingProcessor", {}],
 
-		["new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}], // prepare all data for succ projectile generation, including adjustment of collision zones and not damaging the parent object. Also sets proper parent.
+		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}], // prepare all data for succ projectile generation, including adjustment of collision zones and not damaging the parent object. Also sets proper parent.
 		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}], // For generation of projectile from factory and projectile data
 		["new.collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}], // Adjust collision component of the entity - for factory generated entities
 		["movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}], // Adjust movable component of the entity - for factory generated entities
@@ -121,7 +121,7 @@
 		{
 			"id" : "NPC",
 			"templates" : [
-				"new/model/body/male/wolfman/gold"
+				"model/body/male/wolfman/gold"
 			],
 
 			"components" : [
@@ -132,13 +132,13 @@
 				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 
-				{"type" : "new.has_weapon:HasWeapon", "params" : {
+				{"type" : "has_weapon:HasWeapon", "params" : {
 							"weapons" : {
 								"bow" : {"weapon" : "wooden_bow_for_NPC", "generator" : "wooden_arrows_pack_for_NPC"}
 							}
 				}},
 		
-				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 
 				{
 					"type" : "brain_ai:BrainAI", 
@@ -225,20 +225,20 @@
 		{
 			"id" : "player01",
 			"templates" : [
-				"new/model/body/male/human/brown",
-				"new/controls/default"
+				"model/body/male/human/brown",
+				"controls/default"
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
 
-				{"type" : "new.has_weapon:HasWeapon", "params" : {
+				{"type" : "has_weapon:HasWeapon", "params" : {
 					"weapons" : {
 						"bow" : {"weapon" : "wooden_bow_for_player", "generator" : "wooden_arrows_pack_for_player"}
 					}
 				}},
 
 				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
-				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
@@ -249,7 +249,7 @@
 			"id" : "wooden_bow_for_NPC",
 			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
 
@@ -257,7 +257,7 @@
 			"id" : "wooden_bow_for_player",
 			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
 
@@ -265,7 +265,7 @@
 			"id" : "wooden_arrows_pack_for_NPC",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
 					"type" : "new.factory:Factory", 
 					"params" : {
@@ -303,7 +303,7 @@
 			"id" : "wooden_arrows_pack_for_player",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
 					"type" : "new.factory:Factory", 
 					"params" : {

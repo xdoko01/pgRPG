@@ -174,7 +174,7 @@
   <object id="2" name="test" type="entity" gid="11" x="240" y="80" width="32" height="32">
    <properties>
     <property name="new.movable:Movable" type="class"/>
-    <property name="templates" value="new/model/body/male/human/olive"/>
+    <property name="templates" value="model/body/male/human/olive"/>
    </properties>
   </object>
   <object id="3" gid="11" x="1253.33" y="185.333" width="32" height="32"/>

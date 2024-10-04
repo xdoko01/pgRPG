@@ -26,7 +26,7 @@
 		
 		// Remove all the components that can be generated from commands here - movement, attack, ...
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 
 		// COMMAND SYSTEM
 		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -41,17 +41,17 @@
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// ANIMATION SYSTEM
-		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// PROJECTILE GENERATION
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
-		["new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
+		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
 
 		// For generation of projectile from factory and projectile data
 		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
@@ -128,7 +128,7 @@
 		{
 			"id" : "NPC",
 			"templates" : [
-				"new/model/body/male/wolfman/gold"
+				"model/body/male/wolfman/gold"
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
@@ -180,7 +180,7 @@
 			"id" : "wooden_bow",
 			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
 
@@ -189,7 +189,7 @@
 			"id" : "wooden_arrows_pack",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
 					"type" : "new.factory:Factory", 
 					"params" : {
@@ -226,19 +226,19 @@
 		{
 			"id" : "player01",
 			"templates" : [
-				"new/model/body/male/human/brown",
-				"new/controls/default"
+				"model/body/male/human/brown",
+				"controls/default"
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
 
-				{"type" : "new.has_weapon:HasWeapon", "params" : {
+				{"type" : "has_weapon:HasWeapon", "params" : {
 					"weapons" : {
 						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
 					}
 				}},
 
-				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 150}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}

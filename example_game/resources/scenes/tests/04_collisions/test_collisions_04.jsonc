@@ -33,9 +33,9 @@
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// For animation
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
 		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
@@ -120,8 +120,8 @@
 		{
 			"id" : "player01",
 			"templates" : [
-				"new/model/body/male/human/white", // for model
-				"new/controls/default" // for controls
+				"model/body/male/human/white", // for model
+				"controls/default" // for controls
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},

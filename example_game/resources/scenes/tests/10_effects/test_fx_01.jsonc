@@ -33,15 +33,15 @@
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// For animation
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// NEW - For projectile data generation
-		["new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
+		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
 
 		// NEW - For generation of projectile from factory and projectile data
 		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
@@ -109,8 +109,8 @@
 
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 		["new.collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
-		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
-		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
 		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
 
@@ -144,7 +144,7 @@
 			"id" : "spear_generator",
 			"templates" : [], // no model needed
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
 				{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
 				{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
 
@@ -185,7 +185,7 @@
 			"id" : "long_spear",
 			"templates" : ["model/weapon/thrust/spear"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
 			]
 		},
 
@@ -195,7 +195,7 @@
 			"id" : "sword_generator",
 			"templates" : [],
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				//{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
 				//{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
 
@@ -235,7 +235,7 @@
 			"id" : "long_sword",
 			"templates" : ["model/weapon/slash/dagger"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
 			]
 		},
 
@@ -254,7 +254,7 @@
 			"id" : "wooden_bow",
 			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
 
@@ -262,7 +262,7 @@
 			"id" : "spell_pack",
 			"templates" : [],
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
 				{"type" : "new.sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
 				{"type" : "new.visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position": true}},
 
@@ -304,15 +304,15 @@
 			"id" : "spell_ability",
 			"templates" : [],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "spell",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "spell",	"max_projectiles" : 5}}
 			]
 		},
 
 		{
 			"id" : "player01",
 			"templates" : [
-				"new/model/body/male/human/white",
-				"new/controls/default"
+				"model/body/male/human/white",
+				"controls/default"
 			],
 			"components" : [
 
@@ -328,7 +328,7 @@
 
 
 				// Bow is armed and preselected as the active weapon
-				{"type" : "new.has_weapon:HasWeapon", "params" : {
+				{"type" : "has_weapon:HasWeapon", "params" : {
 					"weapons" : {
 						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"},
 						"sword" : {"weapon" : "long_sword", "generator" : "sword_generator"},
@@ -340,8 +340,8 @@
 
 				{"type" : "new.has_score:HasScore", "params" : {}},
 
-				//{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "sword"}},
+				//{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "sword"}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},

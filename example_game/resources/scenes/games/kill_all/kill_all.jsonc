@@ -37,15 +37,15 @@
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {"step": 1}],
 
 		// For animation
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For projectile data generation
-		["new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
+		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
 
 		// For generation of projectile from factory and projectile data
 		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
@@ -100,8 +100,8 @@
 
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 		["new.collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
-		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
-		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
 		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
 

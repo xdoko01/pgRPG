@@ -5,8 +5,8 @@
 	// Basic data
 	"id" : "test_weapon_animations",
 	"title" : "Movement and Weapon Animation Test",
-	"description" : "Test new animation processors and new render processors for movement and attack actions",
-	"objective" : "POC of the new animation and render system",
+	"description" : "Test animation processors and render processors for movement and attack actions",
+	"objective" : "POC of the animation and render system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -31,11 +31,11 @@
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// For animation
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -53,8 +53,8 @@
 
 		// Removal of obsolete flags
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
-		["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}]
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}]
 	],
 
 	// What maps to load
@@ -73,7 +73,7 @@
 			"id" : "wooden_arrows_pack",
 			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}}
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}}
 			]
 		},
 
@@ -81,15 +81,15 @@
 			"id" : "wooden_bow",
 			"templates" : ["model/weapon/shoot/bow_wooden_big"],
 			"components" : [
-				{"type" : "new.weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
 
 		{
 			"id" : "player01",
 			"templates" : [
-				"new/model/body/male/human/white", // model template
-				"new/controls/default" // control template
+				"model/body/male/human/white", // model template
+				"controls/default" // control template
 			],
 			"components" : [
 
@@ -97,13 +97,13 @@
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
 				// In order to animate attack, some weapom must be in use
-				{"type" : "new.has_weapon:HasWeapon", "params" : {
+				{"type" : "has_weapon:HasWeapon", "params" : {
 					"weapons" : {
 						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
 					}
 				}},
 
-				{"type" : "new.weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},

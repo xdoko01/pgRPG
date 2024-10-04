@@ -31,12 +31,12 @@
 		["new.movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
 		// For animation
-		["new.animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		//["new.animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		//["new.animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["new.animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		//["new.animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["new.animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		//["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		//["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		//["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
 		["new.collision_system:GenerateCollisionsProcessor", {}],
@@ -85,7 +85,7 @@
 		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 		
 		// Removal - animation
-		//["new.animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		//["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 
 		// Removal - score
 		//["new.score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor", {}],

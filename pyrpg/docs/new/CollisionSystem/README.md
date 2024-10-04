@@ -174,7 +174,7 @@ To achieve the above, we would need to introduce the following configuration.
 ```
 {
   "id" : "PLAYER",
-  "templates" : ["new/model/body/male/human/white"],
+  "templates" : ["model/body/male/human/white"],
   "components" : [
 
     {
@@ -207,7 +207,7 @@ To achieve the above, we would need to introduce the following configuration.
 ```
 {
   "id" : "NPC",
-  "templates" : ["new/model/body/male/skeleton/green"],
+  "templates" : ["model/body/male/skeleton/green"],
   "components" : [
 
     {
@@ -275,7 +275,7 @@ The Player as the entity controlled by the real person does not need to be pushe
 ```
 {
   "id" : "PLAYER",
-  "templates" : ["new/model/body/male/human/white"],
+  "templates" : ["model/body/male/human/white"],
   "components" : [
 
     {

@@ -2,7 +2,7 @@
 	"id" : "wooden_arrows_pack",
 	"templates" : ["thing/ammo_pack/shoot", "model/ammo_pack/shoot/wooden_arrows_pack"],
 	"components" : [
-		{"type" : "new.ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 		
 		{
 			"type" : "new.factory:Factory", 

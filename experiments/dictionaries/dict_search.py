@@ -211,7 +211,7 @@ if __name__ == "__main__":
     ex = {
             "processors" : [
                 ["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-                ["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}]
+                ["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}]
             ]
     }
 

@@ -197,7 +197,7 @@
 		"model_file": {
 			"title": "Model File",
 			"description": "Model file",
-			"examples": ["model.json", "new/models/model.json"],
+			"examples": ["model.json", "models/model.json"],
 			"type": "string"
 		},
 
