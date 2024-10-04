@@ -5,8 +5,8 @@
 	// Basic data
 	"id" : "test_pickup_01",
 	"title" : "Pickup Test",
-	"description" : "Test new pickup processors",
-	"objective" : "POC of the new pickup system",
+	"description" : "Test pickup processors",
+	"objective" : "POC of the pickup system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
