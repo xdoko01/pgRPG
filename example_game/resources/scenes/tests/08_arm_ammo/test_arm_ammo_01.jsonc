@@ -5,8 +5,8 @@
 	// Basic data
 	"id" : "test_arm_ammo_01",
 	"title" : "Simple Arm Ammo Test",
-	"description" : "Test new arm ammo processors",
-	"objective" : "POC of the new arm ammo system",
+	"description" : "Test arm ammo processors",
+	"objective" : "POC of the arm ammo system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],

@@ -62,13 +62,13 @@ def main(argv):
     #scene_file = 'tests/09_projectiles/test_projectile_collision.jsonc'
 
     # 08_arm_ammo
-    #scene_file = 'tests/08_arm_ammo/test_arm_ammo_01.json'
+    #scene_file = 'tests/08_arm_ammo/test_arm_ammo_01'
 
     # 07_arm_weapon
-    #scene_file = 'tests/07_arm_weapon/test_arm_weapon_01.json'
+    #scene_file = 'tests/07_arm_weapon/test_arm_weapon_01'
 
     # 06_teleportation
-    scene_file = 'tests/06_teleportation/test_teleportation_02'
+    #scene_file = 'tests/06_teleportation/test_teleportation_02'
     #scene_file = 'tests/06_teleportation/test_teleportation_01'
 
     # 05_pickup

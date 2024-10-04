@@ -5,8 +5,8 @@
 	// Basic data
 	"id" : "test_arm_weapon_01",
 	"name" : "Simple Arm Weapon Test",
-	"description" : "Test new arm weapon processors",
-	"objective" : "POC of the new arm weapon system",
+	"description" : "Test arm weapon processors",
+	"objective" : "POC of the arm weapon system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
