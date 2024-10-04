@@ -2,7 +2,7 @@
   - [x] Implement logger also for the configurations
   - [ ] Prepare a new `SoundFXOnDamage` component to be on the damagable entities (hurt sounds etc)
   - [ ] Prepare a new `SoundFXOnDestroy` component to be on the dead entities
-  
+  - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
 
 # To Do
  

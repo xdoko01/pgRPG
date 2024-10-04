@@ -69,7 +69,7 @@
 			"id" : "NPC",
 			"templates" : [
 				"model/body/male/wolfman/gold",
-				"new/behavior/move_between_2_points($x1=10,$y1=10,$x2=30,$y2=10)" // behavior template
+				"behavior/move_between_2_points($x1=10,$y1=10,$x2=30,$y2=10)" // behavior template
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
