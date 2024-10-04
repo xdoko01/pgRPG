@@ -4,7 +4,7 @@
 	// Basic data
 	"id" : "test_sensors_01",
 	"title" : "Test of Sight sence",
-	"description" : "Test new CanSee component and sense system",
+	"description" : "Test CanSee component and sense system",
 	"objective" : "POC of the sense system",
 
 	// What quests need to be loaded before this one
@@ -154,7 +154,7 @@
 					"params" :  {
 						"x" : 15, "y" : 27, 
 						"dx" : 0, "dy" : 8,
-						"accept_pos_fix_from_denylist" : []//["ALL"] // no one can move the player
+						"accept_pos_fix_from_denylist" : [] //["ALL"] // no one can move the player
 					}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]

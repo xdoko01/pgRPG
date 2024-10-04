@@ -226,7 +226,7 @@ class Map:
 
 			while sy*y < sy*target_px[1]:
 				#print(f'x:{x}, y:{y}, sy*y:{sy*y}, sy*target_px[1]:{sy*target_px[1]}')
-				yield (int(x // GAME["TILE_RES_PX"], y // GAME["TILE_RES_PX"]))
+				yield (int(x // GAME["TILE_RES_PX"]), y // GAME["TILE_RES_PX"])
 				x = x + x_incr
 				y = y + y_incr
 
