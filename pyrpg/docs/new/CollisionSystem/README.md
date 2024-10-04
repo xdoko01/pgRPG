@@ -149,7 +149,7 @@ To achieve the above, we would need to introduce the following configuration.
   "components" : [
 
     {
-      "type" : "new.position:Position", 
+      "type" : "position:Position", 
       "params" : {
         "x" : 300, 
         "y" : 300, 
@@ -178,14 +178,14 @@ To achieve the above, we would need to introduce the following configuration.
   "components" : [
 
     {
-      "type" : "new.position:Position", 
+      "type" : "position:Position", 
       "params" : {
         "x" : 250, "y" : 250, "map" : "test_arena_sand"
       }
     },
 
     {
-      "type" : "new.movable:Movable",
+      "type" : "movable:Movable",
       "params" :  {
         "velocity" : 200
       }
@@ -211,14 +211,14 @@ To achieve the above, we would need to introduce the following configuration.
   "components" : [
 
     {
-      "type" : "new.position:Position", 
+      "type" : "position:Position", 
       "params" : {
         "x" : 219, "y" : 800, "map" : "test_arena_sand"
       }
     },
 
     {
-      "type" : "new.movable:Movable", 
+      "type" : "movable:Movable", 
       "params" :  {
         "velocity" : 100
       }
@@ -248,12 +248,12 @@ In such case, we need to set following parameters on the `Collidable` component 
   "components" : [
 
     {
-      "type" : "new.position:Position", 
+      "type" : "position:Position", 
       "params" : {"x" : 300, "y" : 10, "map" : "test_arena_sand"}
     },
 
     {
-      "type" : "new.movable:Movable", 
+      "type" : "movable:Movable", 
       "params" :  {"velocity" : 100}
     },
 
@@ -279,14 +279,14 @@ The Player as the entity controlled by the real person does not need to be pushe
   "components" : [
 
     {
-      "type" : "new.position:Position", 
+      "type" : "position:Position", 
       "params" : {
         "x" : 250, "y" : 250, "map" : "test_arena_sand"
       }
     },
 
     {
-      "type" : "new.movable:Movable",
+      "type" : "movable:Movable",
       "params" :  {
         "velocity" : 200
       }

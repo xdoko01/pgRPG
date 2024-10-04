@@ -19,7 +19,7 @@
 						{
 							"type": "Behavior",
 							"name": "Save My Position Component",
-							"cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "new.position:Position"}]
+							"cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "position:Position"}]
 						}
 					]
 				}

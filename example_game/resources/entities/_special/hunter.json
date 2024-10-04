@@ -3,7 +3,7 @@
     "vars": ["$target_in"],
     "components": [
         {
-            "type" : "new.btree:BTree", 
+            "type" : "btree:BTree", 
             "params" : {
                 "blackboard": {
                 },

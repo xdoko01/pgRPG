@@ -32,7 +32,7 @@ class RemoveFlagWasArmedAsAmmoByProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.arm_ammo_system.perform_arm_ammo_processor:PerformArmAmmoProcessor'
+        'arm_ammo_system.perform_arm_ammo_processor:PerformArmAmmoProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

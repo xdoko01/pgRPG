@@ -29,7 +29,7 @@ class RemoveFlagCreateFromFactoryProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor'
+        'attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

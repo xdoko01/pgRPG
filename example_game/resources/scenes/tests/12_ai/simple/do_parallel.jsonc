@@ -45,14 +45,14 @@
 		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
 
 		// NEW - For generation of projectile from factory and projectile data
-		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+		["factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
 
 		// For sight - run once per 10 cycles
-		["new.sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
+		["sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
 
 		// For destroy
-		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
-		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+		["destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
+		["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
 
 
 		// For displaying
@@ -74,8 +74,8 @@
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
-		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
+		["factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
 		["movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}]
 	],
 
@@ -119,7 +119,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"id": "wooden_arrows_pack_arrow",
@@ -136,15 +136,15 @@
 									}
 								},
 				
-								//{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
+								//{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 300, "accelerate" : -3}},
 								//{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
 								
-								//{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								//{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								//{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								//{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 							]
 						}
 					}
@@ -195,7 +195,7 @@
 					}
 				},
 
-				{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_tiles": 5}},
+				{"type" : "can_see:CanSee", "params" : {"angle": 120, "distance_tiles": 5}},
 				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}

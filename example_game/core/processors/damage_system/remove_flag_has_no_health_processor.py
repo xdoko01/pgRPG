@@ -30,7 +30,7 @@ class RemoveFlagHasNoHealthProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.damage_system:PerformDamageProcessor'
+        'damage_system:PerformDamageProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

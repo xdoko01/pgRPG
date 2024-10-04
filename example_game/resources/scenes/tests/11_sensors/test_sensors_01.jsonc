@@ -36,13 +36,13 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system:GenerateCollisionsProcessor", {}],
-		["new.collision_system:ResolveCollisionsProcessor", {}],
-		["new.collision_system:ResolveMapCollisionsProcessor", {}],
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
+		["collision_system:ResolveMapCollisionsProcessor", {}],
 
 		// For sight - run once per 10 cycles
-		["new.sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
-		["new.sensor_system.generate_entities_within_earshot_processor:GenerateEntitiesWithinEarshotProcessor", {"step": 100}],
+		["sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
+		["sensor_system.generate_entities_within_earshot_processor:GenerateEntitiesWithinEarshotProcessor", {"step": 100}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -58,7 +58,7 @@
 
 		// Removal of obsolete flags
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 
 	],
 
@@ -124,8 +124,8 @@
 			"id" : "player01",
 			"templates" : ["model/body/male/human/white"],
 			"components" : [
-				{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
-				{"type" : "new.can_hear:CanHear", "params" : {"distance_px": 350}},
+				{"type" : "can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
+				{"type" : "can_hear:CanHear", "params" : {"distance_px": 350}},
 
 				{
 					"type" : "debug:Debug", 
@@ -336,7 +336,7 @@
 				"id" : "ev_quest_start",
 				"actions" : [
 					"SCRIPT",
-					"new.show_dlg_window",
+					"show_dlg_window",
 					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
 				]
 			}

@@ -33,7 +33,7 @@ class GenerateVisualFXOnGenerationProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.factory_system:PerformFactoryGenerationProcessor'
+        'factory_system:PerformFactoryGenerationProcessor'
     ]
 
     __slots__ = ['create_entity_fnc']

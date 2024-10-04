@@ -3,10 +3,10 @@
 	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basic data
-	"id" : "new_collisions_03",
+	"id" : "test_collisions_03",
 	"title" : "Collisions Test - moving NPCs resolving collisions",
-	"description" : "Test new collision processors - moving NPCs are hiting each other while resolving collisions.",
-	"objective" : "POC of the new collision system",
+	"description" : "Test collision processors - moving NPCs are hiting each other while resolving collisions.",
+	"objective" : "POC of the collision system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -37,8 +37,8 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -54,7 +54,7 @@
 
 		// For clearing of processing of movements and collisions
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 
 	],
 
@@ -259,7 +259,7 @@
 				"id": "ev_start_quest",
 				"actions" : [
 					"SCRIPT", 
-					"new.show_dlg_window", 
+					"show_dlg_window", 
 					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
 				]
 			}

@@ -17,7 +17,7 @@
                             // Save target position component ref on bb
                             "type": "Behavior",
                             "name": "Save Target Position Component",
-                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "new.position:Position"}]
+                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "position:Position"}]
                         },
                         {
                             // Move to the close range to the target
@@ -45,13 +45,13 @@
                             // Save entity damagable component
                             "type": "Behavior",
                             "name": "Save My Damagable Component",
-                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "new.damageable:Damageable"}]
+                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_damageable_comp", "component": "damageable:Damageable"}]
                         },
                         {
                             // Save target damagable component
                             "type": "Behavior",
                             "name": "Save Target Damageable Component",
-                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "bb_entity": "$target", "component": "new.damageable:Damageable"}]
+                            "command": ["btree.bb_set_comp_globals", {"bb_key": "bb_target_damageable_comp", "bb_entity": "$target", "component": "damageable:Damageable"}]
                         },
                         {
                             // Attack

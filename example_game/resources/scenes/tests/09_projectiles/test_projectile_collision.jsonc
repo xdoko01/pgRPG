@@ -44,26 +44,26 @@
 		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
 
 		// NEW - For generation of projectile from factory and projectile data
-		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+		["factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
 
 		// NEW - adjust collision component of the entity - mainly for factory generated entities
-		["new.collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}],
+		["collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}],
 
 		// NEW - adjust movable component of the entity - mainly for factory generated entities
 		["movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}],
 
 		// For collisions
-		["new.collision_system:GenerateCollisionsProcessor", {}],
-		["new.collision_system:ResolveCollisionsProcessor", {}],
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
 		
 		// For destroy
-		["new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
-		["new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
-		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+		["destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
+		["destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
+		["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
 
 		// For visual and sound effects
-		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
-		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+		["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
 
 		// For displaying on screen
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -87,12 +87,12 @@
 		["movement_system.remove_flag_adjust_movement_processor:RemoveFlagAdjustMovementProcessor", {}],
 		["movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}],
 
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
-		["new.collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+		["collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
 		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
-		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
+		["factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
 
 		// For logging performance of processors - timed must be True for this processor to work
 		//["debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]
@@ -117,7 +117,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
@@ -132,11 +132,11 @@
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
 								
-								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 							]
 						}
@@ -161,7 +161,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
@@ -176,11 +176,11 @@
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
 								
-								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -206,7 +206,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"id": "wooden_arrow_pack_arrow",
@@ -225,11 +225,11 @@
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -253,7 +253,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"id": "spell_pack_arrow",
@@ -272,10 +272,10 @@
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500}},
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]

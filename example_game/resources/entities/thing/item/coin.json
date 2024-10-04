@@ -3,6 +3,6 @@
 	"templates" : ["thing/item"],
 	"components" : [
 		{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8}},
-		{"type" : "new.pickable:Pickable", "params" : {}}
+		{"type" : "pickable:Pickable", "params" : {}}
 	]
 }

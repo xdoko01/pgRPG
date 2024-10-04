@@ -58,7 +58,7 @@
 ### 2023-05-05 New Argument for Processors - step
   - Newly, the processor does not need to run every time. There is new optional parameter `step` (by default set to `1`) that marks the frequency of processor execution. (1 means every cycle, 2 means every second cycle, 5 means every 5th cycle).
   - This might become handy, if the processor is resource heavy and does not need to run real-time. For example, processor for checking if the entity has reached the destination position
-  - Example of processor definition: `["new.position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}]`
+  - Example of processor definition: `["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}]`
 
 ### 2023-02-20 Behavioral trees support templates
   - Sub-tree of behavior tree can be stored in a file or in the `template` section of the quest and loaded from there. Those templates can be called with parameters that are dynamically added to the template definition upon the load (similar to entity templates).

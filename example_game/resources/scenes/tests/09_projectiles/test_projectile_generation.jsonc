@@ -44,7 +44,7 @@
 		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
 
 		// NEW - For generation of projectile from factory and projectile data
-		["new.factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+		["factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
 
 		// For displaying on screen
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -65,8 +65,8 @@
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
 		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["new.factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}], // NEW - for removing flag for generation of projectile
-		["new.factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
+		["factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}], // NEW - for removing flag for generation of projectile
+		["factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}]
 
 	],
 
@@ -89,7 +89,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"id" : "wooden_arrow",

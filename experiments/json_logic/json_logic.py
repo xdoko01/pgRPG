@@ -1,7 +1,7 @@
 '''
-  PREREQ = ['new.collision_system:GenerateCollisionsProcessor']
-  PREREQ = ["AND", 'new.collision_system:GenerateCollisionsProcessor', 'new.collision_system:GenerateCollisionsProcessor']
-  PREREQ = ["OR", 'new.collision_system:GenerateCollisionsProcessor', 'new.collision_system:GenerateCollisionsProcessor']
+  PREREQ = ['collision_system:GenerateCollisionsProcessor']
+  PREREQ = ["AND", 'collision_system:GenerateCollisionsProcessor', 'collision_system:GenerateCollisionsProcessor']
+  PREREQ = ["OR", 'collision_system:GenerateCollisionsProcessor', 'collision_system:GenerateCollisionsProcessor']
   PREREQ = ["IF", "old.processor", "some.processor", "other.processor"]
 '''
 

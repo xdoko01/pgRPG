@@ -5,8 +5,8 @@
 	// Basic data
 	"id" : "test_collisions_02",
 	"title" : "Collisions Test - resolving collisions",
-	"description" : "Test new collision processors - generation and resolving of the collisions",
-	"objective" : "POC of the new collision system",
+	"description" : "Test collision processors - generation and resolving of the collisions",
+	"objective" : "POC of the collision system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -36,8 +36,8 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -53,7 +53,7 @@
 
 		// Removal of obsolete flags
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 
 	],
 
@@ -89,7 +89,7 @@
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
 
-				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "key_controls_1",
+				{"type" : "controllable:Controllable", "params" :  {"key_profile": "KEY_CONTROLS_1",
 					"control_cmds" : {
 						"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
 						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],

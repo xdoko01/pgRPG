@@ -37,12 +37,12 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
 		// For pickup
-		["new.pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
-		["new.pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+		["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+		["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -59,11 +59,11 @@
 		// For clearing of processing of movements and collisions and pickups
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 
-		["new.pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
-		["new.pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-		["new.pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+		["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+		["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
 
 	],
 	
@@ -135,7 +135,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitating pickup
-				{"type" : "new.has_inventory:HasInventory", "params" :  {}},
+				{"type" : "has_inventory:HasInventory", "params" :  {}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
@@ -150,7 +150,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg pickup
-				{"type" : "new.pickable:Pickable", "params" :  {}},
+				{"type" : "pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
@@ -162,7 +162,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg pickup
-				{"type" : "new.pickable:Pickable", "params" :  {}},
+				{"type" : "pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 140, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
@@ -174,7 +174,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg pickup
-				{"type" : "new.pickable:Pickable", "params" :  {}},
+				{"type" : "pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 170, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
@@ -190,7 +190,7 @@
 				"id" : "ev_quest_start",
 				"actions" : [
 					"SCRIPT",
-					"new.show_dlg_window", 
+					"show_dlg_window", 
 					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
 				]
 			}

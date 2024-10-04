@@ -39,23 +39,23 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system:GenerateCollisionsProcessor", {}],
-		["new.collision_system:ResolveCollisionsProcessor", {}],
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
 
 		// For visual and sound effects concerning collisions
-		["new.effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
-		["new.effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+		["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
 
 		// For pickup
-		["new.pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
-		["new.pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+		["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+		["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
 		
 		// For score
-		["new.score_system:GenerateScoreOnPickupProcessor", {}],
-		["new.score_system:CalculateScoreProcessor", {}],
+		["score_system:GenerateScoreOnPickupProcessor", {}],
+		["score_system:CalculateScoreProcessor", {}],
 
 		// For destroy
-		["new.destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+		["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
 
 		// For displaying on screen
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -78,18 +78,18 @@
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 
 		// Removal - collision
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 		
 		// Removal - animation
 		//["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 
 		// Removal - score
-		["new.score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor", {}],
+		["score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor", {}],
 
 		// Removal - pickup
-		["new.pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
-		["new.pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-		["new.pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+		["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+		["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
 
 	],
 
@@ -108,150 +108,150 @@
 			"id": "golden_coin01",
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "golden_coin02",
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 2, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "golden_coin03",
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 2, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "golden_coin04",
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 2, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "golden_coin05",
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 2, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_100", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "silver_coin01",
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 4, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "silver_coin02",
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 4, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "silver_coin03",
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 4, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "silver_coin04",
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 4, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "silver_coin05",
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 4, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_20", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "copper_coin01",
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 6, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "copper_coin02",
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 6, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "copper_coin03",
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 6, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "copper_coin04",
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 6, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
 			]
 		},
 		{
 			"id": "copper_coin05",
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
-				{"type" : "new.pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
+				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 6, "map" : "test_arena_sand"}},
-				{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
-				{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
+				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/score_5", "fixed_position" : true}}
 			]
 		},
 
@@ -284,9 +284,9 @@
 					}
 				},
 
-				{"type" : "new.has_inventory:HasInventory", "params" : {}},
+				{"type" : "has_inventory:HasInventory", "params" : {}},
 
-				{"type" : "new.has_score:HasScore", "params" : {}},
+				{"type" : "has_score:HasScore", "params" : {}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
@@ -316,7 +316,7 @@
 							["SCRIPT", "show_msg_window", {"html_text" : "WOW! You have just reached the score %total!<br/>WELL DONE!"}],
 							[
 								"SCRIPT", 
-								"new.show_confirm_dlg", 
+								"show_confirm_dlg", 
 								{
 									"title": "Play again?",
 									"long_desc" : "Do you want to play again?",
@@ -339,7 +339,7 @@
 						[">", ["VAR", "total"], 500],
 						[
 							"SCRIPT", 
-							"new.show_confirm_dlg", 
+							"show_confirm_dlg", 
 							{
 								"title": "Play again?",
 								"long_desc" : "Bad luck, you are over the limit. Your score %total is greater than 500. Do you want to try again?",
@@ -362,7 +362,7 @@
 							["==", ["VAR", "from"], "ev_scored_more_than_500_points"],
 							["==", ["VAR", "from"], "ev_scored_exactly_500_points"]
 						],
-						["SCRIPT", "new.restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+						["SCRIPT", "restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
 				]
 			}
 		],

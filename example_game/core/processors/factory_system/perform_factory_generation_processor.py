@@ -39,7 +39,7 @@ class PerformFactoryGenerationProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor'
+        'attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor'
     ]
 
     __slots__ = ['create_entity_fnc']

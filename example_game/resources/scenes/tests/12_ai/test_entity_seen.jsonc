@@ -36,12 +36,12 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system:GenerateCollisionsProcessor", {}],
-		["new.collision_system:ResolveCollisionsProcessor", {}],
-		["new.collision_system:ResolveMapCollisionsProcessor", {}],
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
+		["collision_system:ResolveMapCollisionsProcessor", {}],
 
 		// For sight - run once per 100 cycles
-		["new.sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
+		["sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -57,7 +57,7 @@
 
 		// For clearing of processing of movements and collisions
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 
 	],
 
@@ -123,7 +123,7 @@
 			"id" : "player01",
 			"templates" : ["model/body/male/human/white"],
 			"components" : [
-				{"type" : "new.can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
+				{"type" : "can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
 				{"type" : "debug:Debug", "params" : {}},
 
 				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
@@ -164,7 +164,7 @@
 				// TestEnemySeen    GoTo position
 
 				{
-					"type" : "new.btree:BTree", 
+					"type" : "btree:BTree", 
 					"params" : {
 						"blackboard": {
 						},
@@ -250,7 +250,7 @@
 				},
 
 				// Move up - down
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
+				{"type" : "brain:Brain", "params" : {"commands" : [
 					[0, 	"new_move_to", {"x" : 219, "y" : 10}],
 					[1, 	"new_move_to", {"x" : 219, "y" : 800}],
 					[0, 	"goto", {}]
@@ -275,7 +275,7 @@
 				},
 
 				// Move down - up
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
+				{"type" : "brain:Brain", "params" : {"commands" : [
 					[0, 	"new_move_to", {"x" : 319, "y" : 1000}],
 					[1, 	"new_move_to", {"x" : 319, "y" : 10}],
 					[0, 	"goto", {}]
@@ -300,7 +300,7 @@
 				},
 
 				// Move left - right
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
+				{"type" : "brain:Brain", "params" : {"commands" : [
 					[0, 	"new_move_to", {"x" : 50, "y" : 500}],
 					[1, 	"new_move_to", {"x" : 1000, "y" : 500}],
 					[0, 	"goto", {}]
@@ -326,7 +326,7 @@
 				},
 
 				// Move left - right
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
+				{"type" : "brain:Brain", "params" : {"commands" : [
 					[0, 	"new_move_to", {"x" : 300, "y" : 100}],
 					[1, 	"new_move_to", {"x" : 100, "y" : 100}],
 					[0, 	"goto", {}]
@@ -350,7 +350,7 @@
 				"id" : "ev_quest_start",
 				"actions" : [
 					"SCRIPT",
-					"new.show_dlg_window",
+					"show_dlg_window",
 					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
 				]
 			}

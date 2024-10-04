@@ -8,7 +8,7 @@
 		"class_def": {
 			"title": "Class definition",
 			"description": "String representation of a class in given package and module",
-			"examples": "new.movable:Movable",
+			"examples": "movable:Movable",
 
 			"type": "string",
 			"pattern": "^\\([a-z]+\\.\\)*[a-z]+:[A-Z][a-z]+$"

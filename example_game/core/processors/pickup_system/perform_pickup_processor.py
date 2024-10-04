@@ -50,7 +50,7 @@ class PerformPickupProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.pickup_system.generate_pickup_processor:GeneratePickupProcessor'
+        'pickup_system.generate_pickup_processor:GeneratePickupProcessor'
     ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):

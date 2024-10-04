@@ -32,7 +32,7 @@ def get_dict_params(definition, storage: dict=None, dir: Path=Path('')) -> dict:
                 "id": "t_tile_pos",
                 "vars": ["$tileX", "$tileY", "$map"],
                 "components": [
-                    {"type" : "new.position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
+                    {"type" : "position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
                 ]
             }
 
@@ -43,40 +43,40 @@ def get_dict_params(definition, storage: dict=None, dir: Path=Path('')) -> dict:
                 "id": "t_tile_pos", \
                 "vars": ["$tileX=0", "$tileY=0", "$map"], \
                 "components": [ \
-                    {"type" : "new.position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}} \
+                    {"type" : "position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}} \
                 ] \
             } \
         }
         
         # Cases for template and parameters parsed as s string
         >>> print(get_dict_params(definition="t_tile_pos(5, 5, test_arena_sand)", storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 5, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 5, 'map': 'test_arena_sand'}}]}
 
         >>> print(get_dict_params(definition="t_tile_pos(5, 5, $map=test_arena_sand)", storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 5, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 5, 'map': 'test_arena_sand'}}]}
 
         >>> print(get_dict_params(definition="t_tile_pos(1, 2, 3, 4, 5, $map=test_arena_sand)", storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 1, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 1, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
         >>> print(get_dict_params(definition="t_tile_pos($tileX = 5, $tileY=2, 3, 4, 5, $map=test_arena_sand)", storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
         # Cases for template and parameters as a list
         >>> print(get_dict_params(definition=["t_tile_pos", [3,4,5], {"$tileX": 5, "$tileY": 2, "$map": "test_arena_sand"}], storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
         >>> print(get_dict_params(definition=["t_tile_pos", {"$tileX": 5, "$tileY": 2, "$map": "test_arena_sand"}], storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
         >>> print(get_dict_params(definition=["t_tile_pos", [5,2,"test_arena_sand"]], storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
         # Default parameters of the template are used
         >>> print(get_dict_params(definition=["t_tile_pos", {"$map": "test_arena_sand"}], storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 0, 'tile_y': 0, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 0, 'tile_y': 0, 'map': 'test_arena_sand'}}]}
 
         >>> print(get_dict_params(definition="t_tile_pos(5, 2, 4, $map=test_arena_sand)", storage=storage))
-        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'new.position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
+        {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
     '''
     ###

@@ -23,7 +23,7 @@ for dir in dirs:
 	"id" : "wearable_male_torso_""" + dir + "_" + file.split('.')[0] + """_model",
 	"templates" : ["model/wearable/male/torso"],
 	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/""" + dir + "/" + file + """}}
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/""" + dir + "/" + file + """}}
 	]
 }""")
 	# Return back
@@ -44,7 +44,7 @@ for file in files:
 	"id" : "wearable_male_belt_""" + file.split('.')[0] + """_model",
 	"templates" : ["model/wearable/female/belt"],
 	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/belt/""" + file + """}}
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/belt/""" + file + """}}
 	]
 }""")
 '''

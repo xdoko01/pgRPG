@@ -7,11 +7,11 @@
 
 	"examples" : [
 		{
-			"type" : "new.brain:Brain", 
+			"type" : "brain:Brain", 
 			"params" : {"commands" : []}
 		},
 		{
-			"type" : "new.brain:Brain", 
+			"type" : "brain:Brain", 
 			"params" : {
 				"commands" : [
 					[null, "move", {"dx" : -120}],
@@ -25,7 +25,7 @@
 	"properties": {
 		"type": {
 			"description" : "Path to the component class.",
-			"enum": [ "new.brain:Brain" ]
+			"enum": [ "brain:Brain" ]
 		},
 		"params": {
 			"title": "Component parameters",

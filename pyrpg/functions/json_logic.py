@@ -46,7 +46,7 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 
 	expr: the expression
 	value_fnc: function that should be executed on literal (simple expression)
-	script_fnc: function that should be executed on SCRIPT operator ["SCRIPT", "new.dialog", {}]
+	script_fnc: function that should be executed on SCRIPT operator ["SCRIPT", "dialog", {}]
 	TODO data: dictionary with data that are used in the expression - google jsonLogic
 	'''
 

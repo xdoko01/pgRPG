@@ -30,7 +30,7 @@ class RemoveFlagIsAboutToBeDamagedByProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.damage_system:GenerateDamageProcessor'
+        'damage_system:GenerateDamageProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

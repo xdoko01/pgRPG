@@ -39,8 +39,8 @@ def test_blist(blist:BList, res_generator, steps=True):
 b_list_data1 = {
 	'blackboard': {},
 	'cmd_list': [
-		{"line": 0, "type": "Behavior", "name": "Move", "command": ["test_cmd_1", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "new.position:Position"}], "on_fail_jmp": None},
-		{"line": 1, "type": "Behavior", "name": "Move", "command": ["test_cmd_2", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "new.position:Position"}], "on_fail_jmp": None},
+		{"line": 0, "type": "Behavior", "name": "Move", "command": ["test_cmd_1", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "position:Position"}], "on_fail_jmp": None},
+		{"line": 1, "type": "Behavior", "name": "Move", "command": ["test_cmd_2", {"bb_key": "bb_target_pos_comp", "bb_entity": "$target_in", "component": "position:Position"}], "on_fail_jmp": None},
 		{"line": 2, "type": "Loop", "name": "Looper1", "repeat": 2, "jmp_to": 0},
 		{"line": 3, "type": "Goto", "name": "goto", "jmp_to": -1}
 	]

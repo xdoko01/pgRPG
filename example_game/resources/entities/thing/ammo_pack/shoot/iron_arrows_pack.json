@@ -5,7 +5,7 @@
 		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "iron_arrows_pack"}},
 		
 		{
-			"type" : "new.factory:Factory", 
+			"type" : "factory:Factory", 
 			"params" : {
 				"prescription" : {
 					"id" : "wooden_arrow",

@@ -6,7 +6,7 @@
 	"id" : "test_collisions_01",
 	"title" : "Collisions Test - generation of collisions",
 	"description" : "Test generation of collisions without actually resolving them",
-	"objective" : "POC of the new collision system",
+	"objective" : "POC of the collision system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -36,7 +36,7 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -52,7 +52,7 @@
 
 		// Removal of obsolete flags
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
 
 	],
 

@@ -34,7 +34,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 				
 				{
-					"type" : "new.has_target_position:HasTargetPosition", 
+					"type" : "has_target_position:HasTargetPosition", 
 					"params" : {
 						"targets": [
 							["game_sokoban_lvl02", 16, 6, 10],
@@ -47,7 +47,7 @@
 					}
 				},
 
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 30, 
 					"y" : 30, 
@@ -99,7 +99,7 @@
 			"QUEST_START",
 			{
 				"id": "ev_level02_start",
-				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to next level <b>%quest_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to next level <b>%quest_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
 			}
 		],
 		[
@@ -117,10 +117,10 @@
 							["IN", "crate06", ["VAR", "on_target"]]
 						],
 						["SEQ",
-							["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
+							["SCRIPT", "show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
 							[
 								"SCRIPT", 
-								"new.show_confirm_dlg", 
+								"show_confirm_dlg", 
 								{
 									"title": "Play again?",
 									"long_desc" : "Do you want to play again?",

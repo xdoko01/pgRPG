@@ -281,7 +281,7 @@ class QuestManager:
                 "QUEST_START" :[
                     {
                         "id": "ev_start_game",
-                        "actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+                        "actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
                     }
                 ],
                 "CUST_UI_CONFIRM" : [
@@ -290,7 +290,7 @@ class QuestManager:
                         "actions": [
                             "IF",
                                 ["==", ["VAR", "from"], "ev_all_crates_in_place"],
-                                ["SCRIPT", "new.restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
+                                ["SCRIPT", "restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
                         ]
                     }
                 ]

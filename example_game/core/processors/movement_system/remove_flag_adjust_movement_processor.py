@@ -30,7 +30,7 @@ class RemoveFlagAdjustMovementProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor'
+        'movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

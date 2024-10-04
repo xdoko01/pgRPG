@@ -36,7 +36,7 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.resolve_map_collisions_processor:ResolveMapCollisionsProcessor", {}],
+		["collision_system.resolve_map_collisions_processor:ResolveMapCollisionsProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],

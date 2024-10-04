@@ -46,7 +46,7 @@ class PerformArmAmmoProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.arm_ammo_system.generate_arm_ammo_processor:GenerateArmAmmoProcessor'
+        'arm_ammo_system.generate_arm_ammo_processor:GenerateArmAmmoProcessor'
     ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):

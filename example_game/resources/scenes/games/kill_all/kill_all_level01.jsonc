@@ -44,7 +44,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
@@ -59,13 +59,13 @@
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
 								
-								{"type" : "new.damaging:Damaging", "params" : {"damage" : 10}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 10}},
 
-								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 							]
 						}
@@ -90,7 +90,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
@@ -105,13 +105,13 @@
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
 								
-								{"type" : "new.damaging:Damaging", "params" : {"damage" : 20}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 20}},
 
-								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -137,26 +137,26 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
+								{"type" : "brain:Brain", "params" : {"commands" : [
 									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
 									]}},
 
-								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -180,25 +180,25 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
+								{"type" : "brain:Brain", "params" : {"commands" : [
 									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
 									]}},
 
-								{"type" : "new.damaging:Damaging", "params" : {"damage" : 50}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 50}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500}},
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -222,7 +222,7 @@
 			"components" : [
 
 				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
-				{"type" : "new.can_see:CanSee", "params" : {"angle": 60, "distance_px": 300}},
+				{"type" : "can_see:CanSee", "params" : {"angle": 60, "distance_px": 300}},
 
 				{
 					"type" : "collidable:Collidable", 
@@ -256,8 +256,8 @@
 				//{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
 				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "spell"}},
 
-				{"type" : "new.damageable:Damageable", "params" : {"health" : 10000}},
-				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 5000}},
+				{"type" : "damageable:Damageable", "params" : {"health" : 10000}},
+				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 5000}},
 
 				//{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
@@ -271,7 +271,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : [], // Only collision zone is created, no sprite.
@@ -286,13 +286,13 @@
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
 								
-								{"type" : "new.damaging:Damaging", "params" : {"damage" : 20}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 20}},
 
-								//{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}}//,
-								//{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}}//,
+								//{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -316,7 +316,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// Guard, Seek and destroy the player
-				{"type" : "new.brain:Brain", "params" : {"commands" : [
+				{"type" : "brain:Brain", "params" : {"commands" : [
 					[0, 	"new_guard", {"enemy": "player01", "radius": 200, "update_time_ms": 2000}], // when player01 approaches, continue and destroy him
 					[1, 	"new_move_to_target", {"target" : "player01", "radius": 50, "update_time_ms": 500}], // the lower update time the more difficult to run away
 					[2, 	"new_attack_full", {"attack_time_ms": 500}],
@@ -332,9 +332,9 @@
 
 				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "sword"}},
 
-				{"type" : "new.damaging:Damaging", "params" : {"damage" : 5}},
-				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "damaging:Damaging", "params" : {"damage" : 5}},
+				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
@@ -347,26 +347,26 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
 				{
-					"type" : "new.factory:Factory", 
+					"type" : "factory:Factory", 
 					"params" : {
 						"prescription" : {
 							"templates" : ["model/ammo/shoot/wooden_arrow"],
 							"components" : [
 								{"type" : "debug:Debug", "params" : {}},
 
-								{"type" : "new.brain:Brain", "params" : {"commands" : [
+								{"type" : "brain:Brain", "params" : {"commands" : [
 									[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
 									]}},
 
-								{"type" : "new.damaging:Damaging", "params" : {"damage" : 25}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "new.destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "new.destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
-								{"type" : "new.visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "new.sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
 							]
@@ -399,8 +399,8 @@
 					}
 				}},
 				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 50}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
@@ -414,8 +414,8 @@
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
-				{"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-				{"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
 			]
@@ -431,15 +431,15 @@
 				"actions": [
 					"IF",
 					["AND",
-						["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "NPC01"}], false],
-						["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "NPC02"}], false]
+						["==", ["SCRIPT", "games.kill_all.entity_exists", {"alias": "NPC01"}], false],
+						["==", ["SCRIPT", "games.kill_all.entity_exists", {"alias": "NPC02"}], false]
 					],
 					["SEQ",
 
 						["SCRIPT", "show_msg_window", {"html_text" : " NPC01 and NPC02 destroyed"}],
 						[
 							"SCRIPT", 
-							"new.show_confirm_dlg", 
+							"show_confirm_dlg", 
 							{
 								"title": "Play again?",
 								"long_desc" : "Do you want to play again?",
@@ -459,12 +459,12 @@
 				"id": "h_player01_destroyed",
 				"actions": [
 					"IF",
-					["==", ["SCRIPT", "new.games.kill_all.entity_exists", {"alias": "player01"}], false],
+					["==", ["SCRIPT", "games.kill_all.entity_exists", {"alias": "player01"}], false],
 					["SEQ",
 							["SCRIPT", "show_msg_window", {"html_text" : "You died"}],
 							[
 								"SCRIPT", 
-								"new.show_confirm_dlg", 
+								"show_confirm_dlg", 
 								{
 									"title": "Play again?",
 									"long_desc" : "Do you want to play again?",
@@ -485,7 +485,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "h_player01_destroyed"],
-						["SCRIPT", "new.restart_quest", {"quest_file" : "new/games/kill_all/kill_all_level01.json"}]
+						["SCRIPT", "restart_quest", {"quest_file" : "new/games/kill_all/kill_all_level01.json"}]
 				]
 			}
 		]

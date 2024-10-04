@@ -34,8 +34,8 @@ class PerformDestroyEntitiesProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor',
-        'new.destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor'
+        'destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor',
+        'destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor'
     ]
 
     __slots__ = []

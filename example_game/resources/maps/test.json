@@ -6,7 +6,7 @@
      "name":"test",
      "properties":[
             {
-             "name":"new.movable:Movable",
+             "name":"movable:Movable",
              "type":"class",
              "value":
                 {

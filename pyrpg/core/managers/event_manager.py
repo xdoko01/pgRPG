@@ -24,7 +24,7 @@ class EventManager:
                         "QUEST_START",
                         {
                             "id": "ev_start_game",
-                            "actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+                            "actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
                         }
                     ]
         '''

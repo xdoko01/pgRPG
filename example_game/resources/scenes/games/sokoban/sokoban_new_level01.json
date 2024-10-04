@@ -34,7 +34,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 				
 				{
-					"type" : "new.has_target_position:HasTargetPosition", 
+					"type" : "has_target_position:HasTargetPosition", 
 					"params" : {
 						"targets": [
 							["game_sokoban_lvl01", 2, 3, 10],
@@ -48,7 +48,7 @@
 					}
 				},
 
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 30, 
 					"y" : 30, 
@@ -81,35 +81,35 @@
 			"id": "crate03",
 			"templates": ["t_crate"],
 			"components": [
-				{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate04",
 			"templates": ["#crate01"],
 			"components": [
-				{"type" : "new.position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate05",
 			"templates": ["#crate01"],
 			"components": [
-				{"type" : "new.position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate06",
 			"templates": ["#crate01"],
 			"components": [
-				{"type" : "new.position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate07",
 			"templates": ["#crate01"],
 			"components": [
-				{"type" : "new.position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
@@ -141,10 +141,10 @@
 					}
 				},
 
-				{"type" : "new.has_score:HasScore", "params" : {}},
+				{"type" : "has_score:HasScore", "params" : {}},
 
-				{"type" : "new.movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "new.camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
 			]
 		}
 
@@ -155,7 +155,7 @@
 			"QUEST_START",
 			{
 				"id": "ev_start_game",
-				"actions": 	["SCRIPT", "new.show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
 			}
 		],
 		[
@@ -165,7 +165,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "new.load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level02.json"}]
+						["SCRIPT", "load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level02.json"}]
 				]
 			}
 		],
@@ -185,10 +185,10 @@
 							["IN", "crate07", ["VAR", "on_target"]]
 						],
 						["SEQ",
-							["SCRIPT", "new.show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
+							["SCRIPT", "show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
 							[
 								"SCRIPT", 
-								"new.show_confirm_dlg", 
+								"show_confirm_dlg", 
 								{
 									"title": "Play again?",
 									"long_desc" : "Do you want to play again?",

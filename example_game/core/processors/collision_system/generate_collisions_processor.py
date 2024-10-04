@@ -70,7 +70,7 @@ class GenerateCollisionsOptimizedProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.movement_system.perform_movement_processor:PerformMovementProcessor'
+        'movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):
@@ -234,7 +234,7 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = ['allOf',
-        'new.movement_system.perform_movement_processor:PerformMovementProcessor'
+        'movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):
@@ -391,7 +391,7 @@ class GenerateCollisionsNotOptimizedProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.movement_system.perform_movement_processor:PerformMovementProcessor'
+        'movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):
@@ -545,7 +545,7 @@ class GenerateCollisionsNotOptimizedFullProcessor(Processor):
 
     # Processors that need to be planned before this processor in order for it to work.
     PREREQ = [
-        'new.movement_system.perform_movement_processor:PerformMovementProcessor'
+        'movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):

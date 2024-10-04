@@ -37,12 +37,12 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-		["new.collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
-		["new.collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
 		// For teleportation
-		["new.teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
-		["new.teleport_system.perform_teleportation_processor:PerformTeleportationProcessor", {}],
+		["teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
+		["teleport_system.perform_teleportation_processor:PerformTeleportationProcessor", {}],
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -59,11 +59,11 @@
 		// For clearing of processing of movements and collisions and pickups
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 
-		["new.collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 
-		["new.teleport_system.remove_flag_is_about_to_be_teleported_by_processor:RemoveFlagIsAboutToBeTeleportedByProcessor", {}],
-		["new.teleport_system.remove_flag_has_teleported_processor:RemoveFlagHasTeleportedProcessor", {}],
-		["new.teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor", {}]
+		["teleport_system.remove_flag_is_about_to_be_teleported_by_processor:RemoveFlagIsAboutToBeTeleportedByProcessor", {}],
+		["teleport_system.remove_flag_has_teleported_processor:RemoveFlagHasTeleportedProcessor", {}],
+		["teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor", {}]
 
 	],
 
@@ -135,7 +135,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitating teleportation
-				{"type" : "new.teleportable:Teleportable", "params" :  {}},
+				{"type" : "teleportable:Teleportable", "params" :  {}},
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
@@ -150,7 +150,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg teleportation
-				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 3, "tile_dest_y" : 18}},
+				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 3, "tile_dest_y" : 18}},
 
 				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
@@ -163,7 +163,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg teleportation
-				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
+				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
 
 				{"type" : "position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
@@ -176,7 +176,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 
 				// New component for facilitationg teleportation
-				{"type" : "new.teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10}},
+				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10}},
 
 				{"type" : "position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
@@ -193,7 +193,7 @@
 				"id" : "ev_quest_start",
 				"actions" : [
 					"SCRIPT",
-					"new.show_dlg_window", 
+					"show_dlg_window", 
 					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
 				]
 			}
