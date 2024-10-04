@@ -5,7 +5,7 @@
 	"id" : "test_fx_01",
 	"title" : "Test of SFX and VFX",
 	"description" : "Test of Sound and Visual Effects processors",
-	"objective" : "POC of the new effect system",
+	"objective" : "POC of the effect system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -146,7 +146,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
 				{"type" : "sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
-				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
+				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "effects/explosion", "fixed_position" : true}},
 
 				{
 					"type" : "factory:Factory", 
@@ -170,8 +170,8 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
-								{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
+								{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "effects/explosion"}}
 
 
 							]
@@ -221,7 +221,7 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 								//{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
 
 							]
@@ -246,7 +246,7 @@
 			"id" : "wooden_arrows_pack",
 			"templates" : ["thing/ammo_pack/shoot/wooden_arrows_pack"],
 			"components" : [
-				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}}
+				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "effects/explosion", "fixed_position" : true}}
 			]
 		},
 
@@ -264,7 +264,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
 				{"type" : "sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
-				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position": true}},
+				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "effects/explosion", "fixed_position": true}},
 
 				{
 					"type" : "factory:Factory", 
@@ -290,7 +290,7 @@
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 								//{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
 
 							]
@@ -321,7 +321,7 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
+						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
 					}
 				},
@@ -376,7 +376,7 @@
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "hurt/10.mp3"}},
 				{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
-				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "new/effects/explosion"}}
+				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "effects/explosion"}}
 
 			]
 		},
@@ -398,7 +398,7 @@
 				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "hurt/10.mp3"}},
 				{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
 
-				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "new/effects/explosion"}}
+				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "effects/explosion"}}
 
 			]
 		}

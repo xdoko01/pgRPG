@@ -52,6 +52,7 @@ def main(argv):
 
     # 11_sensors
     #scene_file = 'tests/11_sensors/test_sensors_01.jsonc'
+    
     # 10_effects
     #scene_file = 'tests/10_effects/test_fx_01.jsonc'
 
