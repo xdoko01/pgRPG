@@ -1,5 +1,8 @@
   - [x] The configurations are not properly merged when merging nested dictionaries - fix needed
   - [x] Implement logger also for the configurations
+  - [ ] Prepare a new `SoundFXOnDamage` component to be on the damagable entities (hurt sounds etc)
+  - [ ] Prepare a new `SoundFXOnDestroy` component to be on the dead entities
+  
 
 # To Do
  

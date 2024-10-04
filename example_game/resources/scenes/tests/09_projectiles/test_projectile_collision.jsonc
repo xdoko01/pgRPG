@@ -5,7 +5,7 @@
 	"id" : "test_projectile_collision",
 	"title" : "Test of Projectile Collision",
 	"description" : "Test of Attack and Factory and Effect system - collision of projectile",
-	"objective" : "POC of the new Attack and Factory and Effect system",
+	"objective" : "POC of the Attack and Factory and Effect system",
 
 	// What quests need to be loaded before this one
 	"prereqs" : [],
@@ -135,7 +135,7 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
 								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 							]
@@ -179,7 +179,7 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
 								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
@@ -228,7 +228,7 @@
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
 								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
@@ -274,7 +274,7 @@
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "new/effects/explosion"}},
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
 								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
@@ -306,7 +306,7 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
+						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
 					}
 				},

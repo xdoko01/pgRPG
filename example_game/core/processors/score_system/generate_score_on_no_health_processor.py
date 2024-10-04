@@ -1,7 +1,6 @@
 __all__ = ['GenerateScoreOnNoHealthProcessor']
 
 import logging
-from pyrpg.core.ecs.components.new import scorable_on_no_health
 
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
