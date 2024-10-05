@@ -2,9 +2,9 @@
 
 	"DISPLAY" : {
 		"RESOLUTION" : [640, 480],
-		"BITDEPTH" : 32,
+		"BITDEPTH" : 24,
 		"FULLSCREEN" : false,
-		"MAX_FPS" : 250,
+		"MAX_FPS" : 500,
 		"SHOW_FPS" : true,
 		"GUI_WINDOW_RATIO": 1.5
 	},

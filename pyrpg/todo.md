@@ -1,8 +1,16 @@
   - [x] The configurations are not properly merged when merging nested dictionaries - fix needed
   - [x] Implement logger also for the configurations
+  - [ ] Get rid of new and dots in configs below
+  	"MODULEPATHS": {
+		"SCRIPT_MODULE_PATH" : "core.scripts.new.",
+		"COMMAND_MODULE_PATH" : "core.commands.",
+
   - [ ] Prepare a new `SoundFXOnDamage` component to be on the damagable entities (hurt sounds etc)
   - [ ] Prepare a new `SoundFXOnDestroy` component to be on the dead entities
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
+  - [ ] Show FPS also i fullscreen mode (config parameter)
+  - [ ] Branch - Fix console and make it more usable. It contains very old descriptions.
+  - [ ] Branch - Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
 
 # To Do
  

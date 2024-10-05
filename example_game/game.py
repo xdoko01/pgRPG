@@ -24,7 +24,7 @@ def main(argv):
     #scene_file = 'games/collect_coins/collect_coins.json'
 
     # 12_ai
-    #scene_file = 'tests/12_ai/test_entity_seen.jsonc' - old, does not work, fix it
+    #scene_file = 'tests/12_ai/test_entity_seen.jsonc' # old, does not work, fix it
     #scene_file = 'tests/12_ai/move_between_2_points.jsonc'
     #scene_file = 'tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_template.jsonc'
     #scene_file = 'tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_events.jsonc'

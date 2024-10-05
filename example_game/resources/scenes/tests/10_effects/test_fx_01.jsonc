@@ -197,7 +197,7 @@
 			"components" : [
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
 				//{"type" : "sound_fx_on_generation:SoundFXOnGeneration", "params" : {"sound" : "hurt/shade12.wav"}},
-				//{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "new/effects/explosion", "fixed_position" : true}},
+				//{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "effects/explosion", "fixed_position" : true}},
 
 				{
 					"type" : "factory:Factory",
@@ -222,7 +222,7 @@
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
 								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
-								//{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
+								//{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "effects/explosion"}}
 
 							]
 						}
@@ -291,7 +291,7 @@
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
 								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
-								//{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "new/effects/explosion"}}
+								//{"type" : "visual_fx_on_creation:VisualFXOnCreation", "params" : {"effect" : "effects/explosion"}}
 
 							]
 						}
