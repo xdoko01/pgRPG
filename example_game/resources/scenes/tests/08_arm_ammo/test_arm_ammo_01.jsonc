@@ -1,0 +1,302 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_arm_ammo_01",
+	"title" : "Simple Arm Ammo Test",
+	"description" : "Test arm ammo processors",
+	"objective" : "POC of the arm ammo system",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+
+		// For pickup
+		["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+		["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+
+		// For Arming of a Weapon
+		["arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor", {}],
+		["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
+
+		// For Arming of an Ammo
+		["arm_ammo_system.generate_arm_ammo_processor:GenerateArmAmmoProcessor", {}],
+		["arm_ammo_system.perform_arm_ammo_processor:PerformArmAmmoProcessor", {}],
+
+		// For displaying on screen
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "WEAPON_ARMED", "AMMO_PACK_ARMED"]}],
+
+		// For clearing of processing of movements and collisions and pickups
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+
+		["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+		["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}],
+
+		["arm_weapon_system.remove_flag_is_about_to_arm_weapon_processor:RemoveFlagIsAboutToArmWeaponProcessor", {}],
+		["arm_weapon_system.remove_flag_has_armed_weapon_processor:RemoveFlagHasArmedWeaponProcessor", {}],
+		["arm_weapon_system.remove_flag_was_armed_as_weapon_by_processor:RemoveFlagWasArmedAsWeaponByProcessor", {}],
+
+		["arm_ammo_system.remove_flag_is_about_to_arm_ammo_processor:RemoveFlagIsAboutToArmAmmoProcessor", {}],
+		["arm_ammo_system.remove_flag_has_armed_ammo_processor:RemoveFlagHasArmedAmmoProcessor", {}],
+		["arm_ammo_system.remove_flag_was_armed_as_ammo_by_processor:RemoveFlagWasArmedAsAmmoByProcessor", {}]
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+			
+	// What dialogs to load
+	"dialogs" : [
+		{
+			"id" : "dlg_ammo_armed",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"texts" : [
+				{
+					"text" : "You Have Successfully Armed an ammo",
+					"position" : [5, 20]
+				}
+			]
+		},
+		{
+			"id" : "dlg_weapon_armed",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"texts" : [
+				{
+					"text" : "You Have Successfully Armed a weapon",
+					"position" : [5, 20]
+				}
+			]
+		},
+		{
+			"id" : "dlg_scene_start",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 24,
+				"color" : "#00FFFF",
+				"align" : "LEFT"
+				},
+		
+			"texts" : [
+				{
+					"text" : "Arm Ammo test no. 1 - Demonstration of arming of an ammo",
+					"position" : [5, 20]
+				}
+			],
+			
+			"frames" : [
+				{
+					"font" : {
+						"path" : "small_font.json",
+						"size" : 16,
+						"color" : "#FFFFFF",
+						"align" : "LEFT"
+						},
+
+					"texts" : [
+						{
+							"text" : "If ammo is picked-up, it is imediatelly armed even if other ammo is already armed.",
+							"position" : [5, 65]
+						}
+					]
+				},
+				{
+					"texts" : [
+						{
+							"text" : "Press Enter to continue ...",
+							"position" : [5, 165]
+						}
+					]
+				}
+			]
+		}
+	],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		
+		// Ammo that will be picked and armed
+		{
+			"id" : "ammo01",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{"type" : "collidable:Collidable", "params" : {"x" : 20, "y" : 20}},
+
+				{
+					"type" : "factory:Factory", 
+					"params" : {
+						"max_units" : 5,
+						"prescription" : {
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "debug:Debug", "params" : {}}
+							]
+						} 
+					}
+				},
+				{"type" : "position:Position", "params" : {"x" : 350, "y" : 350, "map" : "test_arena_sand"}},
+				{"type" : "pickable:Pickable", "params" : {}}
+			]
+		},
+
+
+		// Weapon that will be picked up and armed
+		{
+			"id" : "weapon01",
+			"templates" : ["model/weapon/shoot/bow_wooden"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+				{"type" : "pickable:Pickable", "params" : {}},
+				{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 350, "map" : "test_arena_sand"}}
+			]
+		},
+
+		{
+			"id" : "weapon02",
+			"templates" : ["model/weapon/slash/dagger"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+				{"type" : "weapon:Weapon", "params" : {"type" : "sword", "max_projectiles" : 1}},
+				{"type" : "pickable:Pickable", "params" : {}},
+				{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}},
+				{"type" : "position:Position", "params" : {"x" : 200, "y" : 350, "map" : "test_arena_sand"}}
+			]
+		},
+
+		{
+			"id" : "player01",
+			"templates" : [
+				"model/body/male/skeleton/white", // model template
+				"controls/default" // controls template
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// Can pick up another entity
+				{"type" : "has_inventory:HasInventory", "params" : {}},
+
+				// Can arm weapon
+				{"type" : "has_weapon:HasWeapon", "params" : {}},
+
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions" : [
+					"SCRIPT",
+					"show_dlg_window", 
+					{"dialog_id" : "dlg_scene_start", "position" : [5, 5]}
+				]
+			}
+		],
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		],
+		[
+			"WEAPON_ARMED",
+			{
+				"id": "ev_weapon_armed",
+				"actions" : [
+					"SCRIPT",
+					"show_dlg_window",
+					{"dialog_id" : "dlg_weapon_armed", "position" : [5, 5]}
+				]
+			}
+		],
+		[
+			"AMMO_PACK_ARMED",
+			{
+				"id": "ev_ammo_pack_armed",
+				"actions" : [
+					"SCRIPT",
+					"show_dlg_window", 
+					{"dialog_id" : "dlg_ammo_armed", "position" : [5, 5]}
+				]
+			}
+		]
+	]
+}

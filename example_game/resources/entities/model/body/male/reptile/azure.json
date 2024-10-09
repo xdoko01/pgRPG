@@ -1,0 +1,7 @@
+{
+	"id" : "male_reptile_azure_model",
+	"templates" : ["model/body/male/reptile"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/body_male_reptile_azure.json"}}
+	]
+}

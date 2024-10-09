@@ -3,7 +3,7 @@ import logging
 from importlib import import_module
 
 from pyrpg.core.events.event import Event
-from pyrpg.core.config.paths import SCRIPT_MODULE_PATH # Path to the modules containing scripts
+from pyrpg.core.config.modulepaths import MODULEPATHS # for SCRIPT_MODULE_PATH - Path to the modules containing scripts
 from pyrpg.functions import translate, json_logic
 
 # Create logger
@@ -66,7 +66,7 @@ class ScriptManager:
         # Register the script
         if not script_fnc:
 
-            script_module_path_absolute = SCRIPT_MODULE_PATH + script_module_name
+            script_module_path_absolute = f"{MODULEPATHS['SCRIPT_MODULE_PATH']}.{script_module_name}"
 
             # Try to find the script module and get its reference
             try:

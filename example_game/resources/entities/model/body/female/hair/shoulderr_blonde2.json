@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_shoulderr_blonde2_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/shoulderr/blonde2.json}}
+	]
+}

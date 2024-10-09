@@ -1,0 +1,125 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "move_to",
+	"title" : "Test command move_to",
+	"description" : "Test command move_to",
+	"objective" : "POC of NPC controlled by the script",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// Calculate path
+		["command_system.perform_pathfinding_calculation_processor:PerformPathfindingCalculationProcessor", {"max_no_of_calcs": 100}],
+
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For displaying
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// Removal of obsolete flags
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["model/body/male/human/brown"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+				{
+					"type" : "brain_ai:BrainAI", 
+					"params" : {
+
+						"blackboard": {
+							"start_tile_pos": [5,5],
+							"end_tile_pos": [50,50]
+						}, 
+
+						"cmd_tree": {
+							"type": "Repeater",
+							"name": "Repeat Indefinetelly",
+							"children": [
+								{
+									"type": "Sequence",
+									"name": "Move Between Points",
+									"children": [
+										{"name": "Move to end point", "type": "Behavior", "command": ["move_to", {"pos": "^end_tile_pos"}]},
+										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]},
+										{"name": "Move to start point", "type": "Behavior", "command": ["move_to", {"pos": "^start_tile_pos"}]}
+									]
+								}
+							]
+						}
+					}
+				},
+
+				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

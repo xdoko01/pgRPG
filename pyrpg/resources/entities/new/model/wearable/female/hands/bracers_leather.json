@@ -1,7 +1,0 @@
-{
-	"id" : "wearable_female_hands_bracers_leather_model",
-	"templates" : ["new/model/wearable/female/hands"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/hands/bracers/leather.json}}
-	]
-}

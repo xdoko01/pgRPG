@@ -1,7 +1,0 @@
-{
-	"id" : "wearable_male_hands_bracelets_bracelet_model",
-	"templates" : ["new/model/wearable/male/hands"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/hands/bracelets/bracelet.json}}
-	]
-}

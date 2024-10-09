@@ -1,7 +1,0 @@
-{
-	"id" : "weapon_thrust_cane_model",
-	"templates" : ["new/model/weapon/thrust"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/thrust/weapon_thrust_cane.json"}}
-	]
-}

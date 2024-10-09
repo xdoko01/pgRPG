@@ -1,7 +1,7 @@
 import logging
 import pyrpg.utils.dialog as dialog
 
-from pyrpg.core.config.paths import Path, DIALOG_PATH, IMAGE_PATH, FONT_PATH
+from pyrpg.core.config.filepaths import DIALOG_PATH, IMAGE_PATH, FONT_PATH, Path # for DIALOG_PATH, IMAGE_PATH, FONT_PATH
 from pyrpg.functions.get_dict_from_json import get_dict_from_json
 
 # Create logger
@@ -17,7 +17,7 @@ class DialogManager():
         ''' Create dialog from dictionary definition contained in dictionary
         dialog_def and stores it in _dialogs dictionary
 
-        - dialog_def - original data from the quest
+        - dialog_def - original data from the scene
         - new_dlg_data - data after taking into account all templates
         - new_dlg_obj - dictionary with surface objects generated from the data
         '''

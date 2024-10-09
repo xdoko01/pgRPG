@@ -501,7 +501,6 @@ class World:
         `delete_entity` method. If that method is changed, those changes should
         be duplicated here as well.
         """
-
         for entity in self._dead_entities:
 
             for component_type in self._entities[entity]:

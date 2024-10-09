@@ -1,0 +1,54 @@
+{
+	"$id": "blist_ai.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "BListAI Component",
+	"description": "Assigns an AI in a form of a list of commands to the entity",
+	"markdownDescription": "Assigns an AI in a form of a list of commands to the entity",
+
+	"examples" : [
+		{"type" : "blist_ai:BListAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+		{
+			"type" : "blist_ai:BListAI", 
+			"params" : {
+				"blackboard": {}, 
+				"cmd_list": [
+					{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"line": 2, "type": "Behavior", "command": ["move_vect", {"vector" : [0,1]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"line": 4, "type": "Behavior", "command": ["move_vect", {"vector" : [1,0]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"line": 6, "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"command": ["wait", {"duration_ms" : 1000}]},
+					{"line": 9, "type": "Goto", "jmp_to": 0}
+				]
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"title": "BListAI Component",
+			"description": "Assigns an AI in a form of a list of commands to the entity",
+			"markdownDescription": "Assigns an AI in a form of a list of commands to the entity",
+			"enum": [ "blist_ai:BListAI" ]
+		},
+		"params": {
+			"title": "BListAI Component parameters",
+			"description" : "BList Command generator data.",
+			"markdownDescription" : "Blist Command generator data.",
+			"$ref": "../commands/generators/blist.schema.json#/blist",
+
+			"defaultSnippets": [
+				{
+					"label": "BList Command Generator Parameters",
+					"description": "BList Command Generator Parameters",
+					"body": { "blackboard": {}, "cmd_list": []}
+				}
+			]	
+		}
+	}
+}

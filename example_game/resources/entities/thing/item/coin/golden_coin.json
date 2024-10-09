@@ -1,0 +1,9 @@
+{
+	"id" : "golden_coin",
+	"templates" : ["thing/item/coin", "model/item/coin/golden_coin"],
+	"components" : [
+
+		{"type" : "scorable_on_pickup:ScorableOnPickup", "params" : {"score" : 100}}
+
+	]
+}

@@ -1,0 +1,206 @@
+{
+	"id" : "sokoban_level01", 
+	"title": "Sokoban - Level 1",
+	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
+	"objective" : "Push all the boxes on the marked spots.",
+
+	// What scenes need to be loaded before this one 
+	"prereqs" : ["games/sokoban/sokoban_new"],
+
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	"processors" : [],
+
+	"maps" : ["game_sokoban_lvl01"],
+
+	"dialogs" : [],
+
+	"templates": [
+		
+		// Following is template without variables
+		{
+			"id": "t_crate",
+
+			"templates": ["thing/item/crate/wooden_crate"],
+			
+			"components": [
+				{"type" : "debug:Debug", "params" : {}},
+				
+				{
+					"type" : "has_target_position:HasTargetPosition", 
+					"params" : {
+						"targets": [
+							["game_sokoban_lvl01", 2, 3, 10],
+							["game_sokoban_lvl01", 6, 4, 10],
+							["game_sokoban_lvl01", 2, 5, 10],
+							["game_sokoban_lvl01", 5, 6, 10],
+							["game_sokoban_lvl01", 4, 7, 10],
+							["game_sokoban_lvl01", 7, 7, 10],
+							["game_sokoban_lvl01", 5, 8, 10]
+						]
+					}
+				},
+
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "collidable:Collidable", "params" :  {
+					"x" : 30, 
+					"y" : 30, 
+					"position_fix_walkaround_mode" : false // can be pushed only straight
+					}
+				}
+
+			]
+		}
+	],
+
+	"entities" : [
+
+		// New entity created from one template without parameters and one template using parameters
+		{
+			"id": "crate01",
+			"templates": ["t_crate", "t_tile_pos(4, 3, game_sokoban_lvl01)"],  // Crate is created at tile position 4, 3
+			"components": []
+		},
+
+		// New entity created using already existing entity + template for defining the position
+		{
+			"id": "crate02",
+			"templates": ["crate01", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
+			"components": []
+		},
+
+		// New entity created using template without parameters + adding the component manualy
+		{
+			"id": "crate03",
+			"templates": ["t_crate"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate04",
+			"templates": ["crate01"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate05",
+			"templates": ["crate01"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate06",
+			"templates": ["crate01"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id": "crate07",
+			"templates": ["crate01"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
+			]
+		},
+		{
+			"id" : "player01",
+			"templates" : [
+				"model/body/male/human/white", // model
+				"t_tile_pos(3, 3, game_sokoban_lvl01)", // position
+				"controls/default"	//controls
+			],
+			"components" : [
+
+				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+
+				{
+					"type" : "collidable:Collidable", 
+					"params" :  {
+						"x" : 30, "y" : 30,
+						"position_fix_walkaround_mode" : false // can pushed only straight
+					}
+				},
+
+				{
+					"type" : "controllable:Controllable", 
+					"params" :  {
+						"key_profile" : "DEFAULT",
+						"control_cmds" : {
+							"ATTACK": [["none", {}]]
+						}
+					}
+				},
+
+				{"type" : "has_score:HasScore", "params" : {}},
+
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+
+	],
+
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_start_game",
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+			}
+		],
+		[
+			"CUST_UI_CONFIRM",
+			{
+				"id": "ev_restart_confirmed",
+				"actions": [
+					"IF",
+						["==", ["VAR", "from"], "ev_all_crates_in_place"],
+						["SCRIPT", "load_quest", {"scene_file" : "new/games/sokoban/sokoban_new_level02"}]
+				]
+			}
+		],
+		[
+			"ON_POS_TARGET",
+			{
+				"id": "ev_all_crates_in_place",
+				"actions": [
+					"IF", 
+						["AND",
+							["IN", "crate01", ["VAR", "on_target"]], 
+							["IN", "crate02", ["VAR", "on_target"]], 
+							["IN", "crate03", ["VAR", "on_target"]],
+							["IN", "crate04", ["VAR", "on_target"]],
+							["IN", "crate05", ["VAR", "on_target"]],
+							["IN", "crate06", ["VAR", "on_target"]],
+							["IN", "crate07", ["VAR", "on_target"]]
+						],
+						["SEQ",
+							["SCRIPT", "show_msg_window", {"html_text" : "WOW! All cranes are on their places.<br/>WELL DONE!"}],
+							[
+								"SCRIPT", 
+								"show_confirm_dlg", 
+								{
+									"title": "Play again?",
+									"long_desc" : "Do you want to play again?",
+									"event_type": "CUST_UI_CONFIRM",
+									"event_params" : {
+										"from": "ev_all_crates_in_place"
+									}
+								}
+							]
+						]
+				]
+			}
+		]
+	]
+}

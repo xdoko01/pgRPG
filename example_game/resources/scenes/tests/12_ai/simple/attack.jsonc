@@ -1,0 +1,215 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "attack",
+	"title" : "Test command attack",
+	"description" : "Test command attack",
+	"objective" : "POC of NPC controlled by the script",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// NEW - For projectile data generation
+		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
+
+		// NEW - For generation of projectile from factory and projectile data
+		["factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+
+		// For destroy
+		["destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
+		["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+
+
+		// For displaying
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// Removal of obsolete flags
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
+		["movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}]
+
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "NPC",
+			"templates" : [
+				"model/body/male/wolfman/gold",
+				"behavior/move_between_2_points($x1=10,$y1=10,$x2=30,$y2=10)" // behavior template
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}}
+			]
+		},
+
+		{
+			"id" : "wooden_bow",
+			"templates" : ["model/weapon/shoot/bow_wooden_big"],
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+			]
+		},
+
+		// wooden_arrows_pack AmmoPack is Factory for generation of arrows
+		{
+			"id" : "wooden_arrows_pack",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{
+					"type" : "factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"id": "wooden_arrows_pack_arrow",
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "debug:Debug", "params" : {}},
+								
+								{
+									"type" : "brain_ai:BrainAI",
+									"params" : {
+										"cmd_list" : [
+											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
+										]
+									}
+								},
+				
+								//{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
+
+								{"type" : "movable:Movable", "params" :  {"velocity" : 300, "accelerate" : -3}},
+								//{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
+								
+								//{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
+								//{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+							]
+						}
+					}
+				}
+			]
+		},
+
+		{
+			"id" : "player01",
+			"templates" : ["model/body/male/human/brown"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				{"type" : "has_weapon:HasWeapon", "params" : {
+					"weapons" : {
+						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
+					}
+				}},
+
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+
+				{
+					"type" : "brain_ai:BrainAI", 
+					"params" : {
+
+						"blackboard": {
+							"target_ent": "NPC"
+						}, 
+
+						"cmd_tree": {
+							"type": "Repeater",
+							"name": "Repeat Indefinetelly",
+							"children": [
+								{
+									"type": "Sequence",
+									"name": "Stare at the target",
+									"children": [
+										{"name": "Face the NPC", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
+										{"name": "Attack", "type": "Behavior", "command": ["attack", {"attack_time_ms" : 3000}]},
+										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
+									]
+								}
+							]
+						}
+					}
+				},
+
+				{"type" : "position:Position", "params" : {"tile_x": 20, "tile_y": 12, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

@@ -1,0 +1,6 @@
+{
+	"id" : "weapon_shoot_model",
+	"templates" : ["model/weapon"],
+	"components" : [
+	]
+}

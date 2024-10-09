@@ -1,0 +1,17 @@
+{
+	"id" : "wooden_arrow",
+	"templates" : ["thing/ammo/shoot", "model/ammo/shoot/wooden_arrow"],
+	"components" : [
+
+		{"type" : "brain:Brain", "params" : {"commands" : [
+			[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
+			]}},
+
+		{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
+
+		{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
+		{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+		{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+		{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
+	]
+}

@@ -1,5 +1,0 @@
-{
-	"id" : "weapon",
-	"templates" : ["new/thing"],
-	"components" : []
-}

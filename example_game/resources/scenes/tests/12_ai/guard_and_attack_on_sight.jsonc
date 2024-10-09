@@ -1,0 +1,319 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "guard_and_attack_on_sight",
+	"title" : "Test guarding and attacking the enemy on sight",
+	"description" : "Test guarding and attacking the enemy on sight",
+	"objective" : "POC of NPC controlled by the script",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		
+		// Remove all the components that can be generated from commands here - movement, attack, ...
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
+
+		// COMMAND SYSTEM
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+		
+		// Calculate path
+		["command_system.perform_pathfinding_calculation_processor:PerformPathfindingCalculationProcessor", {"max_no_of_calcs": 100}],
+
+		// MOVEMENT SYSTEM
+		["movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}],
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// ANIMATION SYSTEM
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// PROJECTILE GENERATION
+		["factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
+		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
+
+		// For generation of projectile from factory and projectile data
+		["factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
+		["factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
+
+		// Adjust collision component of the entity - for factory generated entities
+		["collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
+		["collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}],
+
+		// Adjust movable component of the entity - for factory generated entities
+		["movement_system.remove_flag_adjust_movement_processor:RemoveFlagAdjustMovementProcessor", {}],
+		["movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}],
+
+		// Adjust damaging component of the entity - for factory generated entities
+		["damage_system.remove_flag_adjust_damaging_processor:RemoveFlagAdjustDamagingProcessor", {}],
+		["damage_system.perform_adjust_damaging_processor:PerformAdjustDamagingProcessor", {}],
+
+		// COLLISION SYSTEM
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
+
+		// DAMAGE SYSTEM
+		["damage_system.remove_flag_is_about_to_be_damaged_by_processor:RemoveFlagIsAboutToBeDamagedByProcessor", {}],
+		["damage_system:GenerateDamageProcessor", {}],
+
+		["damage_system.remove_flag_was_damaged_by_processor:RemoveFlagWasDamagedByProcessor", {}],
+		["damage_system.remove_flag_has_damaged_processor:RemoveFlagHasDamagedProcessor", {}],
+		["damage_system.remove_flag_has_no_health_processor:RemoveFlagHasNoHealthProcessor", {}],
+		["damage_system:PerformDamageProcessor", {}],
+
+		// SENSOR SYSTEM
+		["sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
+
+		// DESTROY SYSTEM
+		["destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
+		["destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
+		["destroy_system.generate_destroy_on_no_health_processor:GenerateDestroyOnNoHealthProcessor", {}],
+		["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+
+		// EFFECTS SYSTEM
+		["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+
+		// RENDER SYSTEM
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// EVENTS PROCESSING
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}]
+
+
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "NPC",
+			"templates" : [
+				"model/body/male/wolfman/gold",
+				//"behavior/move_between_2_points($x1=10,$y1=10,$x2=30,$y2=10)" // behavior template
+				["behavior/move_among_checkpoints", [[[10,10],[30,10],[30,12],[10,12]]]] // behavior template
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 50}},
+				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
+				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}}
+
+			]
+		},
+
+		{
+			"id" : "wooden_bow",
+			"templates" : ["model/weapon/shoot/bow_wooden_big"],
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
+			]
+		},
+
+		// wooden_arrows_pack AmmoPack is Factory for generation of arrows
+		{
+			"id" : "wooden_arrows_pack",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
+				{
+					"type" : "factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"id": "wooden_arrows_pack_arrow",
+							"templates" : ["model/ammo/shoot/wooden_arrow"],
+							"components" : [
+								{"type" : "debug:Debug", "params" : {}},
+								
+								{
+									"type" : "brain_ai:BrainAI",
+									"params" : {
+										"cmd_list" : [
+											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
+										]
+									}
+								},
+				
+								{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
+
+								{"type" : "movable:Movable", "params" :  {"velocity" : 300, "accelerate" : -1}},
+								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
+								
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
+								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+							]
+						}
+					}
+				}
+			]
+		},
+
+		{
+			"id" : "player01",
+			"templates" : ["model/body/male/human/brown"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				{"type" : "has_weapon:HasWeapon", "params" : {
+					"weapons" : {
+						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"}
+					}
+				}},
+
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+
+				{
+					"type" : "brain_ai:BrainAI", 
+					"params" : {
+
+						"blackboard": {
+							"target_ent": 0,	// Storing the entity that is found along the way and that should be attacked
+							"checkpoints": [[5,5], [30,10], [50,50], [50,5]],
+							"enemies": ["NPC"]	// Storing list of enemies that should be attacked when spotted along the way
+						},
+						
+						"cmd_tree": {
+							"type": "Repeater",
+							"name": "Repeat guarding and fighting with enemies",
+							"children": [
+								{
+									"type": "Selector",
+									"name": "Guard and Attack",
+									"children": [
+										{
+											"type": "Sequence",
+											"name": "Follow  and destroy target, if specified",
+											"children": [
+
+												{
+													"type": "Behavior",
+													"name": "Test if some target spotted", 
+													"results": {
+														"SUCCESS": "Target found",
+														"FAILURE": "No target found"
+													},						
+													"command": ["test_bb_value", {"json_expr": ["!=", ["VAR", "target_ent"], 0]}]
+												},
+												
+												{
+													"type": "RepeatUntilFail",
+													"name": "Repeat Follow and Attack the Target until destroyed or lost",
+													"children": [
+														{
+															"type": "Sequence",
+															"name": "Follow and Attack the Target",
+															"results": {
+																"SUCCESS": "Target attacked",
+																"FAILURE": "Target no longer valid (destroyed/lost)"
+															},
+															"children": [
+																{"name": "Move to target", "type": "Behavior", "command": ["move_to_target", {"target": "^target_ent", "proximity_tl": 2, "upd_path_ms": 3000}]},
+																{"name": "Face the target", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
+																//TODO: stop attacking when target isDestroyed
+																{"name": "Attack the target", "type": "Behavior", "command": ["attack", {"attack_time_ms": 1000}]},
+																{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 100}]}
+															]
+														}
+													]
+												},
+												{"name": "Check target_ent value before removal", "type": "Behavior", "command": ["log", {"text": "^target_ent"}]},
+												{"name": "Remove the target from the BB", "type": "Behavior", "command": ["set_bb_value", {"key": "target_ent", "value": 0}]},
+												{"name": "Check target_ent value after removal", "type": "Behavior", "command": ["log", {"text": "^target_ent"}]}
+
+											]
+										},
+										{
+											"name": "Move on the checkpoints and end with SUCCESS once when NPC spotted",
+											"type": "Behavior",
+											"command": [
+												"do_parallel",
+												{
+													"commands": [
+														["test_can_see", {"entities": "^enemies", "out_bb_key": "target_ent"}],
+														["move_to_checkpoints", {"checkpoints": "^checkpoints"}]
+													],
+													"returns": {
+														"SS": "SUCCESS", "SR": "SUCCESS", "SF": "SUCCESS",
+														"FS": "FAILURE", "FR": "RUNNING", "FF": "FAILURE"
+													}
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					}
+				},
+
+				{"type" : "can_see:CanSee", "params" : {"angle": 120, "distance_tiles": 5}},
+				{"type" : "position:Position", "params" : {"tile_x": 5, "tile_y": 5, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

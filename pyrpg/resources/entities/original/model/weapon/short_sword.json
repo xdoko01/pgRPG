@@ -1,8 +1,0 @@
-{
-	"id" : "short_sword_model",
-	"templates" : ["original/model/weapon"],
-	"components" : [
-		{"type" : "original.collidable:Collidable", "params" : {"x" : 10, "y" : 10}},
-		{"type" : "original.renderable_model:RenderableModel", "params" : {"model" : "shortswordmale.json"}}
-	]
-}

@@ -304,17 +304,17 @@ def get_coll_value(coll, path: str, sep: str='.'):
                 {\
                     'id': 'NPC',\
                     'components': [\
-                        {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
-                        {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},\
-                        {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}\
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}\
                     ]\
                 },\
                 {\
                     'id': 'PLAYER',\
                     'components': [\
-                        {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
-                        {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},\
-                        {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}\
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}\
                     ]\
                 }\
             ]\
@@ -322,11 +322,11 @@ def get_coll_value(coll, path: str, sep: str='.'):
 
         # List all components
         >>> print([i for i in get_coll_value(coll=ex, path='entities/components', sep='/')])
-        [{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.damageable:Damageable', 'params': {'health': 100}}, {'type': 'new.destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [11, 22, 33]}}, {'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.damageable:Damageable', 'params': {'health': 100}}, {'type': 'new.destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [111, 222, 333]}}]
+        [{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'damageable:Damageable', 'params': {'health': 100}}, {'type': 'destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [11, 22, 33]}}, {'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'damageable:Damageable', 'params': {'health': 100}}, {'type': 'destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [111, 222, 333]}}]
         
         # List all component types
         >>> print([i for i in get_coll_value(coll=ex, path='entities/components/type', sep='/')])
-        ['new.collidable:Collidable', 'new.damageable:Damageable', 'new.destroy_on_no_health:DestroyOnNoHealth', 'new.collidable:Collidable', 'new.damageable:Damageable', 'new.destroy_on_no_health:DestroyOnNoHealth']
+        ['collidable:Collidable', 'damageable:Damageable', 'destroy_on_no_health:DestroyOnNoHealth', 'collidable:Collidable', 'damageable:Damageable', 'destroy_on_no_health:DestroyOnNoHealth']
         
         # List all entity ids
         >>> print([i for i in get_coll_value(coll=ex, path='entities/id', sep='/')])
@@ -337,12 +337,41 @@ def get_coll_value(coll, path: str, sep: str='.'):
         [100, 100]
 
         # List all collidable components
-        >>> print( list( filter( lambda x: x["type"] == "new.collidable:Collidable", get_coll_value(coll=ex, path='entities/components', sep='/') ) ) )
-        [{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}]
+        >>> print( list( filter( lambda x: x["type"] == "collidable:Collidable", get_coll_value(coll=ex, path='entities/components', sep='/') ) ) )
+        [{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}]
 
     '''
     keys = [] if path == '' else path.split(sep)
     yield from _get_coll_value(coll=coll, keys=keys)
+
+def merge_dicts(orig: dict, new: dict) -> dict:
+    """ Merge 2 dictionaries original and new, so that
+        - if key exists in both, value from new i sused
+        - if key exists only in default, key: value from default is used
+        - if key exists only in new, key: value from new is used
+    """
+    merged = dict()
+
+    # key exists in new but not in original
+    for new_key in new: 
+        if not orig.get(new_key):
+            merged[new_key] = new[new_key] 
+
+    for orig_key in orig:
+        # check if exists in orig dict 
+        ## if NOT
+        if not new.get(orig_key): # exists in original but not in new -> add original to the merged dict
+            merged[orig_key] = orig[orig_key]
+        else: 
+            # key exists in both original and new
+            # if in the new dict the value is not dict - merge it
+            if not isinstance(new[orig_key], dict):
+                merged[orig_key] = new[orig_key]
+            else: # the value is again dict
+                merged[orig_key] = merge_dicts(orig[orig_key], new[orig_key])
+    
+    return merged
+
 
 if __name__ == '__main__':
     import doctest

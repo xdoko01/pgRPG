@@ -1,0 +1,373 @@
+{
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_entity_seen",
+	"title" : "Test Enemy in Range",
+	"description" : "Test behavior tree checking that enemy is in range (sight, hearing) of the entity",
+	"objective" : "POC of the behavior",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.generate_command_from_btree_processor:GenerateCommandFromBTreeProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
+		["collision_system:ResolveMapCollisionsProcessor", {}],
+
+		// For sight - run once per 100 cycles
+		["sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],
+
+		// For displaying
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// For clearing of processing of movements and collisions
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs" : [
+		{
+			"id" : "dlg_scene_start",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 24,
+				"color" : "#00FFFF",
+				"align" : "LEFT"
+				},
+		
+			"texts" : [
+				{
+					"text" : "Test no.1 - Demonstration of Sight Sense",
+					"position" : [5, 20]
+				}
+			],
+			
+			"frames" : [
+				{
+					"font" : {
+						"path" : "small_font.json",
+						"size" : 16,
+						"color" : "#FFFFFF",
+						"align" : "LEFT"
+						},
+
+					"texts" : [
+						{
+							"text" : "Entities are spotted and recorded.",
+							"position" : [5, 65]
+						}
+					]
+				},
+				{
+					"texts" : [
+						{
+							"text" : "Press Enter to continue ...",
+							"position" : [5, 165]
+						}
+					]
+				}
+			]
+		}
+	],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["model/body/male/human/white"],
+			"components" : [
+				{"type" : "can_see:CanSee", "params" : {"angle": 120, "distance_px": 300}},
+				{"type" : "debug:Debug", "params" : {}},
+
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
+					"control_cmds" : {
+						"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+						"UP": [["move_dir_add", {"moves" : ["up"]}]],
+						"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+						"ATTACK": []}
+					}
+				},
+
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{
+					"type" : "collidable:Collidable", 
+					"params" :  {
+						"x" : 15, "y" : 27, 
+						"dx" : 0, "dy" : 8,
+						"accept_pos_fix_from_denylist" : [] // ["ALL"] // no one can move the player
+					}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "NPC01",
+			"templates" : ["model/body/male/skeleton/white"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// When player is spotted, move
+				//   RepeatUntilFail
+				//			|
+				//		Inverter
+				//			|
+				//		   SEQ
+				//	  |-------------|
+				// TestEnemySeen    GoTo position
+
+				{
+					"type" : "brain_ai:BrainAI", 
+					"params" : {
+						"blackboard": {
+						},
+						"cmd_tree": {
+							"type": "Sequence",
+							"name": "Main seq",
+							"children": [
+								{
+									// Save target position
+									"type": "Behavior",
+									"name": "Save target position",
+									"command": ["btree.bb_set_globals", {"bb_target": [1000, 1000]}]
+								},
+								{
+									"type": "RepeatUntilFail",
+									"name": "Check for enemy presence until player01 is present",
+									"children": [
+										{
+											"type": "Inverter",
+											"name": "Return Fail if sequence is finished",
+											"children": [
+												{
+													"type": "Sequence",
+													"name": "Test if enemy seen and then move to position",
+													"children": [
+														{
+															"type": "Behavior",
+															"name": "Test if player01 is seen",
+															"command": [
+																"btree.test_entity_seen", {
+																		"list_of_enemies": ["player01"], 
+																		"distance": 300,
+																		"angle": 120,
+																		"out_bb_entity": "bb_enemy"
+																	}
+															]
+														},
+														{
+															"type": "Behavior",
+															"name": "Go to predefined position",
+															"command": [
+																"btree.move_to_bb_position", {
+																	"bb_point": "bb_target", 
+																	"bb_entity_pos_comp": "bb_entity_pos_comp",
+																	"max_move_time_s": 1000,
+																	"change_of_direction_ms": 750
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					}
+				},
+
+				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "collidable:Collidable", "params" :  {
+					"x" : 15, 
+					"y" : 27, 
+					"dx" : 0, 
+					"dy" : 8,
+					"accept_pos_fix_from_allowlist" : ["player01"] // only player01 can move me
+					}}
+			]
+		},
+		{
+			"id" : "NPC02",
+			"templates" : ["model/body/male/skeleton/green"],
+			"components" : [
+				{
+					"type" : "debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC02"
+						}
+					}
+				},
+
+				// Move up - down
+				{"type" : "brain_ai:BrainAI", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 219, "y" : 10}],
+					[1, 	"new_move_to", {"x" : 219, "y" : 800}],
+					[0, 	"goto", {}]
+				]}},
+
+				{"type" : "position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC03",
+			"templates" : ["model/body/male/skeleton/grey"],
+			"components" : [
+				{
+					"type" : "debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC03"
+						}
+					}
+				},
+
+				// Move down - up
+				{"type" : "brain_ai:BrainAI", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 319, "y" : 1000}],
+					[1, 	"new_move_to", {"x" : 319, "y" : 10}],
+					[0, 	"goto", {}]
+				]}},
+
+				{"type" : "position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC04",
+			"templates" : ["model/body/male/zombie/green"],
+			"components" : [
+				{
+					"type" : "debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC04"
+						}
+					}
+				},
+
+				// Move left - right
+				{"type" : "brain_ai:BrainAI", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 50, "y" : 500}],
+					[1, 	"new_move_to", {"x" : 1000, "y" : 500}],
+					[0, 	"goto", {}]
+				]}},
+
+
+				{"type" : "position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "NPC05",
+			"templates" : ["model/body/male/wolfman/gold"],
+			"components" : [
+				{
+					"type" : "debug:Debug",
+					"params" : {
+						"info" : { 
+							"name" : "NPC05"
+						}
+					}
+				},
+
+				// Move left - right
+				{"type" : "brain_ai:BrainAI", "params" : {"commands" : [
+					[0, 	"new_move_to", {"x" : 300, "y" : 100}],
+					[1, 	"new_move_to", {"x" : 100, "y" : 100}],
+					[0, 	"goto", {}]
+				]}},
+				
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15,
+														"y" : 27,
+														"dx" : 0,
+														"dy" : 8}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id" : "ev_scene_start",
+				"actions" : [
+					"SCRIPT",
+					"show_dlg_window",
+					{"dialog_id" : "dlg_scene_start", "position" : [5, 5]}
+				]
+			}
+		],
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

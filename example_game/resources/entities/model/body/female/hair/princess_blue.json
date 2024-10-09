@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_princess_blue_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/princess/blue.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "weapon_accessories_quiver_model",
+	"templates" : ["model/weapon/accessories"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/accessories/weapon_accessories_quiver.json"}}
+	]
+}

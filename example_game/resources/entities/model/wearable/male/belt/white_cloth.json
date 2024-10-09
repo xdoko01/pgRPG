@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_belt_white_cloth_model",
+	"templates" : ["model/wearable/female/belt"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/belt/white_cloth.json}}
+	]
+}

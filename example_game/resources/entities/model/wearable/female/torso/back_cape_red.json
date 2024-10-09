@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_torso_back_cape_red_model",
+	"templates" : ["model/wearable/female/torso"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/torso/back/cape_red.json}}
+	]
+}

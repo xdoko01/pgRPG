@@ -1,39 +1,49 @@
-import pygame
 
-def translate_key_from_str(key_string):
-	''' Returns code of the key
-	'''
-	return eval('pygame.' + key_string) if key_string is not None else pygame.K_CLEAR # Clear key should not be currently supported so ideal to use
+# Init logging config
+import logging
+logger = logging.getLogger(__name__)
 
-''' If some part of game requests controlling by the keyboard, it can import
-keys module and reference the module variable holding the key value based on
-default or json configuration.
+from pyrpg.core.config import KEYS
 
-E.g.
-import pyrpg.core.config.keys as keys
-player_1_up_key = keys.K_PROFILE['player1']['up']
-'''
+def _trans_key_from_str(key_string):
+    """ Returns pygame code of the key.
+    """
+    import pygame
+    return eval('pygame.' + key_string) if key_string is not None else pygame.K_CLEAR # Clear key should not be currently supported so ideal to use
 
-# Load definition of keyboard keys from config
-from .config import KEYS
+def init() -> None:
+    """Prepare the config data.
+    """
+    # Iterate through key schemas defined in config file and assign the keyboard keys
+    k_profile = dict()
+    for key_profile in KEYS.copy().get('KEY_PROFILES', []):
+        k_profile.update({key_profile: {k: _trans_key_from_str(v) for k, v in KEYS[key_profile].items()}})
+    KEYS["K_PROFILE"] = k_profile
 
-# Dictionary holding all key profiles for moving of characters
-K_PROFILE = {}
+    # Clear the original pre-conversion config
+    for profile in KEYS["KEY_PROFILES"]: del(KEYS[profile])
+    del(KEYS["KEY_PROFILES"])
 
-# Iterate through key schemas defined in config file and assign the keyboard keys
-for key_profile in KEYS.get('key_profiles', []):
-	K_PROFILE.update({key_profile : {k: translate_key_from_str(v) for k, v in KEYS[key_profile].items()}})
+    # Convert the rest of the keys
+    for k,v in KEYS.items(): KEYS[k] = _trans_key_from_str(v) if k not in ("K_PROFILE") else KEYS[k]
 
-# Game management hot keys
-K_CONSOLE_TOGGLE = translate_key_from_str(KEYS['console_toggle'])
-K_SAVE_GAME = translate_key_from_str(KEYS['save_game'])
-K_LOAD_GAME = translate_key_from_str(KEYS['load_game'])
-K_PAUSE_GAME = translate_key_from_str(KEYS['pause_game'])
+    import pprint
+    logger.debug(f"Keys config initiated. {pprint.pformat(KEYS)}")
 
 
-# Game menu navigation keys
-K_NAV_UP = translate_key_from_str(KEYS['nav_up'])
-K_NAV_DOWN = translate_key_from_str(KEYS['nav_down'])
-K_NAV_LEFT = translate_key_from_str(KEYS['nav_left'])
-K_NAV_RIGHT = translate_key_from_str(KEYS['nav_right'])
-K_SUBMIT = translate_key_from_str(KEYS['submit'])
+def convert_dict_conf_to_vars() -> None:
+    """ Add access to KEYS dictionary keys as variables of this module.
+    Now it is able to get the configuration as follows:
+    
+        from pyrpg.core.config.keys import K_SUBMIT
+
+    Without this, you would always need to use the following way
+
+        from pyrpg.core.config.keys import KEYS
+        K_SUBMIT = FILEPATHS["K_SUBMIT"]
+    """
+    globals().update((k,v) for k, v in KEYS.items())
+
+    logger.debug(f"Keys config values initiated as vars.")
+
+

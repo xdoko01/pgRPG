@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_bangslong2_purple_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/bangslong2/purple.json}}
+	]
+}

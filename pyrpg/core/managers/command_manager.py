@@ -2,7 +2,7 @@ import logging
 
 #from importlib import import_module
 from pyrpg.functions import str_to_package_module
-from pyrpg.core.config.paths import COMMAND_MODULE_PATH
+from pyrpg.core.config.modulepaths import MODULEPATHS # for COMMAND_MODULE_PATH
 from pyrpg.functions import translate # for substitution of command parameters with the values from the blackboard
 
 from pyrpg.core.commands import CommandGenerator, Command, CommandContext
@@ -106,7 +106,7 @@ class CommandManager:
     def register_command(self, command_module_name: str, init=False):
         '''Returns the registered command function if registered. Else register it first.'''
 
-        command_module_path_absolute = COMMAND_MODULE_PATH + command_module_name
+        command_module_path_absolute = f"{MODULEPATHS['COMMAND_MODULE_PATH']}.{command_module_name}"
 
         # Try to find the command module and get its reference
         try:

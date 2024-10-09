@@ -1,5 +1,0 @@
-{
-	"id" : "shoot_ammo",
-	"templates" : ["new/thing/ammo"],
-	"components" : []
-}

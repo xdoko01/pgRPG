@@ -1,0 +1,6 @@
+{
+	"id" : "male_wolfman_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

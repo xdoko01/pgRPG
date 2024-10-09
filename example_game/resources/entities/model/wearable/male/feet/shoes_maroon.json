@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_feet_shoes_maroon_model",
+	"templates" : ["model/wearable/male/feet"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/feet/shoes/maroon.json}}
+	]
+}

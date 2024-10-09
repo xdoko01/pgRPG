@@ -1,0 +1,91 @@
+{
+	"$id": "brain_ai.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "BrainAI Component",
+	"description": "Assigns an AI to the entity",
+	"markdownDescription": "Assigns an AI to the entity",
+
+	"examples" : [
+		{"type" : "brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_list" : []}},
+		{"type" : "brain_ai:BrainAI", "params" : {"blackboard": {}, "cmd_tree" : []}},
+		{
+			"type" : "brain_ai:BrainAI", 
+			"params" : {
+				"blackboard": {}, 
+				"cmd_list": [
+					{"line": 0, "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"line": 2, "type": "Behavior", "command": ["move_vect", {"vector" : [0,1]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"line": 4, "type": "Behavior", "command": ["move_vect", {"vector" : [1,0]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"line": 6, "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1]}]},
+					{"command": ["move_auto", {"duration_ms" : 250}]}, 
+					{"command": ["wait", {"duration_ms" : 1000}]},
+					{"line": 9, "type": "Goto", "jmp_to": 0}
+				]
+			}
+		},
+		{
+			"type" : "brain_ai:BrainAI", 
+			"params" : {
+				"blackboard": {}, 
+				"cmd_tree": {
+					"type": "Repeater",
+					"name": "Repeat Indefinetelly",
+					"children": [
+						{
+							"type": "Sequence",
+							"name": "Make square movement",
+							"children": [
+								{"name": "Turn Left", "type": "Behavior", "command": ["move_vect", {"vector" : [-1,0], "absolute": true}]},
+								{"name": "Move Left", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Turn Down", "type": "Behavior", "command": ["move_vect", {"vector" : [0,1], "absolute": true}]},
+								{"name": "Move Down", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Turn Right", "type": "Behavior", "command": ["move_vect", {"vector" : [1,0], "absolute": true}]},
+								{"name": "Move Right", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Turn Up", "type": "Behavior", "command": ["move_vect", {"vector" : [0,-1], "absolute": true}]},
+								{"name": "Move Up", "type": "Behavior", "command": ["move_auto", {"duration_ms" : 250}]},
+
+								{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
+							]
+						}
+					]
+				}
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"title": "BrainAI Component",
+			"description": "Assigns an AI to the entity",
+			"markdownDescription": "Assigns an AI to the entity",
+			"enum": [ "brain_ai:BrainAI" ]
+		},
+		"params": {
+			"title": "BrainAI Component parameters",
+			"description" : "Command generator data.",
+			"markdownDescription" : "Command generator data.",
+			"$ref": "../commands/generators/generator.schema.json#/command_generator",
+
+			"defaultSnippets": [
+				{
+					"label": "BList Command Generator Parameters",
+					"description": "BList Command Generator Parameters",
+					"body": { "blackboard": {}, "cmd_list": []}
+				},
+				{
+					"label": "BTree Command Generator Parameters",
+					"description": "BTree Command Generator Parameters",
+					"body": { "blackboard": {}, "cmd_tree": {}}
+				}
+			]	
+		}
+	}
+}

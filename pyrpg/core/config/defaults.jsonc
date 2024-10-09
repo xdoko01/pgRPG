@@ -1,0 +1,250 @@
+{
+
+	"DISPLAY": {
+		"RESOLUTION" : [640, 480],
+		"BITDEPTH" : 32,
+		"FULLSCREEN" : false,
+		"MAX_FPS" : 250,
+		"SHOW_FPS" : true
+	},
+
+	"FILEPATHS": {
+		"FONT_PATH" : "resources/fonts/",
+		"FRAME_PATH" : "resources/frames/",
+		"DIALOG_PATH" : "resources/dialogs/",
+		"MODEL_PATH" : "resources/models/",
+		"IMAGE_PATH" : "resources/images/",
+		"SCENE_PATH" : "resources/scenes/",
+		"ENTITY_PATH" : "resources/entities/",
+		"BTREE_PATH" : "resources/btrees/",
+		"MAP_PATH" : "resources/maps/",
+		"SOUND_PATH" : "resources/sounds/",
+		"LOG_PATH" : "logs/",
+		"SAVE_PATH" : "save/",
+		"CONSOLE_SCRIPT_PATH" : "resources/scripts/",
+		"MENU_BACKGROUND_PATH" : "resources/images/menu_background/waterfall/"
+	},
+
+	"KEYS": {
+		// Keys for game management
+		"K_CONSOLE_TOGGLE": null,
+		"K_SAVE_GAME": null,
+		"K_LOAD_GAME": null,
+		"K_PAUSE_GAME" : null,
+
+		// Keys for navigating through menus
+		"K_NAV_UP": "K_UP",
+		"K_NAV_DOWN": "K_DOWN",
+		"K_NAV_LEF": "K_LEFT",
+		"K_NAV_RIGHT": "K_RIGHT",
+		"K_SUBMIT": "K_RETURN",
+		"K_ESCAPE": "K_ESCAPE",
+		
+		// List of key profiles for manipulating of characters
+		"KEY_PROFILES": ["DEFAULT", "KEY_CONTROLS_1", "KEY_CONTROLS_2", "KEY_CONTROLS_3", "KEY_CONTROLS_4"],
+
+		"DEFAULT": {"UP": "K_UP", "DOWN": "K_DOWN", "LEFT": "K_LEFT", "RIGHT": "K_RIGHT", "ATTACK": "K_LCTRL"},
+		"KEY_CONTROLS_1": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null},
+		"KEY_CONTROLS_2": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null},
+		"KEY_CONTROLS_3": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null},
+		"KEY_CONTROLS_4": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null}
+	},
+
+	"GUI": {
+		"MENU_BACKGROUND_ANIMATION_DELAY_MS": 130
+	},
+
+    //MESSAGES contain format of message that should be generated
+    //upon game event generation. Such message is then displayed on 
+    //the game window. If event is not represented as a key in 'on_events'
+    //dictionary it means that such event is not generating any message (for
+    //example collision - that would generat too much unncesessary messages)
+    "MESSAGES": {
+        "ON_EVENT": {
+            "TELEPORTATION": ["Entity {} was teleported using teleport {}.", ["generator_obj", "other_obj"]],
+            "ITEM_PICKUP": ["Entity {} was picked up by entity {}.", ["generator_obj", "other_obj"]],
+            "WEARABLE_WEARED": ["Entity {} weared {}.", ["generator_obj", "other_obj"]],
+            "WEAPON_ARMED": ["Entity {} picked up weapon {}.", ["other_obj", "generator_obj"]],
+            "AMMO_PACK_ARMED": ["Entity {} picked up ammo pack {}.", ["other_obj", "generator_obj"]],
+            "AMMO_PACK_DISARMED": ["Ammo pack {} was disarmed from {}.", ["generator_obj", "other_obj"]],
+            "DAMAGE": ["Entity {} was hit by entity {}.", ["generator_obj", "other_obj"]],
+            "SCORE": ["Entity {} has scored.", ["generator_obj"]],
+            "KILL": ["Entity {} was killed by entity {}.", ["other_obj", "generator_obj"]],
+            "QUEST_START": ["Scene {} has started.", ["generator_obj"]],
+            "PHASE_START": ["Phase {} has started.", ["generator_obj"]]
+        },
+        "DEFAULT_TTL_MS" : 2000
+    },
+
+
+    "CONSOLE": {
+        "global" : {
+            "cli_module": "pyrpg.main",
+            "bck_alpha": 150
+        },
+        "input": {
+            "font_file": "JackInput.ttf",
+            "bck_alpha": 0
+        },
+        "output": {
+            "font_file": "JackInput.ttf",
+            "bck_alpha": 0,
+            "display_lines": 20,
+            "display_columns": 100
+        }
+    },
+
+    "debug": {
+        "show_health": false,
+        "show_state": false,
+        "show_weapons": false,
+        "show_wearables": false,
+        "show_inventory": false,
+        "show_labels": false,
+        "show_position": false,
+        "show_brain": false,
+        "show_collision": false,
+        "show_direction": false,
+        "show_map_screen_area": false
+    },
+
+    "LOGGING": {
+        "version" : 1.0,
+        "disable_existing_loggers": false,
+
+        "formatters": {
+            "console_short": {
+                "format": "%(name)s - %(message)s"
+            },
+            "short": {
+                "format": "%(filename)-45s - %(message)s"
+            },
+            "short_with_func": {
+                "format": "%(filename)-2s  %(funcName)-18s - %(message)s"
+            },
+            "simple": {
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            },
+            "extra": {
+                "format":"%(asctime)-2s %(levelname)-6s %(name)-30s %(filename)-15s %(funcName)-18s %(lineno)-6s %(message)s",
+                "datefmt":"%m-%d %H:%M:%S"
+            }
+        },
+
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+                "stream": "ext://sys.stdout"
+            },
+            "in_game_console": {
+                "class": "logging.StreamHandler",
+                "formatter": "console_short",
+                "stream": "ext://pyrpg.core.managers.console_manager" // Module containing write function
+            },
+            "file_handler_comp": {
+                "class": "logging.FileHandler",
+                "formatter": "short",
+                "filename": "components.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "file_handler_proc": {
+                "class": "logging.FileHandler",
+                "formatter": "short",
+                "filename": "processors.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "file_handler_mng": {
+                "class": "logging.FileHandler",
+                "formatter": "short_with_func",
+                "filename": "managers.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "file_handler_cmd": {
+                "class": "logging.FileHandler",
+                "formatter": "short_with_func",
+                "filename": "commands.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "file_handler_btrees": {
+                "class": "logging.FileHandler",
+                "formatter": "short_with_func",
+                "filename": "btrees.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "file_handler_blists": {
+                "class": "logging.FileHandler",
+                "formatter": "short_with_func",
+                "filename": "blists.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "file_handler_engine": {
+                "class": "logging.FileHandler",
+                "formatter": "short_with_func",
+                "filename": "engine.log",
+                "mode": "w",
+                "encoding": "utf-8"
+            },
+            "null": {
+                "class": "logging.NullHandler"
+            }
+        },
+
+        "loggers" : {
+
+            // Save all the logs from component classes to the file
+            "core.components" : {
+                "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+                "handlers" : ["null"],  // do not log to file for speed
+                "propagate" : false // Do not send messages from these loggers to parent (root) logger
+            },
+
+            // Save all the logs from processor classes to the file
+            "core.processors" : {
+                "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+                "handlers" : ["null"], // do not log to file for speed
+                "propagate" : false // Do not send messages from these loggers to parent (root) logger
+            },
+
+            // Save all the logs from engine
+            "pyrpg.core.engine" : {
+                "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+                "handlers" : ["file_handler_engine"], // uncomment to log to the file
+                "propagate" : false // Do not send messages from these loggers to parent (root) logger
+            },
+
+            // Save all the logs from manager classes to the file
+            "pyrpg.core.managers" : {
+                "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+                "handlers" : ["null"],  // do not log to file for speed
+                "propagate" : false // Do not send messages from these loggers to parent (root) logger
+            },
+
+            // Save all the logs from command functions to the file
+            "core.commands" : {
+                "level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+                "handlers" : ["null"],  // do not log to file for speed
+                "propagate" : false // Do not send messages from these loggers to parent (root) logger
+            },
+
+            // Save all the logs other from processor classes to console
+            "pyrpg" : {
+                "level" : "INFO", // Passes INFO and upper logs only, i.e. INFO, WARNING, ERROR, CRITICAL
+                "handlers" : ["in_game_console", "console"],
+                "propagate" : false // Do not send messages from these loggers to parent (root) logger
+            }
+        },
+
+        // Display all DEBUG - INFO - WARNING - ERROR - CRITICAL that are not covered by above loggers to console
+        "root" : {
+            "level" : "DEBUG",
+            "handlers" : ["console"]
+        }
+    }
+}

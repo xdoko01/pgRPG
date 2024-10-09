@@ -1,0 +1,60 @@
+{
+	"$id": "factory.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Factory Component",
+	"description": "Schema validating the Factory component.",
+
+	"examples" : [
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"templates" : ["sword_swing"],
+					"components" : [
+						{"type" : "Debug", "params" : {}}
+					]
+				},
+				"max_units" : 5
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "factory:Factory" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the factory:Factory component class - 'prescription', 'max_units'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["prescription"],
+			"properties": {
+				"prescription" : {
+					"title": "New Entity Prescription",
+					"description": "Dictionary with prescription describing new entity.",
+					"type": "object",
+					"$ref": "../entity.schema.json"
+				},
+				"max_units" : {
+					"title": "Max Units",
+					"description": "Number of units to be generated (optional, default None=unlimited).",
+					"default": null,
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

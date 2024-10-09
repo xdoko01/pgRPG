@@ -1,0 +1,7 @@
+{
+	"id" : "male_facial_bigstache_redhead2_model",
+	"templates" : ["model/body/male/facial"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/facial/bigstache/bigstache_redhead2.json"}}
+	]
+}

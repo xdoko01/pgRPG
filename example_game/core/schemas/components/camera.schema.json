@@ -1,0 +1,100 @@
+{
+	"$id": "camera.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Camera Component",
+	"description": "Assigns screen to the entity",
+	"markdownDescription": "Assigns screen to the entity",
+
+	"examples" : [
+		{"type" : "camera:Camera", "params" : {"always_center" : false}},
+		{"type" : "camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200}},
+		{"type" : "camera:Camera", "params" : {"always_center" : 5, "screen_width" : 200, "screen_height": 200,	"screen_pos_x": 0, "screen_pos_y": 0}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"title": "Camera Component",
+			"description": "Assigns screen to the entity",
+			"markdownDescription": "Assigns screen to the entity",
+			"enum": ["camera:Camera"]
+		},
+		"params": {
+			"title": "Camera Component Parameters",
+			"description" : "screen_width (required), screen_height (required), screen_pos_x (optional), screen_pos_y (optional), always_center (optional)",
+			"markdownDescription" : "`screen_width` (required), `screen_height` (required), `screen_pos_x` (optional), `screen_pos_y` (optional), `always_center` (optional)",
+			"type": "object",
+			"required": ["screen_width", "screen_height"],
+			"$ref": "#/$defs/cond_params",
+
+			"defaultSnippets": [
+				{
+					"label": "Required Camera Parameters",
+					"description": "Standard Camera from top-left corner.",
+					"body": { "screen_width": "${1:100}", "screen_height": "${2:100}"}
+				},
+				{
+					"label": "All Camera Parameters",
+					"description": "All Camera Options",
+					"body": { "screen_width": "${1:100}", "screen_height": "${2:100}", "screen_pos_x": "${3:0}", "screen_pos_y": "${4:0}", "always_center": false}
+				}
+			],	
+
+			"properties": {
+				"always_center" : {
+					"title": "Centered",
+					"description": "Should the entity always be in the centre of the camera?",
+					"markdownDescription": "Should the entity always be in the centre of the camera?",
+					"examples": [false, true],
+					"default": false,
+					"type": "boolean"
+				},
+				"screen_width" : {
+					"title": "Camera Width",
+					"description": "Width of the camera pane in px",
+					"markdownDescription": "Width of the camera pane in px",
+					"examples": [100,200,500],
+					"default" : 100,
+					"type": "integer",
+					"exclusiveMinimum": 0
+				},
+				"screen_height" : {
+					"title": "Camera height",
+					"description": "Height of the camera pane in px",
+					"markdownDescription": "Height of the camera pane in px",
+					"examples": [100,200,500],
+					"default" : 100,
+					"type": "integer",
+					"exclusiveMinimum": 0
+				},
+				"screen_pos_x" : {
+					"title": "Camera Position X-axis",
+					"description": "X-coordinate of the upper-left camera pane corner in px",
+					"markdownDescription": "X-coordinate of the upper-left camera pane corner in px",
+					"examples": [0,100,200,500],
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				},
+				"screen_pos_y" : {
+					"title": "Camera Position Y-axis",
+					"description": "Y-coordinate of the upper-left camera pane corner in px",
+					"markdownDescription": "Y-coordinate of the upper-left camera pane corner in px",
+					"examples": [0,100,200,500],
+					"default" : 0,
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

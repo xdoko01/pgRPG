@@ -1,0 +1,7 @@
+{
+	"id" : "score_50_model",
+	"templates" : ["model/effect"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/effect/score_50.json"}}
+	]
+}

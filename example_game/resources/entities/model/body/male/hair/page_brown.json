@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_page_brown_model",
+"templates" : ["model/body/male/hair"],
+"components" : [
+	{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/page/brown.json}}
+	]
+}

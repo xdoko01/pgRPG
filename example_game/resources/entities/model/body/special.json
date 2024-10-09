@@ -1,0 +1,6 @@
+{
+	"id" : "special_model",
+	"templates" : ["model/body"],
+	"components" : [
+	]
+}

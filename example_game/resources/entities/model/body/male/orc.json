@@ -1,0 +1,6 @@
+{
+	"id" : "male_orc_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

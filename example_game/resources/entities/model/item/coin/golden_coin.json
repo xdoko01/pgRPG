@@ -1,0 +1,8 @@
+{
+	"id" : "golden_coin_model",
+	"templates" : ["model/item/coin"],
+
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/item/coin_gold.json"}}
+	]
+}

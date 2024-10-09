@@ -1,0 +1,55 @@
+{
+	"$id": "has_weapon.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "HasWeapon Component",
+	"description": "Schema validating the HasWeapon component.",
+
+	"examples" : [
+		{"type" : "has_weapon:HasWeapon", "params" : {}},
+		{
+			"type" : "has_weapon:HasWeapon", 
+			"params" : {
+				"weapons" : {
+					"sword" : {"weapon" : "long_sword", "generator" : null},
+					"bow" : {"weapon" : "wooden_bow", "generator" : "pack_of_arrows"}
+				}
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "has_weapon:HasWeapon" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the HasWeapon component class - 'weapons'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"weapons" : {
+					"title": "Weapons",
+					"description": "Dict of entities representing weapon and generator.",
+					"type": "object",
+					"default": {
+						"sword" : {"weapon" : null, "generator" : null},
+						"spear" : {"weapon" : null, "generator" : null},
+						"bow" : {"weapon" : null, "generator" : null},
+						"spell" : {"weapon" : null, "generator" : null}
+					}
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

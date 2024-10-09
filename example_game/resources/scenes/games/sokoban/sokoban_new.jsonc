@@ -1,0 +1,115 @@
+{
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	"id" : "sokoban",
+	"title" : "Sokoban Demo Game",
+	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
+	"objective" : "Push all the boxes on the marked spots.",
+
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": []
+	},
+
+	"processors" : [
+
+		// For commands
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		//["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
+		//["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		//["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
+		["collision_system:ResolveMapCollisionsProcessor", {}],
+
+		// For visual and sound effects concerning collisions
+		//["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
+		//["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+
+		// For pickup
+		//["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+		//["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+		
+		// For score
+		//["score_system:GenerateScoreOnPickupProcessor", {}],
+		//["score_system:CalculateScoreProcessor", {}],
+
+		// For destroy
+		//["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+
+		// For displaying on screen
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		//["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		//["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+		//["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For checking of position targets are reached - run once per 500 cycles
+		["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
+
+		// Removal at the end of the cycle
+
+		// Removal - movement
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+
+		// Removal - collision
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}]
+		
+		// Removal - animation
+		//["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+
+		// Removal - score
+		//["score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor", {}],
+
+		// Removal - pickup
+		//["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		//["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+		//["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+
+	],
+
+	"templates": [
+				
+		// By using template with parameters it is easy to define position of any entity
+		{
+			"id": "t_tile_pos",
+			"vars": ["$tileX", "$tileY", "$map"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
+			]
+		}
+
+	],
+
+	"handlers": [
+		[
+			"QUEST_START", // Run first level upon load
+			{
+				"id": "ev_start_game",
+				"actions": 	["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_new_level01"}]
+			}
+		]
+	]
+}

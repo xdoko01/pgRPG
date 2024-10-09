@@ -1,0 +1,7 @@
+{
+"id" : "female_wound_wound_ribs_model",
+"templates" : ["model/body/female/wound"],
+"components" : [
+{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/wound/wound_ribs.json}}
+]
+}

@@ -1,0 +1,42 @@
+{
+	"$id": "pickable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Pickable Component",
+	"description": "Schema validating the Pickable component.",
+
+	"examples" : [
+		{"type" : "pickable:Pickable", "params" : {}},
+		{"type" : "pickable:Pickable", "params" : {"category": "items.coins.golden"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "pickable:Pickable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Pickable component class - category.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"default": {},
+			"properties": {
+				"category" : {
+					"title": "Category of inventory item",
+					"description": "Category of inventory item",
+					"type": "string"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

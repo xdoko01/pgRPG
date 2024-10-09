@@ -1,0 +1,7 @@
+{
+"id" : "male_hair_pixie_light-blonde2_model",
+"templates" : ["model/body/male/hair"],
+"components" : [
+	{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/hair/pixie/light-blonde2.json}}
+	]
+}

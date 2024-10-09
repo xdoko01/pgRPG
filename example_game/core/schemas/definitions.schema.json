@@ -1,0 +1,272 @@
+{
+	"$id": "definitions.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"description": "File with definitions",
+
+	"basics": {
+		"class_def": {
+			"title": "Class definition",
+			"description": "String representation of a class in given package and module",
+			"examples": "movable:Movable",
+
+			"type": "string",
+			"pattern": "^\\([a-z]+\\.\\)*[a-z]+:[A-Z][a-z]+$"
+		},
+		"template_str_def": {
+			"title": "Template String definition",
+			"description": "String representation of a template with or without parameters",
+			"examples": [
+				"model/body/special/minotaur",  
+				"t_tile_pos(0, 0, test_arena_sand)"
+			],
+
+			"type": "string",
+			"pattern": "^\\([a-zA-Z0-9]+\\/\\)*[a-zA-Z0-9]+\\(( *.*)\\)$"
+		},
+		"template_list_def": {
+			"title": "Template List definition",
+			"description": "List representation of a template with or without parameters",
+			"examples": [
+				["_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in": []}]
+			],
+
+			"type": "array",
+			"prefixItems": [
+				{"type": "string", "pattern": "^\\([a-zA-Z0-9]+\\/\\)*[a-zA-Z0-9]+$"},
+				{"type": "object"}
+			],
+			"items": false
+		},
+		"template_def": {
+			"title": "Template Definition",
+			"description": "Representation of a template with or without parameters",
+
+			"oneOf": [
+				{"$ref": "#/basics/template_str_def"},
+				{"$ref": "#/basics/template_list_def"}
+			]
+		}
+	},
+
+	"definitions" : {
+
+		"list_of_position_targets": {
+			"title": "List of position targets",
+			"description": "List of position targets",
+			"examples": [["test_map", 4, 5, 1 ],["other_map", 10, 10, 5]],
+
+			"type": "array",
+			"items":{
+				"$ref": "#/definitions/position_target"
+			}
+		},
+
+		"list_of_entities": {
+			"title": "List of entities",
+			"description": "List of entities",
+			"examples": [1, "player", "npc01", 12],
+
+			"type": "array",
+			"items":{
+				"$ref": "#/definitions/entity_id"
+			}
+		},
+
+		"blackboard_pointer": {
+			"title": "Pointer to Command Generator Blackboard Value",
+			"description": "Pointer to Command Generator Blackboard Value",
+			"examples": ["^target", "^position", "^player"],
+			"type": "string",
+			"pattern": "^\\^.+"
+
+		},
+
+		"entity_id" : {
+			"title": "Entity ID",
+			"description": "Either number or name uniquelly specifying the entity.",
+			"examples": ["player", 1, 56, "npc02"],
+			"oneOf": [
+				{"$ref": "#/definitions/entity_id_int"},
+				{"$ref": "#/definitions/entity_id_str"}
+			]
+		},
+
+		"entity_id_int": {
+			"title": "Entity ID number",
+			"description" : "Unique number assigned by the game automatically to any entity in the game.",
+			"examples": [1, 0, 56974],
+
+			"type": "integer",
+			"minimum": 1
+		},
+
+		"entity_id_str": {
+			"title": "Entity ID name",
+			"description" : "Unique name assigned by the designer to any entity in the game.",
+			"examples": ["player", "NPC01", "stone", "wooden_bow"],
+
+			"type": "string"
+		},
+
+		"entity_ttl": {
+			"title": "TTL before deletion",
+			"description": "How many miliseconds should the entity persist before deletion.",
+			"examples": [1000, 50, 10000],
+
+			"type": "integer",
+			"default": 0,
+			"minimum": 0
+		},
+
+		"entity_model_file": {
+			"title": "Render Model of Entity",
+			"description": "JSON file in MODEL_PATH.",
+			"examples": ["dark_male.json", "model/white_male.json"],
+
+			"type": "string",
+			"pattern": ".json$"
+		},
+
+		"entity_action": {
+			"title": "Entity Actions",
+			"description": "Possible game actions for the entity",
+			"examples": ["move", "shoot", "idle"],
+
+			"enum": ["move", "idle",
+				"idle_thrust", "thrust",
+				"idle_slash", "slash",
+				"idle_shoot", "shoot",
+				"idle_spellcast", "spellcast",
+				"expire"]
+		},
+
+		"entity_direction": {
+			"title": "Entity Direction",
+			"description": "Possible move directions for the entity.",
+			"examples": ["down", "left"],
+
+			"enum": ["up", "down", "left", "right"]
+		},
+
+		"entity_weapon_type": {
+			"title": "Entity Weapon Type",
+			"description": "Possible weapon types for the entity.",
+			"examples": ["bow", "sword"],
+
+			"enum": ["bow", "spear", "sword", "spell"]
+
+		},
+
+		"entity_health": {
+			"title": "Entity Health",
+			"description": "Percentage of entity health",
+			"examples": [100, 50, 0],
+
+			"type": "integer",
+			"default": 100,
+			"minimum": 0
+		},
+
+		"entity_damage": {
+			"title": "Entity Damage",
+			"description": "Damage",
+			"examples": [100, 50, 1],
+
+			"type": "integer",
+			"minimum": 0
+		},
+
+		"entity_score": {
+			"title": "Entity Score",
+			"description": "Score",
+			"examples": [100, 50, 1],
+
+			"type": "integer",
+			"minimum": 0
+		},
+
+		"sound_file": {
+			"title": "Sound File",
+			"description": "Sound file in the SOUND_PATH.",
+			"examples": ["scream.wav", "new/sounds/alarm.mp3"],
+
+			"type": "string"
+		},
+
+		"model_file": {
+			"title": "Model File",
+			"description": "Model file",
+			"examples": ["model.json", "models/model.json"],
+			"type": "string"
+		},
+
+		"color_rgb": {
+			"title": "RGB color",
+			"description": "RGB color definition.",
+			"examples": [[0, 0, 0], [0, 255, 128]],
+
+			"type": "array",
+			"items": {
+				"type": "integer",
+				"minimum": 0,
+				"maximum": 255
+			},
+			"itemCount": 3
+		},
+
+		"pixel_dim": {
+			"title": "Width/height",
+			"description": "Width/height in pixels.",
+			"examples": [0, 1, 5, 10],
+
+			"type": "integer",
+			"minimum": 0
+		},
+
+		"pixel_pos": {
+			"title": "Position in pixels.",
+			"description": "Position in pixels.",
+			"examples": [0, 1, 5, 10, -10],
+
+			"type": "integer"
+		},
+
+		"tile_pos": {
+			"title": "Position in tiles.",
+			"description": "Position in tiles.",
+			"examples": [0, 1, 5, 10, -10],
+
+			"type": "integer"
+		},
+
+		"map_name": {
+			"title": "Map name",
+			"description": "Name of the map.",
+			"examples": ["test_map", "level01"],
+			"type": "string"
+		},
+
+		"pixel_radius": {
+			"title": "Pixel name",
+			"description": "Radius of target in pixels.",
+			"examples": [0, 10, 102],
+			"type": "integer",
+			"minimum": 1
+		},
+
+		"position_target": {
+			"title": "Position of the target.",
+			"description": "Position of the target.",
+			"examples": [ ["test_map", 10, 10, 5], ["some_other_map", 12, 1, 5]],
+			"type": "array",
+			"prefixItems": [
+				{ "$ref": "#/definitions/map_name" },
+				{ "$ref": "#/definitions/tile_pos" },
+				{ "$ref": "#/definitions/tile_pos" },
+				{ "$ref": "#/definitions/pixel_radius" }
+			],
+			"items": false
+		}	
+	}
+}

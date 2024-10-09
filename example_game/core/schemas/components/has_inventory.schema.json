@@ -1,0 +1,48 @@
+{
+	"$id": "has_inventory.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "HasInventory Component",
+	"description": "Schema validating the HasInventory component.",
+
+	"examples" : [
+        {"type" : "has_inventory:HasInventory", "params" : {}},
+        {"type" : "has_inventory:HasInventory", "params" : {"inventory" : ["key", "other_key", "money", 4]} }
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "has_inventory:HasInventory" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the HasInventory component class - 'inventory', 'categories'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"inventory" : {
+					"title": "List of Items",
+					"description": "List of entities that are in the inventory.",
+					"$ref": "../definitions.schema.json#/definitions/list_of_entities",
+					"default": []
+				},
+				"categories": {
+					"title": "Item categories",
+					"description": "Dict of categories that are in the inventory.",
+					"type": "object",
+					"default": {}
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

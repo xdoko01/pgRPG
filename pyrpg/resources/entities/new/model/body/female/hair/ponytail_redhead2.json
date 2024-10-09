@@ -1,7 +1,0 @@
-{
-	"id" : "female_hair_ponytail_redhead2_model",
-	"templates" : ["new/model/body/female/hair"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/ponytail/redhead2.json}}
-	]
-}

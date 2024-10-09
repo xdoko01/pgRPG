@@ -1,0 +1,121 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_map_collision_01",
+	"title" : "Map Collisions Test",
+	"description" : "Test of new map collision processor",
+	"objective" : "POC of the new map collision system",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["collision_system.resolve_map_collisions_processor:ResolveMapCollisionsProcessor", {}],
+
+		// For displaying
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// Removal of obsolete flags
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+
+	],
+
+	// What maps to load
+	"maps" : ["test_map"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : ["model/body/female/human/white"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				{"type" : "controllable:Controllable", "params" :  {"key_profile" : "DEFAULT",
+					"control_cmds" : {
+						"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+						"UP": [["move_dir_add", {"moves" : ["up"]}]],
+						"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+						"ATTACK": []}
+					}
+				},
+
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_map"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "NPC",
+			"templates" : ["model/body/female/human/brown"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 450, "map" : "test_map"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_info_msg",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

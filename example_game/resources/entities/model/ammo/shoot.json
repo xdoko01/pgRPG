@@ -1,0 +1,6 @@
+{
+	"id" : "shoot_model",
+	"templates" : ["model/ammo"],
+	"components" : [
+	]
+}

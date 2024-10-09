@@ -1,0 +1,6 @@
+{
+	"id" : "wearable_female_hands_model",
+	"templates" : ["model/wearable/female"],
+	"components" : [
+	]
+}

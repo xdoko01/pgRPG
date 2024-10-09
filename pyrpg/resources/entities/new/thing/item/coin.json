@@ -1,8 +1,0 @@
-{
-	"id" : "coin",
-	"templates" : ["new/thing/item"],
-	"components" : [
-		{"type" : "new.collidable:Collidable", "params" : {"x" : 8, "y" : 8}},
-		{"type" : "new.pickable:Pickable", "params" : {}}
-	]
-}

@@ -1,8 +1,0 @@
-{
-	"id" : "fireball_spell_model",
-	"templates" : ["new/model/ammo/spellcast"],
-
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/ammo/spellcast/weapon_spellcast_fireball.json"}}
-	]
-}

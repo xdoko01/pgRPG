@@ -1,0 +1,7 @@
+{
+	"id" : "female_facial_frenchstache_pink_model",
+	"templates" : ["model/body/female/facial"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/frenchstache/pink.json}}
+	]
+}

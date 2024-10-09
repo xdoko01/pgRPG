@@ -1,0 +1,60 @@
+{
+	"$id": "brain.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Brain Component",
+	"description": "Schema validating the Brain component.",
+
+	"examples" : [
+		{
+			"type" : "brain:Brain", 
+			"params" : {"commands" : []}
+		},
+		{
+			"type" : "brain:Brain", 
+			"params" : {
+				"commands" : [
+					[null, "move", {"dx" : -120}],
+					[0, "loop", {"iterations" : 1}]
+				]
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "brain:Brain" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Brain component class - 'commands'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"commands" : {
+					"title": "Commands List",
+					"description": "List of commands.",
+					"type": "array",
+					"items": {
+						"type": "array",
+						"prefixItems": [
+							{ "type": "integer"},
+							{ "type": "string"},
+							{ "type": "object"}
+						]
+					}
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

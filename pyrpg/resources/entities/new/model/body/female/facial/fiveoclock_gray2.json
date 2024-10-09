@@ -1,7 +1,0 @@
-{
-	"id" : "female_facial_fiveoclock_gray2_model",
-	"templates" : ["new/model/body/female/facial"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/fiveoclock/gray2.json}}
-	]
-}

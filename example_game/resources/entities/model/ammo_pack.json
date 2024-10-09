@@ -1,0 +1,6 @@
+{
+	"id" : "ammo_pack_model",
+	"templates" : ["model"],
+	"components" : [
+	]
+}

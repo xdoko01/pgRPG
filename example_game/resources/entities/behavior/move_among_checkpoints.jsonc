@@ -1,0 +1,19 @@
+{
+    "id": "t_move_among_checkpoints",
+    "vars": ["$checkpoints"],
+    "components": [
+
+        {
+            "type" : "brain_ai:BrainAI", 
+            "params" : {
+                "blackboard": {
+                    "checkpoints": "$checkpoints"
+                }, 
+                "cmd_list": [
+                    {"line": 0, "type": "Behavior", "command": ["move_to_checkpoints", {"checkpoints": "^checkpoints"}]},
+                    {"line": 1, "type": "Goto", "jmp_to": 0}
+                ]
+            }
+        }
+    ]
+}

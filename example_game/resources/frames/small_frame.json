@@ -1,0 +1,7 @@
+{
+    "frame_image" : "example_game/resources/images/small_font_frame.png",
+    "frame_color" : "#FF0000",
+	"colorkey" : "#FF00FF",
+    "separator_color" : "#7F7F7F",
+    "elements_order" : ["TL", "TR", "T", "BL", "BR", "R", "L", "B", "M"]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "female_facial_beard_brown2_model",
+	"templates" : ["model/body/female/facial"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/beard/brown2.json}}
+	]
+}

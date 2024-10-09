@@ -1,0 +1,43 @@
+{
+	"$id": "teleportable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Teleportable Component",
+	"description": "Schema validating the Teleportable component.",
+
+	"examples" : [
+		{"type" : "teleportable:Teleportable", "params" : {}},
+		{"type" : "teleportable:Teleportable", "params" : {"keys" : ["golden_key", 23]}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "teleportable:Teleportable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Positon component class - 'keys'.",
+			
+			"type": "object",
+			"required": ["keys"],
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"keys" : {
+					"title": "Keys",
+					"description": "List of keys required to enter the teleport.",
+					"$ref": "../definitions.schema.json#/definitions/list_of_entities",
+					"default": []
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+}

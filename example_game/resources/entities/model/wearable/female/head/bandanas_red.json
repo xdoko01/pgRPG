@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_head_bandanas_red_model",
+	"templates" : ["model/wearable/female/head"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/head/bandanas/red.json}}
+	]
+}

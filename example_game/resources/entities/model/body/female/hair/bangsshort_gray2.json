@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_bangsshort_gray2_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/bangsshort/gray2.json}}
+	]
+}

@@ -1,6 +1,0 @@
-{
-	"id" : "child_elf_model",
-	"templates" : ["new/model/body/child"],
-	"components" : [
-	]
-}

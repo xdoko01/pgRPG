@@ -1,5 +1,0 @@
-{
-	"id" : "thrust_ammo_pack",
-	"templates" : ["new/thing/ammo_pack"],
-	"components" : []
-}

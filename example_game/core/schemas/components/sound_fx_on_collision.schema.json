@@ -1,0 +1,39 @@
+{
+	"$id": "sound_fx_on_collision.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "SoundFXOnCollision Component",
+	"description": "Schema validating the SoundFXOnCollision component.",
+
+	"examples" : [
+		{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "ouch.mp3"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "sound_fx_on_collision:SoundFXOnCollision" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the SoundFXOnCollision component class - 'sound'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["sound"],
+			"properties": {
+				"sound" : {
+					"$ref": "../definitions.schema.json#/definitions/sound_file"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

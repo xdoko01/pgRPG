@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_female_torso_robes_dark_gray_model",
+	"templates" : ["model/wearable/female/torso"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/female/torso/robes/dark_gray.json}}
+	]
+}

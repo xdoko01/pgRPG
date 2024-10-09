@@ -28,7 +28,7 @@ class ProgressBar2():
         return self.update
  
     def __exit__(self, *args):
-        self.finished=True # effectivelly finishes the Thread
+        self.finished = True # effectivelly finishes the Thread
 
     def update(self, iter):
         '''Set values for rendering of progress bar. It is called from different
@@ -39,6 +39,7 @@ class ProgressBar2():
 
             try:
                 self.total = len(iter)
+
             except TypeError: # is not iterator but for example generator
                 self.total = None
 
@@ -52,7 +53,6 @@ class ProgressBar2():
         while not self.finished:
 
             self.gui_manager.blit_background_animation()
-            #self.gui_manager.blit_background()
 
             self.gui_manager.blit_text(f'{self.header} - {self.text} ... {self.progress} / {self.total}')
 

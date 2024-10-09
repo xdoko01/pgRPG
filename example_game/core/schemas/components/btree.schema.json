@@ -1,0 +1,54 @@
+{
+	"$id": "btree.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "BTree Component",
+	"description": "Assigns an AI in a form of BTree to the entity",
+	"markdownDescription": "Assigns an AI in a form of BTree to the entity",
+
+	"examples" : [
+		{
+			"type" : "btree:BTree", 
+			"params" : {
+				"blackboard": {
+				},
+				"tree": {
+					"type": "Sequence",
+					"name": "Guard",
+					"children": [
+						{
+							"type": "Behavior",
+							"name": "Save My Position Component",
+							"cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "position:Position"}]
+						}
+					]
+				}
+			}
+		}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"title": "BTree Component",
+			"description": "Assigns an AI in a form of BTree to the entity",
+			"markdownDescription": "Assigns an AI in a form of BTree to the entity",
+			"enum": [ "btree:BTree" ]
+		},
+		"params": {
+			"title": "BTree Component parameters",
+			"description" : "BTree Command generator data.",
+			"markdownDescription" : "BTree Command generator data.",
+			"$ref": "../commands/generators/btree.schema.json#/btree",
+
+			"defaultSnippets": [
+				{
+					"label": "BTree Command Generator Parameters",
+					"description": "BTree Command Generator Parameters",
+					"body": { "blackboard": {}, "cmd_tree": {}}
+				}
+			]	
+
+		}
+	}	
+}

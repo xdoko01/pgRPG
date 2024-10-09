@@ -1,5 +1,0 @@
-{
-	"id" : "slash_ammo",
-	"templates" : ["new/thing/ammo"],
-	"components" : []
-}

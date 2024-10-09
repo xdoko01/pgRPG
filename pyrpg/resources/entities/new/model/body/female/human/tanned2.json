@@ -1,7 +1,0 @@
-{
-	"id" : "female_human_tanned2_model",
-	"templates" : ["new/model/body/female/human"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/body_female_human_tanned2.json"}}
-	]
-}

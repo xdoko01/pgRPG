@@ -1,6 +1,0 @@
-{
-	"id" : "slash_ammo_pack_model",
-	"templates" : ["new/model/ammo_pack"],
-	"components" : [
-	]
-}

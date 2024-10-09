@@ -1,0 +1,7 @@
+{
+	"id" : "female_nose_buttonnose_dark2_model",
+	"templates" : ["model/body/female/nose"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/nose/buttonnose_dark2.json}}
+	]
+}

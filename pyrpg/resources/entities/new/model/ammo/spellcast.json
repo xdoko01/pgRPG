@@ -1,6 +1,0 @@
-{
-	"id" : "spellcast_model",
-	"templates" : ["new/model/ammo"],
-	"components" : [
-	]
-}

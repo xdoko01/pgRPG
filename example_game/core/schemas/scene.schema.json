@@ -1,0 +1,138 @@
+{
+	"$id": "scene.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Game Scene specification document",
+	"description": "Schema validating the Game Scene specification.",
+
+
+	"required": [ "id", "title", "description", "objective"],
+	"properties": {
+		"id": {
+			"title": "Scene ID",
+			"description" : "The unique ID that is used by the program to identify the game scene.",
+			"type": "string",
+			"minLength": 3
+		},
+		"title": {
+			"title": "Scene title",
+			"description" : "The Scene title to be shown on different game screens.",
+			"type": "string"
+		},
+		"description": {
+			"title": "Scene description",
+			"description" : "The Scene description to be shown on different game screens.",
+			"type": "string"
+		},
+		"objective": {
+			"title": "Scene objective",
+			"description" : "The Scene objective to be shown on different game screens.",
+			"type": "string"
+		},
+		"prereqs": {
+			"title": "Prerequisities",
+			"description" : "List of scenes that will be uploaded prior to scene load.",
+			"type": "array",
+			"minLength": 0
+		},
+		"cleanup": {
+			"title": "Cleanups",
+			"description" : "Cleanups to be done before scene upload",
+			"type": "object",
+			"properties": {
+				"processors": {
+					"description": "List of processors to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"maps": {
+					"description": "List of maps to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"templates": {
+					"description": "List of templates to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"entities": {
+					"description": "List of entities to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"dialogs": {
+					"description": "List of dialogs to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"handlers": {
+					"description": "List of handlers to cleanup",
+					"type": "array",
+					"items": {
+					  "type": "string"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				}
+			}
+		},
+		"processors": {
+			"title": "Scene Processors",
+			"description" : "List of processors used for processing the game logic.",
+			"type": "array"
+		},
+		"maps": {
+			"title": "Scene Maps",
+			"description" : "List of maps used for scene.",
+			"type": "array"
+		},
+		"dialogs": {
+			"title": "Scene Dialogs",
+			"description" : "List of dialogs used for scene.",
+			"type": "array"
+		},
+		"templates": {
+			"title": "Scene Templates",
+			"description" : "List of templates used in the scene.",
+			"type": "array",
+			"items": {
+				"$ref": "template.schema.json"
+			},
+			"uniqueItems": true
+		},
+		"entities": {
+			"title": "Scene Entities",
+			"description" : "List of entities used in the scene.",
+			"type": "array",
+			"items": {
+				"$ref": "entity.schema.json"
+			},
+			"uniqueItems": true
+		},
+		"handlers": {
+			"title": "Scene Event Handlers",
+			"description" : "List of entities used in the scene.",
+			"type": "array"
+		}
+	}
+}

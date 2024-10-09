@@ -1,7 +1,0 @@
-{
-	"id" : "weapon_model",
-	"templates" : ["original/model"],
-	"components" : [
-		{"type" : "original.collidable:Collidable", "params" : {"x" : 20, "y" : 20}}
-	]
-}

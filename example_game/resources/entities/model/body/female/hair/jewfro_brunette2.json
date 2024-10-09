@@ -1,0 +1,7 @@
+{
+	"id" : "female_hair_jewfro_brunette2_model",
+	"templates" : ["model/body/female/hair"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/hair/jewfro/brunette2.json}}
+	]
+}

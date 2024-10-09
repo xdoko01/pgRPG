@@ -1,0 +1,5 @@
+{
+	"id" : "spellcast_ammo",
+	"templates" : ["thing/ammo"],
+	"components" : []
+}

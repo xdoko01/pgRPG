@@ -1,0 +1,216 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_teleportation_01",
+	"title" : "Teleportation Test",
+	"description" : "Test teleportation processors",
+	"objective" : "POC of the teleportation system",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
+		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+
+		// For teleportation
+		["teleport_system.generate_teleportation_processor:GenerateTeleportationProcessor", {}],
+		["teleport_system.perform_teleportation_processor:PerformTeleportationProcessor", {}],
+
+		// For displaying
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// For clearing of processing of movements and collisions and pickups
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+
+		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+
+		["teleport_system.remove_flag_is_about_to_be_teleported_by_processor:RemoveFlagIsAboutToBeTeleportedByProcessor", {}],
+		["teleport_system.remove_flag_has_teleported_processor:RemoveFlagHasTeleportedProcessor", {}],
+		["teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor", {}]
+
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs" : [
+		{
+			"id" : "dlg_scene_start",
+			"templates" : ["basic"],
+
+			"dimensions" : [630, 200],
+
+			"font" : {
+				"path" : "small_font.json",
+				"size" : 24,
+				"color" : "#00FFFF",
+				"align" : "LEFT"
+				},
+		
+			"texts" : [
+				{
+					"text" : "Teleportation test no.1 - Demonstration of teleportation, no keys",
+					"position" : [5, 20]
+				}
+			],
+			
+			"frames" : [
+				{
+					"font" : {
+						"path" : "small_font.json",
+						"size" : 16,
+						"color" : "#FFFFFF",
+						"align" : "LEFT"
+						},
+
+					"texts" : [
+						{
+							"text" : "Teleportable entity can be teleported\nby Teleport entity upon collision.\nNo keys supported in this demo.",
+							"position" : [5, 65]
+						}
+					]
+				},
+				{
+					"texts" : [
+						{
+							"text" : "Press Enter to continue ...",
+							"position" : [5, 165]
+						}
+					]
+				}
+			]
+		}
+	],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : [
+				"model/body/male/human/dark1", // model template
+				"controls/default" // controls template
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitating teleportation
+				{"type" : "teleportable:Teleportable", "params" :  {}},
+
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		},
+		{
+			"id" : "teleport01",
+			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg teleportation
+				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 3, "tile_dest_y" : 18}},
+
+				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "teleport02",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg teleportation
+				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
+
+				{"type" : "position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "teleport03",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg teleportation
+				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10}},
+
+				{"type" : "position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		}
+
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id" : "ev_scene_start",
+				"actions" : [
+					"SCRIPT",
+					"show_dlg_window", 
+					{"dialog_id" : "dlg_scene_start", "position" : [5, 5]}
+				]
+			}
+		],
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

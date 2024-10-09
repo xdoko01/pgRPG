@@ -21,9 +21,9 @@ for dir in dirs:
 		with open('../' + dir + '_' + file, 'w') as fp:
 			fp.write("""{
 	"id" : "wearable_male_torso_""" + dir + "_" + file.split('.')[0] + """_model",
-	"templates" : ["new/model/wearable/male/torso"],
+	"templates" : ["model/wearable/male/torso"],
 	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/""" + dir + "/" + file + """}}
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/""" + dir + "/" + file + """}}
 	]
 }""")
 	# Return back
@@ -42,9 +42,9 @@ for file in files:
 	with open('../' + file, 'w') as fp:
 		fp.write("""{
 	"id" : "wearable_male_belt_""" + file.split('.')[0] + """_model",
-	"templates" : ["new/model/wearable/female/belt"],
+	"templates" : ["model/wearable/female/belt"],
 	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/belt/""" + file + """}}
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/belt/""" + file + """}}
 	]
 }""")
 '''

@@ -1,0 +1,6 @@
+{
+	"id" : "male_model",
+	"templates" : ["model/body"],
+	"components" : [
+	]
+}

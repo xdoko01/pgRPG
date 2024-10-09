@@ -1,0 +1,133 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "face_target",
+	"title" : "Test command face_target",
+	"description" : "Test command face_target",
+	"objective" : "POC of NPC controlled by the script",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// For commands
+		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For movement
+		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		
+		// For animation
+		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For displaying
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
+
+		// Removal of obsolete flags
+		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "NPC",
+			"templates" : [
+				"model/body/male/wolfman/gold",
+				"behavior/move_between_2_points($x1=10,$y1=10,$x2=30,$y2=10)" // behavior template
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}}
+			]
+		},
+		
+		{
+			"id" : "player01",
+			"templates" : ["model/body/male/human/brown"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+				{
+					"type" : "brain_ai:BrainAI", 
+					"params" : {
+
+						"blackboard": {
+							"target_ent": "NPC"
+						}, 
+
+						"cmd_tree": {
+							"type": "Repeater",
+							"name": "Repeat Indefinetelly",
+							"children": [
+								{
+									"type": "Sequence",
+									"name": "Stare at the target",
+									"children": [
+										{"name": "Face the NPC", "type": "Behavior", "command": ["face_target", {"target": "^target_ent"}]},
+										{"name": "Wait", "type": "Behavior", "command": ["wait", {"duration_ms" : 1000}]}
+									]
+								}
+							]
+						}
+					}
+				},
+
+				{"type" : "position:Position", "params" : {"tile_x": 20, "tile_y": 12, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

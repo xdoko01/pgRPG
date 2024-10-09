@@ -1,0 +1,52 @@
+{
+    "id": "t_hunter",
+    "vars": ["$target_in"],
+    "components": [
+        {
+            "type" : "btree:BTree", 
+            "params" : {
+                "blackboard": {
+                },
+                "tree": {
+                    // Find and attack target
+                    "type": "Sequence",
+                    "name": "Hunter",
+                    "children": [
+                        {
+                            // Find target
+                            "type": "Sequence",
+                            "name": "Find Target",
+                            "children": [
+                                {
+                                    // Find target and save it on the bb
+                                    "type": "Behavior",
+                                    "name": "Set Target",
+                                    "cmd_process": ["btree.bb_set_globals", {"bb_target_entity": "$target_in"}]
+                                }
+                            ]
+                        },
+                        {
+                            // Save my position component ref on bb
+                            "type": "Behavior",
+                            "name": "Save My Position Component",
+                            "cmd_process": ["btree.bb_set_comp_globals", {"bb_key": "bb_entity_pos_comp", "component": "position:Position"}]
+                        },
+
+                        {
+                            "type": "TemplateTree",
+                            "name": "Destroy Target",
+                            "template": [
+                                "destroy_target",
+                                {
+                                    "$bb_entity_pos_comp_in": "bb_entity_pos_comp",
+                                    "$target_in": "bb_target_entity",
+                                    "$attack_time_ms_in": 750
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,63 @@
+{
+	"$id": "ammo_pack.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "AmmoPack Component",
+	"description": "Marks entity as ammo pack",
+	"markdownDescription": "Marks entity as ammo pack",
+
+	"examples" : [
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type": "wooden_arrows_pack"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"title": "AmmoPack Component",
+			"description": "Marks entity as ammo pack",
+			"markdownDescription": "Marks entity as ammo pack",
+			"enum": [ "ammo_pack:AmmoPack" ]
+		},
+		"params": {
+			"title": "AmmoPack Component parameters",
+			"description" : "weapon (required), type (required)",
+			"markdownDescription" : "`weapon` (required), `type` (required)",
+			"type": "object",
+			"required": ["weapon", "type"],
+			"$ref": "#/$defs/cond_params",
+
+			"defaultSnippets": [
+				{
+					"label": "Required AmmoPack Parameters",
+					"description": "Required AmmoPack parameters.",
+					"body": { "weapon": "${1:}", "type": "${2:}"}
+				}
+			],	
+
+			"properties": {
+				"weapon" : {
+					"title": "Weapon Type",
+					"description": "Type of weapon for which ammo pack is aimed.",
+					"markdownDescription": "Type of weapon for which ammo pack is aimed.",
+					"examples": ["bow", "sword", "spear", "spell"],
+					"enum": ["bow", "sword", "spear", "spell"]
+				},
+				"type" : {
+					"title": "AmmoPack Type",
+					"description": "Identifier of ammo type so that same types can be grouped together.",
+					"markdownDescription": "Identifier of ammo type so that same types can be grouped together.",
+					"examples": ["iron_arrows", "wooden_arrows"],
+					"type": "string"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

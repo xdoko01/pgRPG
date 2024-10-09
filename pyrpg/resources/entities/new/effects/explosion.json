@@ -1,8 +1,0 @@
-{
-	"id" : "explosion_effect",
-	"templates" : ["new/effects"],
-	"components" : [
-		{"type" : "new.renderable_model:RenderableModel", "params" : {"model" : "generic/effect/explosion.json"}},
-		{"type" : "new.is_destroyed:IsDestroyed", "params" : {"ttl" : 500}}
-	]
-}

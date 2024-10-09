@@ -7,7 +7,7 @@
 	"required": [ "type", "params"],
 	"properties": {
 		"type": {
-			"enum": [ "new.position:Position" ]
+			"enum": [ "position:Position" ]
 		},
 		"params": {
 			"type": "object",

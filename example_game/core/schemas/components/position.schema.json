@@ -1,0 +1,114 @@
+{
+	"$id": "position.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Position Component",
+	"description": "Schema validating the Position component.",
+
+	"examples" : [
+		{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+		{"type" : "position:Position", "params" : {"tile_x" : 20, "tile_y" : 5, "map" : "test_arena_sand"}},
+		{"type" : "position:Position", "params" : {"tile_x" : 20, "y" : 250, "dir_name": "left", "map" : "test_arena_sand"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "position:Position" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Positon component class - 'x', 'y', 'tile_x', 'tile_y', 'map', 'dir_name'. Coordinates (x or tile_x) and (y or tile_y) together with the map should be specified.",
+			
+			"type": "object",
+			"required": ["map"],
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"x" : {
+					"title": "X-axis position",
+					"description": "X-axis position in pixels on the map.",
+					"type": "number",
+					"minimum": 0
+				},
+				"tile_x" : {
+					"title": "X-axis position in tiles",
+					"description": "X-axis position in tiles on the map.",
+					"default" : 0,
+					"type": "number",
+					"minimum": 0
+				},
+				"y": {
+					"title": "Y-axis position",
+					"description": "Y-axis position in pixels on the map.",
+					"type": "number",
+					"minimum": 0
+				},
+				"tile_y": {
+					"title": "Y-axis position in tiles",
+					"description": "Y-axis position in tiles on the map.",
+					"default" : 0,
+					"type": "number",
+					"minimum": 0
+				},
+				"map": {
+					"title": "Map name",
+					"description": "Name of the map where entity is present.",
+					"type": "string"
+				},
+				"dir_name": {
+					"title": "Direction name",
+					"description": "Name of the direction where entity is heading.",
+					"default" : "down",
+					"enum" : ["up", "down", "left", "right"]
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"$ref": "#/$defs/cond_coords_required" 
+		},
+		"cond_coords_required": {
+			"description" : "One of duo 'x', 'tile_x' or 'y', 'tile_y' must be always defined.",
+			"allOf" : [
+				{ "$ref": "#/$defs/cond_either_x_or_tile_x_required" },
+				{ "$ref": "#/$defs/cond_either_y_or_tile_y_required" }
+			]
+		},
+		"cond_either_x_or_tile_x_required" : {
+			"description" : "Either 'x' or 'tile_x' parameter must be present.",
+			"anyOf" : [
+				{
+					"required" : ["x", "tile_x"]
+				},
+				{
+					"not" : { "required" : ["x"] },
+					"required" : ["tile_x"]
+				},
+				{
+					"not" : { "required" : ["tile_x"] },
+					"required" : ["x"]
+				}
+			]
+		},
+		"cond_either_y_or_tile_y_required" : {
+			"description" : "Either 'y' or 'tile_y' parameter must be present.",
+			"anyOf" : [
+				{
+					"required" : ["y", "tile_y"]
+				},
+				{
+					"not" : { "required" : ["y"] },
+					"required" : ["tile_y"]
+				},
+				{
+					"not" : { "required" : ["tile_y"] },
+					"required" : ["y"]
+				}
+			]
+		}
+	}
+}

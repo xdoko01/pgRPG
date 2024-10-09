@@ -1,7 +1,9 @@
 import logging
 
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config.paths import ENTITY_PATH
+from pyrpg.core.config.filepaths import ENTITY_PATH # for ENTITY_PATH
+from pyrpg.core.config.modulepaths import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
+
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.functions import get_class_from_def
 from pyrpg.functions import translate # for creation of the component
@@ -10,9 +12,6 @@ from pyrpg.functions import get_dict_params # for filling of template with varia
 
 # Create logger
 logger = logging.getLogger(__name__)
-
-COMPONENTS_PCKG = 'pyrpg.core.ecs.components'
-PROCESSORSS_PCKG = 'pyrpg.core.ecs.processors'
 
 class ECSManager:
     '''Encapsulates functionalities needed to create, maintain and remove components
@@ -54,7 +53,7 @@ class ECSManager:
     ## PROCESSORS - START
     #####################
     def get_proc_class_from_def(self, proc_class_def):
-        return get_class_from_def(proc_class_def, PROCESSORSS_PCKG)
+        return get_class_from_def(proc_class_def, MODULEPATHS["PROCESSOR_MODULE_PATH"])
 
     def load_processor(self, processor_def: list) -> None:
         '''Takes processor definition and registers
@@ -96,7 +95,7 @@ class ECSManager:
         # Substitute the attributes with reference to specifice engine functions
         proc_attrs = { arg : self._game_functions.get(arg) for arg in proc_attrs if self._game_functions.get(arg) is not None}
 
-        # Overwrite the attributes with custom attributes from the json definition of the quest
+        # Overwrite the attributes with custom attributes from the json definition of the scene
         proc_attrs = {**proc_attrs, **cust_proc_class_attrs}
 
         # Initiate and return the processor class
@@ -172,7 +171,7 @@ class ECSManager:
         :return: Returns reference to the component class.
         :raises: ValueException, if component class cannot be identified
         '''
-        return get_class_from_def(comp_class_def, COMPONENTS_PCKG)
+        return get_class_from_def(comp_class_def, MODULEPATHS["COMPONENT_MODULE_PATH"])
 
     def create_component_from_def(self, component_def: dict) -> Component:
         '''Returns new instance of component created.
@@ -286,7 +285,7 @@ class ECSManager:
         '''
         self._create_empty_entity(entity_alias=entity_def["id"])
 
-    def load_update_empty_entity(self, entity_def: dict) -> None:
+    def load_update_empty_entity(self, entity_def: dict, add_to_templates: bool=True) -> None:
         '''Fills the empty entity with components.
         
         It is called from the engine as the second step of loading entities.
@@ -296,6 +295,10 @@ class ECSManager:
         
         :param entity_def: Description of entity in JSON format (python dict).
         :type entity_def: dict
+
+        :param add_to_templates: Whether to add entity definition automatically to the templates
+                                 where it can be used for creation of other entities.
+        :type add_to_templates: bool
         '''
 
         # Find the entity_id that is associated with the alias stored in entity_def["id"]
@@ -304,14 +307,14 @@ class ECSManager:
         # Now add components to this entity id empty envelope
         self._update_entity(entity_def=entity_def, entity_id=entity_id)
 
-    #def load_entity(self, entity_def: dict) -> None:
-    #    '''Creates brand new entity based on entity definition in a form of dictionary.'''
-    #    self.create_entity(entity_def)
+        # Additionally, add every entity to the template_definitions so every created entity can
+        # be used as a template. (see sokoban_new_level01 scene for examples).
+        if add_to_templates: self.load_template(template_def=entity_def)
 
     def create_entity(self, entity_def: dict, entity_alias: str=None) -> int:
         '''Creates brand new entity with components - called from game logic to factory 
         new entities during the game - projectiles etc.
-        Entities that are created from quest file are created using load_register_empty_entity
+        Entities that are created from scene file are created using load_register_empty_entity
         and load_update_empty_entity function.
 
         :param entity_def: Description of entity in JSON format (python dict).
@@ -336,8 +339,18 @@ class ECSManager:
         return entity_id
 
     def _create_empty_entity(self, entity_alias: str=None) -> int:
-        '''Create empty envelope for the entity where later components will be added'''
+        '''Create empty envelope for the entity where later components will be added.
+        If entity already exists in the game world, return its existing entity_id and
+        do not create new empty entity.
+        '''
         
+        # If entity_alias already exists in the world, do not create new empty entity.
+        # (Such entities will be only updated by the new components)
+        entity_id = self.get_entity_id(entity_alias=entity_alias) 
+        if entity_id is not None: 
+            logger.info(f'Entity alias "{entity_alias}" already exists for {entity_id=}. Skipping creation of new empty entity.')
+            return entity_id
+
         # Create new entity and get its id
         entity_id = self._world.create_entity()
 
@@ -367,15 +380,15 @@ class ECSManager:
         for template_id in entity_def.get("templates", []):
 
             # Get the template data
-            logger.info(f'**Preparing entity data from template ""{template_id}"".')
+            logger.info(f'**Preparing data for entity_id {entity_id} from template "{template_id}".')
             template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
 
             # Create all entities from the template
-            logger.info(f'**Creating components from template ""{template_id}"".')
+            logger.info(f'**Creating components for entity_id {entity_id} from template "{template_id}".')
             try:
                 self._update_entity(template_entity_data, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in creation of entity from template "{template_id}".')
+                logger.error(f'Error in creation of entity {entity_id} from template "{template_id}".')
                 raise ValueError
 
         # Add/update components
@@ -383,7 +396,7 @@ class ECSManager:
             try:
                 self.update_component(component_def=component, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in update of component from definition "{component}".')
+                logger.error(f'Error in update of component of entity {entity_id} from definition "{component}".')
                 raise ValueError
 
         # Remove components
@@ -391,19 +404,19 @@ class ECSManager:
             try:
                 self.remove_component(component_def=component, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in removal of component from definition "{component}".')
+                logger.error(f'Error in removal of component of entity {entity_id} from definition "{component}".')
                 raise ValueError
 
-    def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
+    def delete_entity(self, entity_alias: str=None, entity_id: int=None) -> None:
         ''' Delete and un-register entity from the world.'''
 
-        logger.debug(f'About to delete entity id {entity_id} / {entity_alias or "unknown"}.')
+        logger.debug(f'About to delete entity id {entity_id=} / {entity_alias or "unknown"}.')
 
         # Get alias and id
         entity_alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
         entity_id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
 
-        logger.debug(f'After lookup for delete entity id {entity_id} / {entity_alias or "unknown"}.')
+        logger.debug(f'After lookup for delete entity id {entity_id=} / {entity_alias or "unknown"}.')
 
         # Delete it from Esper world
         self._world.delete_entity(entity=entity_id)
@@ -411,7 +424,7 @@ class ECSManager:
         # Un-register the entity - ignore if not found, can be unregistered entity
         self._unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
 
-        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} successfully removed.')
+        logger.info(f'Entity id {entity_id=} / {entity_alias or "unknown"} successfully removed.')
 
     #####################
     ## ENTITIES - END
@@ -422,7 +435,7 @@ class ECSManager:
         using this call to ScriptManager rather than passing reference to the dictionary directly'''
         return self._alias_to_entity
 
-    def get_entity_id(self, entity_alias: str) -> int:
+    def get_entity_id(self, entity_alias: str) -> int | None:
         ''' Translate entity alias (string) to entity id (integer)
         based on _alias_to_entity dictionary.
         '''
@@ -532,14 +545,14 @@ class ECSManagerMock:
     try_component = lambda self,e,c: None
 
     def try_component(self, entity, comp):
-        from pyrpg.core.ecs.components.new.position import Position, PositionMock
+        from core.components.position import Position, PositionMock
         if comp == Position:
             return PositionMock(x=0,y=0)
         else:
             return None
 
     def component_for_entity(self, entity, comp):
-        from pyrpg.core.ecs.components.new.position import Position, PositionMock
+        from core.components.position import Position, PositionMock
         if comp == Position:
             return PositionMock(x=0,y=0)
         else:

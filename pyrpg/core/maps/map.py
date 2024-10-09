@@ -1,9 +1,8 @@
 '''
 For tests call python -m pyrpg.core.maps.map -v
 '''
-import pyrpg.core.config.config as config # for TILE_RES
-
-from pyrpg.core.config.paths import MAP_PATH
+from pyrpg.core.config.game import GAME # for TILE_RES_PX
+from pyrpg.core.config.filepaths import MAP_PATH # MAP_PATH
 
 import pygame
 from pytmx.util_pygame import load_pygame
@@ -46,7 +45,7 @@ class Map:
 
 
 		# Rescale images
-		self.tmxdata.images = images_rescale(self.tmxdata.images, (config.TILE_RES, config.TILE_RES))
+		self.tmxdata.images = images_rescale(self.tmxdata.images, (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
 
 		# Prepare animation meta-data
 		self.anim_last_frame = {}
@@ -60,8 +59,8 @@ class Map:
 
 		# Map properties print(f'Width: {tmxdata.width} Height: {tmxdata.width} TileWidth: {tmxdata.tilewidth} TIleHeight: {tmxdata.tileheight}')
 		# With and Height of the map in pixels
-		self.width = self.tmxdata.width * config.TILE_RES
-		self.height = self.tmxdata.height * config.TILE_RES
+		self.width = self.tmxdata.width * GAME["TILE_RES_PX"]
+		self.height = self.tmxdata.height * GAME["TILE_RES_PX"]
 
 		# Generate the graph for pathfinding on the given map
 		self.path_graph = self.generate_path_graph()
@@ -111,10 +110,10 @@ class Map:
 		(x1, y1, x2, y2) = rect
 
 		# Calculate the topleft and bottom-right tile map cell positions to display
-		x1 = int(x1 // config.TILE_RES) #0 -> 0
-		y1 = int(y1 // config.TILE_RES) #0 -> 0
-		x2 = int(x2 // config.TILE_RES) #640 -> 10+1 ... 10(real)
-		y2 = int(y2 // config.TILE_RES) #480 -> 8+1  ... 11(real)
+		x1 = int(x1 // GAME["TILE_RES_PX"]) #0 -> 0
+		y1 = int(y1 // GAME["TILE_RES_PX"]) #0 -> 0
+		x2 = int(x2 // GAME["TILE_RES_PX"]) #640 -> 10+1 ... 10(real)
+		y2 = int(y2 // GAME["TILE_RES_PX"]) #480 -> 8+1  ... 11(real)
 
 		for y, x in product(range(y1, min(y2 + 1, self.tmxdata.height)), range(x1, min(x2 + 1, self.tmxdata.width))): # added min function so that small maps are not throwing errors
 			tile = self.get_tile_image(x, y, layer)
@@ -212,22 +211,22 @@ class Map:
 		x, y = source_px[0], source_px[1]
 
 		if abs(dx) > abs(dy):
-			x_incr = sx * config.TILE_RES
+			x_incr = sx * GAME["TILE_RES_PX"]
 			y_incr = x_incr * dy/dx
 
 			while sx*x < sx*target_px[0]:
 				#print(f'x:{x}, y:{y}, sx*x:{sx*x}, sx*target_px[0]:{sx*target_px[0]}')
-				yield (x // config.TILE_RES, int(y // config.TILE_RES))
+				yield (x // GAME["TILE_RES_PX"], int(y // GAME["TILE_RES_PX"]))
 				x = x + x_incr
 				y = y + y_incr
 
 		else:
-			y_incr = sy * config.TILE_RES
+			y_incr = sy * GAME["TILE_RES_PX"]
 			x_incr = y_incr * dx/dy
 
 			while sy*y < sy*target_px[1]:
 				#print(f'x:{x}, y:{y}, sy*y:{sy*y}, sy*target_px[1]:{sy*target_px[1]}')
-				yield (int(x // config.TILE_RES), y // config.TILE_RES)
+				yield (int(x // GAME["TILE_RES_PX"]), y // GAME["TILE_RES_PX"])
 				x = x + x_incr
 				y = y + y_incr
 

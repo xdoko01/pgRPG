@@ -1,0 +1,39 @@
+{
+	"$id": "scorable_on_no_health.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "ScorableOnNoHealth Component",
+	"description": "Schema validating the ScorableOnNoHealth component.",
+
+	"examples" : [
+		{"type" : "scorable_on_no_health:ScorableOnNoHealth", "params" : {"score" : 10}},
+		{"type" : "scorable_on_no_health:ScorableOnNoHealth", "params" : {}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "scorable_on_no_health:ScorableOnNoHealth" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the ScorableOnNoHealth component class - 'score'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"score" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_score"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

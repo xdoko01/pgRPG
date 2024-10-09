@@ -1,0 +1,339 @@
+{
+
+	"DISPLAY" : {
+		"RESOLUTION" : [640, 480],
+		"BITDEPTH" : 24,
+		"FULLSCREEN" : false,
+		"MAX_FPS" : 500,
+		"SHOW_FPS" : true,
+		"GUI_WINDOW_RATIO": 1.5
+	},
+
+	"FILEPATHS": {
+		"GAME_PATH": "example_game", // mandatory to fill
+		"PYRPG_PATH": "pyrpg", // mandatory to fill
+	
+		"FONT_PATH" : "resources/fonts/",
+		"FRAME_PATH" : "resources/frames/",
+		"DIALOG_PATH" : "resources/dialogs/",
+		"MODEL_PATH" : "resources/models/",
+		"IMAGE_PATH" : "resources/images/",
+		"SCENE_PATH" : "resources/scenes/",
+		"ENTITY_PATH" : "resources/entities/",
+		"BTREE_PATH" : "resources/btrees/",
+		"MAP_PATH" : "resources/maps/",
+		"SOUND_PATH" : "resources/sounds/",
+		"LOG_PATH" : "logs/",
+		"SAVE_PATH" : "save/",
+		"CONSOLE_SCRIPT_PATH" : "resources/scripts/",
+		"MENU_BACKGROUND_PATH" : "resources/images/menu_background/waterfall/"
+	},
+
+	"MODULEPATHS": {
+		"SCRIPT_MODULE_PATH" : "core.scripts",
+		"COMMAND_MODULE_PATH" : "core.commands",
+		"PROCESSOR_MODULE_PATH": "core.processors",
+		"COMPONENT_MODULE_PATH": "core.components"
+	},
+	
+
+	"KEYS" : {
+		"KEY_CONTROLS_1": {"UP": "K_u", "DOWN": "K_j", "LEFT": "K_h", "RIGHT": "K_k", "ATTACK": "K_z"},
+		"K_CONSOLE_TOGGLE": "K_F9",
+		"K_SAVE_GAME": "K_F5",
+		"K_LOAD_GAME": "K_F6",
+		"K_PAUSE_GAME": "K_p"
+	},
+
+	"GAME": {
+		"MOVE_SPEED_PX_PER_SEC": 120,
+		"TILE_RES_PX": 64,
+		"DEAD_TIME_TO_DISAPPEAR_MS": 10000
+	},
+
+	"MESSAGES" : {
+		"ON_EVENT" : {
+			"ITEM_PICKUP" : ["FROM JSON: {} was picked up by entity {}", ["generator_obj", "other_obj"]]
+		},
+		"DEFAULT_TTL_MS" : 10000
+	},
+
+	"FONTS": {
+		"GAME_DEBUG_FONT": "small_font.json",
+		"PLAYER_TALK_FONT": "good_neighbours_font.json",
+		"GAME_MSG_FONT": "good_neighbours_font.json",
+		"GUI_MANAGER_FONT": "good_neighbours_font.json"
+	},
+
+	"FRAMES": {
+		"GAME_DEBUG_FRAME": "debug_frame.json",
+		"PLAYER_TALK_FRAME": "small_frame.json"
+	},
+
+	"debug" : {
+		"show_health" : true,
+		"show_state" : true,
+		"show_weapons" : true,
+		"show_wearables" : true,
+		"show_inventory" : true,
+		"show_labels" : true,
+		"show_position" : true,
+		"show_brain" : true,
+		"show_collision" : true,
+		"show_direction" : true,
+		"show_map_screen_area" : true
+	},
+
+	"LOGGING": {
+		"version" : 1.0,
+		"disable_existing_loggers": false,
+	
+		"formatters": {
+			"console_short": {
+				"format": "%(name)s - %(message)s"
+			},
+			"short": {
+				"format": "%(filename)-45s - %(message)s"
+			},
+			"short_with_func": {
+				"format": "%(filename)-2s  %(funcName)-18s - %(message)s"
+			},
+			"simple": {
+				"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+			},
+			"extra": {
+				"format":"%(asctime)-2s %(levelname)-6s %(name)-30s %(filename)-15s %(funcName)-18s %(lineno)-6s %(message)s",
+				"datefmt":"%m-%d %H:%M:%S"
+			}
+		},
+	
+		"handlers": {
+			"console": {
+				"class": "logging.StreamHandler",
+				"formatter": "simple",
+				"stream": "ext://sys.stdout"
+			},
+			"in_game_console": {
+				"class": "logging.StreamHandler",
+				"formatter": "console_short",
+				"stream": "ext://pyrpg.core.managers.console_manager"
+			},
+			"file_handler_comp": {
+				"class": "logging.FileHandler",
+				"formatter": "short",
+				"filename": "logs/components.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_proc": {
+				"class": "logging.FileHandler",
+				"formatter": "short",
+				"filename": "logs/processors.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_config": {
+				"class": "logging.FileHandler",
+				"formatter": "short",
+				"filename": "logs/config.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_mng": {
+				"class": "logging.FileHandler",
+				"formatter": "short_with_func",
+				"filename": "logs/managers.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_cmd": {
+				"class": "logging.FileHandler",
+				"formatter": "short_with_func",
+				"filename": "logs/commands.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_btrees": {
+				"class": "logging.FileHandler",
+				"formatter": "short_with_func",
+				"filename": "logs/btrees.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_blists": {
+				"class": "logging.FileHandler",
+				"formatter": "short_with_func",
+				"filename": "logs/blists.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"file_handler_engine": {
+				"class": "logging.FileHandler",
+				"formatter": "short_with_func",
+				"filename": "logs/engine.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
+			"null": {
+				"class": "logging.NullHandler"
+			}
+		},
+	
+		"loggers" : {
+	
+			// Save all the logs from component classes to the file
+			"core.components" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["file_handler_comp"], // uncomment to log all the processors
+				"handlers" : ["null"],  // do not log to file for speed
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+	
+			// Save all the logs from processor classes to the file
+			"core.processors" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["file_handler_proc"], // uncomment to log all the processors
+				"handlers" : ["null"], // do not log to file for speed
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+
+			// Save all the logs from engine
+			"pyrpg.core.config" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["file_handler_config"], // uncomment to log to the file
+				"handlers" : ["null"], // do not log to file for speed
+				//"handlers" : ["console"], // log to the text console
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+			
+			// Save all the logs from engine
+			"pyrpg.core.engine" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["file_handler_engine"], // uncomment to log to the file
+				"handlers" : ["null"], // do not log to file for speed
+				//"handlers" : ["console"], // log to the text console
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+	
+			// Save all the logs from behavior tree classes to the file
+			"pyrpg.core.commands.generators.btree" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["file_handler_btrees"], // uncomment to log to the file
+				"handlers" : ["null"], // do not log to file for speed
+				//"handlers" : ["console"], // log to the text console
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+	
+			// Save all the logs from behavior list classes to the file
+			"pyrpg.core.commands.generators.blist" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["file_handler_blists"], # uncomment to log to the file
+				"handlers" : ["null"], // do not log to file for speed
+				//"handlers" : ["console"],  # log to the text console
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+	
+			// Save all the logs from manager classes to the file
+			"pyrpg.core.managers" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				"handlers" : ["file_handler_mng"], // uncomment to log all the managers
+				//"handlers" : ["null"], // do not log to file for speed
+				//"handlers" : ["console"], // log to the text console
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+	
+			// Save all the logs from command functions to the file
+			"core.commands" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				//"handlers" : ["console"], // uncomment to log all the commands
+				//"handlers" : ["file_handler_cmd"], // uncomment to log all the commands
+				"handlers" : ["null"], // do not log to file for speed
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+	
+			// Save all the logs other from processor classes to console
+			"pyrpg" : {
+				"level" : "INFO", // Passes INFO and upper logs only, i.e. INFO, WARNING, ERROR, CRITICAL
+				//"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				"handlers" : ["in_game_console", "console"],
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			}
+	
+		},
+	
+		// Display all DEBUG - INFO - WARNING - ERROR - CRITICAL that are not covered by above loggers to console
+		"root" : {
+			"level" : "INFO",
+			"handlers" : ["console"]
+		}
+	},
+
+	"CONSOLE" : {
+		"global" : {
+	//		"cli_module" : "pyrpg.core.engine",
+			"animation": ["TOP", 2000],
+			"layout" : "INPUT_BOTTOM",
+			"padding" : [0,0,0,0],
+	//		"bck_color" : [125,125,125],
+			"bck_image" : "quake.png",
+			"bck_image_resize" : true,
+			"bck_alpha" : 150,
+			"welcome_msg" : "Welcome to pyRPG Console\n***********************\nType 'exit' to quit\nType 'help'/'?' for help\nType '? shell' for examples of python commands",
+			"welcome_msg_color" : [0,255,0]
+			},
+		"header" : {
+			"text" : "pyRPG Console v0.1 | {} | ",
+			"text_params" : ["cons_get_info_header"],
+			"layout" : ["SCROLL_LEFT_CONTINUOUS", 0, 0.5],
+			"padding" :[10,10,10,10],
+			"font_file" : "IBMPlexMono-Regular.ttf",
+			"font_size" : 12,
+			"font_antialias" : true,
+			"font_color" : [255,255,255],
+	//		"bck_color" : [255,0,0],
+	//		"bck_image" : "quake.png",
+	//		"bck_image_resize" : true,
+			"bck_alpha" : 100
+			},
+		"output" : {
+			"padding" : [0,0,10,10],
+			"font_file" : "IBMPlexMono-Regular.ttf",
+			"font_size" : 12,
+			"font_antialias" : true,
+			"font_color" : [255,255,255],
+	//		"font_bck_color" : [55,0,0],
+	//		"bck_color" : [55,0,0],
+			"bck_alpha" : 100,
+			"buffer_size" : 100,
+			"display_lines" : 30,
+			"display_columns" : 90
+			},
+		"input" : {
+			"padding" : [0,0,10,10],
+			"font_file" : "IBMPlexMono-Regular.ttf",
+			"font_size" : 12,
+			"font_antialias" : true,
+			"font_color" : [255,0,0],
+			"bck_color" : [0,255,0],
+			"bck_alpha" : 100,
+			"prompt" : ">>>",
+	//		"max_string_length" : 10,
+	//		"repeat_keys_initial_ms" : 400,
+			"repeat_keys_interval_ms" : 35
+			},
+		"footer" : {
+			"text" : "{}",
+			"text_params" : ["cons_get_info_footer"],
+			"layout" : ["TEXT_RIGHT"],
+			"padding" : [10,10,10,10],
+			"font_file" : "IBMPlexMono-Regular.ttf",
+			"font_size" : 10,
+			"font_antialias" : true,
+			"font_color" : [255,255,255],
+	//		"bck_color" : [0,0,0],
+	//		"bck_image_resize" : true,
+			"bck_alpha" : 100
+			}
+		}
+
+}

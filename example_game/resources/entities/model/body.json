@@ -1,0 +1,6 @@
+{
+	"id" : "body_model",
+	"templates" : ["model"],
+	"components" : [
+	]
+}

@@ -53,3 +53,25 @@ if __name__ == '__main__':
 
 	r = "SUCCESS"
 	print(Status[r])
+
+	FILEPATHS = {
+		"FONT_PATH" : "resources/fonts/",
+		"FRAME_PATH" : "resources/frames/",
+		"DIALOG_PATH" : "resources/dialogs/",
+		"MODEL_PATH" : "resources/models/",
+		"IMAGE_PATH" : "resources/images/",
+		"SCENE_PATH" : "resources/scenes/",
+		"ENTITY_PATH" : "resources/entities/",
+		"BTREE_PATH" : "resources/btrees/",
+		"MAP_PATH" : "resources/maps/",
+		"SOUND_PATH" : "resources/sounds/",
+		"LOG_PATH" : "logs/",
+		"SAVE_PATH" : "save/",
+		"MENU_BACKGROUND_PATH" : "resources/images/menu_background/waterfall/"
+	}
+
+	class Filepath(Enum):
+		FONT_PATH = "resources/fonts/"
+		FRAME_PATH = "resources/frames/"
+
+	print(f'{Filepath.FONT_PATH.value}')

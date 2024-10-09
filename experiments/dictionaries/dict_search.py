@@ -54,17 +54,17 @@ def get_coll_value(coll, path: str, sep: str='.'):
                 {\
                     'id': 'NPC',\
                     'components': [\
-                        {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
-                        {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},\
-                        {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}\
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}\
                     ]\
                 },\
                 {\
                     'id': 'PLAYER',\
                     'components': [\
-                        {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
-                        {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},\
-                        {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}\
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}\
                     ]\
                 }\
             ]\
@@ -72,11 +72,11 @@ def get_coll_value(coll, path: str, sep: str='.'):
 
         # List all components - 2 lists for components of 2 entities
         >>> print([i for i in get_coll_value(coll=ex, path='entities/components', sep='/')])
-        [[{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.damageable:Damageable', 'params': {'health': 100}}, {'type': 'new.destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [11, 22, 33]}}], [{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.damageable:Damageable', 'params': {'health': 100}}, {'type': 'new.destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [111, 222, 333]}}]]
+        [[{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'damageable:Damageable', 'params': {'health': 100}}, {'type': 'destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [11, 22, 33]}}], [{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'damageable:Damageable', 'params': {'health': 100}}, {'type': 'destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [111, 222, 333]}}]]
         
         # List all component types
         >>> print([i for i in get_coll_value(coll=ex, path='entities/components/type', sep='/')])
-        ['new.collidable:Collidable', 'new.damageable:Damageable', 'new.destroy_on_no_health:DestroyOnNoHealth', 'new.collidable:Collidable', 'new.damageable:Damageable', 'new.destroy_on_no_health:DestroyOnNoHealth']
+        ['collidable:Collidable', 'damageable:Damageable', 'destroy_on_no_health:DestroyOnNoHealth', 'collidable:Collidable', 'damageable:Damageable', 'destroy_on_no_health:DestroyOnNoHealth']
         
         # List all entity ids
         >>> print([i for i in get_coll_value(coll=ex, path='entities/id', sep='/')])
@@ -87,8 +87,8 @@ def get_coll_value(coll, path: str, sep: str='.'):
         [100, 100]
 
         # List all collidable components
-        >>> print( list( filter( lambda x: x["type"] == "new.collidable:Collidable", reduce( lambda x,y: x+y, get_coll_value(coll=ex, path='entities/components', sep='/') ) ) ) )
-        [{'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'new.collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}]
+        >>> print( list( filter( lambda x: x["type"] == "collidable:Collidable", reduce( lambda x,y: x+y, get_coll_value(coll=ex, path='entities/components', sep='/') ) ) ) )
+        [{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}]
     '''
     keys = [] if path == '' else path.split(sep)
     yield from _get_coll_value(coll=coll, keys=keys)
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     print([i for i in get_coll_value(coll=ex, path='', sep='/')])
 
 
-    ex = {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy":  8}}
+    ex = {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy":  8}}
 
     print([i for i in get_coll_value(coll=ex, path='aa', sep='/')])
     print([i for i in get_coll_value(coll=ex, path='params', sep='/')])
@@ -116,17 +116,17 @@ if __name__ == "__main__":
             {
                 'id': 'NPC',
                 'components': [
-                    {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
-                    {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-                    {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}
+                    {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+                    {"type" : "damageable:Damageable", "params" : {"health" : 100}},
+                    {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}
                 ]
             },
             {
                 'id': 'PLAYER',
                 'components': [
-                    {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
-                    {"type" : "new.damageable:Damageable", "params" : {"health" : 100}},
-                    {"type" : "new.destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}
+                    {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+                    {"type" : "damageable:Damageable", "params" : {"health" : 100}},
+                    {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}
                 ]
             }
         ]
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     print(
         list(
             filter(
-                lambda x: x["type"] == "new.collidable:Collidable", 
+                lambda x: x["type"] == "collidable:Collidable", 
                 reduce(
                     lambda x,y: x+y, 
                     get_coll_value(coll=ex, path='entities/components', sep='/')
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     )
     '''
 
-    ex = {"type" : "new.collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy":  8}}
+    ex = {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy":  8}}
 
     print([i for i in get_coll_value(coll=ex, path='aa', sep='/')])
     print([i for i in get_coll_value(coll=ex, path='params', sep='/')])
@@ -210,8 +210,8 @@ if __name__ == "__main__":
 
     ex = {
             "processors" : [
-                ["new.movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-                ["new.attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}]
+                ["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+                ["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}]
             ]
     }
 

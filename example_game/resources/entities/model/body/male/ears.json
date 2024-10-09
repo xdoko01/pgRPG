@@ -1,0 +1,6 @@
+{
+	"id" : "male_ears_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

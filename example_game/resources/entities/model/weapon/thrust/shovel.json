@@ -1,0 +1,7 @@
+{
+	"id" : "weapon_thrust_shovel_model",
+	"templates" : ["model/weapon/thrust"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/weapon/thrust/weapon_thrust_shovel.json"}}
+	]
+}

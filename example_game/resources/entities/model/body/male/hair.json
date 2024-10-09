@@ -1,0 +1,6 @@
+{
+	"id" : "male_hair_model",
+	"templates" : ["model/body/male"],
+	"components" : [
+	]
+}

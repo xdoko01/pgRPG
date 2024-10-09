@@ -1,0 +1,6 @@
+{
+	"id" : "being",
+	"templates" : ["thing"],
+	"components" : [
+	]
+}

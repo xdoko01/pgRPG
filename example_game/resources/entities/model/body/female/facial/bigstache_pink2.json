@@ -1,0 +1,7 @@
+{
+	"id" : "female_facial_bigstache_pink2_model",
+	"templates" : ["model/body/female/facial"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/facial/bigstache/pink2.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "female_nose_bignose_light_model",
+	"templates" : ["model/body/female/nose"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/female/nose/bignose_light.json}}
+	]
+}

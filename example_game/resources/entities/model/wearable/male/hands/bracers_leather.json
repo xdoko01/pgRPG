@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_hands_bracers_leather_model",
+	"templates" : ["model/wearable/male/hands"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/hands/bracers/leather.json}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "male_ears_elvenears_tanned_model",
+	"templates" : ["model/body/male/ears"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/body/male/ears/elvenears_tanned.json"}}
+	]
+}

@@ -1,0 +1,7 @@
+{
+	"id" : "wearable_male_torso_leather_chest_model",
+	"templates" : ["model/wearable/male/torso"],
+	"components" : [
+		{"type" : "renderable_model:RenderableModel", "params" : {"model" : "generic/wearable/male/torso/leather/chest.json}}
+	]
+}

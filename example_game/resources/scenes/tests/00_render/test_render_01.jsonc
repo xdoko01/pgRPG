@@ -1,0 +1,84 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_render_01",
+	"title" : "Render Map Test",
+	"description" : "Test new render processors",
+	"objective" : "POC of the new render system - display map",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {"clear_color" : [50, 150, 50]}], // clear the game window
+		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}], // clear all camera surfaces
+		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}], // display map
+		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}], // display all cameras on the game window
+
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}]
+	],
+
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+
+		// In order to display anything, entity with Camera and Position must exist
+		// Multiple cameras are supported
+		{
+			"id" : "camera01",
+			"templates" : [],
+			"components" : [
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 5, "screen_pos_y" : 5, "screen_width" : 630, "screen_height" : 230}}
+			]
+		},
+		{
+			"id" : "camera02",
+			"templates" : [],
+			"components" : [
+				{"type" : "position:Position", "params" : {"x" : 2000, "y" : 2000, "map" : "test_arena_sand"}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 5, "screen_pos_y" : 245, "screen_width" : 630, "screen_height" : 230}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"QUEST_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+	]
+}

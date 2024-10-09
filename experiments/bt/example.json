@@ -1,5 +1,5 @@
 {
-	"type": "new.behavior_tree:BehaviorTree", 
+	"type": "behavior_tree:BehaviorTree", 
 	"params": {
 
 		"blackboard": {
