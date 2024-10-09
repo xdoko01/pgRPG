@@ -106,7 +106,7 @@ class CommandManager:
     def register_command(self, command_module_name: str, init=False):
         '''Returns the registered command function if registered. Else register it first.'''
 
-        command_module_path_absolute = MODULEPATHS["COMMAND_MODULE_PATH"] + command_module_name
+        command_module_path_absolute = f"{MODULEPATHS['COMMAND_MODULE_PATH']}.{command_module_name}"
 
         # Try to find the command module and get its reference
         try:

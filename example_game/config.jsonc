@@ -30,8 +30,8 @@
 	},
 
 	"MODULEPATHS": {
-		"SCRIPT_MODULE_PATH" : "core.scripts.new.",
-		"COMMAND_MODULE_PATH" : "core.commands.",
+		"SCRIPT_MODULE_PATH" : "core.scripts",
+		"COMMAND_MODULE_PATH" : "core.commands",
 		"PROCESSOR_MODULE_PATH": "core.processors",
 		"COMPONENT_MODULE_PATH": "core.components"
 	},

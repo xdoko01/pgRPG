@@ -66,7 +66,7 @@ class ScriptManager:
         # Register the script
         if not script_fnc:
 
-            script_module_path_absolute = MODULEPATHS["SCRIPT_MODULE_PATH"] + script_module_name
+            script_module_path_absolute = f"{MODULEPATHS['SCRIPT_MODULE_PATH']}.{script_module_name}"
 
             # Try to find the script module and get its reference
             try:

@@ -1,4 +1,9 @@
+'''
+Can be run from the console by putting following command
 
+py game.main.game.script_manager._scripts['show_dlg_window'](None, dialog_id='dlg_scene_start', position=[0, 0])
+
+'''
 from pyrpg.functions.wait import wait # import wait function
 import pyrpg.utils.dialog as dialog # import display_dialog function
 
@@ -7,22 +12,27 @@ from pyrpg.core.config.keys import KEYS # for K_SUBMIT
 
 from pyrpg.main import main
 
+def initialize(register, module_name):
+    '''Script registers itself at ScriptManager'''
+    # Mandatory line
+    register(fnc=script_show_dlg_window, alias=module_name)
+    # Optional names for the script
+    register(fnc=script_show_dlg_window, alias='show_dlg_window')
+
 def script_show_dlg_window(event, *args, **kwargs):
     ''' Script that displays dialog window and freezes the game.
     Dialog can have several frames that are switched by pressing
     the submit button.
     '''
 
-
     # Take a copy of the screen and store it in engine
     # Before taking the screen, everything is blittet (screen is updated)
     #!engine.save_screen_copy(True)
-    print(f'MAIN: {main}')
-    main.game.gui_manager.save_screen()
+    main.gui_manager.save_screen()
 
     # Load dialog object based on the dialog_id
     dlg_id = kwargs.get('dialog_id', None)
-    dlg_obj = main.game.dialog_manager._dialogs.get(dlg_id, {})
+    dlg_obj = main.engine.dialog_manager._dialogs.get(dlg_id, {})
 
     # Load the position of the dialog
     dlg_pos = kwargs.get('position', [0, 0])
