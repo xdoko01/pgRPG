@@ -252,6 +252,6 @@ def cons_get_info_header():
 def cons_get_info_footer():
     '''Returns info that is displayed in the console's footer'''
 
-    loaded_quests = main.engine.quest_manager._quests.keys() if main and main.engine else 'N/A'
+    loaded_quests = main.engine._quests.keys() if main and main.engine else 'N/A'
 
     return f'loaded quests: {loaded_quests}'

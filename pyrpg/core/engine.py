@@ -26,7 +26,7 @@ from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
 from pyrpg.core.config.filepaths import SCENE_PATH, Path # for SCENE_PATH
 from pyrpg.core.events.event import Event
-from pyrpg.functions import get_dict_from_file, get_dict_value, get_coll_value
+from pyrpg.functions import get_dict_from_file, get_coll_value
 
 
 logger.info(f"Engine initiated")
@@ -70,7 +70,6 @@ class Game:
         # TODO - maybe it would be better to handle processing of events within processor that
         # would receive list of events and handle event function and using those would implement
         # event processing.
-        #self.event_manager = EventManager(self.quest_manager.handle_event)
         self.event_manager = EventManager(self.script_manager.execute_event_actions)
 
         self.ecs_manager.initialize(timed=timed, game_functions={

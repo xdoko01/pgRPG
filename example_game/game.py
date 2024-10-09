@@ -16,7 +16,7 @@ def main(argv):
     config_file = "example_game/config.jsonc"
 
     # Games
-    scene_file = "games/kill_all/kill_all_level01.jsonc"
+    #scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
     #scene_file = "games/sokoban/sokoban_new_level02.jsonc"
     #scene_file = "games/sokoban/sokoban_new_level01.jsonc"    
     #scene_file = "games/sokoban/sokoban_new.jsonc"            
