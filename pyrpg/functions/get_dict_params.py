@@ -5,7 +5,7 @@ from .get_dict import get_dict
 
 from pathlib import Path
 
-def get_dict_params(definition, storage: dict=None, dir: Path=Path('')) -> dict:
+def get_dict_params(definition: str | list, storage: dict=None, dir: Path=Path('')) -> dict:
     '''Takes template name and parameters as one string (definition). Fills the parameters
     into the template and returns the resulting dictionary.
     

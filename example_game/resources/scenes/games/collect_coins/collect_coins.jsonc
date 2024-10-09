@@ -1,5 +1,5 @@
 {
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basid data
 	"id" : "collect_coins",
@@ -273,7 +273,7 @@
 				{
 					"type" : "controllable:Controllable", 
 					"params" :  {
-						"key_profile" : "default",
+						"key_profile" : "DEFAULT",
 						"control_cmds" : {
 							"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
 							"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
@@ -302,7 +302,7 @@
 			"QUEST_START",
 			{
 				"id": "ev_collect_coins",
-				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to %quest_id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to %id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]
 			}
 		],
 		[
@@ -362,7 +362,7 @@
 							["==", ["VAR", "from"], "ev_scored_more_than_500_points"],
 							["==", ["VAR", "from"], "ev_scored_exactly_500_points"]
 						],
-						["SCRIPT", "restart_quest", {"quest" : "new/games/collect_coins/collect_coins.json"}]
+						["SCRIPT", "restart_quest", {"quest" : "games/collect_coins/collect_coins.jsonc"}]
 				]
 			}
 		],

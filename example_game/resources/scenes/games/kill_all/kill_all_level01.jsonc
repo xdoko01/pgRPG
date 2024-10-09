@@ -227,7 +227,7 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8//,
+						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8 
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
 					}
 				},
@@ -291,7 +291,7 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}//,
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 								//{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
 
 
@@ -388,7 +388,7 @@
 			"templates" : [
 				"model/body/male/human/white()",	// template for the model
 				"t_tile_pos($map=test_arena_sand, $tileY=5, $tileX=5)",	// template for the position - valid form
-				"new/_special/hunter($target_in=player01)"	// template for the btree behavior
+				"_special/hunter($target_in=player01)"	// template for the btree behavior
 			],
 			
 			"components" : [

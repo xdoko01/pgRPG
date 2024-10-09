@@ -5,7 +5,7 @@
 	"objective" : "Push all the boxes on the marked spots.",
 
 	// What quests need to be loaded before this one
-	"prereqs" : ["games/sokoban/sokoban_new_level01.json"],
+	"prereqs" : ["games/sokoban/sokoban_new_level01"],
 
 	"cleanup" : {
 		"processors": [],
@@ -99,7 +99,7 @@
 			"QUEST_START",
 			{
 				"id": "ev_level02_start",
-				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to next level <b>%quest_id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to next level <b>%id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]
 			}
 		],
 		[

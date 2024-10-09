@@ -9,7 +9,7 @@ from pygame_gui.windows import UIConfirmationDialog
 from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
 from pygame import Rect
 from pyrpg.main import main
-from pyrpg.core.config.display import DISPLAY # for DISPLAY_MAX_FPS
+from pyrpg.core.config.display import DISPLAY # for MAX_FPS
 from pyrpg.functions.str_utils import translate_str
 
 def initialize(register, module_name):
@@ -46,7 +46,7 @@ def script_show_confirm_dlg(event, *args, **kwargs):
     is_running = True
 
     while is_running:
-        dt = main.gui_manager.clock.tick(DISPLAY["DISPLAY_MAX_FPS"])
+        dt = main.gui_manager.clock.tick(DISPLAY["MAX_FPS"])
 
         for event in pygame.event.get():
 

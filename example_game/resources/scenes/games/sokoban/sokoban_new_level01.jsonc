@@ -5,7 +5,7 @@
 	"objective" : "Push all the boxes on the marked spots.",
 
 	// What quests need to be loaded before this one 
-	"prereqs" : ["games/sokoban/sokoban_new.json"],
+	"prereqs" : ["games/sokoban/sokoban_new"],
 
 	"cleanup" : {
 		"processors": [],
@@ -72,7 +72,7 @@
 		// New entity created using already existing entity + template for defining the position
 		{
 			"id": "crate02",
-			"templates": ["#crate01", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
+			"templates": ["crate01", "t_tile_pos(5, 4, game_sokoban_lvl01)"],
 			"components": []
 		},
 
@@ -86,35 +86,39 @@
 		},
 		{
 			"id": "crate04",
-			"templates": ["#crate01"],
+			"templates": ["crate01"],
 			"components": [
 				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate05",
-			"templates": ["#crate01"],
+			"templates": ["crate01"],
 			"components": [
 				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate06",
-			"templates": ["#crate01"],
+			"templates": ["crate01"],
 			"components": [
 				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id": "crate07",
-			"templates": ["#crate01"],
+			"templates": ["crate01"],
 			"components": [
 				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 7, "map" : "game_sokoban_lvl01"}}
 			]
 		},
 		{
 			"id" : "player01",
-			"templates" : ["model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
+			"templates" : [
+				"model/body/male/human/white", // model
+				"t_tile_pos(3, 3, game_sokoban_lvl01)", // position
+				"controls/default"	//controls
+			],
 			"components" : [
 
 				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -130,12 +134,8 @@
 				{
 					"type" : "controllable:Controllable", 
 					"params" :  {
-						"key_profile" : "default",
+						"key_profile" : "DEFAULT",
 						"control_cmds" : {
-							"LEFT": [["new_move_noadd", {"moves" : ["left"]}]],
-							"RIGHT": [["new_move_noadd", {"moves" : ["right"]}]],
-							"UP": [["new_move_noadd", {"moves" : ["up"]}]],
-							"DOWN": [["new_move_noadd", {"moves" : ["down"]}]],
 							"ATTACK": [["none", {}]]
 						}
 					}
@@ -155,7 +155,7 @@
 			"QUEST_START",
 			{
 				"id": "ev_start_game",
-				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
 			}
 		],
 		[
@@ -165,7 +165,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level02.json"}]
+						["SCRIPT", "load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level02"}]
 				]
 			}
 		],

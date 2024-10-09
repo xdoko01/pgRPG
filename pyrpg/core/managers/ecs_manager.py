@@ -285,7 +285,7 @@ class ECSManager:
         '''
         self._create_empty_entity(entity_alias=entity_def["id"])
 
-    def load_update_empty_entity(self, entity_def: dict) -> None:
+    def load_update_empty_entity(self, entity_def: dict, add_to_templates: bool=True) -> None:
         '''Fills the empty entity with components.
         
         It is called from the engine as the second step of loading entities.
@@ -295,6 +295,10 @@ class ECSManager:
         
         :param entity_def: Description of entity in JSON format (python dict).
         :type entity_def: dict
+
+        :param add_to_templates: Whether to add entity definition automatically to the templates
+                                 where it can be used for creation of other entities.
+        :type add_to_templates: bool
         '''
 
         # Find the entity_id that is associated with the alias stored in entity_def["id"]
@@ -303,9 +307,9 @@ class ECSManager:
         # Now add components to this entity id empty envelope
         self._update_entity(entity_def=entity_def, entity_id=entity_id)
 
-    #def load_entity(self, entity_def: dict) -> None:
-    #    '''Creates brand new entity based on entity definition in a form of dictionary.'''
-    #    self.create_entity(entity_def)
+        # Additionally, add every entity to the template_definitions so every created entity can
+        # be used as a template. (see sokoban_new_level01 scene for examples).
+        if add_to_templates: self.load_template(template_def=entity_def)
 
     def create_entity(self, entity_def: dict, entity_alias: str=None) -> int:
         '''Creates brand new entity with components - called from game logic to factory 
@@ -335,8 +339,18 @@ class ECSManager:
         return entity_id
 
     def _create_empty_entity(self, entity_alias: str=None) -> int:
-        '''Create empty envelope for the entity where later components will be added'''
+        '''Create empty envelope for the entity where later components will be added.
+        If entity already exists in the game world, return its existing entity_id and
+        do not create new empty entity.
+        '''
         
+        # If entity_alias already exists in the world, do not create new empty entity.
+        # (Such entities will be only updated by the new components)
+        entity_id = self.get_entity_id(entity_alias=entity_alias) 
+        if entity_id is not None: 
+            logger.info(f'Entity alias "{entity_alias}" already exists for {entity_id=}. Skipping creation of new empty entity.')
+            return entity_id
+
         # Create new entity and get its id
         entity_id = self._world.create_entity()
 
@@ -366,15 +380,15 @@ class ECSManager:
         for template_id in entity_def.get("templates", []):
 
             # Get the template data
-            logger.info(f'**Preparing entity data from template ""{template_id}"".')
+            logger.info(f'**Preparing data for entity_id {entity_id} from template "{template_id}".')
             template_entity_data = get_dict_params(definition=template_id, storage=self._template_definitions, dir=ENTITY_PATH)
 
             # Create all entities from the template
-            logger.info(f'**Creating components from template ""{template_id}"".')
+            logger.info(f'**Creating components for entity_id {entity_id} from template "{template_id}".')
             try:
                 self._update_entity(template_entity_data, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in creation of entity from template "{template_id}".')
+                logger.error(f'Error in creation of entity {entity_id} from template "{template_id}".')
                 raise ValueError
 
         # Add/update components
@@ -382,7 +396,7 @@ class ECSManager:
             try:
                 self.update_component(component_def=component, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in update of component from definition "{component}".')
+                logger.error(f'Error in update of component of entity {entity_id} from definition "{component}".')
                 raise ValueError
 
         # Remove components
@@ -390,19 +404,19 @@ class ECSManager:
             try:
                 self.remove_component(component_def=component, entity_id=entity_id)
             except ValueError:
-                logger.error(f'Error in removal of component from definition "{component}".')
+                logger.error(f'Error in removal of component of entity {entity_id} from definition "{component}".')
                 raise ValueError
 
-    def delete_entity(self, entity_id: int=None, entity_alias: str=None) -> None:
+    def delete_entity(self, entity_alias: str=None, entity_id: int=None) -> None:
         ''' Delete and un-register entity from the world.'''
 
-        logger.debug(f'About to delete entity id {entity_id} / {entity_alias or "unknown"}.')
+        logger.debug(f'About to delete entity id {entity_id=} / {entity_alias or "unknown"}.')
 
         # Get alias and id
         entity_alias = entity_alias if entity_alias else self._entity_to_alias.get(entity_id, None)
         entity_id = entity_id if entity_id else self._alias_to_entity.get(entity_alias, None)
 
-        logger.debug(f'After lookup for delete entity id {entity_id} / {entity_alias or "unknown"}.')
+        logger.debug(f'After lookup for delete entity id {entity_id=} / {entity_alias or "unknown"}.')
 
         # Delete it from Esper world
         self._world.delete_entity(entity=entity_id)
@@ -410,7 +424,7 @@ class ECSManager:
         # Un-register the entity - ignore if not found, can be unregistered entity
         self._unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
 
-        logger.info(f'Entity id {entity_id} / {entity_alias or "unknown"} successfully removed.')
+        logger.info(f'Entity id {entity_id=} / {entity_alias or "unknown"} successfully removed.')
 
     #####################
     ## ENTITIES - END
@@ -421,7 +435,7 @@ class ECSManager:
         using this call to ScriptManager rather than passing reference to the dictionary directly'''
         return self._alias_to_entity
 
-    def get_entity_id(self, entity_alias: str) -> int:
+    def get_entity_id(self, entity_alias: str) -> int | None:
         ''' Translate entity alias (string) to entity id (integer)
         based on _alias_to_entity dictionary.
         '''

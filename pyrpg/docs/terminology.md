@@ -21,9 +21,9 @@ Unique string representing the entity. One entity alias belongs to max one entit
  - Long form - `processor`
 
   - Processor alias, processor class def
-    - `"original.game_events_processor:GameEventsExProcessor"`
+    - `"event_system.game_events_processor:GameEventsExProcessor"`
   - Processor definition
-    - `["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "DESTROYED", "CUST_UI_CONFIRM"]}]`
+    - `["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "DESTROYED", "CUST_UI_CONFIRM"]}]`
 
 
  # Translation from File definition to Python basic obj definition to instances of classes

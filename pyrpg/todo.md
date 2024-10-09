@@ -1,10 +1,22 @@
   - [x] The configurations are not properly merged when merging nested dictionaries - fix needed
   - [x] Implement logger also for the configurations
+  - [x] Template from existing entity using # ... add entities also into storage=self._template_definitions
+  - [x] BUG - Updating of existing entity (created in some scene before) does not work. Instead, completely new entity is created!
+  - [x] BUG - When collect coins or sokoban ends it cannot start again for some error - fix it
+  
+  - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason
+  - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
+  
+  - [ ] Is quest manager used? remove it
+  - [ ] Rename quest to `scene` everywhere
+  
   - [ ] Get rid of new and dots in configs below
   	"MODULEPATHS": {
 		"SCRIPT_MODULE_PATH" : "core.scripts.new.",
 		"COMMAND_MODULE_PATH" : "core.commands.",
 
+  Features
+  - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
   - [ ] Prepare a new `SoundFXOnDamage` component to be on the damagable entities (hurt sounds etc)
   - [ ] Prepare a new `SoundFXOnDestroy` component to be on the dead entities
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches

@@ -1,5 +1,5 @@
 {
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basic data
 	"id" : "sokoban",
@@ -70,11 +70,11 @@
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-		// For checking of position targets are reached - run once per 500 cycles
+		// For checking of position targets are reached - run once per 1000 cycles
 		["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}],
 
 		// For events processing - display the dialog on the start of the quest - after first game screen is generated
-		["original.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
 
@@ -206,7 +206,7 @@
 		},
 		{
 			"id" : "player01",
-			"templates" : ["model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)"],
+			"templates" : ["model/body/male/human/white", "t_tile_pos(3, 3, game_sokoban_lvl01)", "controls/default"],
 			"components" : [
 
 				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
@@ -222,12 +222,8 @@
 				{
 					"type" : "controllable:Controllable", 
 					"params" :  {
-						"key_profile" : "default",
-						"control_cmds" : {
-							"LEFT": [["new_move_noadd", {"moves" : ["left"]}]],
-							"RIGHT": [["new_move_noadd", {"moves" : ["right"]}]],
-							"UP": [["new_move_noadd", {"moves" : ["up"]}]],
-							"DOWN": [["new_move_noadd", {"moves" : ["down"]}]],
+						"key_profile" : "DEFAULT",
+						"control_cmds" : {						
 							"ATTACK": [["none", {}]]
 						}
 					}
@@ -263,7 +259,7 @@
 			"QUEST_START",
 			{
 				"id": "ev_start_game",
-				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
 
 			}
 		],
@@ -274,7 +270,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "restart_quest", {"quest" : "new/games/sokoban/sokoban.json"}]
+						["SCRIPT", "restart_quest", {"quest" : "games/sokoban/sokoban"}]
 				]
 			}
 		],
