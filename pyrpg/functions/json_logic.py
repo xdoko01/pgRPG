@@ -1,7 +1,7 @@
 ''' Function json_logic is aiming to evaluate logical expressions written 
 in JSON.
 
-In pyRPG it is used for example to evaluate prerequisities of quest processors.
+In pyRPG it is used for example to evaluate prerequisities of scene processors.
 '''
 
 from functools import reduce

@@ -6,14 +6,14 @@ from pyrpg.core.events.event import Event
 logger = logging.getLogger(__name__)
 
 class EventManager:
-    '''New version that is ready to get rid of Quest as a class object and
+    '''New version that is ready to get rid of Scene as a class object and
     introduces event handlers as a dictionary property of this manager.
     '''
 
     def __init__(self, exec_event_actions_fnc) -> None:
         self._event_queue = []
         self._exec_event_actions_fnc = exec_event_actions_fnc
-        self._event_handlers = {}  # Stores all event handlers from quests and phases. Event is a dict key and value is list of handlers
+        self._event_handlers = {}  # Stores all event handlers from scenes and phases. Event is a dict key and value is list of handlers
         logger.info(f'EventManager initiated.')
 
     def load_handler(self, handler_def: list) -> None:
@@ -24,7 +24,7 @@ class EventManager:
                         "QUEST_START",
                         {
                             "id": "ev_start_game",
-                            "actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%quest_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+                            "actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%scene_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
                         }
                     ]
         '''
@@ -116,7 +116,7 @@ class EventManager:
 
 
     def process_events(self, process: list(Event.EVENT_TYPES)=None, ignore: list(Event.EVENT_TYPES)=None) -> None:
-        ''' Process particular game/quest event types that are specified on the input.
+        ''' Process particular game/scene event types that are specified on the input.
         '''
 
         # This will be filled by the events that are outstanding for processing

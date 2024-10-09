@@ -3,7 +3,7 @@
 ## Templates
 Template can be defined 
  - as external file
- - as part of `templates` section within the quest
+ - as part of `templates` section within the scene
 
 Examples of possible json template definitions
 

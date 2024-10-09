@@ -4,7 +4,7 @@
 	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
 	"objective" : "Push all the boxes on the marked spots.",
 
-	// What quests need to be loaded before this one 
+	// What scenes need to be loaded before this one 
 	"prereqs" : ["games/sokoban/sokoban_new"],
 
 	"cleanup" : {
@@ -165,7 +165,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "load_quest", {"quest_file" : "new/games/sokoban/sokoban_new_level02"}]
+						["SCRIPT", "load_quest", {"scene_file" : "new/games/sokoban/sokoban_new_level02"}]
 				]
 			}
 		],

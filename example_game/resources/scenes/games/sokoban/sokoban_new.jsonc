@@ -66,7 +66,7 @@
 		// For checking of position targets are reached - run once per 500 cycles
 		["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}],
 
-		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
 		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
@@ -108,7 +108,7 @@
 			"QUEST_START", // Run first level upon load
 			{
 				"id": "ev_start_game",
-				"actions": 	["SCRIPT", "load_quest", {"quest_file" : "games/sokoban/sokoban_new_level01"}]
+				"actions": 	["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_new_level01"}]
 			}
 		]
 	]

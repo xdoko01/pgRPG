@@ -95,7 +95,7 @@ class ECSManager:
         # Substitute the attributes with reference to specifice engine functions
         proc_attrs = { arg : self._game_functions.get(arg) for arg in proc_attrs if self._game_functions.get(arg) is not None}
 
-        # Overwrite the attributes with custom attributes from the json definition of the quest
+        # Overwrite the attributes with custom attributes from the json definition of the scene
         proc_attrs = {**proc_attrs, **cust_proc_class_attrs}
 
         # Initiate and return the processor class
@@ -314,7 +314,7 @@ class ECSManager:
     def create_entity(self, entity_def: dict, entity_alias: str=None) -> int:
         '''Creates brand new entity with components - called from game logic to factory 
         new entities during the game - projectiles etc.
-        Entities that are created from quest file are created using load_register_empty_entity
+        Entities that are created from scene file are created using load_register_empty_entity
         and load_update_empty_entity function.
 
         :param entity_def: Description of entity in JSON format (python dict).

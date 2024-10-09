@@ -103,7 +103,7 @@ class GUIManager:
 
     def save_screen(self, flip_before_copy=False):
         """ Parameter is used to force displaying everything on screen.
-        Was prepared due to PHASE start of the first quest that was processed
+        Was prepared due to PHASE start of the first scene that was processed
         before anything was blitted on the screen.
         """
 

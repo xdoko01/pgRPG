@@ -31,22 +31,22 @@ from pyrpg.functions import get_dict_from_file, get_coll_value
 
 logger.info(f"Engine initiated")
 
-class Quest:
-    def __init__(self, alias: str, quest_def: dict) -> None:
+class Scene:
+    def __init__(self, alias: str, scene_def: dict) -> None:
         self.filepath: str = None
         self.id, self.alias = alias, alias
-        self.title = quest_def.get("title")
-        self.description = quest_def.get("description")
-        self.objective = quest_def.get("objective")
+        self.title = scene_def.get("title")
+        self.description = scene_def.get("description")
+        self.objective = scene_def.get("objective")
         self.stats = {
-            "no_of_prereqs": len(quest_def.get("prereqs", [])),
-            "no_of_procs": len(quest_def.get("processors", [])),
-            "no_of_maps": len(quest_def.get("maps", [])),
-            "no_of_dlgs": len(quest_def.get("dialogs", [])),
-            "no_of_temps": len(quest_def.get("templates", [])),
-            "no_of_ents": len(quest_def.get("entities", [])),
-            "no_of_handlers": len(quest_def.get("handlers", [])),
-            "no_of_comps": {e.get("id"): len(e.get("components", [])) for e in quest_def.get("entities", [])}
+            "no_of_prereqs": len(scene_def.get("prereqs", [])),
+            "no_of_procs": len(scene_def.get("processors", [])),
+            "no_of_maps": len(scene_def.get("maps", [])),
+            "no_of_dlgs": len(scene_def.get("dialogs", [])),
+            "no_of_temps": len(scene_def.get("templates", [])),
+            "no_of_ents": len(scene_def.get("entities", [])),
+            "no_of_handlers": len(scene_def.get("handlers", [])),
+            "no_of_comps": {e.get("id"): len(e.get("components", [])) for e in scene_def.get("entities", [])}
         }
 
 class Game:
@@ -119,10 +119,10 @@ class Game:
 
         self._quests = {}
 
-        # Quest loader managing creting of new quest from json/yaml file and creation
+        # Scene loader managing creting of new scene from json/yaml file and creation
         # of the game objects
-        self.load_quest_def_fncs = [
-            ["prereqs", self.load_quest_from_file],
+        self.load_scene_def_fncs = [
+            ["prereqs", self.load_scene_from_file],
             ["cleanup/processors", self.ecs_manager.delete_processor],
             ["cleanup/maps", self.map_manager.delete_map],
             ["cleanup/templates", self.ecs_manager.delete_template],
@@ -141,54 +141,54 @@ class Game:
 
         logger.info(f"Game initiated")
 
-    def load_quest_from_file(self, filepath: str) -> Quest:
-        """Reads file with the quest, translates it to quest definition
-        and processes quest definition into game world objects.
+    def load_scene_from_file(self, filepath: str) -> Scene:
+        """Reads file with the scene, translates it to scene definition
+        and processes scene definition into game world objects.
         
         Parameters:
             :param filepath: Absolute or relative path to the file containing
-                             quest definition (JSON/YAML/other).
+                             scene definition (JSON/YAML/other).
             :type filepath: str
 
-            :returns: Quest object with basic quest information
+            :returns: Scene object with basic scene information
         """
 
-        # Read the quest definition from a file
-        quest_def = get_dict_from_file(filepath=Path(filepath), dir=SCENE_PATH)
+        # Read the scene definition from a file
+        scene_def = get_dict_from_file(filepath=Path(filepath), dir=SCENE_PATH)
 
-        # Translate quest definition into the game objects
-        quest = self.load_quest_from_def(quest_def)
+        # Translate scene definition into the game objects
+        scene = self.load_scene_from_def(scene_def)
 
         # Remember the path
-        quest.filepath = filepath
+        scene.filepath = filepath
 
-        # Return the quest objects containing usefull information
-        return quest
+        # Return the scene objects containing usefull information
+        return scene
 
-    def load_quest_from_def(self, quest_def: dict) -> Quest:
-        """Translates the quest definition into the objects representing the
+    def load_scene_from_def(self, scene_def: dict) -> Scene:
+        """Translates the scene definition into the objects representing the
         game world - entities, components, maps, dialogs, handlers, etc.
 
         Parameters:
-            :param quest_def: Dictionary containing all information about the
-                              quest.
-            :type quest_def: dict
+            :param scene_def: Dictionary containing all information about the
+                              scene.
+            :type scene_def: dict
 
-            :returns: Quest object with basic quest information
+            :returns: Scene object with basic scene information
         """
 
-        quest = Quest(alias=quest_def["id"], quest_def=quest_def)
+        scene = Scene(alias=scene_def["id"], scene_def=scene_def)
 
-        logger.info(f"Loading objects for quest {quest.alias} has started.")
+        logger.info(f"Loading objects for scene {scene.alias} has started.")
 
-        # Search every defined location in the quest_def and try to process
+        # Search every defined location in the scene_def and try to process
         # it using the given functions for processing.
-        for data_path, process_fnc in self.load_quest_def_fncs:
+        for data_path, process_fnc in self.load_scene_def_fncs:
 
             # Get the data on the path to be processed
-            data_to_process = get_coll_value(coll=quest_def, path=data_path, sep="/") # generator
+            data_to_process = get_coll_value(coll=scene_def, path=data_path, sep="/") # generator
 
-            logger.info(f'Start of processing of "{data_path}" for quest "{quest.alias}".')
+            logger.info(f'Start of processing of "{data_path}" for scene "{scene.alias}".')
 
             # Cycle this data and process them using progress bar
             with ProgressBar2(gui_manager=self.gui_manager, header="Loading", text=data_path) as progress:
@@ -196,39 +196,39 @@ class Game:
                     logger.debug(f'About to process following item "{item}" using function "{process_fnc}".')
                     process_fnc(item)
 
-            logger.info(f'End of processing of "{data_path}" for quest "{quest.alias}".')
+            logger.info(f'End of processing of "{data_path}" for scene "{scene.alias}".')
         
-        logger.info(f'Loading objects for quest "{quest.alias}" has finished.')
+        logger.info(f'Loading objects for scene "{scene.alias}" has finished.')
 
-        return quest
+        return scene
 
     def new_game(self, filepath: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
-        """Loads new game from the quest"""
+        """Loads new game from the scene"""
 
-        logger.debug(f'Loading quest "{filepath}".')
+        logger.debug(f'Loading scene "{filepath}".')
 
         # Delete every game object
         if clear_before_load: self._clear_game()
 
-        # Load the quest, register it and create QUEST_START event
-        quest = self.load_quest_from_file(filepath=filepath)
-        self._quests[quest.alias] = quest
+        # Load the scene, register it and create QUEST_START event
+        scene = self.load_scene_from_file(filepath=filepath)
+        self._quests[scene.alias] = scene
         self.event_manager.add_event(
             Event("QUEST_START", 
             self, 
             None, 
             params={
-                "filepath": quest.filepath,
-                "id": quest.id,
-                "alias": quest.alias,
-                "title": quest.title,
-                "description": quest.description,
-                "objective": quest.objective,
-                "stats": quest.stats
+                "filepath": scene.filepath,
+                "id": scene.id,
+                "alias": scene.alias,
+                "title": scene.title,
+                "description": scene.description,
+                "objective": scene.objective,
+                "stats": scene.stats
             })
         )
 
-        logger.info(f'Quest "{filepath}" successfully loaded.')
+        logger.info(f'Scene "{filepath}" successfully loaded.')
 
     def _clear_game(self) -> None:
         """Clear all game related resources"""
@@ -245,19 +245,19 @@ class Game:
 
         logger.info(f"All game resources cleared.")
 
-    def delete_quest(self, quest_name: str) -> None:
-        """Deletes quests from the game"""
+    def delete_quest(self, scene_name: str) -> None:
+        """Deletes scenes from the game"""
 
-        del self._quests[quest_name]
-        logger.info(f'Quest "{quest_name}" was deleted.')
+        del self._quests[scene_name]
+        logger.info(f'Scene "{scene_name}" was deleted.')
 
     def clear_quests(self) -> None:
-        """ Clears all the loaded quests."""
+        """ Clears all the loaded scenes."""
 
-        quests = list(self._quests.keys()).copy()
+        scenes = list(self._quests.keys()).copy()
 
-        for quest_name in quests:
-            self.delete_quest(quest_name)
+        for scene_name in scenes:
+            self.delete_quest(scene_name)
 
         logger.info(f"Quests cleared.")
 
@@ -281,7 +281,7 @@ class Game:
                 elif event.key == KEYS["K_LOAD_GAME"]:
                     pass
 
-        # maps and quests added in order that command can be informed about quest to change the phase
+        # maps and scenes added in order that command can be informed about scene to change the phase
         self.ecs_manager.process(events=key_events, keys=key_pressed, dt=dt, debug=debug)
 
         return State.GAME

@@ -28,7 +28,7 @@ Unique string representing the entity. One entity alias belongs to max one entit
 
  # Translation from File definition to Python basic obj definition to instances of classes
   - The json/yaml definition object of entity/component/processor that is translated to dictionary/list/tuple/str is called definition and is named with suffix `_def`.
-  -> JSON/YAML/other -> translates to `_def` (`quest_def`, `comp_def`, `proc_def`, etc) it is string/list/dictionary -> this further translates to instances of classes representing the game objects in the game world, i.e. `quest`, `component` or `comp`, `processor` or `proc`
+  -> JSON/YAML/other -> translates to `_def` (`scene_def`, `comp_def`, `proc_def`, etc) it is string/list/dictionary -> this further translates to instances of classes representing the game objects in the game world, i.e. `scene`, `component` or `comp`, `processor` or `proc`
 
 # ID versus ALIAS
  - id is a number or UUID assigned to some game object without any semantic meaning

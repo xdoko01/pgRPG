@@ -24,15 +24,15 @@
   - The definition of such behavior is more complicated, but it is more universal and does not require specific commands for specific tests.
 
 ### 2024-06-25 Handlers now can be defined as a part of component parameters
-  - To make the definition of handlers more readable, it is now possible to include handlers deinition also into the component `params` dictionary. It is good to have event handlers defined on the same place as `BrainAI` definition so that the behavior tree and event handlers that are modifying the blackboard are in the same place in quest specification.
+  - To make the definition of handlers more readable, it is now possible to include handlers deinition also into the component `params` dictionary. It is good to have event handlers defined on the same place as `BrainAI` definition so that the behavior tree and event handlers that are modifying the blackboard are in the same place in scene specification.
 
 ### 2024-06-25 New get_coll_value function to search values in the collection
   - The function is located in `pyrpg.functions.dict_utils` package and is capable of returning values from collections as an generator.
-  - It was developed to facilitate getting and loading handlers from different places in the quest definition (used in `engine` module).
+  - It was developed to facilitate getting and loading handlers from different places in the scene definition (used in `engine` module).
 
 ### 2024-06-21 New test_damaged and test_can_see commands inplemented
-  - the `test_can_see` commands is using the `CanSee` entity for getting the list of entities in sight. If there is desired entity in sight (command parameter) then the command succeeds. Can be used in behavior tree inside the `do_parallel` command to check for enemies during movements and consequent attack or running away - check also the test quest `guard_and_attack_on_sight`.
-  - the `test_damaged` command is using `FlagWasDamagedBy` to determine if the entity was damaged and by whom. The attacking entity can be stored on the blackboard and further use in the brain logic. Check aslo the test quests `test_damaged` and `guard_and_fight_back_if_ambushed`
+  - the `test_can_see` commands is using the `CanSee` entity for getting the list of entities in sight. If there is desired entity in sight (command parameter) then the command succeeds. Can be used in behavior tree inside the `do_parallel` command to check for enemies during movements and consequent attack or running away - check also the test scene `guard_and_attack_on_sight`.
+  - the `test_damaged` command is using `FlagWasDamagedBy` to determine if the entity was damaged and by whom. The attacking entity can be stored on the blackboard and further use in the brain logic. Check aslo the test scenes `test_damaged` and `guard_and_fight_back_if_ambushed`
 
 ### 2024-06-07 New test_bb_value and log commands implemented
   - the `test_bb_value` command lets you test the content of the global blackboard using the json expression such as `["!=", ["VAR", "target_ent"], 0]` (if the value target_ent on the blackboard differs from 0 (true) then return `SUCCESS`. Else, return `FAILURE`)
@@ -46,13 +46,13 @@
   - Newly, there is new processor in the `CommandSystem` called `PerformPathfindingCalculationProcessor`. This processor invokes `continue_search` method of the `PathfindManager` and hence calculates part of the paths.
   - Newly, commands can request calculation of the path (typically in their `init` part) and ask in the `process` part whether path calculation is finished or is still running. Once it is finished, they can use it. CHeck the `move_to` command implementation for an example.
 
-### 2023-09-30 Fixed usage of aliases in all quest definitions
-  - Previously, it was not possible to use alias in the quest file definition, if the entity representing this alias was not yet created (was defined lower in the quest file than in was used).
-  - Newly, alias can be used anywhere in the quest file. Even if the entity is defined last in the quest file, it can be referenced by the entity that is defined first in the quest file.
+### 2023-09-30 Fixed usage of aliases in all scene definitions
+  - Previously, it was not possible to use alias in the scene file definition, if the entity representing this alias was not yet created (was defined lower in the scene file than in was used).
+  - Newly, alias can be used anywhere in the scene file. Even if the entity is defined last in the scene file, it can be referenced by the entity that is defined first in the scene file.
 
 ### 2023-09-07 Commands and Command Generators Redone
   - Newly, logic can be defined by `btree` or `blist`. Commands can be used in both structures. Both structures follow `CommandGenerator` prototype. In future, no problem to add more structures that will follow `CommandGenerator` prototype.
-  - Newly, `Command` namedtuple consists of `name`,`params` and `entity_id` attribtes. Those 3 attributes reflect the information from the `quest` definition. Specifically, `entity_id` marks the optional parameter specified in the quest on which entity the command must be executed. It is hence possible for the player entity to issue commands (for example via `Controllable` Component) to other entity such as NPC. Useful for global brain entity that can issue commands to different entities and hence orchestrate the action in the game.
+  - Newly, `Command` namedtuple consists of `name`,`params` and `entity_id` attribtes. Those 3 attributes reflect the information from the `scene` definition. Specifically, `entity_id` marks the optional parameter specified in the scene on which entity the command must be executed. It is hence possible for the player entity to issue commands (for example via `Controllable` Component) to other entity such as NPC. Useful for global brain entity that can issue commands to different entities and hence orchestrate the action in the game.
   - Newly, all commands have as a parameter `Command`, `CommandContext` blackboard and `ECSmanager` that contains functions for manipulating the game world.
 
 ### 2023-05-05 New Argument for Processors - step
@@ -61,7 +61,7 @@
   - Example of processor definition: `["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}]`
 
 ### 2023-02-20 Behavioral trees support templates
-  - Sub-tree of behavior tree can be stored in a file or in the `template` section of the quest and loaded from there. Those templates can be called with parameters that are dynamically added to the template definition upon the load (similar to entity templates).
+  - Sub-tree of behavior tree can be stored in a file or in the `template` section of the scene and loaded from there. Those templates can be called with parameters that are dynamically added to the template definition upon the load (similar to entity templates).
 
 ### 2023-01-12 Initial implementation for usage of behavioral trees for AI logic
   - New component `BTree` created - analogous to `Brain` component
@@ -69,21 +69,21 @@
   - New core package `pyrpg.core.btrees` created. Contains classes for individual btree nodes and functions
   - Behavior tree in pyRPG implementation contains in the leaf behavior nodes actions and conditions represented by command name and command parameters as a strings/dict. The logic which behavior leaf node is selected is guided by the other parent nodes in the btree. The command is then passed to the command manager which changes it to function call and returns the result back to the behavior tree.
 
-### 2022-11-20 Possibility to copy components from one entity to other entity within the definition in the quest file - EXPERIMENTAL
+### 2022-11-20 Possibility to copy components from one entity to other entity within the definition in the scene file - EXPERIMENTAL
   - Similarly to creating the entity from template it is now possible to create new entity from existing entity by copying its component from existing entity.
   - This can be achieved by putting entity alias in `templates` list with `#` prefix. E.g. `"templates": ["#crate01"]`
   - This feature is only experimental. It is using `copy.copy` method for creation of the components on the new entity. Later changes in source entity component can affect also the destination entity component (sharing the same memory location).
 
-### 2022-11-20 Possibility to delete component from entity from within the definition in the quest file
+### 2022-11-20 Possibility to delete component from entity from within the definition in the scene file
 
-### 2022-11-13 Possibility to additionally add components on the existing entity with definition in the quest file
-  - This feature allows to add/rewrite components on one entity several times in the quest file(s)
-  - This is useful when the game is spread accross multiple files and in new level (new quest file) we need to add additional feature to our entity (and not create a new one).
-  - E.g. player entity is created in the first quest file and in the next quest file (level) we need to adjust starting position of the player. So we can simply add new position component to player01 that will override the original position.
+### 2022-11-13 Possibility to additionally add components on the existing entity with definition in the scene file
+  - This feature allows to add/rewrite components on one entity several times in the scene file(s)
+  - This is useful when the game is spread accross multiple files and in new level (new scene file) we need to add additional feature to our entity (and not create a new one).
+  - E.g. player entity is created in the first scene file and in the next scene file (level) we need to adjust starting position of the player. So we can simply add new position component to player01 that will override the original position.
 
-### 2022-08-04 Templates with parameters, templates loaded from within the quest definition as well as from the files
+### 2022-08-04 Templates with parameters, templates loaded from within the scene definition as well as from the files
 
-### 2022-07-01 Adjustments in ECS_MANAGER. Entities are not loaded before components, so entity alias can be used anywhere in the quest JSON!
+### 2022-07-01 Adjustments in ECS_MANAGER. Entities are not loaded before components, so entity alias can be used anywhere in the scene JSON!
 
 ### 2022-06-27 Implemented confirmation dialog as a form of script. After clicking on OK, custom event with custom parameters is generated and can be further processed by standard event handling logic.
 
@@ -95,7 +95,7 @@
   Now, there is a new class `ProgressBar` that is initiated in `Main` class and passed to `Game` class. In the `new_game` method, new thread is created that calls `ProgressBar.run` function that draws progress bar in the separate thread. The status of the progress is updated by calling `ProgressBar.update` function. Once the progress is done and no more progress bar should be displayed, `update(finished=True)` needs to triggered. This effectivelly stops the `run` method from execution and hence the thread operation ends.
 
 ### 2022-06-07 New ScriptManager prepared
-  The `ScriptManager` is responsible for loading and execution of the script. Script is single python module that can be dynamically specified within quest specification.
+  The `ScriptManager` is responsible for loading and execution of the script. Script is single python module that can be dynamically specified within scene specification.
 
 ### 2022-06-02 Extension of PREREQ on Processors to support logical operations while evaluating the prerequisities
 
@@ -148,8 +148,8 @@
   #### Final solution
   Probably there was a bug in `PerformDestroyEntitiesProcessor` - particularly in the way the elapsed time was calculated. After fixing of the condition it seems that the deletion from the ECS game world is done in the cycle when IsDestroyed flag is assigned.
 
-### 2022-03-04 Adding support for YAML quest files definition
-  Newly, pyRPG supports loading quest in YAML file format. It can be more readable for some people than json.
+### 2022-03-04 Adding support for YAML scene files definition
+  Newly, pyRPG supports loading scene in YAML file format. It can be more readable for some people than json.
 
 ### LOGGING implemented
    - Configuration of the logging is happening in pyrpg.main. The configuration itself is part of the `config.py`. 
@@ -188,14 +188,14 @@
     - New command `new_move_auto` was introduced. This command has no parameters and it moves the entity in the current direction. This command is expected to be usefull for auto-movements of projectiles. This command should be placed in the `Brain` of the projectile and hence substitute the currently existing `LinearMovementProcessor` processor.
     - component `Movable` and processor `PerformMovementProcessor` newly supports also acceleration. This again is expected to be useful for accelerated auto_movement of projectile.
 
-### Processors used in the game are now configurable within JSON describing the quest
+### Processors used in the game are now configurable within JSON describing the scene
   - Previously, the construction of processors and their adding into the world was hardcoded in `engine.create_processors` function.
-  - Newly, the list and order of processors is fully configurable within JSON file describing the quest.
-    - there is new list defined in the quest JSON (on quest level) called `processors`
+  - Newly, the list and order of processors is fully configurable within JSON file describing the scene.
+    - there is new list defined in the scene JSON (on scene level) called `processors`
     - the format of the item from `processors` list looks as follows `["ExampleProcessor", {"example_argument" : arg_value}]`
     - there is new function is `processors.__init__.py` called `get_processor(proc_str)`. Based on the name of the processor on the input, the function returns tuple containing reference to the class of given processor + list of names of class __init__ parameters (excluding `self` parameter)
     - there is new `engine._create_processor(proc_str)` function that takes the list of 2 items (processor name + processor additional parameters in form of a dict), creates the new processor and registers it in the game world.
-    - there is new code in `Quest.__init__` consrtuctor that parses the quest JSON `processors` list and calls `engine._create_processor` for every item in `processors` list. By doing so, all the processors are created in the game world.
+    - there is new code in `Scene.__init__` consrtuctor that parses the scene JSON `processors` list and calls `engine._create_processor` for every item in `processors` list. By doing so, all the processors are created in the game world.
 
 ### New destroy score generation system (several processors and temporary flags)
   Aim of this system is to be able to generate Score flag `FlagAddScore` upon destroyed entity (no health). The flag is further processed by *SCORE COUNTING SYSTEM* in order to add the score to the correct entity.
@@ -271,9 +271,9 @@
 ### New functionality for displaying in-game windows
  - even pause window implemented as a dialog!
 
-### Init quest created that is always loaded before any other quest
-  - This quest is **always** loaded on the pyRPG start and contains game definitions that are common for the whole game - first example is definition of PAUSE dialog.
-  - There is still possibility that quests (game definitions) that are loaded later can overrule the *init* quest definitions by specifying its objects in *cleanup* section of the quest definition.
+### Init scene created that is always loaded before any other scene
+  - This scene is **always** loaded on the pyRPG start and contains game definitions that are common for the whole game - first example is definition of PAUSE dialog.
+  - There is still possibility that scenes (game definitions) that are loaded later can overrule the *init* scene definitions by specifying its objects in *cleanup* section of the scene definition.
 
 ### Console configured to be available anytime, not only in game, and to display system messages
   - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pyrpg.main.init` function called `cons_enabled`. Value of this parameter is stored as `pyrpg.main.show_cons_on_sys_msg` variable for further use.
@@ -291,12 +291,12 @@
   - New processor `GameMessagesProcessor` that only callse `core.engine.process_game_messages` and nothing else
   - Messages can be generated from anywhere in the code. Now, they can be generated by following means:
     - by event processor - i.e. function `engine.process_game_events` - every event that is processed is automatically put into the message queue. Based on configuration it is decided if message should be shown or not and in what format.
-    - by script function - i.e. function `core.scripts.add_msg` - this can be used when generating message as an quest event handler action
+    - by script function - i.e. function `core.scripts.add_msg` - this can be used when generating message as an scene event handler action
     - by command function - i.e. function `core.commands.add_msg` - this can be used from brain component
 
-### Game windows that can be shown as actions for quest or quest phase start (stopping any other action from happening)
-  - New events *QUEST_START* and *PHASE_START* were created. Those events are automatically added to the event queue on every quest init and phase init (hardcoded).
-  - Quest definition json contains even handler that handles *QUEST_START* and *PHASE_START* events. 
+### Game windows that can be shown as actions for scene or scene phase start (stopping any other action from happening)
+  - New events *QUEST_START* and *PHASE_START* were created. Those events are automatically added to the event queue on every scene init and phase init (hardcoded).
+  - Scene definition json contains even handler that handles *QUEST_START* and *PHASE_START* events. 
   - In the *condition* of the even handler there is definition of phase that we want to have linked with displaying of the game window, i.e. `"conditions" : {"script" : "self.phase_id == 'phase01'"}`
   - In the *action* of the event handler there is `show_dlg_window` script being called. The `show_dlg_window` script function uses `utils.dialog` to draw window on the screen. While `show_dlg_window` is executed, the rest of the game is frozen.
 
@@ -393,7 +393,7 @@
     - component contains dictionary of entities that are weared.
   - New processor *CollisionWearableProcessor* created.
     - must be planned before *CollisionItemProcessor* - first try to wear the item (*CanWear* mandatory), then pick it up as regular item into the inventory.
-    - wearing item generates new event that can be scripted in the quest - *WEARABLE_WEARED*
+    - wearing item generates new event that can be scripted in the scene - *WEARABLE_WEARED*
   - Adjustment of processor *RenderModelWorldProcessor* - added check if entity has CanWear component and if yes - rendering the clothes.
 
 ### Processing only entities that are visible on the screen implemented
@@ -411,13 +411,13 @@
 ### Save and Load game implemented
   - Implementation using pickle library.
 
-  1. All engine global objects are put into the dictionary called game_state (command queue, event queue, maps, quests and esper.world)
+  1. All engine global objects are put into the dictionary called game_state (command queue, event queue, maps, scenes and esper.world)
   2. pygame.Surface objects are not serializable, so before saving it was necessary to set every such reference to None (on both components and processors).
   3. After saving those references must be refreshed in order to keep the game going - it is done using pre_save and post_load methods and the logic happens in save_game and load_game functions.
   
   - During the game, pressing *F1* saves the game and pressing *F2* loads the game.
 
-### Simple quest implemented
+### Simple scene implemented
   - **Scenario overview**
     - Player hits NPC.
     - Player and NPC have linear conversation.
@@ -432,11 +432,11 @@
 ### Picking items implemented
   - very similar to *Teleport* implementation
 
-### Quest event (simple) processing implemented
+### Scene event (simple) processing implemented
   - New *GameEventProcessor* created. The processor takes as a parametr global (engine) function that is event handler.
-  - The engine handler function is called and takes the list of events and passes it to all quests.
-  - Each quest has event handler method that processes the event based on conditions and actions.
-  - Those conditions and actions are specified in json file specifying the quest/phase.
+  - The engine handler function is called and takes the list of events and passes it to all scenes.
+  - Each scene has event handler method that processes the event based on conditions and actions.
+  - Those conditions and actions are specified in json file specifying the scene/phase.
   - **Conditions** can be specified in 3 ways that can be combined:
     - by comparing the event params to condition params
     - by evaluating python condition in form of the string

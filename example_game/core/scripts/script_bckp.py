@@ -20,7 +20,7 @@ if not pygame.get_init(): pygame.init()
 
 
 def modify_brain(event=None, *args, **kwargs):
-	''' Called from quest 
+	''' Called from scene 
 	'''
 	# Get the entity whose brain I will be working with
 	entity = engine.alias_to_entity.get(kwargs.get("entity", None))
@@ -49,7 +49,7 @@ def execute_script(event, *args, **kwargs):
 	# Get script name from the arguments
 	script_name = kwargs.get("script_ref", '')
 
-	# Get the body of the script from  the quest data
+	# Get the body of the script from  the scene data
 	script_body = kwargs.get("script_body", '')
 	
 	# Execute the script

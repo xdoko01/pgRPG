@@ -14,13 +14,13 @@ def initialize(register, module_name):
     register(fnc=script_load_quest, alias='load_quest')
 
 def script_load_quest(event, *args, **kwargs):
-    ''' Script that loads aa new quest
+    ''' Script that loads aa new scene
     '''
 
-    quest_file = kwargs.get('quest_file')
+    scene_file = kwargs.get('scene_file')
 
     # Do not show progress information and do not clear anything
-    main.engine.new_game(filepath=quest_file, clear_before_load=False, show_progress=False)
+    main.engine.new_game(filepath=scene_file, clear_before_load=False, show_progress=False)
 
     # Return success
     return 0

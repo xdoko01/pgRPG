@@ -7,7 +7,7 @@
 	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
 	"objective" : "Push all the boxes on the marked spots.",
 
-	// What quests need to be loaded before this one
+	// What scenes need to be loaded before this one
 	"prereqs" : [],
 
 	// What objects need to be cleaned first
@@ -73,7 +73,7 @@
 		// For checking of position targets are reached - run once per 1000 cycles
 		["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}],
 
-		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
 		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
@@ -270,7 +270,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "restart_quest", {"quest" : "games/sokoban/sokoban"}]
+						["SCRIPT", "restart_quest", {"scene" : "games/sokoban/sokoban"}]
 				]
 			}
 		],

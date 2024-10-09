@@ -7,9 +7,9 @@
   - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason
   - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
   
-  - [ ] Is quest manager used? remove it
-  - [ ] Rename quest to `scene` everywhere
-  
+  - [ ] Is scene manager used? remove it
+  - [ ] Rename scene to `scene` everywhere
+
   - [ ] Get rid of new and dots in configs below
   	"MODULEPATHS": {
 		"SCRIPT_MODULE_PATH" : "core.scripts.new.",
@@ -32,7 +32,7 @@
   - [ ] new command based on experience with `do_parallel` - `do_if_bb_test_true`
   - [ ] Behavior Tree and Behavior list - implementation of restart function - tree/list starts again from scratch. Useful for restart of the whole tree if some event comes.
   - [ ] Make scripts runnable from the console
-  - [ ] Rename quests to scenes. Scene is more common name for what the engine is defining in the json files.
+  - [ ] Rename scenes to scenes. Scene is more common name for what the engine is defining in the json files.
   - [ ] Every game/test using scenes should be defined outside of pyRPG folders and only import pyRPG and use its parts. No direct changes in pyRPG folders and files.
   - [ ] Make scripts more nice - now they are using main, is it ok? Missing logging, missing description. Missing concept when to use commands and when to use scripts, make them work from console...
   - [ ] finish tests and json definitions for new commands
@@ -45,11 +45,11 @@
   - [ ] BUG - move_to_pos_target_vect - direction of movement (facing of entity is not being changed)
   - [ ] BUG - Problem with pushing entities into walls - eventhough map collisions are enabled. To be fixed.
   - [ ] BUG - debug processor works onlywith one camera
-  - [ ] BUG - when restarting quest in the `collect_coins` game, there is loading screen in the background
+  - [ ] BUG - when restarting scene in the `collect_coins` game, there is loading screen in the background
 
   - [x] BUG - at the moment cannot controll other entity as the `entity` parameter is poped from the command `params`. As `params` is mutable dictionary, it is removed everywhere. As a fix, either add `entity_id` into the `Command` namedtuple or do not `pop` the entity parameter, just read it.
-  - [x] BUG - seems that `ECSManager` does not translate references to aliases that are lower in the quest file. It would be needed to add new item to the `engine.load_quest_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
-  - [x] BUG - Dialogs stopped working - because engine.py imports QuestManager and QuestManager imports Quest quest.py imports scripts  (for get_script_fnc) and there are all scripts imported - we need to have script same as processor - define it at JSON string
+  - [x] BUG - seems that `ECSManager` does not translate references to aliases that are lower in the scene file. It would be needed to add new item to the `engine.load_scene_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
+  - [x] BUG - Dialogs stopped working - because engine.py imports QuestManager and QuestManager imports Scene scene.py imports scripts  (for get_script_fnc) and there are all scripts imported - we need to have script same as processor - define it at JSON string
   - [x] BUG - when shooting arrow the entity moves down - fixed by adding `accept_pos_fix_from_denylist=["ALL"]`
   - [x] BUG - NPC is destroyed but the brain still works - as a result it is lying dead and moving forward
   - [x] BUG - when there is no command assigned to ACTION button, the controlls freeze after pressing z button - None command must be assigned in Controllable component
@@ -90,12 +90,12 @@
   - [ ] Implement ordering of displaying of entities based on their Y position. Entities with lower Y should be generated on the display before entities with higher Y
   - [ ] How to implement that some map layer elements are displayed before entities and some behind entities
   - [ ] find all places where we are loading a dictionary and use functions.get_dict and functions.get_dict_params functions
-  - [ ] Implement `ALL`, `` into the cleanup at the beginning of the quest definition - ideally some pre_processing that will substitute keyword ALL with all the processors in the
-  - [ ] Possibly substitute 'id' key from quest file on entities for 'alias'. To make things more readable in the code and not to mismatch
-  - [ ] schema validation path to every test quest
+  - [ ] Implement `ALL`, `` into the cleanup at the beginning of the scene definition - ideally some pre_processing that will substitute keyword ALL with all the processors in the
+  - [ ] Possibly substitute 'id' key from scene file on entities for 'alias'. To make things more readable in the code and not to mismatch
+  - [ ] schema validation path to every test scene
   - [ ] Unit tests for BTree and BList
-  - [ ] implement `toml` format for easy quest definitions (same as currenlty used `yaml` and `json`)
-  - [ ] implement test quests for testing of the new commands with the command context.
+  - [ ] implement `toml` format for easy scene definitions (same as currenlty used `yaml` and `json`)
+  - [ ] implement test scenes for testing of the new commands with the command context.
   - [ ] Implement new component `CanHear` that will specify what the entity can hear and will hold list of entities that are being heard.
   - [ ] it would be nice to have left mouse click and right mouse click mapable in the `Controllable` component to some commands. For example by left click, there will be new brain sequence that will move the character to the target.
   - [ ] btree_test.py failing - try to fix the error with templates
@@ -120,31 +120,31 @@
   - [x] update collision processor according to the new concept and document it
   - [x] write documentation how to add new component/processor class without the need to change all the dependencies - multiple classes in the files
   - [x] Solve creation of arrow/sword swing so that it does not move player and the player does not need to have accept_pos_fix_from_denylist set to [ALL]
-  - [x] Prepare all weapons in some test quest - to test the factory functionality
+  - [x] Prepare all weapons in some test scene - to test the factory functionality
   - [x] JSON schema - every component can have one 
-  - [x] JSON Schema for the whole quest
+  - [x] JSON Schema for the whole scene
   - [x] Prereq extension so that it supports `and`, `or`, `oneOf`, `anyOf`
 
   - [x] Prepare script module that implements YES/NO decision + IF json logic - custom event generation and catching the event in the event handler
-  - [x] Prepare script that restarts the quest - clear all quest and loads specific quest
-  - [x] Reimplement QuestManager so it manages the loading of all quests data and distribution to other Managers, 
-  - [x] *Also reimplement EventManager to manage all the handlers loaded from the quests*.
+  - [x] Prepare script that restarts the scene - clear all scene and loads specific scene
+  - [x] Reimplement QuestManager so it manages the loading of all scenes data and distribution to other Managers, 
+  - [x] *Also reimplement EventManager to manage all the handlers loaded from the scenes*.
   - [x] rewrite conditions and actions upon events into JSON logic format
   - [x] loading game on GUI using threading library
   - [x] implement Sokoban-like game - moving the boxes is ok, when box is landed to the correct spot, it changes??? How to implement that?
   - [x] rewrite commands so that code in the package is not needed and commands register themselves with the command manager
   - [x] implement that the processors are not running in every cycle - some nice implementation for all processors in esper probably would be nice
 
-  - [x] Template not only from files but also from previous entities definition in the quest file - implement copy entity method, maybe on esper level. Then use it in quest definition.
+  - [x] Template not only from files but also from previous entities definition in the scene file - implement copy entity method, maybe on esper level. Then use it in scene definition.
   - [x] Load all entities synonyms at the beginning so that entity names can be used in all component definitions
   - [x] Rewrite all event handling conditions in tests to JSON LOGIC.
   - [x] Fix the map layers that are not transparent - Upgrade to new pyTMX version helped
-  - [x] Possibility to update entities in the quest definition - adding new components to already existing entities.
-  - [x] Possibility to update entities in the quest definition - deleting components on existing entities.
+  - [x] Possibility to update entities in the scene definition - adding new components to already existing entities.
+  - [x] Possibility to update entities in the scene definition - deleting components on existing entities.
 
   - [x] Remake ecs manager so that it contains some get processor function that translate processor string into class. And redo load processor and delete processor to use this new function
   game. By doing it this way it will not be necessary to modify the logic of ecs_manager's delete_processor.
-  - [x] Redo prereqs in the quest manager - the load is ugly
+  - [x] Redo prereqs in the scene manager - the load is ugly
   - [x] Implement new component `CanSee` that will specify what the entity can see and will hold list of entities that are being seen.
 
   

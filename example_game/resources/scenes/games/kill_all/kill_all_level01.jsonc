@@ -1,5 +1,5 @@
 {
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../../core/schemas/new/scene.schema.json",
 
 	// Basic data
 	"id" : "q_kill_all_level01",
@@ -7,7 +7,7 @@
 	"description" : "Kill all the enemies in this level",
 	"objective" : "Kill all your enemies",
 
-	// What quests need to be loaded before this one
+	// What scenes need to be loaded before this one
 	"prereqs" : ["games/kill_all/kill_all.jsonc"],
 
 	// What objects need to be cleaned first
@@ -485,7 +485,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "h_player01_destroyed"],
-						["SCRIPT", "restart_quest", {"quest_file" : "new/games/kill_all/kill_all_level01.json"}]
+						["SCRIPT", "restart_quest", {"scene_file" : "new/games/kill_all/kill_all_level01.json"}]
 				]
 			}
 		]

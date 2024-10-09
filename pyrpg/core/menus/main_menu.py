@@ -16,20 +16,20 @@ class MainMenu(Menu):
         self.gui_manager = gui_manager
         self.state_manager = state_manager
 
-        self.load_quest_button = UIButton(relative_rect=Rect((150, 175), (100, 50)), text='Load Quest', manager=self.gui_manager.window_manager, container=None)
+        self.load_scene_button = UIButton(relative_rect=Rect((150, 175), (100, 50)), text='Load Scene', manager=self.gui_manager.window_manager, container=None)
         self.exit_game_button = UIButton(relative_rect=Rect((150, 275), (100, 50)), text='Exit', manager=self.gui_manager.window_manager, container=None)
-        self.load_quest_button.hide()
+        self.load_scene_button.hide()
         self.exit_game_button.hide()
 
         logger.info(f'Main menu window initiated')
 
     def show(self) -> None:
-        self.load_quest_button.show()
+        self.load_scene_button.show()
         self.exit_game_button.show()
         logger.info(f'Main menu window showned')
 
     def hide(self) -> None:
-        self.load_quest_button.hide()
+        self.load_scene_button.hide()
         self.exit_game_button.hide()
         logger.info(f'Main menu window hidden')
 
@@ -41,8 +41,8 @@ class MainMenu(Menu):
         for event in key_events:
 
             if event.type == UI_BUTTON_PRESSED:
-                if event.ui_element == self.load_quest_button:
-                    logger.info(f'Accessing load quest window')
+                if event.ui_element == self.load_scene_button:
+                    logger.info(f'Accessing load scene window')
                     self.hide()
                     return State.LOAD_QUEST_MENU
                 if event.ui_element == self.exit_game_button:

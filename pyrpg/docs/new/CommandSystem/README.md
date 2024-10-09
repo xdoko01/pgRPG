@@ -6,7 +6,7 @@
 
 Command is a way of telling the entity what to do in the game world - for example to move, to attack, to search for enemy etc.
 
-Technically, command is defined as a list consisting of 2 items - name (str) and params (dict) in the quest file.
+Technically, command is defined as a list consisting of 2 items - name (str) and params (dict) in the scene file.
 
 Example of a Command: ("new_move_vect_noadd", {"vector": [0, 10], "entity": 1})
 

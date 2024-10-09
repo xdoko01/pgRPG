@@ -62,8 +62,8 @@
     ----------------------------------------
     How dialogs are incorporated into pyRPG?
     ----------------------------------------
-    - dialog is defined as an inline json definition in quest data and stored with dialog_id on engine level
-    - during initiation of the quest, dialogs are transformed from text definition to dict object containing
+    - dialog is defined as an inline json definition in scene data and stored with dialog_id on engine level
+    - during initiation of the scene, dialogs are transformed from text definition to dict object containing
       surfaces and positions. This dialog object is stored on engine level in dialogs dictionary.
     - Using script or command, dialog can be found in engine.dialogs and dislpayed.
 
@@ -84,7 +84,7 @@
                 }
             ]
 
-    - dialog is then used during quest phase
+    - dialog is then used during scene phase
         "actions" : [
             ["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
             ["show_dialog", {"dialog_id" : "welcome_dlg"}]

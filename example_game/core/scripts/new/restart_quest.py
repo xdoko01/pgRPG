@@ -14,11 +14,11 @@ def initialize(register, module_name):
     register(fnc=script_restart_quest, alias="restart_quest")
 
 def script_restart_quest(event, *args, **kwargs):
-    """ Script that clears all quests and loads new one again.
+    """ Script that clears all scenes and loads new one again.
     """
 
-    quest = kwargs.get("quest")
+    scene = kwargs.get("scene")
 
-    main.engine.new_game(filepath=quest)
+    main.engine.new_game(filepath=scene)
 
     return 0

@@ -1,7 +1,7 @@
 import pyrpg.core.ecs.components as components
 
 def script_modify_brain(event=None, *args, **kwargs):
-    ''' Called from quest as an reaction to event fulfilled
+    ''' Called from scene as an reaction to event fulfilled
     conditions.
     '''
 

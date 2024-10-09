@@ -104,7 +104,7 @@ Key `id` describes the internal identificator of the dialog. It should be the sa
 
   - "id" : "dlg_basic"
   - "id" : "dlg_teleport_hint"
-  - "id" : "dlg_quest_start"
+  - "id" : "dlg_scene_start"
 
 ### Mandatory / Optional
 
@@ -124,7 +124,7 @@ By having such multiple inheritance, the definition of new dialogs is easier as 
 ### Examples
 
   - "templates" : ["dlg_empty"]
-  - "templates" : ["dlg_empty", "dlg_basic", "dlg_quest_start"]
+  - "templates" : ["dlg_empty", "dlg_basic", "dlg_scene_start"]
 
 ### Mandatory / Optional
 

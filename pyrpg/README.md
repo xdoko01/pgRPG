@@ -259,28 +259,28 @@
 ## Questions
   - [ ] should position fixing be part of collision system or in separate component/processors?
 
-### Quest Manager
+### Scene Manager
   - It issues commands to the other managers - serves as an input for them telling them what to load/delete.
   - From that perspecive QuestManager is not on the same level as the other managers. It is their boss.
   - Maybe the whole content of QuestManager should be part of the engine
   - QuestManager contains references to other managers even now 
 
-### Quest/Phase as description and no class/object/instance
+### Scene/Phase as description and no class/object/instance
   *All is described in MIRO*
   - [x] Create `EventManagerEx` that processes the event actions
-  - [x] Transform `quest` module to `QuestManagerEx` + start filling `EventManagerEx` with handlers
+  - [x] Transform `scene` module to `QuestManagerEx` + start filling `EventManagerEx` with handlers
   - [x] ensure `engine` module is updated
   - [ ] `delete_processor` method should probably call finalize method of the processor
   - [x] `delete_template` method not implemented
   - [x] `delete_handler` not implemented in `EventManager`
-  - [ ] check that prereq quests are not loaded if those are already loaded
+  - [ ] check that prereq scenes are not loaded if those are already loaded
 
 ### Processing templates
-  1/ Parse the quest file and store the templates there to the ecs_manager
+  1/ Parse the scene file and store the templates there to the ecs_manager
     - store the dict with template into following dict `self._template_definitions[template_name]`
   2/ When creating entity and template is used:
-    a/ Check, if template is already loaded in ECS manager and hence was part of the quest. If yes, use this template and continue.
-    b/ If no such quest exists, try to load it from the `ENTITY_PATH`
+    a/ Check, if template is already loaded in ECS manager and hence was part of the scene. If yes, use this template and continue.
+    b/ If no such scene exists, try to load it from the `ENTITY_PATH`
     c/ check if () are part of the template name. If yes, expect parameters vars in the template definition. If vars not found, error.
 
 ### Fade-in Fade-out effect POC
@@ -311,13 +311,13 @@
     - [x] Backup and clear the unused manager and main and engine classes
     - [x] Make console nicer - get rid of dummy data and display statistics from ECS manager + state + memory usage
     - [x] Make the diagram and implement Menu abstract class
-    - [x] Retest all the test quests
+    - [x] Retest all the test scenes
       - [x] for collision test 4 fix all the errors and dialogs are not displayed and not correctly cleared - RuntimeError: dictionary changed size during iteration
     - [ ] Document the changes in this document
     - [ ] Clear the console and menus upon exit
     - [ ] Get rid of debug as parameter starting in main and ending in processors
     - [ ] Think how to implement MenuManager
-    - [ ] Spread managers to the respective directiries - MenuManager to the menus, QuestManager to quests etc.
+    - [ ] Spread managers to the respective directiries - MenuManager to the menus, QuestManager to scenes etc.
 
 ### Improve collisions - NPC entities can walk around each other while hitting themselves
   - Different Entities have different collision behavior
@@ -370,12 +370,12 @@
   - no longer adding imports when new component and/or processor is added - instead importlib can be used
     
     *Currently*
-    - `quest.__init__` -> read the list of processors into quest.processors
-    - `quest.__init__` -> for all processors `engine._create_processor(proc str)`
+    - `scene.__init__` -> read the list of processors into scene.processors
+    - `scene.__init__` -> for all processors `engine._create_processor(proc str)`
 
     *Newly*
-    - `quest.__init__` -> read the list of processors
-    - `quest.__init__` -> calls `engine.load_processors(list_of_processors)`
+    - `scene.__init__` -> read the list of processors
+    - `scene.__init__` -> calls `engine.load_processors(list_of_processors)`
     - `engine.load_processors`
       - `for all processors`
         - get the processor class
@@ -652,7 +652,7 @@ NewIsInInventory + AmmoPack
   - this will have effect on projectiles that are using `Temporary` - how to solve this?
 
 ### Processor has its prerequisities as part of the Processor class
-  - later when processors/systems are defined as part of quest, we can check those dependencies
+  - later when processors/systems are defined as part of scene, we can check those dependencies
   - create new wrapping function that is putting processors into the world - with every put there is check if dependency is kept
 
 
@@ -756,7 +756,7 @@ NewIsInInventory + AmmoPack
 ### make it possible to change the resolution within the game
   - used by Camera component - camera should have some possibility to define it as reference to screen variable
   - for example x : 'RESOLUTION_X div 2 - 10', if RESOLUTION_X is available for Camera component then we can run eval() and that is it
-  - but same as with entity -alias we want to preprocess the data comming from the quest - translate to real data so the components do not need to handle this
+  - but same as with entity -alias we want to preprocess the data comming from the scene - translate to real data so the components do not need to handle this
   - so do this translation somewhere else? create_component function in init calls translate fction that already is doing the translation for aliases
   - put config dict as reference to create entity. And then use eval on every parameter for creation of the component
   - but eval('hello') will not work - so use try eval if fail then use the original value - TypeError if we are evaluating something else then string, NameError if we are evaluating something that is not known
@@ -972,7 +972,7 @@ NewIsInInventory + AmmoPack
           - close the dialog and nothing else (x to close the window)
           - show some other dialog (are you sure yes/no) and wait for the return of that dialog
           - create event in the event queue (can be defined in dialog definition)
-          - execute command (can be defined in dialog definition) - for example if accept deny the next quest
+          - execute command (can be defined in dialog definition) - for example if accept deny the next scene
           - execute script (can be defined in dialog definition)
         - after execution of on_submit either close the dialog or proceed to the next frame or keep the dialog
     
@@ -992,7 +992,7 @@ NewIsInInventory + AmmoPack
           ////////////////////////////////////////////
 
           // Show yet another dialog window
-          ["show_dlg_window", {"dialog_id" : "dlg_quest_start", "position" : [200,200]}]
+          ["show_dlg_window", {"dialog_id" : "dlg_scene_start", "position" : [200,200]}]
 
           // Execute some other command
           ["execute_script", {"script_body" : "print(f'QUEST HAS STARTED')"}],
@@ -1029,12 +1029,12 @@ NewIsInInventory + AmmoPack
 ### Add shadow to the window
 
 ### Create documentation to the event processing - how to define conditions on the events
-  - i have troubles catching quest id for the QUEST_START event
+  - i have troubles catching scene id for the QUEST_START event
   - rewrite conditions for event handling
     - "params" currently check only alias for entity objects - example of example below - system search for `ent` and `col_event_entity` in `alias_to_entity` dictionary
       - teleport_event = event.Event('TELEPORTATION', ent, col_event_entity, params={'teleport' : ent, 'teleportee' : col_event_entity})
     - now I have QUEST_START that does not have entity integer as a parameter - instead it hase some elementary value - string
-      - self.event_queue.append(event.Event('QUEST_START', self, None, params={'quest_id' : self.id}))
+      - self.event_queue.append(event.Event('QUEST_START', self, None, params={'scene_id' : self.id}))
     *SOLUTION*
       - event handler must first check alias_to_entity and next plain condition if key not found in alias_to_entity
 
@@ -1053,9 +1053,9 @@ NewIsInInventory + AmmoPack
 
 ### processing of event is happening before the world is drawn on the display - parametrize procesor for event processing to have specific list of events to process 
   - simply postponing the processing of PHASE START after render processors will help because there will be already some objects displayed in the screen buffer and the command for displaying dialog will force screen update - or better taking the screen copy function of engine will force the update (based on parameter)
-  - by doing so - phase start and quest start events can be processed after some image is drawn on the screen and not before
+  - by doing so - phase start and scene start events can be processed after some image is drawn on the screen and not before
   - all_events_processor = processors.GameEventsProcessor(process_game_events) ... this will take all events
-  - quest_events_processor = processors.GameEventsProcessor(process_game_events, ['QUEST_START', 'PHASE_START']) ... this will take selected events only
+  - scene_events_processor = processors.GameEventsProcessor(process_game_events, ['QUEST_START', 'PHASE_START']) ... this will take selected events only
     - game_event_handler must have event_type on input
 
     - must be done smartly - list of indexes cannot be parsed for deletion
@@ -1071,7 +1071,7 @@ NewIsInInventory + AmmoPack
 
 ### Rewrite `show_text` using dialogs as a json configuration
   - dialog is specified in a form of json
-  - dialogs are part of quest json specification
+  - dialogs are part of scene json specification
   - upon start of the phase, dialogs for given phase are loaded and stored in engine dictionary - dialog_id : dialog data dict / instance of the object
   ----
   - during game dialogs are poped out as an action on some event by calling `show_dialog` script
@@ -1080,16 +1080,16 @@ NewIsInInventory + AmmoPack
   - this will display dlg and stopped the game until some key is pressed - the key for continue will be part of dialog specification.
   ----
   - upgrade - dialog to read key input and return some value that can be used to further change the flow of the game
-  - example, accepting the new quest by some selection done in the dialog
+  - example, accepting the new scene by some selection done in the dialog
   ----
   - dialog as a class? vs
   - dialog as a dictionary that has stored the surfaces
   - top-down approach
     - function display_dlg(target, position, dictionary)
 
-    - script `show_dialog` - parameter dialog_id that is saved during loading of the quest into the new engine global table. Similarly, for `modify_brain` action `entity_id` is used.
+    - script `show_dialog` - parameter dialog_id that is saved during loading of the scene into the new engine global table. Similarly, for `modify_brain` action `entity_id` is used.
     - 
-  - dialog is configured as a part of the quest
+  - dialog is configured as a part of the scene
   - create dialog function that will create dialog from the hierarchy and templates ...???
     - must know about FONT PATH and IMG PATH ...
 
@@ -1115,7 +1115,7 @@ NewIsInInventory + AmmoPack
   - first rename the global variables properly
       global world - ok
       global _maps - TO maps - DONE
-      global quests - TO quests - DONE
+      global scenes - TO scenes - DONE
       global c_event_queue - TO event_queue - DONE
       global command_queue - ok
       global message_queue - ok
@@ -1123,26 +1123,26 @@ NewIsInInventory + AmmoPack
       global entity_to_alias - ok
 
   - getters setters and is functions
-    - accessing engine.quests
+    - accessing engine.scenes
       - `set_phase` command is using it. How to work around that?
-      - what about passing quest in commands? Yes, by passing globals to following engine variable
+      - what about passing scene in commands? Yes, by passing globals to following engine variable
       - `def process_game_commands(keys=None, events=None, debug=False, gl_vars = {})` + command processor has the gl_vars as parameter
         - game.create_processor -> game.CommandProcessor(engine.process_game_commands)
         - game.run() - game.world.process(keys, events, gl_vars)
-      - `game._quests` -> create processor in game CommandProcessor(... game._quest) -> game.run() - game.world.process(keys, events, gl_vars) -> CommandProcessor().process(... quests)
+      - `game._quests` -> create processor in game CommandProcessor(... game._scene) -> game.run() - game.world.process(keys, events, gl_vars) -> CommandProcessor().process(... scenes)
 
 
     - accessing engine.maps
       - `Position` and `Teleport` components are accessing that for assertion checks
       - solution is to remove the assertion completelly
       - other solution would be to pass maps as argument to create_component function. By doing so eveny component can have access to Maps and other globals.
-              `def create_component(world, entity: int, comp_class: str, comp_params: dict, global_refs: dict)` - maps, quests
+              `def create_component(world, entity: int, comp_class: str, comp_params: dict, global_refs: dict)` - maps, scenes
                         comp_inst = comp_name(**{**comp_params, **global_refs})
               `assert self.map in kwargs.get('gr_map', {}).keys(), f'Map {self.map} is not initialized for {self.__class__} component.`
 
 
 
-    - function that checks quests
+    - function that checks scenes
     - functions that translate alias to entity and entity to alias
 
   - event_queue, command_queue is really private variable, it seems that it is not accessed directly from no other module. Hence it should be ok to rename it to _event_queue, _command_queue and does not need to be necessarily global ... it is used only in engine.py and shared with processor via parameter
@@ -1176,12 +1176,12 @@ NewIsInInventory + AmmoPack
   - set enabled to False by default and the processor change it to True if run ... + adjust process_ame_messages
 
 
-### How to display messages that relate to quest for example at the beginning of the quest phase??
+### How to display messages that relate to scene for example at the beginning of the scene phase??
   - Message has frame and picture - same as static window below???? wait with implementation till the below is implemented
 
 
-### Quest has defined events to which it is listening to - must register this in engine module so that engine sends the events to the quest. Otherwise all quests are processing all generated events.
-  - probably some structure on engine level emembering what quest requires what event to process
+### Scene has defined events to which it is listening to - must register this in engine module so that engine sends the events to the scene. Otherwise all scenes are processing all generated events.
+  - probably some structure on engine level emembering what scene requires what event to process
 
 ### Update documentations on mapping using _entity_map and entity_to_alias
 
@@ -1198,7 +1198,7 @@ NewIsInInventory + AmmoPack
     - Processor is bliting messages - same as other Render processors are bliting things on screen
   - DISADVANTAGES
     - If processor is not planned - message queue grows bigger and noting reduces it (currently done by `engine.process_game_messages`) - the current solution has the same disadvantage.
-	- Other processors that are handeling the queues (Command processor and Event processor) are resolved similarly as current version of GameMessageProcessor - i.e. calling engine function and nothing more. But the other processors are not rendering anything, they are just calling other handlers - event processor for example takes all events in the queue and resends them to `quest` module for handeling. `quest` module based on handeling invokes action in the form of a `script`. Similarly, `engine.process_game_commands` execute command and notifies related `brain` about the result. So what are the options for our `process_game_messages` function? Definetelly it must clear invalid messages from the queue. Then every message in the queue send to the handler? But handler is nothing more than printing on the game window and to do it correctly it must be printed on perfectly given position - should such handler be in the `quest` module? Probably not - in such case quest configuratin file should contain part describing where on the screen to generate messages and which messages to generate and which not to generate. That is good, but where to process the printing of the screen - by calling new script `print_messages` or by calling some other script that will be able to handle the list of messages `store_messages_to_disk`  - but there can be several quests active at the same time ... what if 2 quests are handling the same message? Does not make sense... PROCESSING MESSAGE using QUEST HANDLER DOES NOT MAKE SENSE (due to multiple quests can be active at the same time whereas message is one)
+	- Other processors that are handeling the queues (Command processor and Event processor) are resolved similarly as current version of GameMessageProcessor - i.e. calling engine function and nothing more. But the other processors are not rendering anything, they are just calling other handlers - event processor for example takes all events in the queue and resends them to `scene` module for handeling. `scene` module based on handeling invokes action in the form of a `script`. Similarly, `engine.process_game_commands` execute command and notifies related `brain` about the result. So what are the options for our `process_game_messages` function? Definetelly it must clear invalid messages from the queue. Then every message in the queue send to the handler? But handler is nothing more than printing on the game window and to do it correctly it must be printed on perfectly given position - should such handler be in the `scene` module? Probably not - in such case scene configuratin file should contain part describing where on the screen to generate messages and which messages to generate and which not to generate. That is good, but where to process the printing of the screen - by calling new script `print_messages` or by calling some other script that will be able to handle the list of messages `store_messages_to_disk`  - but there can be several scenes active at the same time ... what if 2 scenes are handling the same message? Does not make sense... PROCESSING MESSAGE using QUEST HANDLER DOES NOT MAKE SENSE (due to multiple scenes can be active at the same time whereas message is one)
   - SO IT MAKE SENSE TO PROCESS MESSAGES ON THE GAME LEVEL - in MESSAGES module
 
 ### Keys
@@ -1243,7 +1243,7 @@ NewIsInInventory + AmmoPack
 
 ### key mapping as config parameters
   - Controllable has parameters up/down/left/right/attack
-    - controllable - control_keys dict now there are numbers in quest json
+    - controllable - control_keys dict now there are numbers in scene json
         default_keys = {'left' : 276, 'right': 275, 'up' : 273, 'down' : 274, 'attack' : 122}
     - newly I need something better
         default_keys = {'left' : 'left_arrow', 'right': 'right_arrow', 'up' : 'up_arrow', 'down' : 'down_arrow', 'attack' : 'left_ctrl'}
@@ -1265,20 +1265,20 @@ NewIsInInventory + AmmoPack
 ### How to display some message across the whole window - regardless cameras
   - QUest description for example, or game loading
   - some command that will display global window that can be part of global script engine
-    - on start/end of quest generate event 
+    - on start/end of scene generate event 
     - on start/end of phase generate event
   - events are generated by processors now
   - newly event queue is passed to load_quest method and further to load_phase method
-  - event is added on quest and phase load, parameters of the event is quest/phase id
-  - quests have event handlers for quest start, quest end 
+  - event is added on scene and phase load, parameters of the event is scene/phase id
+  - scenes have event handlers for scene start, scene end 
   - handlers call function for displaying of text for example, or music or earthquake
   - function to show something on the screen and stop the game
 
 
-### Prepare test_empty_map.tmx and do quests for testing of collisions
+### Prepare test_empty_map.tmx and do scenes for testing of collisions
   - several moving entities that are hitting each other
 
-### Prepare quests for testing of teleportation
+### Prepare scenes for testing of teleportation
   - including moving teleport
   - including teleport that teleports to other map and back
   - prepare RenderableModel for teleport
@@ -1332,7 +1332,7 @@ NewIsInInventory + AmmoPack
     - If hit other `Position`, `Collidable`, issue move command + get rid of the collision event
 
 
-### Indicate error in quest definition if weapon or wearable has Position component and at the same time is in inventory of the player. If this is done it is causing error in rendering the object. The reason is that this object is in idle status when displaying at position and might be shifting the frames in this action status???
+### Indicate error in scene definition if weapon or wearable has Position component and at the same time is in inventory of the player. If this is done it is causing error in rendering the object. The reason is that this object is in idle status when displaying at position and might be shifting the frames in this action status???
 
 
 ### Where to put pygame.Vector2 so that it is used in the whole game
@@ -1362,7 +1362,7 @@ NewIsInInventory + AmmoPack
 
 ### Group components into domains modules - Physics, Rendering, ...
 
-### Implement several test quests for testing purposes
+### Implement several test scenes for testing purposes
   - test01_map_scrolling.json
   - all models, all wearables, all weapons, teleportation, collisions
 
@@ -1402,7 +1402,7 @@ NewIsInInventory + AmmoPack
 
 ####
 
-### Fix when rats quest dialog is finished and the NPC bounces to the player again, the initial dialog happens again and also the item is given one more time
+### Fix when rats scene dialog is finished and the NPC bounces to the player again, the initial dialog happens again and also the item is given one more time
 
 ### Fix colision correction movement - now it is moving strangelly into the side
 

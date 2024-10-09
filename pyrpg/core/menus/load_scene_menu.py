@@ -11,7 +11,7 @@ from .menu import Menu
 # Initiate logging of module
 logger = logging.getLogger(__name__)
 
-class LoadQuestMenu(Menu):
+class LoadSceneMenu(Menu):
     """ Class implementing the 'Load Scenes Menu' dialog.
     """
 
@@ -21,17 +21,17 @@ class LoadQuestMenu(Menu):
 
         self.init_game_fnc = init_game_fnc
 
-        self.last_quest_path = SCENE_PATH
-        self.load_quest_window = None
+        self.last_scene_path = SCENE_PATH
+        self.load_scene_window = None
 
         logger.info(f"Load Scenes Menu dialog initiated.")
 
     def show(self) -> None:
-        self.load_quest_window = UIFileDialog(
+        self.load_scene_window = UIFileDialog(
                 rect=Rect(self.gui_manager._gui_dlg_start, self.gui_manager._gui_dlg_dim),
                 manager=self.gui_manager.window_manager,
                 window_title="Load Scene",
-                initial_file_path=self.last_quest_path,
+                initial_file_path=self.last_scene_path,
                 allow_existing_files_only=False,
                 allow_picking_directories=False)
 
@@ -42,7 +42,7 @@ class LoadQuestMenu(Menu):
 
     def run(self, key_events, key_pressed, dt) -> State:
 
-        # If load quest menu accessed from other game state, create new exit dialog
+        # If load scene menu accessed from other game state, create new exit dialog
         if self.state_manager.changed_game_state:
             self.show()
 
@@ -50,7 +50,7 @@ class LoadQuestMenu(Menu):
             if event.type == UI_FILE_DIALOG_PATH_PICKED:
                 logger.info(f"Loading scene file '{event.text}''.")
                 self.init_game_fnc(event.text)
-                self.last_quest_path = event.text
+                self.last_scene_path = event.text
                 return State.GAME
             elif event.type == UI_WINDOW_CLOSE and self.state_manager.prev_game_state:
                 logger.info(f"Closing Load Scenes Menu Dialog.")

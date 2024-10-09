@@ -1,5 +1,5 @@
 {
-	"$schema": "../../../../../core/schemas/new/quest.schema.json",
+	"$schema": "../../../../../core/schemas/new/scene.schema.json",
 
 	// Basic data
 	"id" : "q_kill_all",
@@ -7,7 +7,7 @@
 	"description" : "Game where your objective is to kill all the enemies",
 	"objective" : "Kill all your enemies",
 
-	// What quests need to be loaded before this one
+	// What scenes need to be loaded before this one
 	"prereqs" : [],
 
 	// What objects need to be cleaned first
@@ -143,8 +143,8 @@
 				"actions": [
 					"SEQ",
 					["SCRIPT", "load_image", {"image_file" : "weather_effects/rainy/frame_00_delay-0.06s.gif"}],
-					["SCRIPT", "show_msg_window", {"html_text" : "Welcome to the <b>%quest_id</b> quest.<br/>Your goal is to kill all the enemies.<br/><br/>Good luck!"}],
-					["SCRIPT", "load_quest", {"quest_file" : "new/games/kill_all/kill_all_level01.json"}]
+					["SCRIPT", "show_msg_window", {"html_text" : "Welcome to the <b>%scene_id</b> scene.<br/>Your goal is to kill all the enemies.<br/><br/>Good luck!"}],
+					["SCRIPT", "load_quest", {"scene_file" : "new/games/kill_all/kill_all_level01.json"}]
 				]
 			}
 		]

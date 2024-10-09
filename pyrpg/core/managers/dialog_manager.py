@@ -17,7 +17,7 @@ class DialogManager():
         ''' Create dialog from dictionary definition contained in dictionary
         dialog_def and stores it in _dialogs dictionary
 
-        - dialog_def - original data from the quest
+        - dialog_def - original data from the scene
         - new_dlg_data - data after taking into account all templates
         - new_dlg_obj - dictionary with surface objects generated from the data
         '''

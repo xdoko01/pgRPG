@@ -17,7 +17,7 @@ def initialize(register, module_name):
     register(fnc=script_restart_brain, alias='restart_brain')
 
 def script_restart_brain(event, *args, **kwargs):
-    ''' Script that loads aa new quest
+    ''' Script that loads aa new scene
 
     '''
 

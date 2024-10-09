@@ -1,7 +1,7 @@
 '''
 Can be run from the console by putting following command
 
-py game.main.game.script_manager._scripts['show_dlg_window'](None, dialog_id='dlg_quest_start', position=[0, 0])
+py game.main.game.script_manager._scripts['show_dlg_window'](None, dialog_id='dlg_scene_start', position=[0, 0])
 
 '''
 from pyrpg.functions.wait import wait # import wait function

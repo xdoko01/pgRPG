@@ -7,7 +7,7 @@
 	"description" : "Test behavior tree checking that enemy is in range (sight, hearing) of the entity",
 	"objective" : "POC of the behavior",
 
-	// What quests need to be loaded before this one
+	// What scenes need to be loaded before this one
 	"prereqs" : [],
 
 	// What objects need to be cleaned first
@@ -52,7 +52,7 @@
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
 		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
 
 		// For clearing of processing of movements and collisions
@@ -67,7 +67,7 @@
 	// What dialogs to load
 	"dialogs" : [
 		{
-			"id" : "dlg_quest_start",
+			"id" : "dlg_scene_start",
 			"templates" : ["basic"],
 
 			"dimensions" : [630, 200],
@@ -347,24 +347,24 @@
 		[
 			"QUEST_START",
 			{
-				"id" : "ev_quest_start",
+				"id" : "ev_scene_start",
 				"actions" : [
 					"SCRIPT",
 					"show_dlg_window",
-					{"dialog_id" : "dlg_quest_start", "position" : [5, 5]}
+					{"dialog_id" : "dlg_scene_start", "position" : [5, 5]}
 				]
 			}
 		],
 		[
 			"QUEST_START",
 			{
-				"id": "ev_quest_start",
+				"id": "ev_scene_start",
 				"actions": 	[
 					"SCRIPT",
 					"show_msg_window", 
 					{
 						"title": "%filepath",
-						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
 					}
 				]
 			}

@@ -11,13 +11,13 @@ toml # for toml format support
 
 create custom logging handler that will feed the logs to a pygame surface or game Screen ... there are examples online - inherit logging.StreamHandler - emit function
 +++
-global command procesor - will have some list of commands - will be filled by the quest - command will have entity_id
+global command procesor - will have some list of commands - will be filled by the scene - command will have entity_id
 so on ENgine level I should be able to call processor.processCommand() - hence engine will need reference to processor
 Proessor will need to call something like this ... hence take somewhere reference - ... entity_id.move(1,1)
 ==
 
-engine as a global variable or distribute engine reference in a constructor for quest, map, and others 
-it seems not effective to init Quest from engine and from quest call engine again to create map.
+engine as a global variable or distribute engine reference in a constructor for scene, map, and others 
+it seems not effective to init Scene from engine and from scene call engine again to create map.
 Map can be created in Map class and engine reference can be passed to it. 
 What to do with the remove map function???
 
@@ -26,7 +26,7 @@ same unload should be in respective classes and can be called with parameter eng
 
 Dict of entities is stored only on MAP level - there is no entity without map 
 Dict of maps is stored only on engine level - MAYBE STORE MAPS ONLY ON QUEST level
-Dict of quests is stored on Engine level only 
+Dict of scenes is stored on Engine level only 
 
 ==
 
@@ -41,7 +41,7 @@ Requests
 ********
 	Request #1 - Support Save and Load Game
     Request #2 - Support multiple map layers
-    Request #3 - Support quests
+    Request #3 - Support scenes
 	Request #4 - Implement global script machine for orchestrating all objects during cut scenes 
 	Request #5 - Wearables as items stored on Character level - nice implementation (currently not subclass of item)
 
@@ -50,10 +50,10 @@ Requests
 
 	* Game Initiation
 	--------------------------------------------------------------------------------------------------------------
- 		Idea is that quest file and class manages initiation of everything in the game. QUest would create 
-		everything including the screens - the new game will be initiated by loading the initial quest only.
+ 		Idea is that scene file and class manages initiation of everything in the game. QUest would create 
+		everything including the screens - the new game will be initiated by loading the initial scene only.
 
-		The structure of quest file is described in the quest class comments. The basic idea of the workflow 
+		The structure of scene file is described in the scene class comments. The basic idea of the workflow 
 		is described below. 
 
 		Workflow
@@ -96,7 +96,7 @@ Requests
 		Playing with the idea that some map method will be responsible for moving player and not MapEntity instance.
 		Map knows position of all map items and player not. So map.move_entity will manage the movement based on 
 		collision with other items. If some collision happens, map entity can call MapEntity.onInteraction and 
-		MapEntity will decide what to do (for example generate event for Engine / Quest).
+		MapEntity will decide what to do (for example generate event for Engine / Scene).
 
 		Workflow
 			- main loop identifies key is processed
@@ -119,7 +119,7 @@ Requests
 		BUT in order to pass this reference we need to use instance of engine(self) instead of cls 
 		Also how will we be able to send_event from entity for example, entity must know engine instance.
 
-	Idea #1 - Let's pass Entity instance arround to Quest, Map, MapEntity + keep Maps on Entity level
+	Idea #1 - Let's pass Entity instance arround to Scene, Map, MapEntity + keep Maps on Entity level
 
 		By doing so we can call EventHandler from Map, Entity class and Engine will process it.
 
@@ -178,7 +178,7 @@ Requests
  	doing so, the commands start to be executing.
  	At the beginning of the main loop ProcessCommands(time) is executed - if list of commands is empty then nothing 
  	happens, if not command is started/updated.
- 	Quest is adding commands to the list of commands machine ScriptProcessor. ScriptProcessor is executing them.
+ 	Scene is adding commands to the list of commands machine ScriptProcessor. ScriptProcessor is executing them.
 
  	- study Javix(youtube)
  		- main game loop
@@ -203,7 +203,7 @@ Requests
  			- method Start - just Engine.ShowDialog
 
  		- subclass Command_CHangeMap(mapName, posX, posY)
- 		- subclass Command_AddQuest(quest)
+ 		- subclass Command_AddQuest(scene)
 
  		- class ScriptProcessor
  			- property list of commands, bUsrControlEnabled
@@ -230,7 +230,7 @@ Requests
 
  	Question #1 - DO WE NEED TO STORE ENTITY ON QUEST AND ALSO ON MAP? (PENDING)
  	------------------------------------------------------------------
- 	Currently, MapEntity is stored on Quest instance and on Map instance. Also,
+ 	Currently, MapEntity is stored on Scene instance and on Map instance. Also,
  	map_id is stored as a parameter of MapEntity instance. Are all of these necessary?
  	
 
@@ -238,17 +238,17 @@ Requests
  	Question #2 - HOW TO IMPLEMENT EVENTS AND LISTENERS FOR THE QUEST EVENTS? (ANSWERED)
  	-------------------------------------------------------------------------
  	Engine class is serving as a EventDispatcher, i.e. it distributes events to all relevant
- 	objects - quests, maps, screens using send_event method. Engine.send_event method is invoked
+ 	objects - scenes, maps, screens using send_event method. Engine.send_event method is invoked
  	by other entities in the game (players, characters). Those entities have also send_event method 
  	implemented and this method is just recalling Engine.send_event.
  	Quests have implemented event_handler method that is invoked by Engine.send_event. This method
  	decides what should happen (if anything) upon receival of the event.
- 	The behavior is stored on dictionary on quest instance level - it consists of 2 objects: condition
- 	and action. The whole flow on quest instance level then works as follows:
- 		- Event received by quest.event_handler
- 		- Event checked against quest.event_handler dictionary (condition + action data)
+ 	The behavior is stored on dictionary on scene instance level - it consists of 2 objects: condition
+ 	and action. The whole flow on scene instance level then works as follows:
+ 		- Event received by scene.event_handler
+ 		- Event checked against scene.event_handler dictionary (condition + action data)
  		- If event fulfills condition in dictionary, relevant action is performed
- 	Links: https://www.gamedev.net/forums/topic/652095-help-on-how-to-implement-stories-and-quests-on-an-rpg/
+ 	Links: https://www.gamedev.net/forums/topic/652095-help-on-how-to-implement-stories-and-scenes-on-an-rpg/
 
 
 
@@ -266,13 +266,13 @@ Random Comments
  	 - has dict of all game maps
  	 	- Map
  	 		- has list of map items (teleports)
- 	 		- has list of items filled by adding new quest
- 	 		- has list of characters filled by adding new quest
+ 	 		- has list of items filled by adding new scene
+ 	 		- has list of characters filled by adding new scene
  	 - has one player
  	 	- Player
  	 	    - has reference to current map
- 	 - has list of players quests
- 	 	- Quest 
+ 	 - has list of players scenes
+ 	 	- Scene 
  	 		- has items and characters to be added to different maps
 
 Wearables
@@ -322,7 +322,7 @@ class Character
       send_event("onInteraction", self.id, object.id)
       --send_event("onInteraction", "q01_p01_n01", "player")
 
-class Quest      
+class Scene      
 
   ev_actions = { 
   

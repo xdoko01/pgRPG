@@ -3,7 +3,7 @@
 Contains all the game scripts
 
 Script implements complex game functionalities that can be triggered by events. E.g.
-earthquake, fadeouts, changing quests, etc
+earthquake, fadeouts, changing scenes, etc
 
 Every script is implemented as a function.
 

@@ -7,7 +7,7 @@
 	"description" : "Simple collect coins game, the aim is to collect all the coins and end.",
 	"objective" : "Collect all the points",
 
-	// What quests need to be loaded before this one
+	// What scenes need to be loaded before this one
 	"prereqs" : [],
 
 	// What objects need to be cleaned first
@@ -69,7 +69,7 @@
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
 		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "SCORE", "ITEM_PICKUP", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
@@ -362,7 +362,7 @@
 							["==", ["VAR", "from"], "ev_scored_more_than_500_points"],
 							["==", ["VAR", "from"], "ev_scored_exactly_500_points"]
 						],
-						["SCRIPT", "restart_quest", {"quest" : "games/collect_coins/collect_coins.jsonc"}]
+						["SCRIPT", "restart_quest", {"scene" : "games/collect_coins/collect_coins.jsonc"}]
 				]
 			}
 		],

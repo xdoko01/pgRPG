@@ -99,9 +99,9 @@ class Main:
         #from pyrpg.core.menus.progress_bar import ProgressBar
         #self.progress_bar = ProgressBar(gui_manager=self.gui_manager)
 
-        # Class representing the load quest menu
-        from pyrpg.core.menus.load_quest_menu import LoadQuestMenu
-        self.load_quest_menu = LoadQuestMenu(gui_manager=self.gui_manager, state_manager=self.state_manager, init_game_fnc=self.init_game)
+        # Class representing the load scene menu
+        from pyrpg.core.menus.load_scene_menu import LoadSceneMenu
+        self.load_scene_menu = LoadSceneMenu(gui_manager=self.gui_manager, state_manager=self.state_manager, init_game_fnc=self.init_game)
 
         # Class representing the exit dialog
         from pyrpg.core.menus.exit_menu import ExitMenu
@@ -179,8 +179,8 @@ class Main:
                 self.state_manager.change_state(self.main_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt))
 
             elif self.state_manager.state == State.LOAD_QUEST_MENU:
-                #res_state = self.load_quest_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt)
-                self.state_manager.change_state(self.load_quest_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt))
+                #res_state = self.load_scene_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt)
+                self.state_manager.change_state(self.load_scene_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt))
 
             elif self.state_manager.state == State.EXIT_GAME_DIALOG:
                 #res_state = self.exit_menu.run(key_events=key_events, key_pressed=key_pressed, dt=dt)
@@ -223,9 +223,9 @@ class Main:
 
         # Clear Menus
         self.exit_menu.clear()
-        self.load_quest_menu.clear()
+        self.load_scene_menu.clear()
         self.main_menu.clear()
-        self.exit_menu, self.load_quest_menu, self.main_menu = None, None, None
+        self.exit_menu, self.load_scene_menu, self.main_menu = None, None, None
         logger.info(f'Menus closed')
 
         # Clear Managers
@@ -254,4 +254,4 @@ def cons_get_info_footer():
 
     loaded_quests = main.engine._quests.keys() if main and main.engine else 'N/A'
 
-    return f'loaded quests: {loaded_quests}'
+    return f'loaded scenes: {loaded_quests}'

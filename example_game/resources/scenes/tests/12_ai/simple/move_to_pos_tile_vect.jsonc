@@ -8,7 +8,7 @@
 	"description" : "Test command move_to_pos_tile_vect",
 	"objective" : "POC of NPC controlled by the script",
 
-	// What quests need to be loaded before this one
+	// What scenes need to be loaded before this one
 	"prereqs" : [],
 
 	// What objects need to be cleaned first
@@ -44,7 +44,7 @@
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-		// For events processing - display the dialog on the start of the quest - after first game screen is generated
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
 		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}],
 
 		// Removal of obsolete flags
@@ -106,13 +106,13 @@
 		[
 			"QUEST_START",
 			{
-				"id": "ev_quest_start",
+				"id": "ev_scene_start",
 				"actions": 	[
 					"SCRIPT",
 					"show_msg_window", 
 					{
 						"title": "%filepath",
-						"html_text": "<b>Quest ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
 					}
 				]
 			}
