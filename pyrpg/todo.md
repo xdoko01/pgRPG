@@ -7,11 +7,8 @@
   - [x] Rename `quest` to `scene` everywhere
   - [x] Get rid of new and dots in configs below "MODULEPATHS": {"SCRIPT_MODULE_PATH" : "core.scripts.new.", "COMMAND_MODULE_PATH" : "core.commands."
 
-
   - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason
   - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
-  
-
 
   Features
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
