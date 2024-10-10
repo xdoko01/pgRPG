@@ -1,14 +1,4 @@
-  - [x] The configurations are not properly merged when merging nested dictionaries - fix needed
-  - [x] Implement logger also for the configurations
-  - [x] Template from existing entity using # ... add entities also into storage=self._template_definitions
-  - [x] BUG - Updating of existing entity (created in some scene before) does not work. Instead, completely new entity is created!
-  - [x] BUG - When collect coins or sokoban ends it cannot start again for some error - fix it
-  - [x] Is quest manager used? remove it
-  - [x] Rename `quest` to `scene` everywhere
-  - [x] Get rid of new and dots in configs below "MODULEPATHS": {"SCRIPT_MODULE_PATH" : "core.scripts.new.", "COMMAND_MODULE_PATH" : "core.commands."
 
-  - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason
-  - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
 
   Features
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
@@ -21,6 +11,9 @@
 
 # To Do
  
+  - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
+  - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason
+
   - [ ] `do_parallel` to support skipping of cycles so that some commands run once per some amount of ticks and meanwhile return some default value
   - [ ] prepare `test_bb_value_in` and `test_bb_value_not_in` as a faster alternatives to `test_bb_values` that is using potentionally slow json logic
   - [ ] blackboard having implicit value `self` referencing the entity ID or name - can be then used in all handlers
@@ -34,14 +27,19 @@
 
 ## Bugs
   - [ ] BUG - move_to command makes the NPSs to walk through the tiles
-  - [x] BUG - entity is moving to the second point in the path not the first point in the path! That is causing problems when only chekcpoints are moved. Entity is not
-              avoiding obstacles under those circumstances.
-
+  - [x] BUG - entity is moving to the second point in the path not the first point in the path! That is causing problems when only chekcpoints are moved. Entity is not avoiding obstacles under those circumstances.
+  
   - [ ] BUG - move_to_pos_target_vect - direction of movement (facing of entity is not being changed)
   - [ ] BUG - Problem with pushing entities into walls - eventhough map collisions are enabled. To be fixed.
   - [ ] BUG - debug processor works onlywith one camera
   - [ ] BUG - when restarting scene in the `collect_coins` game, there is loading screen in the background
 
+  - [x] BUG - The configurations are not properly merged when merging nested dictionaries - fix needed
+  
+  - [x] BUG - Template from existing entity using # ... add entities also into storage=self._template_definitions
+
+  - [x] BUG - Updating of existing entity (created in some scene before) does not work. Instead, completely new entity is created!
+  - [x] BUG - When collect coins or sokoban ends it cannot start again for some error - fix it
   - [x] BUG - at the moment cannot controll other entity as the `entity` parameter is poped from the command `params`. As `params` is mutable dictionary, it is removed everywhere. As a fix, either add `entity_id` into the `Command` namedtuple or do not `pop` the entity parameter, just read it.
   - [x] BUG - seems that `ECSManager` does not translate references to aliases that are lower in the scene file. It would be needed to add new item to the `engine.load_scene_def_fncs` that will call some `create_empty_entity` over all entities first and then calles `update_entity` over all (2 step process, now it is just one step).
   - [x] BUG - Dialogs stopped working - because engine.py imports QuestManager and QuestManager imports Scene scene.py imports scripts  (for get_script_fnc) and there are all scripts imported - we need to have script same as processor - define it at JSON string
@@ -111,6 +109,10 @@
   - [ ] How to solve the problem when AI follows some path and is attacked? The easier way is probably to reset the BT as a part of event handler, not sure.
   - [ ] ECS manager will provide only `_game_functions` to processors and commands and nothing else. Thus, we would need to pass the whole `ecs_mng` reference to the commands but only `ecs_mng._game_functions` (dict of references)
 
+  - [x] Is quest manager used? remove it
+  - [x] Rename `quest` to `scene` everywhere
+  - [x] Get rid of new and dots in configs below "MODULEPATHS": {"SCRIPT_MODULE_PATH" : "core.scripts.new.", "COMMAND_MODULE_PATH" : "core.commands."
+  - [x] Implement logger also for the configurations 
   - [x] reduce number of files in `collision_system` delete some of them and merge necessary version of classes to the existing files `generate_collisions_processor.py` and/or `resolve_collisions_processor`
   - [x] update collision processor according to the new concept and document it
   - [x] write documentation how to add new component/processor class without the need to change all the dependencies - multiple classes in the files

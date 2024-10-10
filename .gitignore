@@ -6,3 +6,6 @@ __pycache__
 
 # Ignore all backup directories
 **/backup
+
+# Ignore all backup experiments
+**/experiments
