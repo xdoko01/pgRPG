@@ -57,3 +57,6 @@ class ExitMenu(Menu):
         self.gui_manager.draw_gui()
 
         return State.EXIT_GAME_DIALOG
+
+    def clear(self) -> None:
+        pass

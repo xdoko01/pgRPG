@@ -112,6 +112,8 @@ class GUIManager:
         self.screen_copy = self.window.copy()
         logger.info(f"Screen has been copied")
 
+    def clear(self) -> None:
+        pass
 
 if __name__ == '__main__':
     gui = GUIManager(640, 480, 32)

@@ -21,10 +21,13 @@ def init(config_file: str, console: bool=True, scene_file: str=None, timed: bool
     logger.info(f"Config successfully loaded.")
 
     # Start the engine
+    from pyrpg.core import main as m
+    m.init(console=console, scene_file=scene_file, timed=timed)
+
+    ## Store the main module TODO: is this really needed?
     global main
-    from pyrpg.core.main import Main
-    main = Main(console=console, filepath=scene_file, timed=timed)
-    logger.info(f'Instance of Main class created as "{main}".')
+    main = m
+    logger.info(f'Main module stored as "{main}".')
 
     # Main loop
     logger.info(f'Starting the main loop.')

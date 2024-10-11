@@ -73,6 +73,9 @@ class StateManager:
 
         self.change_state(self.prev_state)
 
+    def clear(self) -> None:
+        pass
+
 if __name__ == '__main__':
     
     from ...config.states import State, STATES_GRAPH, NON_GAME_STATES, START_STATE

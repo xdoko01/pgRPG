@@ -65,3 +65,6 @@ class LoadSceneMenu(Menu):
         self.gui_manager.draw_gui()
 
         return State.LOAD_QUEST_MENU
+
+    def clear(self) -> None:
+        pass

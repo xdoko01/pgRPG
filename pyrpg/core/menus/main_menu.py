@@ -58,3 +58,6 @@ class MainMenu(Menu):
         self.gui_manager.draw_gui()
 
         return State.MAIN_MENU
+
+    def clear(self) -> None:
+        pass
