@@ -1,4 +1,4 @@
-from pyrpg.main import main
+from pyrpg import main
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''

@@ -10,7 +10,7 @@ import pyrpg.utils.dialog as dialog # import display_dialog function
 import pygame
 from pyrpg.core.config.keys import KEYS # for K_SUBMIT
 
-from pyrpg.main import main
+from pyrpg import main
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''

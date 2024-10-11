@@ -79,7 +79,7 @@
 
     "CONSOLE": {
         "global" : {
-            "cli_module": "pyrpg.main",
+            "cli_module": "pyrpg",
             "bck_alpha": 150
         },
         "input": {
