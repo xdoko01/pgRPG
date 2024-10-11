@@ -21,7 +21,8 @@ def init() -> None:
     CONSOLE.get('global').update({'script_path': FILEPATHS["CONSOLE_SCRIPT_PATH"]})
 
     # For now just text, reference is created in console manager, during creation of the Console entity
-    CONSOLE["CLI_MODULE"] = CONSOLE.get("global").get("cli_module", "pyrpg.main")
+    CONSOLE["CLI_MODULE"] = CONSOLE.get("global").get("cli_module", "pyrpg")
 
     import pprint
     logger.debug(f"Console config initiated. {pprint.pformat(CONSOLE)}")
+    

@@ -117,7 +117,7 @@ class Game:
             "FNC_PLAY_SOUND" : self.sound_manager.play_sound
         })
 
-        self._quests = {}
+        self._scenes = {}
 
         # Scene loader managing creting of new scene from json/yaml file and creation
         # of the game objects
@@ -212,7 +212,7 @@ class Game:
 
         # Load the scene, register it and create QUEST_START event
         scene = self.load_scene_from_file(filepath=filepath)
-        self._quests[scene.alias] = scene
+        self._scenes[scene.alias] = scene
         self.event_manager.add_event(
             Event("QUEST_START", 
             self, 
@@ -241,23 +241,21 @@ class Game:
         self.ecs_manager.clear_ecs()
         self.script_manager.clear_scripts()
 
-        self.clear_quests()
+        self.clear_scenes()
 
         logger.info(f"All game resources cleared.")
 
-    def delete_quest(self, scene_name: str) -> None:
+    def delete_scene(self, scene_name: str) -> None:
         """Deletes scenes from the game"""
 
-        del self._quests[scene_name]
+        del self._scenes[scene_name]
         logger.info(f'Scene "{scene_name}" was deleted.')
 
-    def clear_quests(self) -> None:
+    def clear_scenes(self) -> None:
         """ Clears all the loaded scenes."""
 
-        scenes = list(self._quests.keys()).copy()
-
-        for scene_name in scenes:
-            self.delete_quest(scene_name)
+        for scene_name in self._scenes.copy().keys():
+            self.delete_scene(scene_name)
 
         logger.info(f"Quests cleared.")
 

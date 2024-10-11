@@ -122,7 +122,7 @@ def load(config_file: str) -> None:
     frames.convert_dict_conf_to_vars()
     #show("FRAMES config", FRAMES)
 
-    # Process CONSOLE - must be the last because internally it is importing pyrpg.main module that is using some KEYS configurations that 
+    # Process CONSOLE - must be the last because internally it is importing pyrpg module that is using some KEYS configurations that 
     # must be already ready
     global CONSOLE
     CONSOLE =_prep_conf_console(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="CONSOLE"))

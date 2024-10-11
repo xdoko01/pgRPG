@@ -1129,7 +1129,7 @@ NewIsInInventory + AmmoPack
       - `def process_game_commands(keys=None, events=None, debug=False, gl_vars = {})` + command processor has the gl_vars as parameter
         - game.create_processor -> game.CommandProcessor(engine.process_game_commands)
         - game.run() - game.world.process(keys, events, gl_vars)
-      - `game._quests` -> create processor in game CommandProcessor(... game._scene) -> game.run() - game.world.process(keys, events, gl_vars) -> CommandProcessor().process(... scenes)
+      - `game._scenes` -> create processor in game CommandProcessor(... game._scene) -> game.run() - game.world.process(keys, events, gl_vars) -> CommandProcessor().process(... scenes)
 
 
     - accessing engine.maps

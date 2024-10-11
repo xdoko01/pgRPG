@@ -8,7 +8,7 @@ import pygame
 from pygame_gui.windows import UIConfirmationDialog
 from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
 from pygame import Rect
-from pyrpg.main import main
+from pyrpg import main
 from pyrpg.core.config.display import DISPLAY # for MAX_FPS
 from pyrpg.functions.str_utils import translate_str
 

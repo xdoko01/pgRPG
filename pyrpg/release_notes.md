@@ -152,7 +152,7 @@
   Newly, pyRPG supports loading scene in YAML file format. It can be more readable for some people than json.
 
 ### LOGGING implemented
-   - Configuration of the logging is happening in pyrpg.main. The configuration itself is part of the `config.py`. 
+   - Configuration of the logging is happening in pyrpg. The configuration itself is part of the `config.py`. 
    - There are 3 handlers for logging 
      - `console` - for logging to the standard output / text console
      - `in_game_console` - for logging to the graphical console that is available directly from the game. In order to enable this logic, there needs to be write function implemented in some module. For now the module is `pyrpg.core.config.console` but might be different one in the future as this is not elegant enough.
@@ -276,12 +276,12 @@
   - There is still possibility that scenes (game definitions) that are loaded later can overrule the *init* scene definitions by specifying its objects in *cleanup* section of the scene definition.
 
 ### Console configured to be available anytime, not only in game, and to display system messages
-  - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pyrpg.main.init` function called `cons_enabled`. Value of this parameter is stored as `pyrpg.main.show_cons_on_sys_msg` variable for further use.
+  - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pyrpg.init` function called `cons_enabled`. Value of this parameter is stored as `pyrpg.show_cons_on_sys_msg` variable for further use.
   - Console can be toggled from every game state by pressing `K_CONSOLE_TOGGLE` button.
   - Functions that are serving the console are executed in every game cycle for every game state. By doing so, we can achieve rolling-out effect even if the game state has no longer value `CONSOLE`.
   - In order to always keep the console transparent, a copy of a screen is taken once console is enabled, and blitted before the console. For capturing the game screen, new function has been introduced in `pyrpg.core.engine` module called `save_screen_copy()`. The function stores the copy of the screen in `pygame.core.engine.screen_copy` variable.
   - In order to disable any functional keys for controlling the game/menus when the console is enabled, new game state `CONSOLE` has been introduced. While being in this game state, only console is consuming all the inputs.
-  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.main.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
+  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
 
 ### Showing the messages during the game (not stopping the game)- things like 'item picked', 'NPC died', 'new phase changed'
   - New global variable `engine.message_queue` stores message objects to be displayed (or any other action)

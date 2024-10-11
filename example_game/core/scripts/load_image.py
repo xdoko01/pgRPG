@@ -4,7 +4,7 @@ Can be run from the console by putting following command
 XXXX
 '''
 import pygame
-from pyrpg.main import main
+from pyrpg import main
 from pyrpg.core.config.filepaths import IMAGE_PATH # for IMAGE_PATH
 
 def initialize(register, module_name):

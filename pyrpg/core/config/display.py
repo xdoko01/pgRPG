@@ -9,6 +9,8 @@ def init() -> None:
     """
     import pygame
 
+    global DISPLAY
+    
     DISPLAY["WINDOW"] = pygame.display.set_mode(
         size=tuple(DISPLAY["RESOLUTION"]),
         flags=pygame.FULLSCREEN if DISPLAY["FULLSCREEN"] else 0,

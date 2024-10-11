@@ -4,7 +4,7 @@ Can be run from the console by putting following command
 XXXX
 """
 
-from pyrpg.main import main
+from pyrpg import main
 
 def initialize(register, module_name):
     """Script registers itself at ScriptManager"""

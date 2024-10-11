@@ -1,23 +1,7 @@
-''' pyrpg/pyrpg/main.py
-
-    Called from:
-    -> pyrpg/pyrpg.py
-
-    Aim:
-    -> Implements the main game loop - switching between game, console and the menus
-
-    Usage:
-    -> Implements the main game loop - switching between game, console and the menus
-'''
-
 # Init logging config
 import logging
 logger = logging.getLogger(__name__)
 
-# Get process object to determine info about python process (mem usage etc.)
-import os, psutil
-logger.info(f'pyRPG process running as PID={os.getpid()}.')
-python_process = psutil.Process(os.getpid())
 
 # It is needed to import pygame in order to have access to key events in the main game loop
 import pygame
@@ -29,31 +13,6 @@ from pyrpg.core.config.display import DISPLAY # for MAX_FPS
 
 from pyrpg.core.config.states import State
 
-
-# Via this global variable, console can access all game properties
-main = None
-
-def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
-    '''Create instance of main game class and remember it in 
-    form of global variable so that console can use it'''
-  
-    # Start the engine
-    global main
-    main = Main(console=console, filepath=scene_file, timed=timed)
-    logger.info(f'Instance of Main class created as "{main}".')
-
-    logger.info(f'Starting the main loop.')
-    main.run()
-
-def exit() -> None:
-    '''Clears the references and exits'''
-    global main
-
-    main.end_program()
-    main = None
-    pygame.quit()
-
-    logger.info(f'Program quits.')
 
 class Main:
 
@@ -135,7 +94,6 @@ class Main:
 
         self.engine.new_game(filepath)
 
-
     def run(self):
         ''' Main game and menu loop. Contains references to other
         loop codes depending of current GameState
@@ -213,8 +171,7 @@ class Main:
             # Get the time of the frame
             dt = self.gui_manager.clock.tick(DISPLAY["MAX_FPS"])
 
-
-    def end_program(self) -> None:
+    def end(self) -> None:
 
         # Clear Game
         if self.engine:
@@ -235,23 +192,6 @@ class Main:
         self.gui_manager, self.sound_manager, self.state_manager = None, None, None
         logger.info(f'Managers closed')
 
+        pygame.exit()
+        logger.info(f'pygame closed')
 
-'''
-Functions that feed the console with header and footer data.
-'''
-
-def cons_get_info_header():
-    '''Returns info that is displayed in the console's header'''
-
-    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
-    game_state = main.state_manager.game_state if main else 'N/A'
-    no_of_entities =  len(main.engine.ecs_manager._world._entities) if main and main.engine else 'N/A'
-
-    return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
-
-def cons_get_info_footer():
-    '''Returns info that is displayed in the console's footer'''
-
-    loaded_quests = main.engine._quests.keys() if main and main.engine else 'N/A'
-
-    return f'loaded scenes: {loaded_quests}'

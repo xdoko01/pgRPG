@@ -161,17 +161,9 @@ EXAMPLES
 
     print(f"Starting with the following arguments:\n{console=}\n{scene_file=}\n{config_file=}")
 
-
-    # Load all configurations based on the config file. Must be here so that the main module can already use logging functionality
-    # that is based on config files.
-    import pyrpg.core.config as config
-    config.load(config_file=config_file)
-    #import pyrpg.core.config.logging # all logging initiation done here
-
-
-    # Start the game
-    from pyrpg.main import init
-    init(console=console, scene_file=scene_file, timed=False)
+    # Load the framework using all the configs
+    import pyrpg
+    pyrpg.init(config_file=config_file, console=console, scene_file=scene_file, timed=False)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
