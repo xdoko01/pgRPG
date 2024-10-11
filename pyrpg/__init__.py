@@ -34,12 +34,9 @@ def exit() -> None:
     '''Clears the references and exits'''
     global main
 
-    main.end_program()
+    main.end()
     main = None
-    pygame.quit()
-
-    logger.info(f'Program quits.')
-
+    logger.info(f'PyRPG quits.')
 
 
 '''
@@ -58,6 +55,6 @@ def cons_get_info_header():
 def cons_get_info_footer():
     '''Returns info that is displayed in the console's footer'''
 
-    loaded_quests = main.engine._quests.keys() if main and main.engine else 'N/A'
+    loaded_quests = main.engine._scenes.keys() if main and main.engine else 'N/A'
 
     return f'loaded scenes: {loaded_quests}'

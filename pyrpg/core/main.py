@@ -94,7 +94,6 @@ class Main:
 
         self.engine.new_game(filepath)
 
-
     def run(self):
         ''' Main game and menu loop. Contains references to other
         loop codes depending of current GameState
@@ -172,8 +171,7 @@ class Main:
             # Get the time of the frame
             dt = self.gui_manager.clock.tick(DISPLAY["MAX_FPS"])
 
-
-    def end_program(self) -> None:
+    def end(self) -> None:
 
         # Clear Game
         if self.engine:
@@ -193,3 +191,7 @@ class Main:
         self.state_manager.clear()
         self.gui_manager, self.sound_manager, self.state_manager = None, None, None
         logger.info(f'Managers closed')
+
+        pygame.exit()
+        logger.info(f'pygame closed')
+

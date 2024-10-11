@@ -25,21 +25,4 @@ def init() -> None:
 
     import pprint
     logger.debug(f"Console config initiated. {pprint.pformat(CONSOLE)}")
-
-
-def cons_get_info_header(pyrpg_ref) -> str:
-    '''Returns info that is displayed in the console's header'''
-
-    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
-    game_state = pyrpg_ref.state_manager.game_state if main else 'N/A'
-    no_of_entities =  len(pyrpg_ref.engine.ecs_manager._world._entities) if main and main.engine else 'N/A'
-
-    return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
-
-def cons_get_info_footer(pyrpg_ref) -> str:
-    '''Returns info that is displayed in the console's footer'''
-
-    loaded_quests = pyrpg_ref.engine._quests.keys() if main and main.engine else 'N/A'
-
-    return f'loaded scenes: {loaded_quests}'
     
