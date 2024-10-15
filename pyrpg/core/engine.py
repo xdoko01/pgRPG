@@ -18,7 +18,7 @@ from pyrpg.core.managers import message_manager #import MessageManager
 from pyrpg.core.managers import dialog_manager #import DialogManager
 from pyrpg.core.managers import command_manager #import CommandManager
 from pyrpg.core.managers import ecs_manager #import ECSManager
-from pyrpg.core.managers.event_manager import EventManager
+from pyrpg.core.managers import event_manager #import EventManager
 from pyrpg.core.managers.script_manager import ScriptManager
 from pyrpg.core.managers.pathfind_manager import PathfindManager
 
@@ -45,7 +45,7 @@ pathfind_manager = PathfindManager()
 # TODO - maybe it would be better to handle processing of events within processor that
 # would receive list of events and handle event function and using those would implement
 # event processing.
-event_manager = EventManager(script_manager.execute_event_actions)
+event_manager.init(exec_event_actions_fnc=script_manager.execute_event_actions)
 
 # System resources managers - ititiated by init function
 #gui_manager: GUIManager
