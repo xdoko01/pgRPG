@@ -2,50 +2,39 @@
 import logging
 logger = logging.getLogger(__name__)
 
-# Init engine
-engine = None
+# Initiate GUI manager - all configuration parameters are loaded in the gui_manager
+from pyrpg.core.managers import gui_manager
+gui_manager.init()
 
+# Initiate Sound Manager
+from pyrpg.core.managers import sound_manager
+sound_manager.init()
+
+# Initiate  Console Manager
+from pyrpg.core.managers import console_manager
+
+#def _init_console() -> None:
+#    console_manager.init()
+#    global console
+#    console = console_manager.console
+
+# Initiate State Manager
+from pyrpg.core.managers import state_manager
+state_manager.init()
+
+# Initiate engine
+engine = None
 def _init_game(scene_file: str, timed: bool) -> None:
     # Create engine instance if not yet created
     global engine
 
-    if engine is None:
-        from pyrpg.core.engine import Game
-        engine = Game(gui_manager, sound_manager, timed=timed)
-
+    #if engine is None:
+    from pyrpg.core import engine as e
+    engine = e
+        #e.init(gui_manager, sound_manager, timed=timed)
+        #e.init(sound_manager, timed=timed)
+    engine.init(timed=timed)
     engine.new_game(scene_file)
-
-
-# Manager of GUI window and related
-from pyrpg.core.managers.gui_manager import GUIManager
-from pyrpg.core.config.display import DISPLAY 
-gui_manager = GUIManager(
-    window=DISPLAY["WINDOW"],
-    width=DISPLAY["WIDTH"], 
-    height=DISPLAY["HEIGHT"], 
-    depth=DISPLAY["BITDEPTH"], 
-    full=DISPLAY["FULLSCREEN"], 
-    ratio=DISPLAY["GUI_WINDOW_RATIO"]
-)
-
-# Prepare console
-import pyrpg.core.managers.console_manager as console_manager
-console=None 
-
-def _init_console() -> None:
-    console_manager.init()
-    global console
-    console = console_manager.console
-
-
-# Prepare game states
-from pyrpg.core.managers.state_manager import StateManager
-from pyrpg.core.config.states import STATES_GRAPH, NON_GAME_STATES, START_STATE
-state_manager = StateManager(states_graph=STATES_GRAPH, start=START_STATE, non_game_states=NON_GAME_STATES)
-
-# Sound Manager
-from pyrpg.core.managers.sound_manager import SoundManager
-sound_manager = SoundManager()
 
 # MainMenu
 from pyrpg.core.menus.main_menu import MainMenu
@@ -60,12 +49,18 @@ from pyrpg.core.menus.exit_menu import ExitMenu
 exit_menu = ExitMenu(gui_manager=gui_manager, state_manager=state_manager)
 
 
+
+
+
+
+
+
 def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
 
     # Init Console, if required
-    if console: 
-        _init_console()
-        logger.info(f"Console initiation done.")
+    if console: console_manager.init()
+        #_init_console()
+    logger.info(f"Console initiation done.")
 
     # Init game state - Start game into main menu or into the game
     if scene_file:
@@ -109,8 +104,8 @@ def run():
                 state_manager.change_state(State.EXIT_GAME_DIALOG)
 
             if event.type == pygame.KEYUP:
-                if event.key == KEYS["K_CONSOLE_TOGGLE"] and console:
-                    if console.toggle():
+                if event.key == KEYS["K_CONSOLE_TOGGLE"] and console_manager.console:
+                    if console_manager.console.toggle():
                         gui_manager.save_screen()
                         logger.info(f'Entering console')
                         state_manager.change_state(State.CONSOLE)
@@ -135,18 +130,22 @@ def run():
                 break
 
         # If console is in use
-        if console: 
+        if console_manager.console: 
             # Read and process events related to the console
-            console.update(key_events)
+            console_manager.console.update(key_events)
             # Display the console if enabled or animation is still in progress
-            console.show(gui_manager.window)
+            console_manager.console.show(gui_manager.window)
+
+        # Display FPS
+        gui_manager.blit_text("FPS: " + str(int(gui_manager.clock.get_fps())))
 
         # Flip the frame buffers
         #pygame.display.flip()
         gui_manager.flip()
 
         # Display FPS in window title
-        pygame.display.set_caption('FPS: ' + str(int(gui_manager.clock.get_fps())))
+        #pygame.display.set_caption('FPS: ' + str(int(gui_manager.clock.get_fps())))
+
 
         # Get the time of the frame
         dt = gui_manager.clock.tick(DISPLAY["MAX_FPS"])
@@ -175,16 +174,34 @@ def end() -> None:
     logger.info(f'Menus closed')
 
     # Clear Managers
-    global gui_manager
     gui_manager.clear()
-    gui_manger = None
-
-    global sound_manager
     sound_manager.clear()
-    sound_manager = None
-
-    global state_manager
     state_manager.clear()
-    state_manager = None
 
     logger.info(f'Managers closed')
+
+'''
+Functions that feed the console with header and footer data.
+'''
+
+# Get process object to determine info about python process (mem usage etc.)
+import os, psutil
+logger.info(f'pyRPG process running as PID={os.getpid()}.')
+python_process = psutil.Process(os.getpid())
+
+
+def cons_get_info_header():
+    '''Returns info that is displayed in the console's header'''
+
+    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
+    game_state = state_manager.game_state #if main else 'N/A'
+    no_of_entities =  len(engine.ecs_manager._world._entities) if engine else 'N/A'
+
+    return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
+
+def cons_get_info_footer():
+    '''Returns info that is displayed in the console's footer'''
+
+    loaded_quests = engine._scenes.keys() if engine else 'N/A'
+
+    return f'loaded scenes: {loaded_quests}'

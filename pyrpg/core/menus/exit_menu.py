@@ -23,7 +23,7 @@ class ExitMenu(Menu):
     def show(self) -> None:
         '''Each time the exit dialog must be created. When closed it is destroyed automatically. '''
         self.exit_dialog = UIConfirmationDialog(
-                rect=Rect(self.gui_manager._gui_dlg_start, self.gui_manager._gui_dlg_dim),
+                rect=Rect(self.gui_manager.gui_dlg_start, self.gui_manager.gui_dlg_dim),
                 manager=self.gui_manager.window_manager,
                 action_long_desc='Do you want to exit the game?',
                 action_short_name='Exit')

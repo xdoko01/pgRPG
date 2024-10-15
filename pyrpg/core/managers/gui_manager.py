@@ -17,13 +17,130 @@ from pyrpg.core.config.filepaths import MENU_BACKGROUND_PATH # MENU_BACKGROUND_P
 from pyrpg.core.config.gui import GUI
 #from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
 
-from pyrpg.utils.bitmap_font import BitmapFont
+#from pyrpg.utils.bitmap_font import BitmapFont
 #from pyrpg.core.config.paths import FONT_PATH
 
 
 Dim = namedtuple("Dim", ["width", "height"])
 Pos = namedtuple("Pos", ["x", "y"])
 
+####
+
+class BackgroundAnimation:
+    def __init__(self, path: Path, res: Dim, delay: int):
+        self.animation = load_animation(background_folder_path=path, resize=res)
+        self.delay = delay
+        self.last_image = 0
+        self.last_time = pygame.time.get_ticks()
+        self.frames = len(self.animation)
+
+# Font
+from pyrpg.core.config.fonts import FONTS # for GUI_MANAGER_FONT
+font = FONTS["GUI_MANAGER_FONT"] #BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
+
+#_res: Dim
+gui_dlg_dim: Dim
+gui_dlg_start: Pos
+
+window: pygame.Surface
+clock = pygame.time.Clock()
+
+screen_copy: pygame.Surface
+window_manager: pygame_gui.UIManager
+
+background_animation: BackgroundAnimation
+
+def init() -> None:
+    # Initiate GUI manager
+    from pyrpg.core.config.display import WINDOW, WIDTH, HEIGHT, BITDEPTH, FULLSCREEN, GUI_WINDOW_RATIO 
+    _init(win=WINDOW, width=WIDTH, height=HEIGHT, depth=BITDEPTH, full=FULLSCREEN, ratio=GUI_WINDOW_RATIO)
+        
+    logger.info(f"GUI Manager initiated.")
+
+def _init(win: pygame.Surface, width: int, height: int, depth: int=32, full: bool=False, ratio: float=1.5) -> None:
+
+    # Dimensions of game window
+    _res = Dim(width, height)
+
+    # Dimensions of GUI window
+    global gui_dlg_dim
+    gui_dlg_dim = Dim(
+        _res.width / ratio,
+        _res.height / ratio
+    )
+
+    # Start position of the GUI window - center on the screen
+    global gui_dlg_start
+    gui_dlg_start = Pos(
+        (_res.width - gui_dlg_dim.width) / 2,
+        (_res.height - gui_dlg_dim.height) / 2
+    )
+
+    # At this moment, display is already created during initial configuration
+    global window
+    window = win
+
+    global screen_copy
+    screen_copy = pygame.Surface(_res)
+    global window_manager
+    window_manager = pygame_gui.UIManager(_res)
+
+    global background_animation
+    background_animation = BackgroundAnimation(
+        path=MENU_BACKGROUND_PATH, 
+        res=_res, 
+        delay=GUI["MENU_BACKGROUND_ANIMATION_DELAY_MS"]
+    )
+
+    logger.info(f"GUIManager initiated.")
+
+def process_events(event) -> None:
+    window_manager.process_events(event)
+
+def update(time) -> None:
+    window_manager.update(time) # in seconds
+
+def draw_gui() -> None:
+    window_manager.draw_ui(window)
+
+def blit_background() -> None:
+    window.blit(screen_copy, (0, 0))
+
+def blit_image(image: pygame.image=None):
+    window.blit(image, (0, 0))
+
+def blit_text(text: str, pos=(0,0)):
+    window.blit(font.render(text), pos)
+
+def blit_background_animation():
+    if pygame.time.get_ticks() >= background_animation.last_time + background_animation.delay:
+        background_animation.last_time = pygame.time.get_ticks()
+        # blit background image
+        background_animation.last_image = (background_animation.last_image + 1) % background_animation.frames
+
+    blit_image(background_animation.animation[background_animation.last_image])
+
+def flip():
+    """ Trigger displaying on the screen.
+    """
+    pygame.display.flip()
+
+def save_screen(flip_before_copy=False):
+    """ Parameter is used to force displaying everything on screen.
+    Was prepared due to PHASE start of the first scene that was processed
+    before anything was blitted on the screen.
+    """
+
+    if flip_before_copy: flip()
+
+    global screen_copy
+    screen_copy = window.copy()
+    logger.info(f"Screen has been copied")
+
+def clear() -> None:
+    pass
+
+'''
 class GUIManager:
 
     def __init__(self, window: pygame.Surface, width: int, height: int, depth: int=32, full: bool=False, ratio: float=1.5) -> None:
@@ -114,6 +231,7 @@ class GUIManager:
 
     def clear(self) -> None:
         pass
+'''
 
 if __name__ == '__main__':
-    gui = GUIManager(640, 480, 32)
+    gui = init(640, 480, 32)
