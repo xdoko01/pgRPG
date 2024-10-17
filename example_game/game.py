@@ -19,9 +19,9 @@ def main(argv):
     #scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
     #scene_file = "games/sokoban/sokoban_new_level02.jsonc"
     #scene_file = "games/sokoban/sokoban_new_level01.jsonc"    
-    scene_file = "games/sokoban/sokoban_new.jsonc"            
+    #scene_file = "games/sokoban/sokoban_new.jsonc"            
     #scene_file = "games/sokoban/sokoban.jsonc"                
-    #scene_file = "games/collect_coins/collect_coins.jsonc"
+    scene_file = "games/collect_coins/collect_coins.jsonc"
 
     # 12_ai
     #scene_file = "tests/12_ai/test_entity_seen.jsonc" # old, does not work, fix it
