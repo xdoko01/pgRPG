@@ -20,7 +20,7 @@ from pyrpg.core.managers import command_manager #import CommandManager
 from pyrpg.core.managers import ecs_manager #import ECSManager
 from pyrpg.core.managers import event_manager #import EventManager
 from pyrpg.core.managers import script_manager #import ScriptManager
-from pyrpg.core.managers.pathfind_manager import PathfindManager
+from pyrpg.core.managers import pathfind_manager #import PathfindManager
 
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
@@ -39,9 +39,9 @@ from pyrpg.core.scene import Scene
 #command_manager = CommandManager()
 #ecs_manager = ECSManager()
 #script_manager = ScriptManager(alias_to_entity_dict_fnc=ecs_manager.get_alias_to_entity_dict)
+#pathfind_manager = PathfindManager()
 script_manager.init(alias_to_entity_dict_fnc=ecs_manager.get_alias_to_entity_dict)
 
-pathfind_manager = PathfindManager()
 
 # Reference function for adding events
 # TODO - maybe it would be better to handle processing of events within processor that
