@@ -22,7 +22,7 @@ class SoundFXOnDamage(Component):
         >>> c = SoundFXOnDamage(**{"sound" : "explosion.wav"})
     '''
 
-    __slots__ = ['sound']
+    __slots__ = ['sound', 'stop_before_playback']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new SoundFXOnDamage component.
@@ -30,11 +30,15 @@ class SoundFXOnDamage(Component):
         Parameters:
             :param sound: Filename of the sound effect - reference to sound file.
             :type sound: str
+
+            :param stop_before_playback: stop the sound before playing it again (one man cannot shout more sounds at once)
+            :type stop_before_playback: bool
         '''
         super().__init__()
 
         # Get the sound file name
         sound_file = kwargs.get('sound')
+        stop_before_playback = kwargs.get('stop_before_playback', False)
 
         # Check the sound_file name for validity
         try:
@@ -42,6 +46,8 @@ class SoundFXOnDamage(Component):
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError
+
+        self.stop_before_playback = stop_before_playback
 
         # Initiate new sound
         try:

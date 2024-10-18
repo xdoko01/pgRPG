@@ -57,7 +57,7 @@ class GenerateSoundFXOnDamageProcessor(Processor):
         for ent, (flag_was_damaged_by, sfx_on_damage) in self.world.get_components_ex(FlagWasDamagedBy, SoundFXOnDamage):
 
             # Use play sound fnc to play the effect
-            self.play_sound_fnc(sfx_on_damage.sound)
+            self.play_sound_fnc(sfx_on_damage.sound, sfx_on_damage.stop_before_playback)
 
             logger.debug(f'({self.cycle}) - Entity {ent} - has produced sound fx {sfx_on_damage.sound} upon damage.')
 
