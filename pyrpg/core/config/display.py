@@ -4,19 +4,25 @@ logger = logging.getLogger(__name__)
 
 from pyrpg.core.config import DISPLAY
 
+from functools import namedtuple
+Resolution = namedtuple("Resolution", ["width", "height"])
+
 def init() -> None:
     """Prepare the config data.
     """
     import pygame
-
     global DISPLAY
-    
+
+    DISPLAY["RESOLUTION"] = Resolution(DISPLAY["RESOLUTION"][0], DISPLAY["RESOLUTION"][1])
+
     DISPLAY["WINDOW"] = pygame.display.set_mode(
-        size=tuple(DISPLAY["RESOLUTION"]),
+        size=DISPLAY["RESOLUTION"],
         flags=pygame.FULLSCREEN if DISPLAY["FULLSCREEN"] else 0,
-        depth=DISPLAY["BITDEPTH"]
+        depth=0 # better than DISPLAY["BITDEPTH"], automatically selects the fastest option
     )
+
     import pprint
+    pprint.pformat(DISPLAY)
     logger.debug(f"Display config initiated. {pprint.pformat(DISPLAY)}")
 
 def convert_dict_conf_to_vars() -> None:

@@ -26,7 +26,7 @@ def init():
     console = Console(
         app=import_module(CONSOLE["CLI_MODULE"]),
         lua_runtime=None,
-        width=DISPLAY["WIDTH"],
+        width=DISPLAY["RESOLUTION"].width,
         config=CONSOLE
     )
     logger.info(f"Console initiated.")

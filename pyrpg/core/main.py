@@ -2,6 +2,10 @@
 import logging
 logger = logging.getLogger(__name__)
 
+# Import configuration so it is available for the console commands - it is ok, because
+# it was already initiated in pyrpg.__init__()
+from pyrpg.core import config
+
 # Initiate GUI manager - all configuration parameters are loaded in the gui_manager
 from pyrpg.core.managers import gui_manager
 gui_manager.init()
@@ -136,8 +140,8 @@ def run():
             # Display the console if enabled or animation is still in progress
             console_manager.console.show(gui_manager.window)
 
-        # Display FPS
-        gui_manager.blit_text("FPS: " + str(int(gui_manager.clock.get_fps())))
+        # Display FPS if SHOW_FPS is enabled in config
+        not DISPLAY["SHOW_FPS"] or gui_manager.blit_text("FPS: " + str(int(gui_manager.clock.get_fps())))
 
         # Flip the frame buffers
         #pygame.display.flip()

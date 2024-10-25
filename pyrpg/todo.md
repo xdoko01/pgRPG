@@ -1,9 +1,16 @@
 
+  - [x] - remove WIDTH and HEIGHT, keep only resolution
+  - [ ] - GUI manager after calling init is deleting the background with the game - do it so that background is kept
+  - [ ] - console manager after init is deleting all history from console. Probably do some separate function `on_display_changed`
+  - change video component to take resolution
+  - prepare console command that changes the resolution
+    - display.init()
+    - gui_manager.init()
+    - updates all video components in the game
 
   Features
+  - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
-  - [ ] Prepare a new `SoundFXOnDamage` component to be on the damagable entities (hurt sounds etc)
-  - [ ] Prepare a new `SoundFXOnDestroy` component to be on the dead entities
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
   - [ ] Show FPS also i fullscreen mode (config parameter)
   - [ ] Branch - Fix console and make it more usable. It contains very old descriptions.

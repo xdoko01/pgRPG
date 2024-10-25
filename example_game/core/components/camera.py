@@ -7,6 +7,7 @@ module tests.
 
 from pygame import Surface
 from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.config.display import DISPLAY
 
 class Camera(Component):
     ''' Entity is in focus of a camera that is displayed in form of a screen
@@ -82,8 +83,8 @@ class Camera(Component):
         self.screen_pos_y = kwargs.get('screen_pos_y', 0)
 
         # Width and height of the Camera screen
-        self.screen_width = kwargs.get('screen_width', 100)
-        self.screen_height = kwargs.get('screen_height', 100)
+        self.screen_width = kwargs.get('screen_width', DISPLAY["RESOLUTION"][0])
+        self.screen_height = kwargs.get('screen_height', DISPLAY["RESOLUTION"][1])
 
         # Check the parameters for correctness
         try:
@@ -126,6 +127,7 @@ class Camera(Component):
         ''' Regenerate all non-serializable objects for the component
         '''
         self.screen = Surface((self.screen_width, self.screen_height))
+
 
 if __name__ == '__main__':
     import doctest

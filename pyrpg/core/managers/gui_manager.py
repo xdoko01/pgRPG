@@ -21,13 +21,13 @@ from pyrpg.core.config.gui import GUI
 #from pyrpg.core.config.paths import FONT_PATH
 
 
-Dim = namedtuple("Dim", ["width", "height"])
 Pos = namedtuple("Pos", ["x", "y"])
+Dim = namedtuple("Dim", ["width", "height"])
 
 ####
 
 class BackgroundAnimation:
-    def __init__(self, path: Path, res: Dim, delay: int):
+    def __init__(self, path: Path, res: tuple, delay: int):
         self.animation = load_animation(background_folder_path=path, resize=res)
         self.delay = delay
         self.last_image = 0
@@ -39,7 +39,7 @@ from pyrpg.core.config.fonts import FONTS # for GUI_MANAGER_FONT
 font = FONTS["GUI_MANAGER_FONT"] #BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
 
 #_res: Dim
-gui_dlg_dim: Dim
+gui_dlg_dim: tuple
 gui_dlg_start: Pos
 
 window: pygame.Surface
@@ -50,30 +50,40 @@ window_manager: pygame_gui.UIManager
 
 background_animation: BackgroundAnimation
 
+INIT_DONE: bool = False
+
 def init() -> None:
     # Initiate GUI manager
-    from pyrpg.core.config.display import WINDOW, WIDTH, HEIGHT, BITDEPTH, FULLSCREEN, GUI_WINDOW_RATIO 
-    _init(win=WINDOW, width=WIDTH, height=HEIGHT, depth=BITDEPTH, full=FULLSCREEN, ratio=GUI_WINDOW_RATIO)
-        
+    from pyrpg.core.config.display import DISPLAY #WINDOW, WIDTH, HEIGHT, BITDEPTH, FULLSCREEN, GUI_WINDOW_RATIO 
+    _init(
+        win=DISPLAY["WINDOW"], 
+        res=DISPLAY["RESOLUTION"],
+        #width=WIDTH, height=HEIGHT, 
+        full=DISPLAY["FULLSCREEN"], 
+        ratio=DISPLAY["GUI_WINDOW_RATIO"]
+    )
+
     logger.info(f"GUI Manager initiated.")
 
-def _init(win: pygame.Surface, width: int, height: int, depth: int=32, full: bool=False, ratio: float=1.5) -> None:
+def _init(win: pygame.Surface, res: Dim, full: bool=False, ratio: float=1.5) -> None:
+
+    global INIT_DONE
 
     # Dimensions of game window
-    _res = Dim(width, height)
+    #_res = Dim(width, height)
 
     # Dimensions of GUI window
     global gui_dlg_dim
     gui_dlg_dim = Dim(
-        _res.width / ratio,
-        _res.height / ratio
+        res.width / ratio,
+        res.height / ratio
     )
 
     # Start position of the GUI window - center on the screen
     global gui_dlg_start
     gui_dlg_start = Pos(
-        (_res.width - gui_dlg_dim.width) / 2,
-        (_res.height - gui_dlg_dim.height) / 2
+        (res.width - gui_dlg_dim.width) / 2,
+        (res.height - gui_dlg_dim.height) / 2
     )
 
     # At this moment, display is already created during initial configuration
@@ -81,18 +91,26 @@ def _init(win: pygame.Surface, width: int, height: int, depth: int=32, full: boo
     window = win
 
     global screen_copy
-    screen_copy = pygame.Surface(_res)
+    screen_copy = pygame.Surface(res)
+    
     global window_manager
-    window_manager = pygame_gui.UIManager(_res)
+
+    if not INIT_DONE:
+        window_manager = pygame_gui.UIManager(res)
+    else:
+        window_manager.set_window_resolution(res)
 
     global background_animation
     background_animation = BackgroundAnimation(
         path=MENU_BACKGROUND_PATH, 
-        res=_res, 
+        res=res, 
         delay=GUI["MENU_BACKGROUND_ANIMATION_DELAY_MS"]
     )
 
+    INIT_DONE = True
+
     logger.info(f"GUIManager initiated.")
+
 
 def process_events(event) -> None:
     window_manager.process_events(event)

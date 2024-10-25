@@ -75,8 +75,8 @@ def load(config_file: str) -> None:
     DISPLAY =_prep_conf_display(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="DISPLAY"))
     import pyrpg.core.config.display as d
     d.init()
-    d.convert_dict_conf_to_vars()
-    #show("DISPLAY config", DISPLAY)
+    #d.convert_dict_conf_to_vars()
+    show("DISPLAY config", DISPLAY)
 
     # Process KEYS
     global KEYS
@@ -154,9 +154,6 @@ def _prep_conf_logging(logging_config: dict) -> dict:
 def _prep_conf_display(display_config: dict) -> dict:
     """ Prepare global DISPLAY dictionary with configurations.
     """
-    display_config["WIDTH"] = display_config["RESOLUTION"][0]
-    display_config["HEIGHT"] = display_config["RESOLUTION"][1]
-
     return display_config
 
 def _prep_conf_console(console_config: dict) -> dict:
