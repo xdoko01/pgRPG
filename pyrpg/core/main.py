@@ -5,8 +5,9 @@ logger = logging.getLogger(__name__)
 # Init the configuration
 # Config variables were merged from default.jsonc and config.jsonc. Now we need to init
 # all the necessary configurations, bring them to life (init display, console, logging, ...)
+import sys
 import pyrpg.core.config as config
-config.init()
+config.init(main_module=sys.modules[__name__]) # return the reference to the main module to the config module in order to use it for console functions getting info about the game
 
 # Load selected configuration objects to the main module so that it can be used
 import pyrpg.core.config.gui as gui_manager # for manipulation with game screen
@@ -149,6 +150,7 @@ def end() -> None:
     state_manager.clear()
 
     logger.info(f'Managers closed')
+
 
 '''
 Functions that feed the console with header and footer data.

@@ -16,6 +16,9 @@ PYRPG_DEFAULT_CONFIG_FILEPATH = Path("pyrpg/core/config/defaults.jsonc")
 # Where game configs are stored
 CONFIG_FILEPATH = None
 
+# Reference to the main game module
+MAIN_GAME_MODULE = None
+
 # Global dictionaries holding all configurations
 PYRPG: dict = {}
 LOGGING: dict = {}
@@ -32,29 +35,9 @@ FONTS: dict = {}
 FRAMES: dict = {}
 STATES: dict = {}
 
+# Console reference
 cons = None
 
-
-# maybe do this dynamicaly - exists pyrpg.core.config.pyrpg having initialize function, so
-# I will call pyrpg.core.config.pyrpg.load(here ref to config module)
-# load will do all the actions and returned dict that would be saved to config global variable
-load_config_fncs = [
-    ["LOGGING", load_scene_from_file],
-    (key="PYRPG", conf=PYRPG, load_fnc=_prep_conf_pyrpg, load_fnc_args=(FILEPATHS, DISPLAY)),
-    ["cleanup/maps", map_manager.delete_map],
-    ["cleanup/templates", ecs_manager.delete_template],
-    ["cleanup/entities", ecs_manager.delete_entity],
-    ["cleanup/dialogs", dialog_manager.delete_dialog],
-    ["cleanup/handlers", event_manager.delete_handler],
-    ["processors", ecs_manager.load_processor],
-    ["maps", map_manager.load_map],
-    ["dialogs", dialog_manager.load_dialog],
-    ["templates", ecs_manager.load_template],
-    ["entities", ecs_manager.load_register_empty_entity], # first register all entities
-    ["entities", ecs_manager.load_update_empty_entity], # next fill them in order to be able to use aliases everywhere
-    ["entities/components/params/handlers", event_manager.load_handler], # look for handlers in the parameters of components
-    ["handlers", event_manager.load_handler]
-]
 
 def show(config: any, text: str="") -> None:
     """Print nicely any config variable."""
@@ -62,24 +45,23 @@ def show(config: any, text: str="") -> None:
     print(f'{text}')
     pprint.pprint(config)
 
-def reload() -> None:
-    """ Reloads the configuration based on up-to-date data
-    present in default and given configuration file.
-    """
-    
-    if CONFIG_FILEPATH: 
-        load(config_file=CONFIG_FILEPATH)
-        logger.debug('Config reloaded.')
 
-def load(config_file: str, show_res: bool=False) -> None:
+def load(config_file: str=None, hide_res: bool=True) -> None:
     """ Loads configuration into global dictionary CONFIG as
     a merge of defaults.jsonc and given configuration file.
+
+    Can be used repeatedly for reloading of config after change
+    in config jsons during the game.
     """
 
-    # We want to remember the location of config file
-    global CONFIG_FILEPATH
-    CONFIG_FILEPATH = Path(config_file)
-    show_res or show(text="CONFIG_FILEPATH config", config=CONFIG_FILEPATH)
+    # If config file is specified, always reload config from this file
+    if config_file is not None:
+        global CONFIG_FILEPATH
+        CONFIG_FILEPATH = Path(config_file)
+        hide_res or show(text="CONFIG_FILEPATH config", config=CONFIG_FILEPATH)
+    
+    # config file not specified, use the config file configured during the latest load
+    assert CONFIG_FILEPATH is not None, f"No config file loaded yet"
 
     # Read specific GAME config and basic PYRPG config for further merging
     from pyrpg.functions import get_dict_from_file
@@ -89,23 +71,23 @@ def load(config_file: str, show_res: bool=False) -> None:
     # Process PYRPG - general config of the framework
     global PYRPG
     PYRPG = _prep_conf_pyrpg(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="PYRPG"))
-    show_res or show(text="PYRPG config:", config=PYRPG)
+    hide_res or show(text="PYRPG config:", config=PYRPG)
 
     # Process FILEPATHS - take every path and add the game directory to it
     # Must go first as paths are used in other configurations
     global FILEPATHS
     FILEPATHS = _prep_conf_filepaths(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="FILEPATHS"))
-    show_res or show(text="FILEPATHS config:", config=FILEPATHS)
+    hide_res or show(text="FILEPATHS config:", config=FILEPATHS)
 
     # Process DISPLAY - initiate pygame screen
     global DISPLAY
     DISPLAY =_prep_conf_display(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="DISPLAY"))
-    show_res or show(text="DISPLAY config", config=DISPLAY)
+    hide_res or show(text="DISPLAY config", config=DISPLAY)
 
     # Process KEYS
     global KEYS
     KEYS =_prep_conf_keys(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="KEYS"))
-    show_res or show(text="KEYS config", config=KEYS)
+    hide_res or show(text="KEYS config", config=KEYS)
 
     # Process GUI
     global GUI
@@ -113,27 +95,27 @@ def load(config_file: str, show_res: bool=False) -> None:
         gui_config=_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="GUI"),
         display_config=DISPLAY.copy()
     )
-    show_res or show(text="GUI config", config=GUI)
+    hide_res or show(text="GUI config", config=GUI)
 
     # Process SOUND
     global SOUND
     SOUND =_prep_conf_sound(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="SOUND"))
-    show_res or show(text="SOUND config", config=SOUND)
+    hide_res or show(text="SOUND config", config=SOUND)
 
     # Process GAME
     global GAME
     GAME =_prep_conf_game(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="GAME"))
-    show_res or show(text="GAME config", config=GAME)
+    hide_res or show(text="GAME config", config=GAME)
 
     # Process MESSAGES
     global MESSAGES
     MESSAGES =_prep_conf_msgs(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="MESSAGES"))
-    show_res or show(text="MESSAGES config", config=MESSAGES)
+    hide_res or show(text="MESSAGES config", config=MESSAGES)
 
     # Process MODULEPATHS
     global MODULEPATHS
     MODULEPATHS =_prep_conf_modulepaths(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="MODULEPATHS"))
-    show_res or show(text="MODULEPATHS config", config=MODULEPATHS)
+    hide_res or show(text="MODULEPATHS config", config=MODULEPATHS)
 
     # Process FONTS - needs to have display already initiated
     global FONTS
@@ -141,7 +123,7 @@ def load(config_file: str, show_res: bool=False) -> None:
         fonts_config=_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="FONTS"),
         filepaths_config=FILEPATHS.copy()
         )
-    show_res or show(text="FONTS config", config=FONTS)
+    hide_res or show(text="FONTS config", config=FONTS)
 
     # Process FRAMES - needs to have display already initiated
     global FRAMES
@@ -149,7 +131,7 @@ def load(config_file: str, show_res: bool=False) -> None:
         frames_config=_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="FRAMES"),
         filepath_config=FILEPATHS.copy()
         )
-    show_res or show(text="FRAMES config", config=FRAMES)
+    hide_res or show(text="FRAMES config", config=FRAMES)
 
     # Process CONSOLE - must be the last because internally it is importing pyrpg module that is using some KEYS configurations that 
     # must be already ready
@@ -158,7 +140,7 @@ def load(config_file: str, show_res: bool=False) -> None:
         console_config=_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="CONSOLE"),
         filepaths_config=FILEPATHS.copy()
         )
-    show_res or show(text="CONSOLE config", config=CONSOLE)
+    hide_res or show(text="CONSOLE config", config=CONSOLE)
 
     # Process LOGGING - must go after console as logging to console can be part of the configuration
     global LOGGING
@@ -166,17 +148,26 @@ def load(config_file: str, show_res: bool=False) -> None:
         logging_config=_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="LOGGING"),
         filepaths_config=FILEPATHS.copy()
         )
-    show_res or show(text="LOGGING config:", config=LOGGING)
+    hide_res or show(text="LOGGING config:", config=LOGGING)
 
     # Process LOGGING - must go after console as logging to console can be part of the configuration
     global STATES
     STATES = _prep_conf_states(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="STATES"))
-    show_res or show(text="STATES config:", config=STATES)
+    hide_res or show(text="STATES config:", config=STATES)
 
-def init() -> None:
+def init(main_module=None, states: bool=True) -> None:
     """Initiate all necessary configuration - logging, console, display,...
     Create configuration objects.
     """
+
+    # If config file is specified, always reload config from this file
+    if main_module is not None:
+        global MAIN_GAME_MODULE
+        MAIN_GAME_MODULE = main_module
+    
+    # config file not specified, use the config file configured during the latest load
+    assert MAIN_GAME_MODULE is not None, f"No main game module specified"
+
     _init_display()
     _init_console()
     _init_logging()
@@ -186,7 +177,7 @@ def init() -> None:
 
     _init_gui()
     _init_sound()
-    _init_states()
+    if states: _init_states()
 
 
 def _merge_conf(default_config: dict, game_config: dict, conf_key: str) -> dict:
@@ -393,6 +384,7 @@ def _init_console(app_module: str=None) -> None:
     global cons
     
     if cons is None:
+        import pyrpg.core.config.console # because this module is used for functions displaying info on console
         # Load the console from utils
         cons = Console(
             #app=import_module(CONSOLE["CLI_MODULE"]), #Carefull this triggers import of the module!!!
@@ -406,9 +398,16 @@ def _init_console(app_module: str=None) -> None:
         cons.set_cli_app(app_module if app_module is not None else CONSOLE["CLI_MODULE"])
 
     else:
+
+        cons.init(
+            app=None, 
+            lua_runtime=None,
+            width=DISPLAY["RESOLUTION"][0],
+            config=CONSOLE
+        )
+
+        # reload the game CLI entry point module
         cons.set_cli_app(app_module if app_module is not None else CONSOLE["CLI_MODULE"])
-        # to be done resize the console window
-        #console.set_width(DISPLAY["RESOLUTION"].width)
 
 def _init_fonts() -> None:
     import pyrpg.utils as utils# for BitmapFont class
@@ -448,6 +447,6 @@ def _init_states() -> None:
 if __name__ == "__main__":
     load(config_file="example_game/config.jsonc")
     load(config_file="example_game/config.jsonc")
-    reload()
-    init()
+    load(hide_res=False)
+    #init()
     #init()

@@ -1,15 +1,23 @@
 
+  - [ ] - commend properly the COnsole code - changing the app leading to revidion of text_params in the header and footer
   - [x] - get rid of timed - should be part of the config and not passed around as a parameter
-  - [ ] - change width of the console from separate function
-  - [ ] - implement reload in console - changing CLI, Paths, ... maybe just adjust the same init function ... using _INIT ...
+  - [x] - change width of the console from separate function
+  - [x] - implement reload in console - changing CLI, Paths, ... maybe just adjust the same init function ... using _INIT ...
   - [x] - remove WIDTH and HEIGHT, keep only resolution
-  - [ ] - GUI manager after calling init is deleting the background with the game - do it so that background is kept
-  - [ ] - console manager after init is deleting all history from console. Probably do some separate function `on_display_changed`
+  - [x] - GUI manager after calling init is deleting the background with the game - do it so that background is kept
+  - [x] - console manager after init is deleting all history from console. Probably do some separate function `on_display_changed`
+  - [ ] - after reinit of the console, history is kept but the lines ar not divided correctly according to the width
+  - [ ] - move the Menus under GUI similarly to background animation
+
   - change video component to take resolution
   - prepare console command that changes the resolution
+    - `py game.config.display.show_details()` ... details about current graphic settings
+    - `py game.config.display.show_modes()` ... show all available display modes for given configuration
+    - `py game.config.display.set_mode()`
     - display.init()
     - gui_manager.init()
     - updates all video components in the game
+
 
   Features
   - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
