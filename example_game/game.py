@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(Path(pyrpg_path)))
 def main(argv):
     """Run the game using the CLI arguments"""
 
-    console = True
+    #console = True
     scene_file = None
     config_file = "example_game/config.jsonc"
 
@@ -59,7 +59,7 @@ def main(argv):
     # 09_projectiles
     #scene_file = "tests/09_projectiles/test_projectile_score_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_generation.jsonc"
-    scene_file = "tests/09_projectiles/test_projectile_damage.jsonc"
+    #scene_file = "tests/09_projectiles/test_projectile_damage.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_collision.jsonc"
 
     # 08_arm_ammo
@@ -159,11 +159,13 @@ EXAMPLES
         elif opt in ("-c", "--config"):
             config_file = arg
 
-    print(f"Starting with the following arguments:\n{console=}\n{scene_file=}\n{config_file=}")
+    print(f"Starting with the following arguments:\n{scene_file=}\n{config_file=}")
 
     # Load the framework using all the configs
     import pyrpg
-    pyrpg.init(config_file=config_file, console=console, scene_file=scene_file, timed=False)
+    #pyrpg.init(config_file=config_file, console=console, scene_file=scene_file, timed=False)
+    #pyrpg.init(config_file=config_file, scene_file=scene_file, timed=False)
+    pyrpg.init(config_file=config_file, scene_file=scene_file)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

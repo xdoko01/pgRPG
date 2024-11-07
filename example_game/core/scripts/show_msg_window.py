@@ -10,6 +10,7 @@ from pygame_gui.windows import UIMessageWindow
 from pygame_gui import UI_WINDOW_CLOSE
 from pygame import Rect
 from pyrpg.core.config.display import DISPLAY # for MAX_FPS
+from pyrpg.core.config import GUI
 from pyrpg.functions.str_utils import translate_str
 
 
@@ -35,7 +36,8 @@ def script_show_msg_window(event, *args, **kwargs):
 
     # Prepare the window
     message_window = UIMessageWindow(
-        rect=Rect(main.gui_manager.gui_dlg_start, main.gui_manager.gui_dlg_dim), 
+        #rect=Rect(main.gui_manager.gui_dlg_start, main.gui_manager.gui_dlg_dim), 
+        rect=Rect(GUI["DLG_START_PX"], GUI["DLG_DIM_PX"]), 
         html_message = html_text,
         manager=main.gui_manager.window_manager,
         window_title=window_title

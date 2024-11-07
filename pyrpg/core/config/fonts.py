@@ -5,6 +5,13 @@ logger = logging.getLogger(__name__)
 from pyrpg.core.config import FILEPATHS # FONT_PATH # for font path
 from pyrpg.core.config import FONTS # for fonts modification
 
+_INIT: bool = False
+
+def get_init() -> bool:
+    """Return True, if console config is already initiated.
+    """
+    return _INIT
+
 def init() -> None:
     """Prepare the config data.
     """
@@ -23,6 +30,10 @@ def init() -> None:
 
     import pprint
     logger.debug(f"Fonts config initiated. {pprint.pformat(FONTS)}")
+
+    global _INIT
+    _INIT = True
+
 
 def convert_dict_conf_to_vars() -> None:
     """ Add access to FONTS dictionary keys as variables of this module.

@@ -383,6 +383,11 @@ def merge_dicts(orig: dict, new: dict) -> dict:
         True
         >>> merged["SHOW_FPS"]
         False
+
+        >>> empty = dict()
+        >>> merged = merge_dicts(orig, empty)
+        >>> merged["FULLSCREEN"]
+        False
     """
 
     # Add items that exist in new but not in original

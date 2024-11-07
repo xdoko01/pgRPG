@@ -1,6 +1,7 @@
 import logging
 
 from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
+from pyrpg.core.config import GUI
 from pyrpg.core.config.states import State
 from pygame_gui.windows import UIConfirmationDialog
 from pygame import Rect
@@ -23,7 +24,8 @@ class ExitMenu(Menu):
     def show(self) -> None:
         '''Each time the exit dialog must be created. When closed it is destroyed automatically. '''
         self.exit_dialog = UIConfirmationDialog(
-                rect=Rect(self.gui_manager.gui_dlg_start, self.gui_manager.gui_dlg_dim),
+                #rect=Rect(self.gui_manager.gui_dlg_start, self.gui_manager.gui_dlg_dim),
+                rect=Rect(GUI["DLG_START_PX"], GUI["DLG_DIM_PX"]),
                 manager=self.gui_manager.window_manager,
                 action_long_desc='Do you want to exit the game?',
                 action_short_name='Exit')

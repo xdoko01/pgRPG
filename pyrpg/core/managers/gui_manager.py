@@ -13,7 +13,7 @@ import pygame_gui
 from pathlib import Path
 from collections import namedtuple
 from pyrpg.functions.load_animation import load_animation
-from pyrpg.core.config.filepaths import MENU_BACKGROUND_PATH # MENU_BACKGROUND_PATH
+from pyrpg.core.config.filepaths import FILEPATHS #MENU_BACKGROUND_PATH # MENU_BACKGROUND_PATH
 from pyrpg.core.config.gui import GUI
 #from pyrpg.core.config.config import MENU_BACKGROUND_ANIMATION_DELAY
 
@@ -36,7 +36,7 @@ class BackgroundAnimation:
 
 # Font
 from pyrpg.core.config.fonts import FONTS # for GUI_MANAGER_FONT
-font = FONTS["GUI_MANAGER_FONT"] #BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
+font = None
 
 #_res: Dim
 gui_dlg_dim: tuple
@@ -54,7 +54,7 @@ INIT_DONE: bool = False
 
 def init() -> None:
     # Initiate GUI manager
-    from pyrpg.core.config.display import DISPLAY #WINDOW, WIDTH, HEIGHT, BITDEPTH, FULLSCREEN, GUI_WINDOW_RATIO 
+    from pyrpg.core.config import DISPLAY #WINDOW, WIDTH, HEIGHT, BITDEPTH, FULLSCREEN, GUI_WINDOW_RATIO 
     _init(
         win=DISPLAY["WINDOW"], 
         res=DISPLAY["RESOLUTION"],
@@ -62,6 +62,9 @@ def init() -> None:
         full=DISPLAY["FULLSCREEN"], 
         ratio=DISPLAY["GUI_WINDOW_RATIO"]
     )
+    global font
+    font = FONTS["GUI_MANAGER_FONT"] #BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
+
 
     logger.info(f"GUI Manager initiated.")
 
@@ -102,7 +105,7 @@ def _init(win: pygame.Surface, res: Dim, full: bool=False, ratio: float=1.5) -> 
 
     global background_animation
     background_animation = BackgroundAnimation(
-        path=MENU_BACKGROUND_PATH, 
+        path=FILEPATHS["MENU_BACKGROUND_PATH"], 
         res=res, 
         delay=GUI["MENU_BACKGROUND_ANIMATION_DELAY_MS"]
     )

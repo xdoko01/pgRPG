@@ -5,16 +5,26 @@ logger = logging.getLogger(__name__)
 from pyrpg.core.config import FILEPATHS
 from pathlib import Path
 
+_INIT: bool = False
+
+def get_init() -> bool:
+    """Return True, if console config is already initiated.
+    """
+    return _INIT
+
 def init() -> None:
     """Prepare the config data.
     """
 
     # Convert filepaths to Paths
-    for path_name, path_rel in FILEPATHS.copy().items():
-        FILEPATHS[path_name] = Path(FILEPATHS["GAME_PATH"], path_rel) if path_name not in ("GAME_PATH", "PYRPG_PATH") else Path(path_rel)
+    #for path_name, path_rel in FILEPATHS.copy().items():
+    #    FILEPATHS[path_name] = Path(FILEPATHS["GAME_PATH"], path_rel) if path_name not in ("GAME_PATH", "PYRPG_PATH") else Path(path_rel)
 
     import pprint
     logger.debug(f"Filepaths config initiated. {pprint.pformat(FILEPATHS)}")
+
+    global _INIT
+    _INIT = True
 
 
 def convert_dict_conf_to_vars() -> None:

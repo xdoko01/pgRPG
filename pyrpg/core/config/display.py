@@ -4,26 +4,39 @@ logger = logging.getLogger(__name__)
 
 from pyrpg.core.config import DISPLAY
 
-from functools import namedtuple
-Resolution = namedtuple("Resolution", ["width", "height"])
+#from functools import namedtuple
+#Resolution = namedtuple("Resolution", ["width", "height"])
 
-def init() -> None:
+_INIT: bool = False
+
+def get_init() -> bool:
+    """Return True, if display config is already initiated.
+    """
+    return _INIT
+
+def init(display_config: dict) -> None:
     """Prepare the config data.
     """
     import pygame
     global DISPLAY
 
-    DISPLAY["RESOLUTION"] = Resolution(DISPLAY["RESOLUTION"][0], DISPLAY["RESOLUTION"][1])
+ #   DISPLAY["RESOLUTION"] = Resolution(DISPLAY["RESOLUTION"][0], DISPLAY["RESOLUTION"][1])
 
     DISPLAY["WINDOW"] = pygame.display.set_mode(
-        size=DISPLAY["RESOLUTION"],
-        flags=pygame.FULLSCREEN if DISPLAY["FULLSCREEN"] else 0,
+        size=display_config["RESOLUTION"],
+        flags=pygame.FULLSCREEN if display_config["FULLSCREEN"] else 0,
         depth=0 # better than DISPLAY["BITDEPTH"], automatically selects the fastest option
     )
 
     import pprint
     pprint.pformat(DISPLAY)
     logger.debug(f"Display config initiated. {pprint.pformat(DISPLAY)}")
+    print(f"Display config initiated. {pprint.pformat(DISPLAY)}")
+
+
+    global _INIT
+    _INIT = True
+
 
 def convert_dict_conf_to_vars() -> None:
     """ Add access to DISPLAY dictionary keys as variables of this module.

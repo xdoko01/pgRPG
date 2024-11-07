@@ -3,8 +3,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config.filepaths import ENTITY_PATH # for ENTITY_PATH
+from pyrpg.core.config.filepaths import FILEPATHS # ENTITY_PATH # for ENTITY_PATH
 from pyrpg.core.config.modulepaths import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
+from pyrpg.core.config import PYRPG # for TIMED parameter
 
 from pyrpg.core.ecs.components.component import Component
 from pyrpg.functions import get_class_from_def
@@ -28,11 +29,12 @@ _template_definitions: dict = {}
 
 logger.info(f"ECSManager created.")
 
-def initialize(timed: bool, game_functions: dict) -> None:
+#def initialize(timed: bool, game_functions: dict) -> None:
+def initialize(game_functions: dict) -> None:
     """Fill ECS variables with initial values."""
 
     global _world, _game_functions
-    _world = World(timed=timed)
+    _world = World(timed=PYRPG["TIMED"])
     _game_functions = game_functions
 
     logger.info(f"ECSManager initiated.")
@@ -405,7 +407,7 @@ def _update_entity(entity_def: dict, entity_id: int) -> None:
 
         # Get the template data
         logger.info(f'**Preparing data for entity_id {entity_id} from template "{template_id}".')
-        template_entity_data = get_dict_params(definition=template_id, storage=_template_definitions, dir=ENTITY_PATH)
+        template_entity_data = get_dict_params(definition=template_id, storage=_template_definitions, dir=FILEPATHS["ENTITY_PATH"])
 
         # Create all entities from the template
         logger.info(f'**Creating components for entity_id {entity_id} from template "{template_id}".')

@@ -1,4 +1,7 @@
 
+  - [x] - get rid of timed - should be part of the config and not passed around as a parameter
+  - [ ] - change width of the console from separate function
+  - [ ] - implement reload in console - changing CLI, Paths, ... maybe just adjust the same init function ... using _INIT ...
   - [x] - remove WIDTH and HEIGHT, keep only resolution
   - [ ] - GUI manager after calling init is deleting the background with the game - do it so that background is kept
   - [ ] - console manager after init is deleting all history from console. Probably do some separate function `on_display_changed`

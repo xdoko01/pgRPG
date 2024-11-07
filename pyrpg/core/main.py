@@ -2,73 +2,48 @@
 import logging
 logger = logging.getLogger(__name__)
 
-# Import configuration so it is available for the console commands - it is ok, because
-# it was already initiated in pyrpg.__init__()
-from pyrpg.core import config
+# Init the configuration
+# Config variables were merged from default.jsonc and config.jsonc. Now we need to init
+# all the necessary configurations, bring them to life (init display, console, logging, ...)
+import pyrpg.core.config as config
+config.init()
 
-# Initiate GUI manager - all configuration parameters are loaded in the gui_manager
-from pyrpg.core.managers import gui_manager
-gui_manager.init()
+# Load selected configuration objects to the main module so that it can be used
+import pyrpg.core.config.gui as gui_manager # for manipulation with game screen
+import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pyrpg.core.config import cons # handler for manipulation with the game console
 
-# Initiate Sound Manager
-from pyrpg.core.managers import sound_manager
-sound_manager.init()
-
-# Initiate  Console Manager
-from pyrpg.core.managers import console_manager
-
-#def _init_console() -> None:
-#    console_manager.init()
-#    global console
-#    console = console_manager.console
-
-# Initiate State Manager
-from pyrpg.core.managers import state_manager
-state_manager.init()
-
-# Initiate engine
+# Remember reference to engine module to be used by the console commands
 engine = None
-def _init_game(scene_file: str, timed: bool) -> None:
+
+#def _init_game(scene_file: str, timed: bool=False) -> None:
+def _init_game(scene_file: str) -> None:
+
     # Create engine instance if not yet created
     global engine
-
-    #if engine is None:
     from pyrpg.core import engine as e
     engine = e
-        #e.init(gui_manager, sound_manager, timed=timed)
-        #e.init(sound_manager, timed=timed)
-    engine.init(timed=timed)
+    engine.init() # Init can be removed as timed parameter is no longer passed
     engine.new_game(scene_file)
 
-# MainMenu
+# Load the menus that can be accessed from the main program loop
 from pyrpg.core.menus.main_menu import MainMenu
-main_menu = MainMenu(gui_manager=gui_manager, state_manager=state_manager)
-
-# LoadSceneMenu
 from pyrpg.core.menus.load_scene_menu import LoadSceneMenu
-load_scene_menu = LoadSceneMenu(gui_manager=gui_manager, state_manager=state_manager, init_game_fnc=_init_game)
-
-# ExitMenu
 from pyrpg.core.menus.exit_menu import ExitMenu
+
+main_menu = MainMenu(gui_manager=gui_manager, state_manager=state_manager)
+load_scene_menu = LoadSceneMenu(gui_manager=gui_manager, state_manager=state_manager, init_game_fnc=_init_game)
 exit_menu = ExitMenu(gui_manager=gui_manager, state_manager=state_manager)
 
-
-
-
-
-
-
-
-def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
-
-    # Init Console, if required
-    if console: console_manager.init()
-        #_init_console()
-    logger.info(f"Console initiation done.")
-
+# Start the program
+#def init(scene_file: str=None, timed: bool=False) -> None:
+def init(scene_file: str=None) -> None:
+    """ Start either into the game scene or in the main menu.
+    """
     # Init game state - Start game into main menu or into the game
     if scene_file:
-        _init_game(scene_file, timed)
+       # _init_game(scene_file, timed)
+        _init_game(scene_file)
         state_manager.change_state(State.GAME) # TODO: shouldnt this be part of init game??
         logger.info(f"Starting into the game.")
     else:
@@ -77,16 +52,16 @@ def init(console: bool=True, scene_file: str=None, timed: bool=False) -> None:
 
 
 
+import pygame
 # Initiate keys used for the console toggle anywhere in the game
 from pyrpg.core.config.keys import KEYS # for K_CONSOLE_TOGGLE
 from pyrpg.core.config.display import DISPLAY # for MAX_FPS
 from pyrpg.core.config.states import State
-import pygame
 
 def run():
-    ''' Main game and menu loop. Contains references to other
-    loop codes depending of current GameState
-    '''
+    """ Main game and menu loop. Contains references to other
+    loop codes depending of current GameState.
+    """
 
     # Fix of the problem with the first frame that has too
     # big dt and as a consequence the first movement with
@@ -108,8 +83,8 @@ def run():
                 state_manager.change_state(State.EXIT_GAME_DIALOG)
 
             if event.type == pygame.KEYUP:
-                if event.key == KEYS["K_CONSOLE_TOGGLE"] and console_manager.console:
-                    if console_manager.console.toggle():
+                if event.key == KEYS["K_CONSOLE_TOGGLE"]: 
+                    if cons.toggle():
                         gui_manager.save_screen()
                         logger.info(f'Entering console')
                         state_manager.change_state(State.CONSOLE)
@@ -133,23 +108,15 @@ def run():
                 end()
                 break
 
-        # If console is in use
-        if console_manager.console: 
-            # Read and process events related to the console
-            console_manager.console.update(key_events)
-            # Display the console if enabled or animation is still in progress
-            console_manager.console.show(gui_manager.window)
+        # Notify console
+        cons.update(key_events)
+        cons.show(gui_manager.window)
 
         # Display FPS if SHOW_FPS is enabled in config
         not DISPLAY["SHOW_FPS"] or gui_manager.blit_text("FPS: " + str(int(gui_manager.clock.get_fps())))
 
         # Flip the frame buffers
-        #pygame.display.flip()
         gui_manager.flip()
-
-        # Display FPS in window title
-        #pygame.display.set_caption('FPS: ' + str(int(gui_manager.clock.get_fps())))
-
 
         # Get the time of the frame
         dt = gui_manager.clock.tick(DISPLAY["MAX_FPS"])
@@ -179,7 +146,6 @@ def end() -> None:
 
     # Clear Managers
     gui_manager.clear()
-    sound_manager.clear()
     state_manager.clear()
 
     logger.info(f'Managers closed')

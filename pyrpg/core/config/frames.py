@@ -5,6 +5,14 @@ logger = logging.getLogger(__name__)
 from pyrpg.core.config import FILEPATHS #FRAME_PATH # for frame path
 from pyrpg.core.config import FRAMES
 
+
+_INIT: bool = False
+
+def get_init() -> bool:
+    """Return True, if console config is already initiated.
+    """
+    return _INIT
+
 def init() -> None:
     """Prepare the config data.
     """
@@ -16,6 +24,10 @@ def init() -> None:
 
     import pprint
     logger.debug(f"Frames config initiated. {pprint.pformat(FRAMES)}")
+
+    global _INIT
+    _INIT = True
+
 
 def convert_dict_conf_to_vars() -> None:
     """ Add access to FRAMES dictionary keys as variables of this module.

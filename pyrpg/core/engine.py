@@ -10,8 +10,12 @@ import pygame # for pygame.QUIT, pygame.KEYDOWN
 from pyrpg.core.config.keys import KEYS
 
 from pyrpg.core.config.states import State
-from pyrpg.core.managers import gui_manager  #import GUIManager
-from pyrpg.core.managers import sound_manager #import SoundManager
+
+#from pyrpg.core.managers import gui_manager  #import GUIManager
+import pyrpg.core.config.gui as gui_manager  #import GUIManager
+
+#from pyrpg.core.managers import sound_manager #import SoundManager
+import pyrpg.core.config.sound as sound_manager
 
 from pyrpg.core.managers import map_manager #import MapManager
 from pyrpg.core.managers import message_manager #import MessageManager
@@ -24,7 +28,7 @@ from pyrpg.core.managers import pathfind_manager #import PathfindManager
 
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
-from pyrpg.core.config.filepaths import SCENE_PATH, Path # for SCENE_PATH
+from pyrpg.core.config.filepaths import FILEPATHS, Path #SCENE_PATH, Path # for SCENE_PATH
 from pyrpg.core.events.event import Event
 from pyrpg.functions import get_dict_from_file, get_coll_value
 
@@ -55,7 +59,8 @@ event_manager.init(exec_event_actions_fnc=script_manager.execute_event_actions)
 
 _scenes = {}
 
-def init(timed: bool=False) -> None:
+def init() -> None:
+#def init(timed: bool=False) -> None:
 #def init(sound_mng: SoundManager, timed: bool=False) -> None:
 #def init(gui_mng: GUIManager, sound_mng: SoundManager, timed: bool=False) -> None:
     # System resources managers
@@ -65,7 +70,8 @@ def init(timed: bool=False) -> None:
     #global sound_manager
     #sound_manager = sound_mng # for playing music and sounds
 
-    ecs_manager.initialize(timed=timed, game_functions={
+    #ecs_manager.initialize(timed=timed, game_functions={
+    ecs_manager.initialize(game_functions={
         "window": gui_manager.window,
         "create_entity_fnc": ecs_manager.create_entity,
         "remove_entity_fnc": ecs_manager.delete_entity,
@@ -125,7 +131,7 @@ def load_scene_from_file(scene_file: str) -> Scene:
     """
 
     # Read the scene definition from a file
-    scene_def = get_dict_from_file(filepath=Path(scene_file), dir=SCENE_PATH)
+    scene_def = get_dict_from_file(filepath=Path(scene_file), dir=FILEPATHS["SCENE_PATH"])
 
     # Translate scene definition into the game objects
     scene = load_scene_from_def(scene_def)

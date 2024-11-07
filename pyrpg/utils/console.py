@@ -1346,6 +1346,17 @@ class Console(pygame.Surface):
 		# By default console is disabled
 		self.enabled = False
 
+	def set_cli_app(self, module: str):
+		'''Sets the module/class/function to be used as reference entry point to the game.
+		'''
+		try:
+			import sys
+			self.app=sys.modules[module] # must be called after the cli module is imported
+			self.cli.app = self.app
+		except KeyError:
+			raise ValueError(f"{module} not yet imported. No console CLI module loaded.")
+
+
 	def update(self, events):
 		''' Call updates of relevant console parts. If ENTER was pressed, process the command.
 		Only process if console is enabled.
