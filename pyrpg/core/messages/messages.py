@@ -1,5 +1,5 @@
 import pygame
-from pyrpg.core.config.messages import MESSAGES # for DEFAULT_TTL_MS
+from pyrpg.core.config import MESSAGES # for DEFAULT_TTL_MS
 
 class Message:
     ''' Class representing game message displayed to the players

@@ -73,6 +73,8 @@
 		// For visual and sound effects
 		["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
 		["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+		["effects_system.generate_sound_fx_on_damage_processor:GenerateSoundFXOnDamageProcessor", {}],
+
 
 		// For displaying on screen
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -154,8 +156,7 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
-								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 
 							]
 						}
@@ -201,8 +202,7 @@
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
 
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
-								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 
 
 							]
@@ -252,8 +252,7 @@
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
-								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 
 
 							]
@@ -300,8 +299,7 @@
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}},
-								{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "hurt/1.mp3"}}
+								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
 
 
 							]
@@ -349,12 +347,14 @@
 				}},
 
 				//{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
+				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "spear"}},
 
 				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				// {"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "camera:Camera", "params" : {"always_center": false}}
+
 			]
 		},
 		// Dagger for NPC01
@@ -440,6 +440,7 @@
 				{"type" : "damaging:Damaging", "params" : {"damage" : 5}},
 				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02.ogg", "stop_before_playback": true}},
 
 
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
@@ -455,6 +456,7 @@
 
 				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
+				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02.ogg", "stop_before_playback": true}},
 
 
 				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},

@@ -7,7 +7,7 @@ module tests.
 import pyrpg.core.sounds.sound as sound # For cached sounds
 
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.config.filepaths import SOUND_PATH, Path # for SOUND_PATH, Path
+from pyrpg.core.config import FILEPATHS, Path # for SOUND_PATH, Path
 
 class SoundFXOnCreation(Component):
     ''' Game plays sound effect upon creation of the entity.
@@ -45,9 +45,9 @@ class SoundFXOnCreation(Component):
 
         # Initiate new sound
         try:
-            self.sound = sound.load_sound(SOUND_PATH / Path(sound_file))
+            self.sound = sound.load_sound(FILEPATHS["SOUND_PATH"] / Path(sound_file))
         except:
-            print(f'Something went wrong during initiation of the sound "{SOUND_PATH / Path(sound_file)}".')
+            print(f'Something went wrong during initiation of the sound "{FILEPATHS["SOUND_PATH"] / Path(sound_file)}".')
             # Notify component factory that initiation has failed
             raise ValueError
 

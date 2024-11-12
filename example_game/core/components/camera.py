@@ -7,6 +7,7 @@ module tests.
 
 from pygame import Surface
 from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.config import DISPLAY
 
 class Camera(Component):
     ''' Entity is in focus of a camera that is displayed in form of a screen
@@ -37,7 +38,7 @@ class Camera(Component):
     '''
 
     __slots__ = ['always_center', 'map_screen_rect', 'offset_x', 'offset_y', 'screen_pos_x', 'screen_pos_y',\
-                'screen_width', 'screen_height', 'screen_width_half', 'screen_height_half', 'screen']
+                'screen_width', 'screen_height', 'screen_width_half', 'screen_height_half', 'screen', 'screen_fill']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new Camera component.
@@ -57,6 +58,9 @@ class Camera(Component):
 
             :param screen_height: Height of the screen window (optional, default 100).
             :type screen_height: int
+
+            :param screen_fill: True, if the camera dimensions should be the same as the screen.
+            :type screen_fill: bool
 
             :raise: ValueError - in case of incorrect screen window parameters.
         '''
@@ -82,8 +86,11 @@ class Camera(Component):
         self.screen_pos_y = kwargs.get('screen_pos_y', 0)
 
         # Width and height of the Camera screen
-        self.screen_width = kwargs.get('screen_width', 100)
-        self.screen_height = kwargs.get('screen_height', 100)
+        self.screen_width = kwargs.get('screen_width', DISPLAY["RESOLUTION"][0])
+        self.screen_height = kwargs.get('screen_height', DISPLAY["RESOLUTION"][1])
+
+        # For processor to always use DISPLAY resolution parameters not screen_width, screen_height
+        self.screen_fill = kwargs.get('screen_fill', False)
 
         # Check the parameters for correctness
         try:
@@ -116,6 +123,23 @@ class Camera(Component):
         # Move the sprite of the entity - returns new shifted coordinates
         return (pos[0] + self.offset_x, pos[1] + self.offset_y)
 
+    def on_display_change(self):
+        
+        # Change camera dimension only if screen_fill parameter is enabled
+        if not self.screen_fill: return
+
+        # Width and height of the Camera screen
+        self.screen_width = DISPLAY["RESOLUTION"][0]
+        self.screen_height = DISPLAY["RESOLUTION"][1]
+
+        # Half of width and height is precalculated to avoid repetitive calculations /2
+        self.screen_width_half = int(round(self.screen_width / 2))
+        self.screen_height_half = int(round(self.screen_height / 2))
+
+        # Camera screen surface on which map is blitted
+        self.screen = Surface((self.screen_width, self.screen_height))
+
+
     def pre_save(self):
         ''' Prepare component for saving - remove all nreferences to
         non-serializable objects
@@ -126,6 +150,7 @@ class Camera(Component):
         ''' Regenerate all non-serializable objects for the component
         '''
         self.screen = Surface((self.screen_width, self.screen_height))
+
 
 if __name__ == '__main__':
     import doctest

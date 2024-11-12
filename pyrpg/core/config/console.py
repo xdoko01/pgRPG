@@ -1,28 +1,40 @@
+
 # Init logging config
 import logging
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.config import FILEPATHS # for IMAGE_PATH, FONT_PATH, CONSOLE_SCRIPT_PATH
-from pyrpg.core.config import CONSOLE
+from pyrpg.core.config import cons
 
-def init() -> None:
-    """Prepare the config data.
+def write(text):
+    """ Mandatory function used (not only) by the logger handler to write 
+    directly onto the game console.
+
+    Link is specified in the logger configuration
     """
-    # Fix the relative paths so that they are directing into correct folders
-    if CONSOLE.get('global', {}).get('bck_image', None): CONSOLE.get('global').update({'bck_image' : FILEPATHS["IMAGE_PATH"] / CONSOLE.get('global').get('bck_image')})
-    if CONSOLE.get('header', {}).get('bck_image', None): CONSOLE.get('header').update({'bck_image' : FILEPATHS["IMAGE_PATH"] / CONSOLE.get('header').get('bck_image')})
-    if CONSOLE.get('footer', {}).get('bck_image', None): CONSOLE.get('footer').update({'bck_image' : FILEPATHS["IMAGE_PATH"] / CONSOLE.get('footer').get('bck_image')})
-    if CONSOLE.get('header', {}).get('font_file', None): CONSOLE.get('header').update({'font_file' : FILEPATHS["FONT_PATH"] / CONSOLE.get('header').get('font_file')})
-    if CONSOLE.get('output', {}).get('font_file', None): CONSOLE.get('output').update({'font_file' : FILEPATHS["FONT_PATH"] / CONSOLE.get('output').get('font_file')})
-    if CONSOLE.get('input', {}).get('font_file', None): CONSOLE.get('input').update({'font_file' : FILEPATHS["FONT_PATH"] / CONSOLE.get('input').get('font_file')})
-    if CONSOLE.get('footer', {}).get('font_file', None): CONSOLE.get('footer').update({'font_file' : FILEPATHS["FONT_PATH"] / CONSOLE.get('footer').get('font_file')})
+    if cons: cons.write(text)
 
-    # Add console_script_path to the console config
-    CONSOLE.get('global').update({'script_path': FILEPATHS["CONSOLE_SCRIPT_PATH"]})
 
-    # For now just text, reference is created in console manager, during creation of the Console entity
-    CONSOLE["CLI_MODULE"] = CONSOLE.get("global").get("cli_module", "pyrpg")
+"""
+Functions that feed the console with header and footer data.
+"""
+from pyrpg.core.config import MAIN_GAME_MODULE
 
-    import pprint
-    logger.debug(f"Console config initiated. {pprint.pformat(CONSOLE)}")
-    
+# Get process object to determine info about python process (mem usage etc.)
+import os, psutil
+python_process = psutil.Process(os.getpid())
+
+def cons_get_info_header():
+    '''Returns info that is displayed in the console's header'''
+
+    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
+    game_state = MAIN_GAME_MODULE.state_manager.game_state #if main else 'N/A'
+    no_of_entities =  len(MAIN_GAME_MODULE.engine.ecs_manager._world._entities) if MAIN_GAME_MODULE.engine else 'N/A'
+
+    return f'Memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
+
+def cons_get_info_footer():
+    '''Returns info that is displayed in the console's footer'''
+
+    loaded_quests = MAIN_GAME_MODULE.engine._scenes.keys() if MAIN_GAME_MODULE.engine else 'N/A'
+
+    return f'Loaded scenes: {loaded_quests}'

@@ -1,11 +1,34 @@
 {
 
+	"PYRPG": {
+		"TIMED": false
+	},
+
+	"STATES": {
+
+		"ALL_STATES": ["START_PROGRAM", "MAIN_MENU", "GAME", "PAUSE_GAME", "CONSOLE", "END_PROGRAM", "LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
+		"NON_GAME_STATES": ["CONSOLE", "START_PROGRAM", "END_PROGRAM"],
+		"START_STATE": "START_PROGRAM",
+
+		"STATES_GRAPH": {
+			"START_PROGRAM"    : ["MAIN_MENU", "GAME"],
+			"MAIN_MENU"        : ["LOAD_QUEST_MENU", "EXIT_GAME_DIALOG", "CONSOLE"],
+			"LOAD_QUEST_MENU"  : ["MAIN_MENU", "GAME", "CONSOLE"],
+			"GAME"             : ["MAIN_MENU", "PAUSE_GAME", "CONSOLE", "EXIT_GAME_DIALOG"],
+			"PAUSE_GAME"       : ["GAME", "CONSOLE"],
+			"CONSOLE"          : ["MAIN_MENU", "LOAD_QUEST_MENU", "GAME"],
+			"EXIT_GAME_DIALOG" : ["END_PROGRAM", "GAME", "MAIN_MENU"],
+			"END_PROGRAM"      : []
+		}
+	},
+
 	"DISPLAY": {
-		"RESOLUTION" : [640, 480],
-		"BITDEPTH" : 32,
-		"FULLSCREEN" : false,
+		"RESOLUTION" : "DEFAULT",
+		"BITDEPTH" : "DEFAULT",
+		"FULLSCREEN" : true,
 		"MAX_FPS" : 250,
-		"SHOW_FPS" : true
+		"SHOW_FPS" : true,
+		"WIN_TITLE": "pyRPG"
 	},
 
 	"FILEPATHS": {
@@ -51,6 +74,7 @@
 	},
 
 	"GUI": {
+		"GUI_WINDOW_RATIO": 0.75,
 		"MENU_BACKGROUND_ANIMATION_DELAY_MS": 130
 	},
 
@@ -79,7 +103,7 @@
 
     "CONSOLE": {
         "global" : {
-            "cli_module": "pyrpg",   // the module must cointain functions for header and footer information
+            "cli_module": "pyrpg.core.main",   // the module must cointain functions for header and footer information
             "bck_alpha": 150
         },
         "input": {
@@ -90,7 +114,7 @@
             "font_file": "JackInput.ttf",
             "bck_alpha": 0,
             "display_lines": 20,
-            "display_columns": 100
+            "display_columns": 1000
         }
     },
 

@@ -4,7 +4,7 @@ Can be run from the console by putting following command
 XXXX
 """
 
-from pyrpg import main
+from pyrpg.core import main
 
 def initialize(register, module_name):
     """Script registers itself at ScriptManager"""
@@ -19,6 +19,6 @@ def script_restart_quest(event, *args, **kwargs):
 
     scene = kwargs.get("scene")
 
-    main.engine.new_game(filepath=scene)
+    main.engine.new_game(scene_file=scene)
 
     return 0

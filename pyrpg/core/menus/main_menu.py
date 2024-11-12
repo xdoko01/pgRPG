@@ -12,8 +12,9 @@ logger = logging.getLogger(__name__)
 class MainMenu(Menu):
     '''Class implementing the main menu buttons'''
 
-    def __init__(self, gui_manager, state_manager) -> None:
+    def __init__(self, gui_manager, sound_manager, state_manager) -> None:
         self.gui_manager = gui_manager
+        self.sound_manager = sound_manager
         self.state_manager = state_manager
 
         self.load_scene_button = UIButton(relative_rect=Rect((150, 175), (100, 50)), text='Load Scene', manager=self.gui_manager.window_manager, container=None)
@@ -58,3 +59,6 @@ class MainMenu(Menu):
         self.gui_manager.draw_gui()
 
         return State.MAIN_MENU
+
+    def clear(self) -> None:
+        pass

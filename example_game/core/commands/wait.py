@@ -36,7 +36,7 @@ def initialize(register, module_name):
 ######## COMMAND PART
 
 ### DO NOT REMOVE - Mandatory imports
-from pyrpg.core.managers.ecs_manager import ECSManager
+from types import ModuleType # for type hint on importing the ecs_manager module
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 def init(
@@ -73,7 +73,7 @@ def init(
 
 def process(
         # Mandatory attributes that must be always present
-        ecs_mng: ECSManager,
+        ecs_mng: ModuleType,
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command

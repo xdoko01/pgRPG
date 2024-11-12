@@ -1,7 +1,8 @@
 import logging
 
 #from pyrpg.core.config.paths import QUEST_PATH
-from pyrpg.core.config.filepaths import SCENE_PATH # for SCENE_PATH
+from pyrpg.core.config import FILEPATHS #SCENE_PATH # for SCENE_PATH
+from pyrpg.core.config import GUI
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
 from pyrpg.core.config.states import State
 from pygame_gui.windows import UIFileDialog
@@ -15,20 +16,22 @@ class LoadSceneMenu(Menu):
     """ Class implementing the 'Load Scenes Menu' dialog.
     """
 
-    def __init__(self, gui_manager, state_manager, init_game_fnc) -> None:
+    def __init__(self, gui_manager, sound_manager, state_manager, init_game_fnc) -> None:
         self.gui_manager = gui_manager
+        self.sound_manager = sound_manager
         self.state_manager = state_manager
 
         self.init_game_fnc = init_game_fnc
 
-        self.last_scene_path = SCENE_PATH
+        self.last_scene_path = FILEPATHS["SCENE_PATH"]
         self.load_scene_window = None
 
         logger.info(f"Load Scenes Menu dialog initiated.")
 
     def show(self) -> None:
         self.load_scene_window = UIFileDialog(
-                rect=Rect(self.gui_manager._gui_dlg_start, self.gui_manager._gui_dlg_dim),
+                #rect=Rect(self.gui_manager._gui_dlg_start, self.gui_manager._gui_dlg_dim),
+                rect=Rect(GUI["DLG_START_PX"], GUI["DLG_DIM_PX"]),
                 manager=self.gui_manager.window_manager,
                 window_title="Load Scene",
                 initial_file_path=self.last_scene_path,
@@ -65,3 +68,6 @@ class LoadSceneMenu(Menu):
         self.gui_manager.draw_gui()
 
         return State.LOAD_QUEST_MENU
+
+    def clear(self) -> None:
+        pass

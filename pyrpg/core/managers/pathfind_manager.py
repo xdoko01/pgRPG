@@ -32,6 +32,100 @@ class PathfindRequest:
     def __str__(self):
         return f'{self.start=}\n{self.goal=}\n{self.search=}\n{self.options=}\n'
 
+###
+
+_req_queue: list = [] # list of PathfindRequest objects
+_req_lookup: dict = {} # lookup for PathfindRequest based on their req_id
+_next_req_id: int = 0 # last calc id generated
+
+logger.debug(f"PathfindManager created.")
+
+def __str__():
+    """PathfindManager information."""
+    return f"{_req_queue=}\n{_req_lookup=}\n{_next_req_id=}"
+
+def request_path(graph: dict, start: tuple, goal: tuple, search: str='BFS'):
+    """Registers PathfindRequest with the processor and enqueue it for processing.
+
+    :returns: int - Path Request ID
+    """
+    # Create PathFindRequest object
+    try:
+        path_req = PathfindRequest(graph=graph, start=start, goal=goal, option=PathfindOption[search])
+    except KeyError:
+        raise ValueError(f"Requested pathfinding search {search=} is not defined. Available searchs are: " +
+                            f"{PathfindOption._member_names_}.")
+
+    # Generate new calc_id under which the path_request is stored
+    global _next_req_id
+    req_id = _next_req_id
+    _next_req_id += 1
+
+    # Generate ID and Register it in the dictionary
+    _req_lookup.update({req_id: path_req})
+    logger.debug(f"PathfindRequest registered under {req_id=}")
+
+    # Add calc request to the calculation queue
+    _req_queue.append(path_req)
+    logger.debug(f"Pathfinding request {req_id=} added into the queue for processing. Total enqued requests {len(_req_queue)=}")
+
+    # Return the new ID
+    return req_id
+
+def continue_pathfinding(max_steps=None):
+    """Try part of the path calculation for all paths in the queue.
+    It is possible to limit how long to spent here using total_number of_steps_allowed input.
+
+    If total_number_of_steps_allowed=None then calculate all what is in he queue.
+    """
+    # Quit if there is no path for calculation
+    if len(_req_queue) == 0: return
+
+    # How many cycles we can spend on each path calculation in the queue
+    max_steps_per_calc = max_steps // len(_req_queue) if max_steps is not None else None
+    
+    for path_req in _req_queue.copy():
+        finished, path = path_req.search.proceed(no_of_steps=max_steps_per_calc)
+        if finished:
+            # remove from queue and continue with next one
+            logger.debug(f"Pathfinding request fulfilled and path calculation finished")
+            _req_queue.remove(path_req)
+
+def get_path(req_id: int):
+    """Get the path or information that the path is not yet ready.
+    returns None if path calculation is in progress or path_id no longer exists
+    returns path if path found (empty list if path does not exist).
+    """
+    
+    # Find the path using the ID
+    path_req = _req_lookup.get(req_id, None) # if not found return None
+
+    # If no such path_id exists
+    if path_req is None:
+        logger.debug(f"{req_id=} does not exists and/or path already obtained.")
+        return None
+    
+    # If calculation is still running
+    if not path_req.search.finished: 
+        logger.debug(f"{req_id=} calculation is still in progress.\nDetails:\n{path_req.search}")
+        return None
+
+    # If finished
+    #  Remove from the dictionaty _req_lookup
+    _req_lookup.pop(req_id)
+
+    # Extract only checkpoints - if wanted
+    if path_req.options.value.checkpoints: path_req.search.filter_checkpoints()
+
+    # Add start coordinates - if wanted
+    if path_req.options.value.start: path_req.search.include_start()
+    
+    # Return resulting path
+    return path_req.search.get_path_result()
+
+
+###
+"""
 class PathfindManager:
     '''Manages requests for path calculations and returns the resulting path once it is ready.
     The continue_pathfinding function is called by the processor from the main game loop.
@@ -125,7 +219,7 @@ class PathfindManager:
         
         # Return resulting path
         return path_req.search.get_path_result()
-
+"""
 
 if __name__ == '__main__':
 
@@ -158,3 +252,5 @@ if __name__ == '__main__':
     print(f'Request 0 results: {pf_manager.get_path(req_id=path_req_0)}')
     print(f'Request 1 results: {pf_manager.get_path(req_id=path_req_1)}')
     print(f'Request 2 results: {pf_manager.get_path(req_id=path_req_2)}')
+
+# %%

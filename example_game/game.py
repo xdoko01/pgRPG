@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath(Path(pyrpg_path)))
 def main(argv):
     """Run the game using the CLI arguments"""
 
-    console = True
+    #console = True
     scene_file = None
     config_file = "example_game/config.jsonc"
 
@@ -19,9 +19,9 @@ def main(argv):
     #scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
     #scene_file = "games/sokoban/sokoban_new_level02.jsonc"
     #scene_file = "games/sokoban/sokoban_new_level01.jsonc"    
-    scene_file = "games/sokoban/sokoban_new.jsonc"            
+    #scene_file = "games/sokoban/sokoban_new.jsonc"            
     #scene_file = "games/sokoban/sokoban.jsonc"                
-    #scene_file = "games/collect_coins/collect_coins.jsonc"
+    scene_file = "games/collect_coins/collect_coins.jsonc"
 
     # 12_ai
     #scene_file = "tests/12_ai/test_entity_seen.jsonc" # old, does not work, fix it
@@ -159,11 +159,13 @@ EXAMPLES
         elif opt in ("-c", "--config"):
             config_file = arg
 
-    print(f"Starting with the following arguments:\n{console=}\n{scene_file=}\n{config_file=}")
+    print(f"Starting with the following arguments:\n{scene_file=}\n{config_file=}")
 
     # Load the framework using all the configs
     import pyrpg
-    pyrpg.init(config_file=config_file, console=console, scene_file=scene_file, timed=False)
+    #pyrpg.init(config_file=config_file, console=console, scene_file=scene_file, timed=False)
+    #pyrpg.init(config_file=config_file, scene_file=scene_file, timed=False)
+    pyrpg.init(config_file=config_file, scene_file=scene_file)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

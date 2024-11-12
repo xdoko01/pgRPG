@@ -8,8 +8,9 @@ import pygame
 from pygame_gui.windows import UIConfirmationDialog
 from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
 from pygame import Rect
-from pyrpg import main
-from pyrpg.core.config.display import DISPLAY # for MAX_FPS
+from pyrpg.core import main
+from pyrpg.core.config import DISPLAY # for MAX_FPS
+from pyrpg.core.config import GUI
 from pyrpg.functions.str_utils import translate_str
 
 def initialize(register, module_name):
@@ -37,7 +38,8 @@ def script_show_confirm_dlg(event, *args, **kwargs):
 
     # Prepare the window
     message_window = UIConfirmationDialog(
-        rect=Rect(main.gui_manager._gui_dlg_start, main.gui_manager._gui_dlg_dim), 
+        #rect=Rect(main.gui_manager.gui_dlg_start, main.gui_manager.gui_dlg_dim),
+        rect=Rect(GUI["DLG_START_PX"], GUI["DLG_DIM_PX"]), 
         action_long_desc=long_desc,
         window_title=title,
         action_short_name=confirm_text,

@@ -5,7 +5,7 @@ import logging
 # Parent super-class
 from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
 
-from pyrpg.core.config.fonts import FONTS # for GAME_MSG_FONT 
+from pyrpg.core.config import FONTS # for GAME_MSG_FONT 
 
 # Logger init
 logger = logging.getLogger(__name__)

@@ -230,10 +230,6 @@ def get_all_dict_values(d: dict):
                     "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
                 }\
             }
-        >>> next(get_all_dict_values(d))
-        2
-        >>> next(get_all_dict_values(d))
-        3
         >>> set(get_all_dict_values(d))
         {33, 2, 3, 1, 10, 22}
         >>> set(get_all_dict_values(d['items']['weapons']))
@@ -345,22 +341,61 @@ def get_coll_value(coll, path: str, sep: str='.'):
     yield from _get_coll_value(coll=coll, keys=keys)
 
 def merge_dicts(orig: dict, new: dict) -> dict:
-    """ Merge 2 dictionaries original and new, so that
+    """ Merge 2 dictionaries original and new, so that:
+
         - if key exists in both, value from new i sused
         - if key exists only in default, key: value from default is used
         - if key exists only in new, key: value from new is used
-    """
-    merged = dict()
 
-    # key exists in new but not in original
-    for new_key in new: 
-        if not orig.get(new_key):
-            merged[new_key] = new[new_key] 
+    Parameters:
+        :param orig: Dictionary that is taken as a base for adding and updating items from new dict (slave)
+        :type orig: dict
+
+        :param new: Dictionary from which items are added and modified (master)
+                     where new value should be found.
+        :type new: dict
+
+        :returns: merge dict as a result of orig (slave) and new (master)
+
+
+    Tests:
+        >>> orig = {\
+            "RESOLUTION" : [640, 480],\
+            "BITDEPTH" : 32,\
+            "FULLSCREEN" : False,\
+            "MAX_FPS" : 250,\
+            "SHOW_FPS" : True\
+        }
+
+        >>> new = {\
+            "RESOLUTION" : [800, 600],\
+            "BITDEPTH" : 24,\
+            "FULLSCREEN" : True,\
+            "MAX_FPS" : 500,\
+            "SHOW_FPS" : False,\
+            "GUI_WINDOW_RATIO": 1.8\
+        }
+
+        >>> merged = merge_dicts(orig, new)
+        >>> merged["RESOLUTION"]
+        [800, 600]
+        >>> merged["FULLSCREEN"]
+        True
+        >>> merged["SHOW_FPS"]
+        False
+
+        >>> empty = dict()
+        >>> merged = merge_dicts(orig, empty)
+        >>> merged["FULLSCREEN"]
+        False
+    """
+
+    # Add items that exist in new but not in original
+    merged = {k: v for k,v in new.items() if k not in orig}
 
     for orig_key in orig:
         # check if exists in orig dict 
-        ## if NOT
-        if not new.get(orig_key): # exists in original but not in new -> add original to the merged dict
+        if orig_key not in new:
             merged[orig_key] = orig[orig_key]
         else: 
             # key exists in both original and new
@@ -376,3 +411,4 @@ def merge_dicts(orig: dict, new: dict) -> dict:
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
+

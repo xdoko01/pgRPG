@@ -374,7 +374,7 @@
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "hurt/10.mp3"}},
+				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02", "stop_before_playback": true}},
 				{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
 				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "effects/explosion"}}
 
@@ -395,7 +395,7 @@
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
-				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "hurt/10.mp3"}},
+				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02", "stop_before_playback": true}},
 				{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
 
 				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "effects/explosion"}}

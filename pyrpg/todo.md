@@ -1,11 +1,21 @@
 
+  - [ ] - Console commands as script file - similar to game commands - initialize, keep list of commands, possible to have some synonyms, ... Probably part of the Console solution ...
+
+  - [ ] - commend properly the COnsole code - changing the app leading to revidion of text_params in the header and footer
+  - [x] - get rid of timed - should be part of the config and not passed around as a parameter
+  - [x] - change width of the console from separate function
+  - [x] - implement reload in console - changing CLI, Paths, ... maybe just adjust the same init function ... using _INIT ...
+  - [x] - remove WIDTH and HEIGHT, keep only resolution
+  - [x] - GUI manager after calling init is deleting the background with the game - do it so that background is kept
+  - [x] - console manager after init is deleting all history from console. Probably do some separate function `on_display_changed`
+  - [x] - after reinit of the console, history is kept but the lines ar not divided correctly according to the width
+
 
   Features
+  - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
-  - [ ] Prepare a new `SoundFXOnDamage` component to be on the damagable entities (hurt sounds etc)
-  - [ ] Prepare a new `SoundFXOnDestroy` component to be on the dead entities
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
-  - [ ] Show FPS also i fullscreen mode (config parameter)
+  - [x] Show FPS also i fullscreen mode (config parameter)
   - [ ] Branch - Fix console and make it more usable. It contains very old descriptions.
   - [ ] Branch - Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
 

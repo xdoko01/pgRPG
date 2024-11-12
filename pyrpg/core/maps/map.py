@@ -1,8 +1,8 @@
 '''
 For tests call python -m pyrpg.core.maps.map -v
 '''
-from pyrpg.core.config.game import GAME # for TILE_RES_PX
-from pyrpg.core.config.filepaths import MAP_PATH # MAP_PATH
+from pyrpg.core.config import GAME # for TILE_RES_PX
+from pyrpg.core.config import FILEPATHS # MAP_PATH # MAP_PATH
 
 import pygame
 from pytmx.util_pygame import load_pygame
@@ -41,7 +41,7 @@ class Map:
 		#### TMX load map and properties
 
 		# Load map
-		self.tmxdata = load_pygame(MAP_PATH / str(map_name + '.tmx'))
+		self.tmxdata = load_pygame(FILEPATHS["MAP_PATH"] / str(map_name + '.tmx'))
 
 
 		# Rescale images
