@@ -217,10 +217,18 @@ def _prep_conf_logging(logging_config: dict, filepaths_config: dict) -> dict:
 def _prep_conf_display(display_config: dict) -> dict:
     """ Prepare global DISPLAY dictionary with configurations.
     """
+
     from functools import namedtuple
     Resolution = namedtuple("Resolution", ["width", "height"])
 
-    display_config["RESOLUTION"] = Resolution(display_config["RESOLUTION"][0], display_config["RESOLUTION"][1])
+    # Set automatically to native resolution if required
+    if display_config["RESOLUTION"] == "DEFAULT":
+        display_config["RESOLUTION"] = Resolution(pygame.display.Info().current_w, pygame.display.Info().current_h)
+    else:
+        display_config["RESOLUTION"] = Resolution(display_config["RESOLUTION"][0], display_config["RESOLUTION"][1])
+
+    # Set the best bitdepth (default)
+    if display_config["BITDEPTH"] == "DEFAULT": display_config["BITDEPTH"] = 0
 
     return display_config
 
@@ -359,20 +367,29 @@ def _init_display() -> None:
         DISPLAY["WINDOW"] = pygame.display.set_mode(
             size=DISPLAY["RESOLUTION"],
             flags=pygame.FULLSCREEN if DISPLAY["FULLSCREEN"] else 0,
-            depth=0 # better than DISPLAY["BITDEPTH"], automatically selects the fastest option
+            depth=DISPLAY["BITDEPTH"]
         )
+
+        # Set window title
+        pygame.display.set_caption(DISPLAY["WIN_TITLE"])
+
     else:
         #Resize the resolution and/or switch to fullscreen 
 
         # copy the surface
-        temp_surf = DISPLAY["WINDOW"].copy()
+        temp_surf = pygame.display.get_surface().convert()
+        cursor = pygame.mouse.get_cursor()
 
         # change the mode
         DISPLAY["WINDOW"] = pygame.display.set_mode(
             size=DISPLAY["RESOLUTION"],
             flags=pygame.FULLSCREEN if DISPLAY["FULLSCREEN"] else 0,
-            depth=0 # better than DISPLAY["BITDEPTH"], automatically selects the fastest option
+            depth=DISPLAY["BITDEPTH"]
         )
+        # Set window title
+        pygame.display.set_caption(DISPLAY["WIN_TITLE"])
+        pygame.mouse.set_cursor(*cursor)
+        pygame.key.set_mods(0) # ???
 
         # paste to the copy to the new window
         DISPLAY["WINDOW"].blit(temp_surf, (0, 0))
@@ -423,18 +440,12 @@ def _init_fonts() -> None:
     # Font or GUI manager
     FONTS["GUI_MANAGER_FONT_OBJ"]= utils.BitmapFont(FONTS["GUI_MANAGER_FONT"], color=FONTS.get("GUI_MANAGER_FONT_COLOUR"))
 
-
 def _init_frames() -> None:
     import pyrpg.utils as utils # for BitmapFrame class
     import pygame # for pygame.Color
 
     FRAMES["PLAYER_TALK_FRAME_OBJ"] = utils.BitmapFrame(FRAMES["PLAYER_TALK_FRAME"], color=FRAMES.get("PLAYER_TALK_FRAME_COLOUR"))
     FRAMES["GAME_DEBUG_FRAME_OBJ"] = utils.BitmapFrame(FRAMES["GAME_DEBUG_FRAME"], color=FRAMES.get("GAME_DEBUG_FRAME_COLOUR"))
-
-def _init_gui() -> None:
-    import pyrpg.core.config.gui as g
-    g.init_background_animation(display=DISPLAY, filepaths=FILEPATHS, gui_conf=GUI)
-    g.init_gui(display=DISPLAY, fonts=FONTS)
 
 def _init_sound() -> None:
     import pyrpg.core.config.sound as s
@@ -443,6 +454,19 @@ def _init_sound() -> None:
 def _init_states() -> None:
     import pyrpg.core.config.states as st
     st.init(states=STATES)
+
+def _init_gui() -> None:
+    """GUI needs sound and states"""
+    # recalculate dialog parameters so that correct dialogs are shown after the
+    # resolution is changed during the game (and config.init() is called again)
+    global GUI
+    GUI = _prep_conf_gui(gui_config=GUI, display_config=DISPLAY)
+
+    import pyrpg.core.config.gui as g
+    g.init_background_animation(display=DISPLAY, filepaths=FILEPATHS, gui_conf=GUI)
+    g.init_gui(display=DISPLAY, fonts=FONTS)
+
+
 
 if __name__ == "__main__":
     load(config_file="example_game/config.jsonc")

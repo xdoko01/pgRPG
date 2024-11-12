@@ -45,9 +45,6 @@ from collections import namedtuple
 Pos = namedtuple("Pos", ["x", "y"])
 Dim = namedtuple("Dim", ["width", "height"])
 
-#gui_dlg_dim: tuple
-#gui_dlg_start: Pos
-
 window: pygame.Surface
 clock = pygame.time.Clock()
 
@@ -57,32 +54,16 @@ window_manager: pygame_gui.UIManager
 
 def init_gui(display: dict, fonts: dict) -> None:
     # Initiate GUI manager
-    #from pyrpg.core.config import DISPLAY #WINDOW, WIDTH, HEIGHT, BITDEPTH, FULLSCREEN, GUI_WINDOW_RATIO 
     _init_gui(
         win=display["WINDOW"], 
         res=display["RESOLUTION"]
     )
     global font
-    font = fonts["GUI_MANAGER_FONT_OBJ"] #BitmapFont(FILEPATHS["FONT_PATH"] / "good_neighbours_font.json")
+    font = fonts["GUI_MANAGER_FONT_OBJ"] 
 
     logger.info(f"GUI Manager initiated.")
 
-#def _init_gui(win: pygame.Surface, res: Dim, full: bool=False, ratio: float=1.5) -> None:
 def _init_gui(win: pygame.Surface, res: Dim) -> None:
-
-    # Dimensions of GUI window
-    #global gui_dlg_dim
-    #gui_dlg_dim = Dim(
-    #    res.width / ratio,
-    #    res.height / ratio
-    #)
-
-    # Start position of the GUI window - center on the screen
-    #global gui_dlg_start
-    #gui_dlg_start = Pos(
-    #    (res.width - gui_dlg_dim.width) / 2,
-    #    (res.height - gui_dlg_dim.height) / 2
-    #)
 
     # At this moment, display is already created during initial configuration
     global window

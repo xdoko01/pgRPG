@@ -42,7 +42,7 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 ### Optional imports
 from .move_to_pos_px import process as cmd_move_to_pos_px # import other existing command
 from .move_to_pos_px import init as cmd_move_to_pos_px_init
-from pyrpg.core.config.game import GAME # for TILE_RES_PX
+from pyrpg.core.config import GAME # for TILE_RES_PX
 
 def init(
         # Mandatory attributes that must be always present

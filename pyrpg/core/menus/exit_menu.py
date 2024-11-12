@@ -13,8 +13,9 @@ logger = logging.getLogger(__name__)
 class ExitMenu(Menu):
     '''Class implementing the exit dialog'''
 
-    def __init__(self, gui_manager, state_manager) -> None:
+    def __init__(self, gui_manager, sound_manager, state_manager) -> None:
         self.gui_manager = gui_manager
+        self.sound_manager = sound_manager
         self.state_manager = state_manager
 
         self.exit_dialog = None

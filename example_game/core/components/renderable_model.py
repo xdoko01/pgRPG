@@ -8,8 +8,8 @@ module tests.
 import pygame
 import pyrpg.core.models as model # For cached animated model in RenderableModel entity
 
-from pyrpg.core.config.game import GAME # For TILE_RES
-from pyrpg.core.config.filepaths import FILEPATHS # MODEL_PATH # For MODEL_PATH
+from pyrpg.core.config import GAME # For TILE_RES
+from pyrpg.core.config import FILEPATHS # MODEL_PATH # For MODEL_PATH
 from pathlib import Path
 from pyrpg.core.ecs.components.component import Component
 

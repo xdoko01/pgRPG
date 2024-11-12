@@ -1,7 +1,7 @@
 import logging
 
 #from pyrpg.core.config.paths import QUEST_PATH
-from pyrpg.core.config.filepaths import FILEPATHS #SCENE_PATH # for SCENE_PATH
+from pyrpg.core.config import FILEPATHS #SCENE_PATH # for SCENE_PATH
 from pyrpg.core.config import GUI
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
 from pyrpg.core.config.states import State
@@ -16,8 +16,9 @@ class LoadSceneMenu(Menu):
     """ Class implementing the 'Load Scenes Menu' dialog.
     """
 
-    def __init__(self, gui_manager, state_manager, init_game_fnc) -> None:
+    def __init__(self, gui_manager, sound_manager, state_manager, init_game_fnc) -> None:
         self.gui_manager = gui_manager
+        self.sound_manager = sound_manager
         self.state_manager = state_manager
 
         self.init_game_fnc = init_game_fnc

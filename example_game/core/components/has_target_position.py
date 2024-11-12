@@ -7,7 +7,7 @@ module tests.
 
 from pyrpg.core.ecs.components.component import Component
 
-from pyrpg.core.config.game import GAME # for TILE_RES # in order to specify the position in pixel coords
+from pyrpg.core.config import GAME # for TILE_RES # in order to specify the position in pixel coords
 
 from collections import namedtuple
 

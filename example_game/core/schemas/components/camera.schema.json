@@ -22,17 +22,22 @@
 		},
 		"params": {
 			"title": "Camera Component Parameters",
-			"description" : "screen_width (required), screen_height (required), screen_pos_x (optional), screen_pos_y (optional), always_center (optional)",
-			"markdownDescription" : "`screen_width` (required), `screen_height` (required), `screen_pos_x` (optional), `screen_pos_y` (optional), `always_center` (optional)",
+			"description" : "screen_width (optional), screen_height (optional), screen_pos_x (optional), screen_pos_y (optional), always_center (optional), screen_fill (optional)",
+			"markdownDescription" : "`screen_width` (optional), `screen_height` (optional), `screen_pos_x` (optional), `screen_pos_y` (optional), `always_center` (optional), `screen_fill (optional)`",
 			"type": "object",
-			"required": ["screen_width", "screen_height"],
+			"required": [],
 			"$ref": "#/$defs/cond_params",
 
 			"defaultSnippets": [
 				{
-					"label": "Required Camera Parameters",
+					"label": "Fix dimensions Camera Parameters",
 					"description": "Standard Camera from top-left corner.",
 					"body": { "screen_width": "${1:100}", "screen_height": "${2:100}"}
+				},
+				{
+					"label": "Full display Camera adjusted together with resolution Parameters",
+					"description": "Standard Camera from top-left corner.",
+					"body": { "screen_fill": "${1:True}"}
 				},
 				{
 					"label": "All Camera Parameters",
@@ -42,6 +47,14 @@
 			],	
 
 			"properties": {
+				"screen_fill" : {
+					"title": "Adjust to resolution",
+					"description": "Adjust camera window to match game window",
+					"markdownDescription": "Adjust camera window to match game window",
+					"examples": [false, true],
+					"default": false,
+					"type": "boolean"
+				},
 				"always_center" : {
 					"title": "Centered",
 					"description": "Should the entity always be in the centre of the camera?",

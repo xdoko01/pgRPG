@@ -44,7 +44,7 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 from core.components.position import Position # To work with components in commands (remove search add ...)
 from .move_to import process as cmd_move_to # import other existing command
 from .move_to import init as cmd_move_to_init # import other existing command
-from pyrpg.core.config.game import GAME # for TILE_RES_PX
+from pyrpg.core.config import GAME # for TILE_RES_PX
 
 def init(
         # Mandatory attributes that must be always present

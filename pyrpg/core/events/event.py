@@ -1,4 +1,4 @@
-from pyrpg.core.config.messages import MESSAGES # for the format of event messages
+from pyrpg.core.config import MESSAGES # for the format of event messages
 
 class Event:
 	''' Class encapsulating event sent by event dispatcher

@@ -5,19 +5,20 @@ logger = logging.getLogger(__name__)
 # Init the configuration
 # Config variables were merged from default.jsonc and config.jsonc. Now we need to init
 # all the necessary configurations, bring them to life (init display, console, logging, ...)
-import sys
 import pyrpg.core.config as config
+import sys
 config.init(main_module=sys.modules[__name__]) # return the reference to the main module to the config module in order to use it for console functions getting info about the game
 
 # Load selected configuration objects to the main module so that it can be used
 import pyrpg.core.config.gui as gui_manager # for manipulation with game screen
+import pyrpg.core.config.sound as sound_manager # for menu sounds
 import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+
 from pyrpg.core.config import cons # handler for manipulation with the game console
 
 # Remember reference to engine module to be used by the console commands
 engine = None
 
-#def _init_game(scene_file: str, timed: bool=False) -> None:
 def _init_game(scene_file: str) -> None:
 
     # Create engine instance if not yet created
@@ -26,15 +27,6 @@ def _init_game(scene_file: str) -> None:
     engine = e
     engine.init() # Init can be removed as timed parameter is no longer passed
     engine.new_game(scene_file)
-
-# Load the menus that can be accessed from the main program loop
-from pyrpg.core.menus.main_menu import MainMenu
-from pyrpg.core.menus.load_scene_menu import LoadSceneMenu
-from pyrpg.core.menus.exit_menu import ExitMenu
-
-main_menu = MainMenu(gui_manager=gui_manager, state_manager=state_manager)
-load_scene_menu = LoadSceneMenu(gui_manager=gui_manager, state_manager=state_manager, init_game_fnc=_init_game)
-exit_menu = ExitMenu(gui_manager=gui_manager, state_manager=state_manager)
 
 # Start the program
 #def init(scene_file: str=None, timed: bool=False) -> None:
@@ -53,10 +45,20 @@ def init(scene_file: str=None) -> None:
 
 
 
+# Load the menus that can be accessed from the main program loop
+from pyrpg.core.menus.main_menu import MainMenu
+from pyrpg.core.menus.load_scene_menu import LoadSceneMenu
+from pyrpg.core.menus.exit_menu import ExitMenu
+
+main_menu = MainMenu(gui_manager=gui_manager, sound_manager=sound_manager, state_manager=state_manager)
+load_scene_menu = LoadSceneMenu(gui_manager=gui_manager, sound_manager=sound_manager, state_manager=state_manager, init_game_fnc=_init_game)
+exit_menu = ExitMenu(gui_manager=gui_manager, sound_manager=sound_manager, state_manager=state_manager)
+
+
 import pygame
 # Initiate keys used for the console toggle anywhere in the game
-from pyrpg.core.config.keys import KEYS # for K_CONSOLE_TOGGLE
-from pyrpg.core.config.display import DISPLAY # for MAX_FPS
+from pyrpg.core.config import KEYS # for K_CONSOLE_TOGGLE
+from pyrpg.core.config import DISPLAY # for MAX_FPS
 from pyrpg.core.config.states import State
 
 def run():
@@ -150,30 +152,3 @@ def end() -> None:
     state_manager.clear()
 
     logger.info(f'Managers closed')
-
-
-'''
-Functions that feed the console with header and footer data.
-'''
-
-# Get process object to determine info about python process (mem usage etc.)
-import os, psutil
-logger.info(f'pyRPG process running as PID={os.getpid()}.')
-python_process = psutil.Process(os.getpid())
-
-
-def cons_get_info_header():
-    '''Returns info that is displayed in the console's header'''
-
-    memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
-    game_state = state_manager.game_state #if main else 'N/A'
-    no_of_entities =  len(engine.ecs_manager._world._entities) if engine else 'N/A'
-
-    return f'memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
-
-def cons_get_info_footer():
-    '''Returns info that is displayed in the console's footer'''
-
-    loaded_quests = engine._scenes.keys() if engine else 'N/A'
-
-    return f'loaded scenes: {loaded_quests}'

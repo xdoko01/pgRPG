@@ -98,6 +98,16 @@ class CommandLineProcessor(cmd.Cmd):
 		'''
 		pass
 
+	def default(self, line):
+		''' Overridden from Cmd super-class. 
+		It is called always when the do_xxx function is not found.
+
+		Parameter line contains the whole input string.
+
+		It is the same as using 'shell' or '!' or 'py_script'
+		'''
+		self.do_shell(line)
+	
 	def do_exit(self, params):
 		''' If "exit" was typed on the command line, set the app's exit variable to True.
 		'''
@@ -189,6 +199,7 @@ class CommandLineProcessor(cmd.Cmd):
 			sys.stdout = sys.__stdout__
 
 	def do_shell(self, params):
+		# ! is synonym for shell in cmd module
 		self.do_py_script(params)
 
 	def do_py_script(self, params):
@@ -634,7 +645,8 @@ class TextOutput:
 					'bck_alpha' : 255,
 					'prompt'	: '',
 					'buffer_size': 100,
-					'line_spacing': None
+					'line_spacing': None,
+					'display_columns' : 500
 		}
 
 		# Merge default values with given values - overwrite defaults by config dict
@@ -821,9 +833,13 @@ class TextOutput:
 			
 			# Only print if there is something to print
 			if text_line:
-				
+
+				# How many characters can we put on one line - minimum from setup and what can fit to the screen?
+				self.display_columns = min(self.display_columns, self.width // self.font_object.get_metrics("O")[0][1] - 3)
+
 				# Split text_line to the list of strings based on number of displayable characters
 				text_line_parts = [text_line[i:i+self.display_columns] for i in range(0, len(text_line), self.display_columns)]	
+
 
 				# Add every splitted string into the output buffer
 				for text_line_part in text_line_parts:
@@ -1586,7 +1602,6 @@ class Console(pygame.Surface):
 
 		If parameter `disable_anim` is set to True, animation is forcefully disabled.
 		'''
-
 		#####
 		# Calculate the delta parameters for displaying animated console
 		#####		

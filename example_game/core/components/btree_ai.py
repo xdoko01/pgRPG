@@ -14,7 +14,7 @@ from pyrpg.core.ecs.components.component import Component
 from pyrpg.core.commands import cmd_factory
 from pyrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
 
-from pyrpg.core.config.filepaths import FILEPATHS # BTREE_PATH # for BTREE_PATH
+from pyrpg.core.config import FILEPATHS # BTREE_PATH # for BTREE_PATH
 
 
 class BTreeAI(Component):

@@ -21,7 +21,7 @@ for k, v in STATES["STATES_GRAPH"].items():
     new_states_graph[State[k]] = [State[s] for s in v.copy()]
 STATES["STATES_GRAPH"] = new_states_graph
 
-print(f'{STATES=}')
+#print(f'{STATES=}')
 
 # Globals
 state_graph: dict

@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import pygame # for pygame.QUIT, pygame.KEYDOWN
-from pyrpg.core.config.keys import KEYS
+from pyrpg.core.config import KEYS
 
 from pyrpg.core.config.states import State
 
@@ -28,7 +28,7 @@ from pyrpg.core.managers import pathfind_manager #import PathfindManager
 
 from pyrpg.core.menus.progress_bar2 import ProgressBar2
 
-from pyrpg.core.config.filepaths import FILEPATHS, Path #SCENE_PATH, Path # for SCENE_PATH
+from pyrpg.core.config import FILEPATHS, Path #SCENE_PATH, Path # for SCENE_PATH
 from pyrpg.core.events.event import Event
 from pyrpg.functions import get_dict_from_file, get_coll_value
 

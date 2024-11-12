@@ -1,11 +1,12 @@
 {
 
 	"DISPLAY" : {
-		"RESOLUTION" : [1024,768],
-		"BITDEPTH" : 24,
+		"RESOLUTION" : [640,480],
+		"BITDEPTH" : "DEFAULT",
 		"FULLSCREEN" : false,
 		"MAX_FPS" : 500,
-		"SHOW_FPS" : true
+		"SHOW_FPS" : true,
+		"WIN_TITLE": "Example Game"
 	},
 
 	"FILEPATHS": {
@@ -315,16 +316,15 @@
 	//		"bck_color" : [55,0,0],
 			"bck_alpha" : 100,
 			"buffer_size" : 100,
-			"display_lines" : 30,
-			"display_columns" : 90
+			"display_lines" : 30
 			},
 		"input" : {
 			"padding" : [0,0,10,10],
 			"font_file" : "IBMPlexMono-Regular.ttf",
 			"font_size" : 12,
 			"font_antialias" : true,
-			"font_color" : [255,0,0],
-			"bck_color" : [0,255,0],
+			"font_color" : [255,255,0],
+			"bck_color" : [0,128,0],
 			"bck_alpha" : 100,
 			"prompt" : ">>>",
 	//		"max_string_length" : 10,
@@ -333,9 +333,7 @@
 			},
 		"footer" : {
 			"text" : "{}",
-			"text_params" : [[null, "cons_get_info_footer"]],
-
-			// "text_params" : [["pyrpg.core.config.console", "cons_get_info_footer"]],
+			"text_params" : [["pyrpg.core.config.console", "cons_get_info_footer"]],
 			"layout" : ["TEXT_RIGHT"],
 			"padding" : [10,10,10,10],
 			"font_file" : "IBMPlexMono-Regular.ttf",

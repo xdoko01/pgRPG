@@ -9,7 +9,7 @@ import pyrpg.core.main as main
 from pygame_gui.windows import UIMessageWindow
 from pygame_gui import UI_WINDOW_CLOSE
 from pygame import Rect
-from pyrpg.core.config.display import DISPLAY # for MAX_FPS
+from pyrpg.core.config import DISPLAY # for MAX_FPS
 from pyrpg.core.config import GUI
 from pyrpg.functions.str_utils import translate_str
 

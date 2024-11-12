@@ -23,11 +23,12 @@
 	},
 
 	"DISPLAY": {
-		"RESOLUTION" : [640, 480],
-		"BITDEPTH" : 32,
-		"FULLSCREEN" : false,
+		"RESOLUTION" : "DEFAULT",
+		"BITDEPTH" : "DEFAULT",
+		"FULLSCREEN" : true,
 		"MAX_FPS" : 250,
-		"SHOW_FPS" : true
+		"SHOW_FPS" : true,
+		"WIN_TITLE": "pyRPG"
 	},
 
 	"FILEPATHS": {
@@ -113,7 +114,7 @@
             "font_file": "JackInput.ttf",
             "bck_alpha": 0,
             "display_lines": 20,
-            "display_columns": 100
+            "display_columns": 1000
         }
     },
 

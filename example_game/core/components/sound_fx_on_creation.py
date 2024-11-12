@@ -7,7 +7,7 @@ module tests.
 import pyrpg.core.sounds.sound as sound # For cached sounds
 
 from pyrpg.core.ecs.components.component import Component
-from pyrpg.core.config.filepaths import FILEPATHS, Path # for SOUND_PATH, Path
+from pyrpg.core.config import FILEPATHS, Path # for SOUND_PATH, Path
 
 class SoundFXOnCreation(Component):
     ''' Game plays sound effect upon creation of the entity.

@@ -2,7 +2,7 @@ import logging
 
 #from importlib import import_module
 from pyrpg.functions import str_to_package_module
-from pyrpg.core.config.modulepaths import MODULEPATHS # for COMMAND_MODULE_PATH
+from pyrpg.core.config import MODULEPATHS # for COMMAND_MODULE_PATH
 from pyrpg.functions import translate # for substitution of command parameters with the values from the blackboard
 
 from pyrpg.core.commands import CommandGenerator, Command, CommandContext

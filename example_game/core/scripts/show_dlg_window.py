@@ -8,7 +8,7 @@ from pyrpg.functions.wait import wait # import wait function
 import pyrpg.utils.dialog as dialog # import display_dialog function
 
 import pygame
-from pyrpg.core.config.keys import KEYS # for K_SUBMIT
+from pyrpg.core.config import KEYS # for K_SUBMIT
 
 from pyrpg import main
 

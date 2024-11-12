@@ -3,8 +3,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from pyrpg.core.ecs.esper import World, Processor
-from pyrpg.core.config.filepaths import FILEPATHS # ENTITY_PATH # for ENTITY_PATH
-from pyrpg.core.config.modulepaths import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
+from pyrpg.core.config import FILEPATHS # ENTITY_PATH # for ENTITY_PATH
+from pyrpg.core.config import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
 from pyrpg.core.config import PYRPG # for TIMED parameter
 
 from pyrpg.core.ecs.components.component import Component

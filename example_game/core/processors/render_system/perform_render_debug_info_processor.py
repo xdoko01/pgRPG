@@ -24,9 +24,9 @@ from ..functions import filter_only_visible_on_camera # for filtering only entit
 from ..functions import get_arrow_points # for drawing of arrows
 from ..functions import get_view_points # for drawing of arrows
 
-from pyrpg.core.config.fonts import FONTS # for GAME_DEBUG_FONT 
-from pyrpg.core.config.frames import FRAMES # for the debug frame
-from pyrpg.core.config.game import GAME # for TILE_RES_PX
+from pyrpg.core.config import FONTS # for GAME_DEBUG_FONT 
+from pyrpg.core.config import FRAMES # for the debug frame
+from pyrpg.core.config import GAME # for TILE_RES_PX
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 
