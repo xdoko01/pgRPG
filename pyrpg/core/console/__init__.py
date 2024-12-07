@@ -1,8 +1,6 @@
-__all__ = ['Console']
-
 '''
-	Experiment for implementation of in-game console
-	supporting input and output in graphics(pygame)
+	Implementation of graphical in-game console
+	supporting input and output in graphics (pygame)
 
 	Features
 	********
@@ -21,17 +19,19 @@ __all__ = ['Console']
 		-	cutting the text of text input
 		-	text input is not limited and scrolls automatically to the left.
 		-	in text input fix jumping text line when '1' or 'q' is input - this is the best solution, use different font if not satisfied
-		-	console does not need to contain header/footer/input/output - based on json config
+		-	console does not ne!ed to contain header/footer/input/output - based on json config
+		-	commands implemented as custom modules
+		-	console scripts supported in specified directory
+		-	console can be reloaded after the change of configuration
+		- 	console scripts are now supporting parameters, for example `script example3.scr x=100 y=500 color=128 name=MyBrick`
+		-	tabs are now translated to spaces based on tab_spaces parameter
+
 
 	FEATURES TODO
 	*************
-		
-		-	blit integers depretiation warning
-		-	Directory with scripts as console parameter
-		-	handling tabs as spaces - substitute tabs on output by predefined number of spaces
 
-		-	merge to GITanim
-		-	put on forums
+		-	Customize keys for console via json configuration
+		-	Show optional vertical scroll bar on console output
 
 
 
@@ -45,13 +45,33 @@ __all__ = ['Console']
 '''
 
 from io import StringIO # for redirection of commands output to the graphical console
+from pathlib import Path
 import sys	# for redirection of stdout to the graphical console
 import pygame # for Surface and graphics init
 import pygame.freetype # for all the fonts
 import pygame.locals as pl # for key names
 import cmd	# for command line support https://docs.python.org/3/library/cmd.html
 
-class Padding(list):
+# Utils functions
+from importlib import import_module
+
+def str_to_package_module(package: str, module: str):
+    '''Gets reference to the module in the package
+
+    Parameters:
+        :param package: Path to the package, for example pyrpg.core.ecs
+        :type package: str
+
+        :param module: Path to the module, relative to the package
+        :type module: str
+    '''
+    try:
+        return import_module(module, package=package)
+    except ModuleNotFoundError:
+        raise ValueError(f'Incorrect package.module name "{package}.{module}"')
+
+
+class Padding(tuple):
 	''' Class to facilitate easier and more understandable work 
 	with console paddings that are tuples (indexing). Items of this class
 	can be accessed by either indexing or by name.
@@ -62,7 +82,7 @@ class Padding(list):
 		pad.up returns also 1
 	'''
 
-	def __init__(self, padding=[0,0,0,0]):
+	def __init__(self, padding=(0,0,0,0)):
 		''' Init the padding and translate the tupple into 
 		readable padding properties.
 		'''
@@ -79,7 +99,7 @@ class CommandLineProcessor(cmd.Cmd):
 	https://github.com/Tuxemon/Tuxemon
 	'''
 
-	def __init__(self, app, lua_runtime=None, input=sys.stdin, output=sys.stdout, script_path=None):
+	def __init__(self, app, input=sys.stdin, output=sys.stdout, cmd_pckg_path=None, script_path=None):
 		''' Inherit from Cmd class. Output will need to be redirected 
 		to console graphical output, otherwise it would go to the text
 		window.
@@ -88,10 +108,44 @@ class CommandLineProcessor(cmd.Cmd):
 		# Initiate the parent class
 		cmd.Cmd.__init__(self, stdin=input, stdout=output)
 		self.app = app
-		self.lua = lua_runtime
 		self.output = output
 		self.input = input
-		self.script_path = script_path
+		self.cmd_pckg_path = cmd_pckg_path # the package containing modules implementing console commands
+		self.script_path = script_path # the path to the directory with console scripts
+		self._cmd_scripts = dict() # dict with functions implementing commands
+
+	def get_command(self, command_name: str):    
+		'''Gets the py script module from the storage if registered or register it first.
+		'''
+		command_fnc = self._cmd_scripts.get(command_name)
+		return command_fnc if command_fnc is not None else self.register_command(command_name)
+
+	def register_command(self, command_module_name: str):
+		'''Register the py script module.'''
+
+		command_module_path_absolute = f"{self.cmd_pckg_path}.{command_module_name}"
+
+		# Try to find the  module and get its reference
+		try:
+			command_module = str_to_package_module(None, command_module_path_absolute)
+
+		except ValueError:
+			raise ValueError(f'Error during loading of py script command module "{command_module_path_absolute}".')
+
+		# Try to register the script
+		try:
+			command_module.initialize(self._register_command, command_module_name)
+
+		except ValueError:
+			raise ValueError(f'Error during initiating/registering of command module "{command_module_path_absolute}".')
+
+		return self._cmd_scripts.get(command_module_name)
+
+	def _register_command(self, fnc, alias) -> None:
+		'''Registers new script command under some
+		specific name.
+		'''
+		self._cmd_scripts.update({alias: fnc})
 
 	def emptyline(self):
 		''' In case empty line is entered, nothing happens
@@ -104,69 +158,20 @@ class CommandLineProcessor(cmd.Cmd):
 
 		Parameter line contains the whole input string.
 
-		It is the same as using 'shell' or '!' or 'py_script'
+		It is the same as using 'py_script'
 		'''
-		self.do_shell(line)
-	
-	def do_exit(self, params):
-		''' If "exit" was typed on the command line, set the app's exit variable to True.
-		'''
-		self.app.exit = True
-		return True
+		self.do_py_script(line)
 
-	def do_quit(self, params):
-		'''If "quit" was typed on the command line, set the app's exit variable to True.
-		'''
-		return self.do_exit(params)
-	
+	def do_help(self, params):
+		''' Ignore build-in help command.'''
+		pass
+
 	def do_EOF(self, params):
-		''' If you press CTRL-D on the command line, set the app's exit variable to True.
+		'''Ignore pressing CTRL-D.
 		'''
-		return self.do_exit(params)
+		pass
 
-	def do_lua(self, params):
-		''' Executes lua commands in the console. App entity can be accessed
-		by referencing 'game'. See examples of possible usage below:
-
-		 - lua print('Hello world') ... prints Hello World at the console
-		 - lua print(game) ... prints reference to main game instance TestObject
-		 - lua local i for i = 1,500,100 do game.set_pos(i, i) end ... assignes new position to the game rect in cycle
-		'''
-
-		console_out = sys.stdout = StringIO()
-
-		if self.lua is None:
-			print('Lua Runtime not specified')
-			return
-
-		Result = None
-
-		try:
-			# Wrap the script so that it can use python global object 'game' and python print function
-			# in order to display the output on console and not on stdout
-			lua_script_wrapped = '''
-				function(game, py_print_fnc, py_scr, lua_scr, con_scr)
-					local py_scr = py_scr
-					local lua_scr = lua_scr
-					local con_scr = con_scr
-					local print = py_print_fnc
-				''' + params + ' end'
-
-			# Prepare function that executes the script and call it with the python global game reference
-			lua_func = self.lua.eval(lua_script_wrapped)
-
-			# Run the lua function with parameters game and python print
-			Result = lua_func(self.app, print, self.do_py_script, self.do_lua_script, self.do_con_script)
-
-		except Exception as E:
-			self.output.write(str(E))
-			return -1
-		finally:
-			self.output.write(str(console_out.getvalue()))
-			if Result: self.output.write(str(Result))
-			sys.stdout = sys.__stdout__
-
-	def do_py(self, params):
+	def do_shell(self, params):
 		''' Executes python commands in the console. App entity can be accessed
 		by referencing self. See examples of possible usage below:
 		 
@@ -198,123 +203,116 @@ class CommandLineProcessor(cmd.Cmd):
 			if Result: self.output.write(str(Result))
 			sys.stdout = sys.__stdout__
 
-	def do_shell(self, params):
-		# ! is synonym for shell in cmd module
-		self.do_py_script(params)
-
 	def do_py_script(self, params):
 		''' Executes python script
 
 			Examples: 
 				py_script test_script.py AmmoPack
 		'''
-
+		# Prepare the text output buffer
 		console_out = sys.stdout = StringIO()
 
-		globals_param = {'__buildins__' : None}
-
-		locals_param = {'game' : self.app}
-
-		filename = params.split()[0]
-
-		# Add the suffix to the filename, if needed
-		filename += '.py' if filename.split('.')[-1] != 'py' else ''
-
 		try:
-			# Open script file - script filename  is the first parameter params.split()[0]
-			with open(self.script_path / filename) as f:
-				self.output.write('>S>Script ' + str(self.script_path / filename) + ' started.')
-
-				py_script = f.read()
-
-				py_script_with_params = f'# Call parameters\nparams = "{params}"\n\n# Script body\n{py_script}'
-
-				try:
-					exec(py_script_with_params, globals_param, locals_param)
-					self.output.write(str(console_out.getvalue()))
-				except Exception as E:
-					self.output.write(str(console_out.getvalue()))
-					self.output.write(str(E))
-					return -1
-				finally:
-					sys.stdout = sys.__stdout__
-
-			# Inform that script has ended
-			self.output.write('>S>Script finished successfully.')
-
-		except FileNotFoundError:
-			self.output.write('Script file "' + str(self.script_path / filename) + '" not found.')
+			py_script = self.get_command(params.split()[0]) # try to get the py script name
+			py_script(game_ctx=self.app, params=params) # call the script
+			self.output.write(str(console_out.getvalue())) # write anything to the console
+		except Exception as E:
+			#self.output.write(str(console_out.getvalue()))
+			self.output.write(str(E))
 			return -1
+		finally:
+			sys.stdout = sys.__stdout__ # restore the output buffer to original system output
 
-	def do_lua_script(self, filename):
-		''' Run lua scripts
 
-		Script example - write 10-times hello to the console
-			local i
-
-			for i = 1, 10, 1 do
-				print('hello')
-			end
-		'''
-
-		# Read the file into params and call do_lua(params)
-		try:
-			# Open script file
-			with open(filename) as f:
-				self.output.write('>S>Script ' + filename + ' started.')
-
-				lua_script = f.read()
-
-				self.do_lua(lua_script)
-
-			# Inform that script has ended
-			self.output.write('>S>Script finished successfully.')
-
-		except FileNotFoundError:
-			self.output.write('Script file "' + str(filename) + '" not found.')
-			return -1
-
-	def do_con_script(self, params):
+	def do_script(self, params):
 		''' Run custom scripts that contain commands implemented in this class.
 
-		Script example:
-			move 300,300
-			!print('I have moved the brick')
-			!game.surf.fill((0,0,0))
-			!print('I have colored the brick')
+		Examples of usage:
+			"script example1.scr"           ... runs script example1.scr
+			"script example1.scr -v"        ... runs script example1.scr in verbose mode
+			"script example1.scr --verbose" ... runs script example1.scr in verbose mode
+			"script example3.scr x=50 y=100 name=MyBrick color=128 --verbose" ... runs script example3.scr with parameters in verbose mode
+			"script -h"      ... get usage instructions
+			"script --help"  ... get usage instructions
 		'''
 		
+		instructions = """
+	Examples of usage:
+		"script example1.scr"           ... runs script example1.scr
+		"script example1.scr -v"        ... runs script example1.scr in verbose mode
+		"script example1.scr --verbose" ... runs script example1.scr in verbose mode
+		"script example3.scr x=50 y=100 name=MyBrick color=128 --verbose" ... runs script example3.scr with parameters in verbose mode
+		"script -h"      ... get usage instructions
+		"script --help"  ... get usage instructions
+		"""
+
 		script_line = None
 		script_line_no = None
 		error = None
 
+		all_params = params.split()
+		no_of_params = len(all_params)
+		
+		# no parameter or help
+		if no_of_params == 0 or all_params[-1] in ['-h', '--help']: 
+			self.output.write(instructions)
+			return
+
+		script_name = all_params[0]
+		script_params = all_params[1:]
+		verbose_mode = True if all_params[-1] in ['-v', '--verbose'] else False
+
+		script_path = Path(self.script_path) / script_name
+		
+		# Prepare the dictionary with the parameters
+		params_list = [s for s in all_params if s.find('=') >=0]
+		params_dict = dict() # empty dictionary where script parameters will be stored as key, value pair
+		for param in params_list:
+			param_key, param_value = param.split('=')
+			params_dict[param_key] = param_value
+
+		# Debugs
+		#print(f'{all_params=}\n{no_of_params=}\n{script_name=}\n{script_params=}\n{verbose_mode=}\n{self.script_path=}\n{script_path=}\n{params_list=}\n{params_dict=}')
+
 		try:
 			# Open script file
-			with open(params) as f:
+			with open(script_path) as f:
 				# For each line execute self.onecmd(line)
-				self.output.write('>S>Script ' + params + ' started.')
+				if verbose_mode: self.output.write('>S>Script ' + script_path + ' started.')
 
 				script_line = f.readline()
 				script_line_no = 1
 
 				while script_line:
-					error = self.onecmd(script_line.strip())
-					if error: raise error
+					
+					# Substitute the parameters in the particular command in the script (look for the $key in the params_dict)
+					# and substitute it with the value.
+					cmd_line = script_line.strip()
+					
+					# Replace all the keys found in the params_dict
+					for param_key, param_value in params_dict.items():
+						cmd_line = cmd_line.replace(f'${param_key}', param_value)
+
+					# Execute the command, now when all parameters are substituted with their values
+					#print(f'About to execute following cmd: {cmd_line=}')
+					error = self.onecmd(cmd_line)
+					if error: raise
 					else: script_line = f.readline()
 			
 			# Inform that script has ended
-			self.output.write('>S>Script finished successfully.')
+			if verbose_mode: self.output.write('>S>Script finished successfully.')
 			return None
 
 		except FileNotFoundError:
-			self.output.write('Script file "' + str(params) + '" not found.')
+			self.output.write('Script file "' + str(script_path) + '" not found.')
 			return -1
 		except:
 			if not script_line: 
-				self.output.write('Error loading script file "' + str(params) + '".')
+				self.output.write('Error loading script file "' + str(script_path) + '".')
 			else:
 				self.output.write('Error (' + str(error) + ') on line '+ str(script_line_no) + '. Command: ' + str(script_line.strip()))
 			return -1
+
 
 class Header:
 	''' Class specifying properties of Console header and/or footer.
@@ -334,8 +332,7 @@ class Header:
 
 			text: (optional, default '') Text displayed in the header. Can contain dynamic data by referencing {}. 
 				Function for dynamic data are contained in text_params list. See further.
-			text_params: (optional, default []) List of functions that are mapped to {} in text parameters. Function must exist in console.app
-				instance (app reference to application instance).
+			text_params: (optional, default []) List of functions that are mapped to {} in text parameters. Defines module and function as a list.
 			layout (optional, default ['TEXT_LEFT']): Specifies formating of the text in the header. List contains 3 parameters. Second and third parameters
 				are optional. First param specifies layout. Second specifies time in ms for scrolling text. Third param specifies
 				movement speed in pixels.
@@ -384,11 +381,10 @@ class Header:
 				package = sys.modules[package] if package is not None else self.console.app # if package is not specified use the console CLI app
 				tmp_text_params.append([package, method])
 			self.text_params = tmp_text_params
-			print(f"{self.text_params=}, {self.console.app=}")
-		
 		except AttributeError:
 			# if self.text_params are not defined, continue
 			pass
+
 
 		# Instantiate padding for further use
 		self.padding = Padding(self.padding)
@@ -416,7 +412,7 @@ class Header:
 			- fnt_bck_surf_dim ... dimensions (Rect) of the text background
 		''' 
 
-		if not pygame.freetype.was_init(): pygame.freetype.init() 
+		pygame.freetype.init() 
 		self.font_object = pygame.freetype.Font(str(self.font_file), self.font_size)
 
 		# Get the height of the text font line and store it in line_spacing
@@ -480,9 +476,6 @@ class Header:
 		if self.layout_name in ['SCROLL_LEFT_CONTINUOUS', 'SCROLL_RIGHT_CONTINUOUS']:
 			self.scroll_repeats = (self.txt_surf_dim.width // self.fnt_txt_surf_dim.width) + 2
 
-	def set_width(self, width: int):
-		self.width = width
-
 	def update(self):
 		''' Called from console update function in order to generate the dynamic
 		text in the header and adjust the surface, if needed.
@@ -492,14 +485,11 @@ class Header:
 		if self.text_params:
 			
 			# prepare the dynamic text
-			
 			try:
-				#text = self.text.format(*[getattr(self.console.app, method_name)() for method_name in self.text_params])
 				text = self.text.format(*[getattr(pack_method[0], pack_method[1])() for pack_method in self.text_params])				
 			except AttributeError:
 				text = f"Missing function in'{self.text_params}'"
-			
-				
+
 			# generate the new text in self.text_surface object
 			(self.fnt_txt_surf, self.fnt_txt_surf_dim) = self.font_object.render(text, self.font_color, None )
 
@@ -646,7 +636,8 @@ class TextOutput:
 					'prompt'	: '',
 					'buffer_size': 100,
 					'line_spacing': None,
-					'display_columns' : 500
+					'display_columns': 500,
+					'tab_spaces': 4				# substitute tabs with spaces
 		}
 
 		# Merge default values with given values - overwrite defaults by config dict
@@ -663,7 +654,7 @@ class TextOutput:
 
 		''' Buffer related parameters
 		'''
-		# Stores list of past commands
+		# Stores list of past texts
 		self.buffer = []
 		# Necessary for implemetation of scrolling in the output buffer (PgUp, PgDown)
 		self.buffer_offset = 0	
@@ -683,7 +674,7 @@ class TextOutput:
 			- fnt_bck_surf_dim ... dimensions (Rect) of the text background
 		''' 
 
-		if not pygame.freetype.was_init(): pygame.freetype.init() 
+		pygame.freetype.init() 
 		self.font_object = pygame.freetype.Font(str(self.font_file), self.font_size)
 
 		# Get the height of the text font line and store it in line_spacing
@@ -742,9 +733,6 @@ class TextOutput:
 		)
 
 		self.txt_surf = pygame.Surface((self.txt_surf_dim.width, self.txt_surf_dim.height), pygame.SRCALPHA)
-
-	def set_width(self, width):
-		self.width = width
 
 	def show(self, surf, pos=(0,0)):
 		''' Blits main surface, text cut surface and all individual lines to
@@ -827,6 +815,9 @@ class TextOutput:
 
 		# Remove newline at the end
 		text.rstrip()
+
+		# Substitute tabs with predefined number of spaces
+		text = text.replace('\t', self.tab_spaces * ' ') 
 	
 		# Based on newline character put every output line on separate row
 		for text_line in text.split('\n'):
@@ -834,12 +825,11 @@ class TextOutput:
 			# Only print if there is something to print
 			if text_line:
 
-				# How many characters can we put on one line - minimum from setup and what can fit to the screen?
-				self.display_columns = min(self.display_columns, self.width // self.font_object.get_metrics("O")[0][1] - 3)
-
+				# How many characters can we put one one line - minimal from setup and what can fit on the screen
+				self.display_columns = min(self.display_columns, self.width // self.font_object.get_metrics("_")[0][1])
+				
 				# Split text_line to the list of strings based on number of displayable characters
 				text_line_parts = [text_line[i:i+self.display_columns] for i in range(0, len(text_line), self.display_columns)]	
-
 
 				# Add every splitted string into the output buffer
 				for text_line_part in text_line_parts:
@@ -958,8 +948,8 @@ class TextInput:
 								the text so it does not cross the console borders
 			- fnt_bck_surf_dim ... dimensions (Rect) of the text background
 		''' 
-		if not pygame.freetype.was_init(): pygame.freetype.init() 
-		self.font_object = pygame.freetype.Font(str(self.font_file), self.font_size)
+		pygame.freetype.init() 
+		self.font_object = pygame.freetype.Font(self.font_file, self.font_size)
 
 		# Determine automatically the hight of the row - height of '|q' string
 		# This prevents the surface to change its height upon different hight of 
@@ -1034,9 +1024,6 @@ class TextInput:
 		# Used for continuous seemless scrolling of input text if text is longer than viewable area
 		self.fnt_txt_scroll_offset =  min(0, int(self.txt_surf_dim.width - self.fnt_txt_surf_dim.width - self.cursor_surf_dim.width))
 
-	def set_width(self, width: int):
-		self.width = width
-
 	def prepare_surface(self):
 		''' After some text is entered it is necessary to regenerate
 		the text surfaces. This function is called from update method
@@ -1092,7 +1079,7 @@ class TextInput:
 					# Regenerate text surfaces
 					self.prepare_surface()
 
-				elif event.key == pl.K_RETURN:
+				elif event.key == pl.K_RETURN or event.key == pl.K_KP_ENTER: # support also enter on keypad
 					# Only store if there is something to store
 					if self.text:
 						self.buffer.append(self.text)
@@ -1134,6 +1121,8 @@ class TextInput:
 					if len(self.buffer) > 0:
 						# Calc new buffer position
 						if self.buffer_offset >= 1: self.buffer_offset = self.buffer_offset - 1
+						if len(self.buffer) == self.buffer_offset: self.buffer_offset = self.buffer_offset + 1 # fix
+						#print(f"{self.buffer_offset=}, {len(self.buffer)=}")
 						# Restore previous input string - last in buffer
 						self.text = self.buffer[self.buffer_offset]						
 						# Set cursor possition at the end of the string
@@ -1156,16 +1145,19 @@ class TextInput:
 
 						# Regenerate text surfaces
 						self.prepare_surface()
-		
+
+			elif event.type == pygame.TEXTINPUT:
 				# Only add new characters if the max limit is not overreached
-				elif len(self.text) < self.max_input_text:					
+				#elif len(self.text) < self.max_input_text:					
+				if len(self.text) < self.max_input_text:					
 					# If no special key is pressed, add unicode of key to input_string
 					self.text = (
 						self.text[:self.cursor_position]
-						+ event.unicode
+						#+ event.unicode
+						+ event.text
 						+ self.text[self.cursor_position:]
 					)
-					self.cursor_position += len(event.unicode)  # Some are empty, e.g. K_UP
+					self.cursor_position += len(event.text)  # Some are empty, e.g. K_UP
 					self.cursor_blit_position = self.font_object.get_rect(self.prompt + self.text[:self.cursor_position]).width
 
 					# Regenerate text surfaces
@@ -1275,10 +1267,9 @@ class Console(pygame.Surface):
 	ANIMATIONS = ['TOP', 'BOTTOM']
 
 
-	def __init__(self, app, lua_runtime, width, config={}):
+	def __init__(self, app, width, config={}):
 		'''
 		:param app: Reference to the instance that is govern (is accessible) by/from the console
-		:param lua_runtime: Reference to lua runtime in order to support lua scripting
 		:param width: Required width of the console window. Height is determined by height of individual console parts.
 		:param config: Dictionary storing all the configs necessary for correct display of console. See keys explanation below:
 			
@@ -1292,109 +1283,25 @@ class Console(pygame.Surface):
 				bck_image_resize (optional, default True): True/False, if image should be adjusted to the console dimensions.
 				bck_alpha (optional, default 255): 0-255, Transparency of console background.
 				welcome_msg (optional, default ''): Text displayed on console after console init.
-				welcome_msg_color (otional, default (255,255,255)): Color of the console welcome text as tuple with 3 values.
-
+				welcome_msg_color (optional, default (255,255,255)): Color of the console welcome text as tuple with 3 values.
+				cmd_pckg_path (optional, default None): Package, where module with console commands can be found.
+				script_path (optional, default None): Path, where console scripts can be found.
+				
 			header (optional section, see Header class for details): Parameters that govern console header configuration.
 			output (optional section, see TextOutput class for details): Parameters that govern console output configuration.
 			input (optional section, see TextInput class for details): Parameters that govern console input configuration.
 			footer (optional section, see Header class for details): Parameters that govern console footer configuration.
 		'''
 
-		self.init(app=app, lua_runtime=lua_runtime, width=width, config=config)
-		
-		"""
-		self.app = app
-		#self.width = width
-		self.lua = lua_runtime
+		self.init(app=app, width=width, config=config)
 
-		# Dictionary with default values
-		default_config = {
-						'animation' : None,
-						'layout' : 'INPUT_BOTTOM',
-						'padding' : (0,0,0,0),
-						'bck_color' : (0,0,0),
-						'bck_image' : None,
-						'bck_image_resize' : True,
-						'bck_alpha' : 128,
-						'welcome_msg' : '',
-						'welcome_msg_color' : (255,255,255)
-					}
-
-		# Merge default values with given values - overwrite defaults by config dict
-		global_config = {**default_config, **config.get('global', {})}
-
-		# Save the params from the config dict
-		for key in global_config: setattr(self, key, global_config.get(key))
-
-		# Instantiate padding for further use
-		self.padding = Padding(self.padding)
-
-		''' Initiates all console supporting objects - header, footer, 
-		text_input and text_output.
-		'''
-		# Initiate header object, use defaults if header params are not passed during initiation
-		self.console_header = Header(self, (width - self.padding.left - self.padding.right), config.get('header')) if config.get('header', None) else None
-
-		# Initiate input text object
-		self.console_input = TextInput(self, (width - self.padding.left - self.padding.right), config.get('input')) if config.get('input', None) else None
-
-		# Initiate output text object
-		self.console_output = TextOutput(self, (width - self.padding.left - self.padding.right), config.get('output')) if config.get('output', None) else None
-
-		# Initiate footer object
-		self.console_footer = Header(self, width - self.padding.left - self.padding.right, config.get('footer')) if config.get('footer', None) else None		
-
-		# Initiace object for processing console commands - output of the class is redirected
-		# if console_output is not defined then standard output is used (sustem text console)
-		self.cli = CommandLineProcessor(self.app, self.lua, output=self.console_output, script_path=config.get('global').get('script_path', None)) if self.console_output else CommandLineProcessor(self.app)
-
-		# Correct the height dimension so that all the text rows are displayable
-		self.dim = (width, self.padding.up 
-							+ (self.console_header.get_height() if self.console_header else 0)
-							+ (self.console_output.get_max_height() if self.console_output else 0)
-							+ (self.console_input.get_height() if self.console_input else 0)
-							+ (self.console_footer.get_height() if self.console_footer else 0)
-							+ self.padding.down)
-		
-		# Call the pygame.Surface initializer
-		super().__init__(self.dim) 
-
-		# If layout is not specified, use INPUT_BOTTOM layout as default
-		self.layout = ('INPUT_BOTTOM' if self.layout not in Console.LAYOUTS else self.layout)
-
-		# Prepare console background image
-		if self.bck_image:
-			self.bck_image = pygame.image.load(str(self.bck_image)).convert()
-			if self.bck_image_resize:
-				self.bck_image = pygame.transform.scale(self.bck_image, (self.dim))
-
-		# Set Console transparency
-		self.set_alpha(self.bck_alpha)
-
-		# Put the initial text on the console in given color
-		if self.console_output: self.write(self.welcome_msg, self.welcome_msg_color)
-
-		''' Animation part - Prepare variables managing animation, if animation is enabled 
-		'''
-		if self.animation:
-			# If specified animation layout is not found, 'TOP' layout will be used as default
-			self.anim_layout = self.animation[0] if len(self.animation) > 0 and self.animation[0] in Console.ANIMATIONS else 'TOP'
-			# If animation time is not specified use 100 ms
-			self.anim_time = self.animation[1] if len(self.animation) > 1 else 100
-			# Calculate animation velocity based on the console dimensions (height)
-			self.anim_velocity = self.dim[1] / self.anim_time
-			# Initiate variable for remembering the time
-			self.anim_last_time = 0
-			# Initiate variable for storing percentage of shown console surface (0 nothing shown, 100 all shown)
-			self.anim_perc = 0
-		"""
 		# By default console is disabled
 		self.enabled = False
 
-	def init(self, width: int, config: dict={}, app=None, lua_runtime=None):
-		'''
+	def init(self, width: int, config: dict={}, app=None):
+		''' Can be called when the configuration is changed.
+
 		:param app: Reference to the instance that is govern (is accessible) by/from the console
-		:param lua_runtime: Reference to lua runtime in order to support lua scripting
 		:param width: Required width of the console window. Height is determined by height of individual console parts.
 		:param config: Dictionary storing all the configs necessary for correct display of console. See keys explanation below:
 			
@@ -1409,6 +1316,7 @@ class Console(pygame.Surface):
 				bck_alpha (optional, default 255): 0-255, Transparency of console background.
 				welcome_msg (optional, default ''): Text displayed on console after console init.
 				welcome_msg_color (otional, default (255,255,255)): Color of the console welcome text as tuple with 3 values.
+				script_module_path: Where to look for the console scripts containing console commands.
 
 			header (optional section, see Header class for details): Parameters that govern console header configuration.
 			output (optional section, see TextOutput class for details): Parameters that govern console output configuration.
@@ -1417,7 +1325,6 @@ class Console(pygame.Surface):
 		'''
 
 		self.app = app
-		self.lua = lua_runtime
 
 		# Dictionary with default values
 		default_config = {
@@ -1472,7 +1379,13 @@ class Console(pygame.Surface):
 
 		# Initiace object for processing console commands - output of the class is redirected
 		# if console_output is not defined then standard output is used (sustem text console)
-		self.cli = CommandLineProcessor(self.app, self.lua, output=self.console_output, script_path=config.get('global').get('script_path', None)) if self.console_output else CommandLineProcessor(self.app)
+		try:
+			cmds_bckp = self.cli._cmd_scripts
+			self.cli = CommandLineProcessor(self.app, output=self.console_output, cmd_pckg_path=config.get('global').get('cmd_pckg_path', None), script_path=config.get('global').get('script_path', None)) if self.console_output else CommandLineProcessor(self.app)
+			self.cli._cmd_scripts = cmds_bckp
+		except AttributeError:
+			self.cli = CommandLineProcessor(self.app, output=self.console_output, cmd_pckg_path=config.get('global').get('cmd_pckg_path', None), script_path=config.get('global').get('script_path', None)) if self.console_output else CommandLineProcessor(self.app)
+
 
 		# Correct the height dimension so that all the text rows are displayable
 		self.dim = (width, self.padding.up 
@@ -1514,7 +1427,6 @@ class Console(pygame.Surface):
 			# Initiate variable for storing percentage of shown console surface (0 nothing shown, 100 all shown)
 			self.anim_perc = 0
 
-
 	def set_cli_app(self, module: str):
 		'''Sets the module/class/function to be used as reference entry point to the game.
 		'''
@@ -1549,18 +1461,6 @@ class Console(pygame.Surface):
 		except AttributeError:
 			# if self.text_params are not defined, continue
 			pass
-
-
-	def set_width(self, width: int):
-		'''Sets the width of the console
-		'''
-		self.dim[0] = width
-		self.console_header.set_width(width)
-		self.console_input.set_width(width)
-		self.console_output.set_width(width)
-		self.console_footer.set_width(width)
-
-
 
 	def update(self, events):
 		''' Call updates of relevant console parts. If ENTER was pressed, process the command.
@@ -1600,8 +1500,9 @@ class Console(pygame.Surface):
 		so that we reach required animation effect. The pos parameter is marking the final
 		origin where the fully displayed console is placed.
 
-		If parameter `disable_anim` is set to True, animation is forcefully disabled.
+		If parameter disable_anim is set to True, animation is forcefully disabled.
 		'''
+
 		#####
 		# Calculate the delta parameters for displaying animated console
 		#####		
@@ -1631,7 +1532,7 @@ class Console(pygame.Surface):
 			# If console is enabled, I need to continue animation or show full console if animation is finished or no animation is requested.
 			# If console is disabled, I need to continue hiding animation or fully hide the console if animation is finished
 			if (self.enabled and self.anim_perc < 100) or (not self.enabled and self.anim_perc > 0):
-				self.anim_perc = self.anim_perc + (1 if self.enabled else -1) * (current_time - self.anim_last_time) * self.anim_velocity
+				self.anim_perc = self.anim_perc + (1 if self.enabled else -1) * (current_time - self.anim_last_time) * self.anim_velocity 
 				self.anim_last_time = current_time 
 
 			# Do correction in case that console is fully displayed or fully hidden
@@ -1744,8 +1645,10 @@ class Console(pygame.Surface):
 
 	def toggle(self, enable=None) -> bool:
 		''' Toggle on/off the console. Influences if updade and show console functions are 
-		working. If `enable` parameter is True, showing of console is forced. If `enable`
-		parameter is False, hidding of the console is forced.
+		working.
+
+		If enable parameter is True, showing of console is forced.
+		If enable parameter is False, hidding of the console is forced.
 		'''
 		# Toggle on/off the console
 		self.enabled = not self.enabled if enable is None else enable
@@ -1753,7 +1656,11 @@ class Console(pygame.Surface):
 		# Remember toggle time for smooth animation purposes
 		if self.animation: self.anim_last_time = pygame.time.get_ticks()
 
-		return self.enabled # return the new state
+		# Delete the memory of keyrepeats - otherwise it might happen that keys are automatically pressed after toggle
+		self.console_input.keyrepeat_counters.clear()
+
+		# Return the new state
+		return self.enabled
 
 	def reset(self):
 		''' Method that reloads and resets the console
@@ -1765,323 +1672,3 @@ class Console(pygame.Surface):
 		'''
 		self.console_output.log = list()
 		self.console_output.prepare_surface()
-
-'''
-	Example of the use of the Console
-	For showing/hiding console press F1
-'''
-if __name__ == "__main__":
-
-	from random import randint
-	from datetime import datetime
-
-	class TestObject:
-		''' Testing object that will be govern by console.
-		Print moving square on the screen with the console
-		'''
-
-		def __init__(self):
-
-			pygame.init()
-			self.screen = pygame.display.set_mode((800, 600))
-			self.clock = pygame.time.Clock()
-
-			self.pos = [0,0]
-			self.exit = False
-			self.surf = pygame.Surface((50, 50))
-			self.surf.fill((255,255,255))
-
-			''' Console integration code - START
-				********************************
-			'''
-			# Generate random console config
-			console_config = self.get_console_config()
-
-			# Create console based on th config
-			self.console = Console(self, 
-									self.screen.get_width(), 
-									console_config
-									)
-			''' Console integration code - END
-				********************************
-			'''
-
-		def set_pos(self, x, y):
-			self.pos = [x, y]
-			print(f'New position set to {x}, {y}')
-
-
-		def update(self):
-			while not self.exit:
-				
-				# Reset the screen
-				self.screen.fill((125, 125, 0))
-
-				# Move the square randomly
-				self.pos[0] += randint(-2,2) 
-				self.pos[1] += randint(-2,2)
-
-				# Test of puting something to the console
-				#self.console.write('position X: ' + str(self.pos[0]))
-
-				if self.pos[0] > 500: self.pos[0] = 500
-				if self.pos[0] < 100: self.pos[0] = 100
-				if self.pos[1] > 500: self.pos[1] = 500
-				if self.pos[1] < 100: self.pos[1] = 100
-				
-				# Process the keys
-				events = pygame.event.get()
-				for event in events:
-					
-					# Exit on closing of the window
-					if event.type == pygame.QUIT: self.exit = True
-					elif event.type == pygame.KEYDOWN:
-						if event.key == pygame.K_ESCAPE: self.exit = True
-					elif event.type == pygame.KEYUP:						
-						# Toggle console on/off the console							
-						if event.key == pygame.K_F1: 						
-							# Toggle the console - if on then off if off then on
-							self.console.toggle()
-
-
-				# Update the game situation - blit square on screen and position
-				self.screen.blit(self.surf, (int(self.pos[0]), int(self.pos[1])))
-
-				# Read and process events related to the console in case console is enabled
-				self.console.update(events)	
-
-				# Display the console if enabled or animation is still in progress
-				self.console.show(self.screen)
-
-				pygame.display.update()
-				self.clock.tick(30)
-
-		def move(self, line):
-			''' first argumet is movement on x-axis
-				second argument is movement on y-axis
-			''' 
-			move_x, move_y = line.split(',')
-			self.pos[0] += int(move_x) 
-			self.pos[1] += int(move_y) 
-
-		def cons_get_pos(self):
-			''' Example of function that can be passed to console to show dynamic
-			data in the console
-			'''
-			return str(self.pos)
-		
-		def cons_get_time(self):
-			''' Example of function that can be passed to console to show dynamic
-			data in the console
-			'''
-			return str(datetime.now())
-
-		def cons_get_details(self):
-			''' Example of function that can be passed to console to show dynamic
-			data in the console
-			'''
-			
-			return str('Input text buffer possition: ' + str(self.console.console_input.buffer_position) + ' Input text position: ' + str(len(self.console.console_input.input_string)))
-
-		def cons_get_input_spacing(self):
-			return str('TextInput spacing: ' + str(self.console.console_input.line_spacing) + 
-				' Cursor pos: ' + str(self.console.console_input.cursor_position) +
-				' Buffer pos: ' + str(self.console.console_input.buffer_offset))
-
-		def get_console_config(self, sample=None):
-			
-			# Select random console from 1 to 6
-			if not sample: sample = randint(1,1)
-			
-			# Sample 1: Full console features + top animation with 2s timing
-			if sample == 1:
-				return {
-						'global' : {
-							'animation': ['TOP', 2000],
-							'layout' : 'INPUT_BOTTOM',
-							'padding' : (10,10,20,20),
-							'bck_color' : (125,125,125),
-							'bck_image' : 'experiments/cli/bckground/quake.png',
-							'bck_image_resize' : True,
-							'bck_alpha' : 150,
-							'welcome_msg' : 'Sample 1: Full feature console + top animation with 2s timing\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
-							'welcome_msg_color' : (0,255,0),
-							},
-						'header' : {
-							'text' : 'Console v0.1. Position: {} Time: {} ',
-							'text_params' : ['cons_get_pos','cons_get_time'],												
-							'layout' : ['SCROLL_LEFT_CONTINUOUS', 0, 2],
-							'padding' :(10,10,10,10),
-							'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-							'font_size' : 12,
-							'font_antialias' : True,
-							'font_color' : (255,255,255),
-							'font_bck_color' : None,
-							'bck_color' : (255,0,0),
-							'bck_image' : 'experiments/cli/bckground/quake.png',
-							'bck_image_resize' : True,
-							'bck_alpha' : 100
-							},
-						'output' : {
-							'padding' : (10,10,10,10),
-							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-							'font_size' : 16,
-							'font_antialias' : True,
-							'font_color' : (255,255,255),
-							'font_bck_color' : (55,0,0),
-							'bck_color' : (55,0,0),
-							'bck_alpha' : 120,
-							'buffer_size' : 100,
-							'display_lines' : 20,
-							'display_columns' : 100,
-							'line_spacing' : None,
-							'char_subst' : { 
-								'\t' : '->'
-								}
-							},
-						'input' : {
-							'padding' : (10,10,10,10),
-							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-							'font_size' : 16,
-							'font_antialias' : True,
-							'font_color' : (255,0,0),
-							'font_bck_color' : None,
-							'bck_color' : (0,255,0),
-							'bck_alpha' : 75,
-							'prompt' : '>>>',
-							'max_string_length' : 10,
-							'repeat_keys_initial_ms' : 400,
-							'repeat_keys_interval_ms' :35
-							},
-						'footer' : {						
-							'text' : '{} ',
-							'text_params' : ['cons_get_input_spacing'],
-							'layout' : ['SCROLL_RIGHT_CONTINUOUS',100,1],
-							'padding' : (10,10,10,10),
-							'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-							'font_size' : 10,
-							'font_antialias' : True,
-							'font_color' : (255,255,255),
-							'font_bck_color' : None,
-							'bck_color' : (0,0,0),
-							'bck_image' : None,
-							'bck_image_resize' : True,
-							'bck_alpha' : 100
-							}
-						}
-
-			# Sample 2: Full featured - no footer, no header + bottom animation with default timing and INPUT_TOP layout
-			if sample == 2:
-				return {
-						'global' : {
-							'animation' : ['BOTTOM'],
-							'layout' : 'INPUT_TOP',
-							'padding' : (10,10,20,20),
-							'bck_color' : (125,125,125),
-							'bck_image' : 'experiments/cli/bckground/quake.png',
-							'bck_image_resize' : True,
-							'bck_alpha' : 150,
-							'welcome_msg' : 'Sample 2: Full featured, no footer, no header + bottom animation + Input top layout\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
-							'welcome_msg_color' : (0,255,0),
-							},
-						'output' : {
-							'padding' : (10,10,10,10),
-							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-							'font_size' : 16,
-							'font_antialias' : True,
-							'font_color' : (255,255,255),
-							'font_bck_color' : (55,0,0),
-							'bck_color' : (55,0,0),
-							'bck_alpha' : 120,
-							'buffer_size' : 100,
-							'display_lines' : 20,
-							'display_columns' : 100,
-							'line_spacing' : None,
-							'char_subst' : { 
-								'\t' : '->'
-								}
-							},
-						'input' : {
-							'padding' : (10,10,10,10),
-							'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-							'font_size' : 16,
-							'font_antialias' : True,
-							'font_color' : (255,0,0),
-							'font_bck_color' : None,
-							'bck_color' : (0,255,0),
-							'bck_alpha' : 75,
-							'prompt' : '>>>',
-							'max_string_length' : 10,
-							'repeat_keys_initial_ms' : 400,
-							'repeat_keys_interval_ms' :35
-							}
-						}
-			
-			# Sample 3: Mimimal - only header
-			if sample == 3:
-				return {
-					'header' : {
-						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-						'text' : 'Sample 3: Minimal - only header. Current Time: {} ',
-						'text_params' : ['cons_get_time'],												
-						'layout' : ['SCROLL_LEFT_CONTINUOUS', 0, 2],
-						}
-					}
-
-			# Sample 4: Mimimal - only header and footer
-			if sample == 4:
-				return {
-					'header' : {
-						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-						'text' : 'Sample 4: Minimal - only header and footer. Current Position: {} ',
-						'text_params' : ['cons_get_pos'],												
-						'layout' : ['SCROLL_LEFT_CONTINUOUS', 0, 2]
-						},
-					'footer' : {						
-						'text' : 'Sample 4: Minimal - only header and footer ',
-						'layout' : ['SCROLL_RIGHT_CONTINUOUS',100,1],
-						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf'
-						}
-					}
-
-			# Sample 5: Mimimal - only header and input, output on stdout
-			if sample == 5:
-				return {
-					'header' : {
-						'font_file' : 'experiments/cli/fonts/IBMPlexMono-Regular.ttf',
-						'text' : 'Sample 5: Minimal - only header and input, output on stdout. Current Pos: {} ',
-						'text_params' : ['cons_get_pos'],												
-						'layout' : ['TEXT_CENTRE']
-						},
-					'input' : {
-						'font_file' : 'experiments/cli/fonts/JackInput.ttf'
-						}
-					}
-
-			# Sample 6: Mimimal - only input and output, with transparency and welcome msg
-			if sample == 6:
-				return {
-					'global' : {
-						'layout' : 'INPUT_BOTTOM',
-						'padding' : (10,10,10,10),
-						'bck_alpha' : 150,
-						'welcome_msg' : 'Sample 6: Mimimal - only input and output, with transparency and welcome msg\n***************\nType "exit" to quit\nType "help"/"?" for help\nType "? shell" for examples of python commands',
-						'welcome_msg_color' : (0,255,0)
-						},
-					'input' : {
-						'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-						'bck_alpha' : 0
-						},
-					'output' : {
-						'font_file' : 'experiments/cli/fonts/JackInput.ttf',
-						'bck_alpha' : 0,
-						'display_lines' : 20,
-						'display_columns' : 100
-						}
-					}
-
-	# Initiate testing 'game'
-	t = TestObject()
-
-	# Enter the infinite loop - press Esc to exit or type 'exit' into the console
-	t.update()

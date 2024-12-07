@@ -25,11 +25,12 @@
 		"SOUND_PATH" : "resources/sounds/",
 		"LOG_PATH" : "logs/",
 		"SAVE_PATH" : "save/",
-		"CONSOLE_SCRIPT_PATH" : "resources/scripts/",
+		"CONSOLE_SCRIPT_PATH" : "core/console/scripts/",
 		"MENU_BACKGROUND_PATH" : "resources/images/menu_background/waterfall/"
 	},
 
 	"MODULEPATHS": {
+		"CONSOLE_COMMAND_MODULE_PATH": "core.console.commands",
 		"SCRIPT_MODULE_PATH" : "core.scripts",
 		"COMMAND_MODULE_PATH" : "core.commands",
 		"PROCESSOR_MODULE_PATH": "core.processors",
@@ -210,9 +211,9 @@
 			// Save all the logs from engine
 			"pyrpg.core.config" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-				//"handlers" : ["file_handler_config"], // uncomment to log to the file
+				"handlers" : ["file_handler_config"], // uncomment to log to the file
 				//"handlers" : ["null"], // do not log to file for speed
-				"handlers" : ["in_game_console"], // log to the text console
+				//"handlers" : ["in_game_console"], // log to the text console
 				//"handlers" : ["console"], // log to the text console
 				"propagate" : false // Do not send messages from these loggers to parent (root) logger
 			},
@@ -289,7 +290,7 @@
 			"bck_image" : "quake.png",
 			"bck_image_resize" : true,
 			"bck_alpha" : 150,
-			"welcome_msg" : "Welcome to pyRPG Console\n***********************\nType 'exit' to quit\nType 'help'/'?' for help\nType '? shell' for examples of python commands",
+			"welcome_msg" : "Welcome to pyRPG Console\n***********************\nType 'list' for available commands and scripts.\nType 'command -h' for help.\nType '!python_command' for execution of python command\nType 'script script_name' for execution of console script",
 			"welcome_msg_color" : [0,255,0]
 			},
 		"header" : {

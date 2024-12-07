@@ -16,7 +16,7 @@
 			"LOAD_QUEST_MENU"  : ["MAIN_MENU", "GAME", "CONSOLE"],
 			"GAME"             : ["MAIN_MENU", "PAUSE_GAME", "CONSOLE", "EXIT_GAME_DIALOG"],
 			"PAUSE_GAME"       : ["GAME", "CONSOLE"],
-			"CONSOLE"          : ["MAIN_MENU", "LOAD_QUEST_MENU", "GAME"],
+			"CONSOLE"          : ["GAME", "END_PROGRAM"],
 			"EXIT_GAME_DIALOG" : ["END_PROGRAM", "GAME", "MAIN_MENU"],
 			"END_PROGRAM"      : []
 		}
@@ -44,7 +44,7 @@
 		"SOUND_PATH" : "resources/sounds/",
 		"LOG_PATH" : "logs/",
 		"SAVE_PATH" : "save/",
-		"CONSOLE_SCRIPT_PATH" : "resources/scripts/",
+		"CONSOLE_SCRIPT_PATH" : "core/console/scripts/",
 		"MENU_BACKGROUND_PATH" : "resources/images/menu_background/waterfall/"
 	},
 
@@ -104,6 +104,7 @@
     "CONSOLE": {
         "global" : {
             "cli_module": "pyrpg.core.main",   // the module must cointain functions for header and footer information
+            "script_module_path": "", // where to look for the console scripts containing console commands
             "bck_alpha": 150
         },
         "input": {

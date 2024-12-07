@@ -1,7 +1,21 @@
 
-  - [ ] - Console commands as script file - similar to game commands - initialize, keep list of commands, possible to have some synonyms, ... Probably part of the Console solution ...
 
-  - [ ] - commend properly the COnsole code - changing the app leading to revidion of text_params in the header and footer
+height of console must be adjusted after change of res
+
+get_components does not work
+get_processors does not work
+set_value does not work
+
+after change of resolutin (and re-init) cannot exit the game by using esc - the exit dialog is not showing
+ - console height cannot be greater than total screen resolution ... somehow pass the resolution to the console, not only width
+
+console TextOutput - if self.display lines are greater than the displayable height then reduce display_lines  ... min(displayable_lines, display_lines from config)
+
+  - [x] - BUG - toggle console causing automatic keypresses after the console is toggled again - fixed by clearing the console keypressed cache during toggling.
+  - [x] - BUG - `exit` console command does not end the game - fixed by allowing transfer from CONSOLE to END_PROGRAM state
+  - [x] - BUG - `list` console command - registered commands go away after reinit of console
+  - [x] - Console commands as script file - similar to game commands - initialize, keep list of commands ... Probably part of the Console solution ...
+  - [ ] - comment properly the COnsole code - changing the app leading to revidion of text_params in the header and footer
   - [x] - get rid of timed - should be part of the config and not passed around as a parameter
   - [x] - change width of the console from separate function
   - [x] - implement reload in console - changing CLI, Paths, ... maybe just adjust the same init function ... using _INIT ...
@@ -17,7 +31,7 @@
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
   - [x] Show FPS also i fullscreen mode (config parameter)
   - [ ] Branch - Fix console and make it more usable. It contains very old descriptions.
-  - [ ] Branch - Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
+  - [x] Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
 
 # To Do
  
@@ -30,9 +44,9 @@
   - [ ] new command based on experience with `do_parallel` - `do_if_bb_test_true`
   - [ ] Behavior Tree and Behavior list - implementation of restart function - tree/list starts again from scratch. Useful for restart of the whole tree if some event comes.
   - [ ] Make scripts runnable from the console
-  - [ ] Rename scenes to scenes. Scene is more common name for what the engine is defining in the json files.
+  - [x] Rename quests to scenes. Scene is more common name for what the engine is defining in the json files.
   - [ ] Every game/test using scenes should be defined outside of pyRPG folders and only import pyRPG and use its parts. No direct changes in pyRPG folders and files.
-  - [ ] Make scripts more nice - now they are using main, is it ok? Missing logging, missing description. Missing concept when to use commands and when to use scripts, make them work from console...
+  - [ ] Make scripts more nice - now they are using mainissing logging, missing description. Missing concept when to use commands and when to use scripts, make them work from console...
   - [ ] finish tests and json definitions for new commands
 
 ## Bugs
@@ -61,7 +75,7 @@
   - [x] BUG - fix `play_commands_01.jsonc`
 
 ## Features - to rearange
-  - [x] Implement handlers into behavior tree definitons - handlers will just put some value from the event on the blackboard. Done - now handlers can be part of components (or basically anywhere in the scene definition. Only the engine code needs to be slightly adjusted). Script `set_bb_key` was prepared to set blackboard value and can be used in the handlers.
+  - [x] Implement handlers into behavior tree definitons - handlers will just pu, is it ok? Mt some value from the event on the blackboard. Done - now handlers can be part of components (or basically anywhere in the scene definition. Only the engine code needs to be slightly adjusted). Script `set_bb_key` was prepared to set blackboard value and can be used in the handlers.
 
   - [ ] Move the processors that are removing the temporary Flag components before the processors that generate Flag components. To ensure that the Flag component is available for all processors, even for those that are before the generator processor.
   - [ ] Instead of ecs_mng return group of functions from the engine - not only for ECS manipulation but for other purposes as well. For example for executing commands, processing events, getting path from the map or pathfind manager etc.

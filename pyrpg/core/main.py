@@ -60,7 +60,7 @@ import pygame
 from pyrpg.core.config import KEYS # for K_CONSOLE_TOGGLE
 from pyrpg.core.config import DISPLAY # for MAX_FPS
 from pyrpg.core.config.states import State
-
+ 
 def run():
     """ Main game and menu loop. Contains references to other
     loop codes depending of current GameState.

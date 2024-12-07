@@ -28,9 +28,10 @@ def cons_get_info_header():
 
     memory_use = python_process.memory_info()[0]/2.**30  # memory use in GB...I think
     game_state = MAIN_GAME_MODULE.state_manager.game_state #if main else 'N/A'
+    state = MAIN_GAME_MODULE.state_manager.state
     no_of_entities =  len(MAIN_GAME_MODULE.engine.ecs_manager._world._entities) if MAIN_GAME_MODULE.engine else 'N/A'
 
-    return f'Memory usage: {memory_use} GB | game state: {str(game_state)} | ECS entities: {no_of_entities}'
+    return f'Memory usage: {memory_use} GB | game state: {str(game_state)} | state: {str(state)} | ECS entities: {no_of_entities}'
 
 def cons_get_info_footer():
     '''Returns info that is displayed in the console's footer'''

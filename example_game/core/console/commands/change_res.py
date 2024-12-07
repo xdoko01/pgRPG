@@ -1,0 +1,76 @@
+''' Script for change of the resolution
+
+    Parameters passed from console:
+        :param game_ctx: Reference to the console entry point to the game (main module). 
+                         Depends on the console configuration.
+        :type game_ctx: ref
+
+        :param params: The whole command passed from console containing the script name and parameters
+        :type params: str
+
+    Examples of usage:
+        "change_res"           ... get usage instructions
+        "change_res -h"        ... get usage instructions
+        "change_res --help"    ... get usage instructions
+        "change_res 640 480"   ... change the resolution to 640x480
+        "change_res 640 480 1" ... change the resolution to 640x480 + fullscreen
+        "change_res 800 600 0" ... change the resolution to 800x600 + windowed
+'''
+
+instructions = """
+Examples of usage:
+    "change_res"           ... get usage instructions
+    "change_res -h"        ... get usage instructions
+    "change_res --help"    ... get usage instructions
+    "change_res 640 480"   ... change the resolution to 640x480
+    "change_res 640 480 1" ... change the resolution to 640x480 + fullscreen
+    "change_res 800 600 0" ... change the resolution to 800x600 + windowed
+"""
+
+def initialize(register, module_name):
+    '''Script registers itself at Console'''
+    # Mandatory line
+    register(fnc=cons_cmd_change_res, alias=module_name)
+
+def cons_cmd_change_res(game_ctx, params):
+    ''' Script that changes game resolution
+    '''
+
+    # Save all parameters passed from the Console in the list
+    all_params = params.split()
+    no_of_params = len(all_params) - 1 # exclude the script name
+
+    # Show instructions if the last parametr indicates so
+    if all_params[-1] in ('-h','--help', '?', 'help') or no_of_params < 2:
+        print(instructions)
+
+    # Try to set new resolution
+    else:
+
+        try:
+            res = (int(all_params[1]), int(all_params[2]))
+
+            # Set the resolution
+            game_ctx.config.DISPLAY["RESOLUTION"] = res
+            print(f'Resolution changed to {res}')
+
+        except ValueError:
+            print("Integer values required.")
+
+        if no_of_params > 2:
+            try:
+                # Set the fullscreen
+                game_ctx.config.DISPLAY["FULLSCREEN"] = bool(int(all_params[3]))
+            except ValueError:
+                print("Integer value 0/1 required for fullscreen settings")
+
+        # Init everything except State of the game
+        game_ctx.config.init(False)
+        print(f'Config reinit done')
+
+        from core.components.camera import Camera
+
+        # Adjust all Camera components for the new resolution
+        for ent, (camera) in game_ctx.engine.ecs_manager._world.get_component(Camera):
+            camera.on_display_change()
+            print(f'Camera comp resolution changed on entity {ent}')

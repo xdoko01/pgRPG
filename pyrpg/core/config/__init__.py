@@ -138,7 +138,8 @@ def load(config_file: str=None, hide_res: bool=True) -> None:
     global CONSOLE
     CONSOLE =_prep_conf_console(
         console_config=_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="CONSOLE"),
-        filepaths_config=FILEPATHS.copy()
+        filepaths_config=FILEPATHS.copy(),
+        modulepaths_config=MODULEPATHS.copy()
         )
     hide_res or show(text="CONSOLE config", config=CONSOLE)
 
@@ -232,7 +233,7 @@ def _prep_conf_display(display_config: dict) -> dict:
 
     return display_config
 
-def _prep_conf_console(console_config: dict, filepaths_config: dict) -> dict:
+def _prep_conf_console(console_config: dict, filepaths_config: dict, modulepaths_config: dict) -> dict:
     """ Prepare all necessary console configurations.
     """
 
@@ -246,6 +247,7 @@ def _prep_conf_console(console_config: dict, filepaths_config: dict) -> dict:
     if console_config.get('footer', {}).get('font_file', None): console_config.get('footer').update({'font_file' : filepaths_config["FONT_PATH"] / console_config.get('footer').get('font_file')})
 
     # Add console_script_path to the console config
+    console_config.get('global').update({'cmd_pckg_path': modulepaths_config["CONSOLE_COMMAND_MODULE_PATH"]})
     console_config.get('global').update({'script_path': filepaths_config["CONSOLE_SCRIPT_PATH"]})
 
     # For now just text, reference is created in console manager, during creation of the Console entity
@@ -397,34 +399,28 @@ def _init_display() -> None:
         print("Display reloaded")
 
 def _init_console(app_module: str=None) -> None:
-    from pyrpg.utils import Console
+    from pyrpg.core.console import Console
     global cons
     
     if cons is None:
         import pyrpg.core.config.console # because this module is used for functions displaying info on console
         # Load the console from utils
         cons = Console(
-            #app=import_module(CONSOLE["CLI_MODULE"]), #Carefull this triggers import of the module!!!
-            app=None, # set the main module as entry point to the console
-            lua_runtime=None,
+            app=None, # configured lated
             width=DISPLAY["RESOLUTION"].width,
             config=CONSOLE
         )
-
-        # try to load CLI module if possible
-        cons.set_cli_app(app_module if app_module is not None else CONSOLE["CLI_MODULE"])
 
     else:
 
         cons.init(
             app=None, 
-            lua_runtime=None,
             width=DISPLAY["RESOLUTION"][0],
             config=CONSOLE
         )
 
-        # reload the game CLI entry point module
-        cons.set_cli_app(app_module if app_module is not None else CONSOLE["CLI_MODULE"])
+    # reload the game CLI entry point module
+    cons.set_cli_app(app_module if app_module is not None else CONSOLE["CLI_MODULE"])
 
 def _init_fonts() -> None:
     import pyrpg.utils as utils# for BitmapFont class

@@ -1,0 +1,5 @@
+change_res 800 800
+!print("res changed")
+toggle_fullscreen 1
+!print("switched to fullscreen")
+!print("$message")
