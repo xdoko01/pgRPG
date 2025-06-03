@@ -94,7 +94,7 @@ def blit_image(image: pygame.image=None):
     window.blit(image, (0, 0))
 
 def blit_text(text: str, pos=(0,0)):
-    window.blit(font.render(text), pos)
+    window.blit(font.render(text)[0], pos)
 
 def flip():
     """ Trigger displaying on the screen.

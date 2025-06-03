@@ -1,5 +1,4 @@
 
- - bitmap font make into a package
  - dict_utils including getting dict from file as a package
 
 ## Current

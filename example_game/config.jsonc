@@ -81,6 +81,23 @@
 		"PLAYER_TALK_FRAME_COLOUR": "blue"
 	},
 
+	"STATES": {
+
+		"ALL_STATES": ["START_PROGRAM", "MAIN_MENU", "GAME", "PAUSE_GAME", "CONSOLE", "END_PROGRAM", "LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
+		"NON_GAME_STATES": ["START_PROGRAM", "MAIN_MENU", "CONSOLE", "END_PROGRAM", "LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
+		"START_STATE": "START_PROGRAM",
+
+		"STATES_GRAPH": {
+			"START_PROGRAM"    : ["MAIN_MENU", "GAME", "CONSOLE"],
+			"MAIN_MENU"        : ["LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
+			"LOAD_QUEST_MENU"  : ["MAIN_MENU", "GAME"],
+			"GAME"             : ["MAIN_MENU", "PAUSE_GAME", "CONSOLE"],
+			"PAUSE_GAME"       : ["GAME"],
+			"CONSOLE"          : ["GAME", "END_PROGRAM"],
+			"EXIT_GAME_DIALOG" : ["END_PROGRAM", "MAIN_MENU"],
+			"END_PROGRAM"      : []
+		}
+	},
 	"debug" : {
 		"show_health" : true,
 		"show_state" : true,

@@ -19,13 +19,21 @@ from pyrpg.core.config import cons # handler for manipulation with the game cons
 # Remember reference to engine module to be used by the console commands
 engine = None
 
-def _init_game(scene_file: str) -> None:
-
+def _init_engine() -> None:
     # Create engine instance if not yet created
     global engine
     from pyrpg.core import engine as e
     engine = e
     engine.init() # Init can be removed as timed parameter is no longer passed
+
+def _init_game(scene_file: str) -> None:
+    # Create engine instance if not yet created
+    #global engine
+    #from pyrpg.core import engine as e
+    #engine = e
+    #engine.init() # Init can be removed as timed parameter is no longer passed
+    global engine
+    _init_engine()
     engine.new_game(scene_file)
 
 # Start the program
@@ -37,12 +45,24 @@ def init(scene_file: str=None) -> None:
     if scene_file:
        # _init_game(scene_file, timed)
         _init_game(scene_file)
-        state_manager.change_state(State.GAME) # TODO: shouldnt this be part of init game??
+        state_manager.change_state(State.GAME)
         logger.info(f"Starting into the game.")
     else:
-        state_manager.change_state(State.MAIN_MENU)
-        logger.info(f"Starting into the main menu.")
+        # to allow load driven by the console script
 
+        # Show and Switch to the console
+        cons.toggle(enable=True)
+        state_manager.change_state(State.CONSOLE)
+
+        # Start the default script - and show the results
+        cons.cli.do_script("default.scr")
+        cons.console_output.prepare_surface() # Show the output buffer - as normally it is not shown
+
+        # Remain in the console or continue in the GAME state based on the script
+
+        # ORIGINAL - wnen by default without scene load was to MAIN MENU
+        #state_manager.change_state(State.MAIN_MENU)
+        #logger.info(f"Starting into the main menu.")
 
 
 # Load the menus that can be accessed from the main program loop

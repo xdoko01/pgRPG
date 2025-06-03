@@ -22,6 +22,9 @@ Examples of usage:
     "load_scene --help"  ... get usage instructions
     "load_scene scene_file"  ... loads scene file
 """
+# Init logging config
+import logging
+logger = logging.getLogger(__name__)
 
 def initialize(register, module_name):
     '''Script registers itself at Console'''
@@ -42,10 +45,14 @@ def cons_cmd_load_scene(game_ctx, params):
 
     # Loads the scene
     else:
+        logger.info(f'Starting loading new scene with {game_ctx.engine=}')
         game_ctx.engine.new_game(scene_file=all_params[1])
+
+        logger.info(f'Current State is "{game_ctx.state_manager.state}".')
 
         # Hide console in order for the camera resolution to take effect
         if game_ctx.state_manager.state == game_ctx.State.CONSOLE:
+            logger.info(f'Changing State to GAME')
             game_ctx.state_manager.change_state(game_ctx.State.GAME)
             game_ctx.cons.toggle()
             return 0

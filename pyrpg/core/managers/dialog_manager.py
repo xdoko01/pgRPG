@@ -7,6 +7,8 @@ import pyrpg.utils.dialog as dialog
 from pyrpg.core.config import FILEPATHS # DIALOG_PATH, IMAGE_PATH, FONT_PATH, Path # for DIALOG_PATH, IMAGE_PATH, FONT_PATH
 from pyrpg.functions.get_dict_from_json import get_dict_from_json
 
+from pathlib import Path
+
 _dialogs = dict()
 
 logger.info(f'DialogManager initiated.')
