@@ -112,18 +112,8 @@ class Camera(Component):
         # Camera screen surface on which map is blitted
         self.screen = Surface((self.screen_width, self.screen_height))
 
-    def apply(self, pos=(0, 0)):
-        ''' Applying camera offset to some position. Returns new position
-        of the object and hence enables scrolling effect.
-
-        Parameters:
-            :param pos: Position on which camera offset will be applied
-            :type pos: tuple
-        '''
-        # Move the sprite of the entity - returns new shifted coordinates
-        return (pos[0] + self.offset_x, pos[1] + self.offset_y)
-
-    def on_display_change(self):
+    def reinit(self):
+        '''Called when configuration is changed.'''
         
         # Change camera dimension only if screen_fill parameter is enabled
         if not self.screen_fill: return
@@ -139,6 +129,16 @@ class Camera(Component):
         # Camera screen surface on which map is blitted
         self.screen = Surface((self.screen_width, self.screen_height))
 
+    def apply(self, pos=(0, 0)):
+        ''' Applying camera offset to some position. Returns new position
+        of the object and hence enables scrolling effect.
+
+        Parameters:
+            :param pos: Position on which camera offset will be applied
+            :type pos: tuple
+        '''
+        # Move the sprite of the entity - returns new shifted coordinates
+        return (pos[0] + self.offset_x, pos[1] + self.offset_y)
 
     def pre_save(self):
         ''' Prepare component for saving - remove all nreferences to

@@ -55,6 +55,24 @@ def cons_cmd_toggle_fullscreen(game_ctx, params):
             except ValueError:
                 print("Expecting integer value 0/1")
 
-        # Init everything except State of the game
-        game_ctx.config.init(False)
-        print(f'Reinit done')
+        # Init what is needed
+        game_ctx.config.init(
+             log_init=False,
+             font_init=False,
+             frame_init=False,
+             sound_init=False,
+             state_init=False
+             )
+        print(f'Config reinit done')
+
+        # Reinit all processors by calling their reinit function
+        game_ctx.engine.ecs_manager.reinit_processors()
+
+        # Reinit all components by calling their reinit funftion
+        game_ctx.engine.ecs_manager.reinit_components()
+
+        # Hide console in order for the camera resolution to take effect
+        if game_ctx.state_manager.state == game_ctx.State.CONSOLE:
+            game_ctx.state_manager.change_state(game_ctx.State.GAME)
+            game_ctx.cons.toggle()
+            return 0

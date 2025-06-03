@@ -36,7 +36,8 @@ class MainMenu(Menu):
 
     def run(self, key_events, key_pressed, dt) -> State:
 
-        if self.state_manager.changed_game_state:
+        #if self.state_manager.changed_game_state:
+        if self.state_manager.changed:
             self.show()
 
         for event in key_events:

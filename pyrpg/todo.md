@@ -1,16 +1,22 @@
 
+ - bitmap font make into a package
+ - dict_utils including getting dict from file as a package
 
-height of console must be adjusted after change of res
-
-get_components does not work
-get_processors does not work
-set_value does not work
-
-after change of resolutin (and re-init) cannot exit the game by using esc - the exit dialog is not showing
- - console height cannot be greater than total screen resolution ... somehow pass the resolution to the console, not only width
-
-console TextOutput - if self.display lines are greater than the displayable height then reduce display_lines  ... min(displayable_lines, display_lines from config)
-
+## Current
+  - [ ] - parameter that decides whether to show the loading progress - was there some time ago already, now gone
+  - [ ] - console command that just toggles off the console + implement parameters to the commands not to toggle off console at the end to use with more complicated console scripts.
+  - [ ] - toggle console without animation effect in an instance, one cycle without console and then back to the console - how to call all processors for one cycle
+  - [ ] - Start into empty console and run console script that loads the scene and everything - the complete load managed by the console script
+  - [x] - prepare `load_scene` console command
+  - [x] - prepare empty scene and load into it - just showing background picture
+  - [ ] - Console hight should be dynamically calculated min(displayable_lines, display_lines from config)
+  - [ ] - BUG - After calling console_command `change_res` the exit screen is not displaying the exit dialog - chaos in states and menus
+  - [x] - BUG - logs are emptied after the console `change_res` console command
+  - [x] - BUG - console command `get_components` does not work properly
+  - [x] - BUG - console command `get_processors` does not work properly
+  - [x] - BUG - console command `set_value` does not work properly
+  - [x] - Get rid of displaying console welcome message when console is re-initiated during for example changing of resolution.
+  - [x] - BUG - after executing change_res console command, the state of the game is START_PROGRAM, also the console is not toggled off.
   - [x] - BUG - toggle console causing automatic keypresses after the console is toggled again - fixed by clearing the console keypressed cache during toggling.
   - [x] - BUG - `exit` console command does not end the game - fixed by allowing transfer from CONSOLE to END_PROGRAM state
   - [x] - BUG - `list` console command - registered commands go away after reinit of console
@@ -25,7 +31,7 @@ console TextOutput - if self.display lines are greater than the displayable heig
   - [x] - after reinit of the console, history is kept but the lines ar not divided correctly according to the width
 
 
-  Features
+## Features
   - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
@@ -33,7 +39,7 @@ console TextOutput - if self.display lines are greater than the displayable heig
   - [ ] Branch - Fix console and make it more usable. It contains very old descriptions.
   - [x] Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
 
-# To Do
+## To Do
  
   - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
   - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason

@@ -1,0 +1,46 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "empty_scene",
+	"title" : "Empty Scene",
+	"description" : "Empty Scene",
+	"objective" : "Empty Scene",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// clear the game window
+		["render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "splash_pyRPG.png", "resize": true}]
+	],
+
+	// What maps to load
+	"maps" : [],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+	],
+
+	// How to handle events
+	"handlers": [
+	]
+}

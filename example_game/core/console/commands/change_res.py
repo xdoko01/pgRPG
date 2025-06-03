@@ -26,6 +26,9 @@ Examples of usage:
     "change_res 640 480 1" ... change the resolution to 640x480 + fullscreen
     "change_res 800 600 0" ... change the resolution to 800x600 + windowed
 """
+# Support of command logging
+import logging
+logger = logging.getLogger(__name__)
 
 def initialize(register, module_name):
     '''Script registers itself at Console'''
@@ -64,13 +67,25 @@ def cons_cmd_change_res(game_ctx, params):
             except ValueError:
                 print("Integer value 0/1 required for fullscreen settings")
 
-        # Init everything except State of the game
-        game_ctx.config.init(False)
+        # Init what is needed
+        game_ctx.config.init(
+             log_init=False,
+             font_init=False,
+             frame_init=False,
+             sound_init=False,
+             state_init=False
+             )
         print(f'Config reinit done')
 
-        from core.components.camera import Camera
+        # Reinit all processors by calling their reinit function
+        game_ctx.engine.ecs_manager.reinit_processors()
 
-        # Adjust all Camera components for the new resolution
-        for ent, (camera) in game_ctx.engine.ecs_manager._world.get_component(Camera):
-            camera.on_display_change()
-            print(f'Camera comp resolution changed on entity {ent}')
+        # Reinit all components by calling their reinit funftion
+        game_ctx.engine.ecs_manager.reinit_components()
+
+
+        # Hide console in order for the camera resolution to take effect
+        if game_ctx.state_manager.state == game_ctx.State.CONSOLE:
+            game_ctx.state_manager.change_state(game_ctx.State.GAME)
+            game_ctx.cons.toggle()
+            return 0

@@ -40,6 +40,6 @@ def cons_cmd_get_processors(game_ctx, params):
 
     # Show processors
     else:
-        for processor in game_ctx.engine.ecs_manager.get_game_world()._processors:
+        for processor in game_ctx.engine.ecs_manager._world._processors:
             print(processor)
 

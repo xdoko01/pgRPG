@@ -156,7 +156,15 @@ def load(config_file: str=None, hide_res: bool=True) -> None:
     STATES = _prep_conf_states(_merge_conf(default_config=pyrpg_config_data, game_config=game_config_data, conf_key="STATES"))
     hide_res or show(text="STATES config:", config=STATES)
 
-def init(main_module=None, states: bool=True) -> None:
+def init(main_module=None, 
+         display_init: bool=True,
+         cons_init: bool=True,
+         log_init: bool=True,
+         font_init: bool=True,
+         frame_init: bool=True,
+         gui_init: bool=True,
+         sound_init: bool=True,
+         state_init: bool=True) -> None:
     """Initiate all necessary configuration - logging, console, display,...
     Create configuration objects.
     """
@@ -169,16 +177,18 @@ def init(main_module=None, states: bool=True) -> None:
     # config file not specified, use the config file configured during the latest load
     assert MAIN_GAME_MODULE is not None, f"No main game module specified"
 
-    _init_display()
-    _init_console()
-    _init_logging()
+    display_init and _init_display()
+    cons_init and _init_console()
+    log_init and _init_logging()
 
-    _init_fonts()
-    _init_frames()
+    font_init and _init_fonts()
+    frame_init and _init_frames()
 
-    _init_gui()
-    _init_sound()
-    if states: _init_states()
+    gui_init and _init_gui()
+    sound_init and _init_sound()
+    state_init and _init_states()
+
+    logger.debug(f'Init done.')
 
 
 def _merge_conf(default_config: dict, game_config: dict, conf_key: str) -> dict:
@@ -361,6 +371,7 @@ def _init_logging() -> None:
     import logging.config
     logging.config.dictConfig(LOGGING)
 
+    logger.debug("Logging initiated successfully.")
 
 def _init_display() -> None:
     global display
@@ -396,7 +407,9 @@ def _init_display() -> None:
         # paste to the copy to the new window
         DISPLAY["WINDOW"].blit(temp_surf, (0, 0))
 
-        print("Display reloaded")
+        #print("Display reloaded")
+
+    logger.debug("Display initiated successfully.")
 
 def _init_console(app_module: str=None) -> None:
     from pyrpg.core.console import Console
@@ -422,6 +435,8 @@ def _init_console(app_module: str=None) -> None:
     # reload the game CLI entry point module
     cons.set_cli_app(app_module if app_module is not None else CONSOLE["CLI_MODULE"])
 
+    logger.debug("Console initiated successfully.")
+
 def _init_fonts() -> None:
     import pyrpg.utils as utils# for BitmapFont class
     from pygame import Color# for pygame.Color
@@ -436,6 +451,8 @@ def _init_fonts() -> None:
     # Font or GUI manager
     FONTS["GUI_MANAGER_FONT_OBJ"]= utils.BitmapFont(FONTS["GUI_MANAGER_FONT"], color=FONTS.get("GUI_MANAGER_FONT_COLOUR"))
 
+    logger.debug("Fonts initiated successfully.")
+
 def _init_frames() -> None:
     import pyrpg.utils as utils # for BitmapFrame class
     import pygame # for pygame.Color
@@ -443,13 +460,19 @@ def _init_frames() -> None:
     FRAMES["PLAYER_TALK_FRAME_OBJ"] = utils.BitmapFrame(FRAMES["PLAYER_TALK_FRAME"], color=FRAMES.get("PLAYER_TALK_FRAME_COLOUR"))
     FRAMES["GAME_DEBUG_FRAME_OBJ"] = utils.BitmapFrame(FRAMES["GAME_DEBUG_FRAME"], color=FRAMES.get("GAME_DEBUG_FRAME_COLOUR"))
 
+    logger.debug("Frames initiated successfully.")
+
 def _init_sound() -> None:
     import pyrpg.core.config.sound as s
     s.init()
 
+    logger.debug("Sound initiated successfully.")
+
 def _init_states() -> None:
     import pyrpg.core.config.states as st
     st.init(states=STATES)
+
+    logger.debug("States initiated successfully.")
 
 def _init_gui() -> None:
     """GUI needs sound and states"""
@@ -462,6 +485,7 @@ def _init_gui() -> None:
     g.init_background_animation(display=DISPLAY, filepaths=FILEPATHS, gui_conf=GUI)
     g.init_gui(display=DISPLAY, fonts=FONTS)
 
+    logger.debug("GUI initiated successfully.")
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from pyrpg.functions import get_class_from_def
 from pyrpg.functions import translate # for creation of the component
 from pyrpg.functions import json_logic # for evaluating conditions for processor prerequisites
 from pyrpg.functions import get_dict_params # for filling of template with variables
-
+from pyrpg.functions import get_all_dict_values # for reinit oc components
 
 # Keeping reference to ECS world
 _world: World = None
@@ -70,6 +70,17 @@ def load_processor(processor_def: list) -> None:
 
     # Log the initiation of the processor
     logger.info(f'Processor "{processor_def}" initiated.')
+
+def reinit_processors():
+    """Used for re-init of processor parameters in case the configuration
+    has changed.
+    """
+    # Call init function on all registered processors _world._processors
+    for processor in _world._processors:
+        processor.reinit()
+        logger.info(f'Processor "{processor.__class__}" re-initiated.')
+
+    logger.info(f'All processors re-initiated.')
 
 def check_proc_in_world(proc_class_def: str) -> bool:
     """Checks, if the class represented by string exists and is already initiated in the
@@ -207,6 +218,17 @@ def create_component_from_def(component_def: dict) -> Component:
     except ValueError:
         logger.error(f'Error while creating component "{comp_class_def}" with parameters "{comp_params}".')
         raise ValueError
+
+def reinit_components():
+    """Used for re-init of component parameters in case the configuration
+    has changed.
+    """
+    # Call init function on all registered processors _world._processors
+    for component in get_all_dict_values(_world._entities):
+        component.reinit()
+        logger.info(f'Component "{component.__class__}" re-initiated.')
+
+    logger.info(f'All components re-initiated.')
 
 def update_component(component_def: dict, entity_id: int) -> None:
     """Takes the definition of the component (dictionary), creates 

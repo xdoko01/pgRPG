@@ -329,7 +329,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((500, 500), 0, 32)
 
     # Where to find the JSON fonts
-    FONT_PATH = pathlib.Path('experiments/ecs/resources/fonts')
+    FONT_PATH = pathlib.Path('experiments/bitmap_font')
 
     # One way to init font
     my_first_font = BitmapFont(FONT_PATH / 'small_font.json', color=pygame.Color('grey'))
@@ -363,7 +363,7 @@ if __name__ == '__main__':
         screen.blit(my_third_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', pygame.Color('#010101'), align='CENTER'), (260, 260))
 
         # Gradient font
-        screen.blit(my_fourth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines', pygame.Color('#010101'), align='CENTER'), (160, 260))
+        screen.blit(my_fourth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines'.upper(), pygame.Color('#010101'), align='CENTER'), (160, 260))
 
         # Good Neighbours font
         screen.blit(my_fifth_font.render(f'Render text\nthat is rendered\nonto multiple\nlines.', align='CENTER'), (60, 260))

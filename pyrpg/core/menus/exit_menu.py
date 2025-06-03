@@ -40,7 +40,8 @@ class ExitMenu(Menu):
     def run(self, key_events, key_pressed, dt) -> State:
 
         # If exit menu accessed from other game state, create new exit dialog
-        if self.state_manager.changed_game_state:
+        #if self.state_manager.changed_game_state:
+        if self.state_manager.changed:
             self.show()
 
         for event in key_events:

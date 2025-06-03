@@ -11,16 +11,16 @@
     Examples of usage:
         "set_value -h"      ... get usage instructions
         "set_value --help"  ... get usage instructions
-        "set_value 1 Position x=50 y=60" ... set new position parameters for entity 1 - x=50, y=60
-        "set_value player01 Position x=50 y=60 -a" ... set new position parameters for entity player01 - x=50, y=60
+        "set_value 1 position:Position x=50 y=60" ... set new position parameters for entity 1 - x=50, y=60
+        "set_value player01 position:Position x=50 y=60 -a" ... set new position parameters for entity player01 - x=50, y=60
 '''
 
 instructions = """
     Examples of usage:
         "set_value -h"      ... get usage instructions
         "set_value --help"  ... get usage instructions
-        "set_value 1 Position x=50 y=60" ... set new position parameters for entity 1 - x=50, y=60
-        "set_value player01 Position x=50 y=60 -a" ... set new position parameters for entity player01 - x=50, y=60
+        "set_value 1 position:Position x=50 y=60" ... set new position parameters for entity 1 - x=50, y=60
+        "set_value player01 position:Position x=50 y=60 -a" ... set new position parameters for entity player01 - x=50, y=60
 """
 
 def initialize(register, module_name):
@@ -87,14 +87,14 @@ def cons_cmd_set_value(game_ctx, params):
 
         # Convert component string to component class
         try:
-            comp_class = getattr(game_ctx.engine.ecs_manager.components, comp_str)
+            comp_class = game_ctx.engine.ecs_manager.get_comp_class_from_def(comp_str)
         except:
             print(f'String "{comp_str}" does not represent any component.')
             raise ValueError()
 
         # Get the component instance for the entity
         try:
-            component = game_ctx.engine.ecs_manager.world.component_for_entity(entity, comp_class)
+            component = game_ctx.engine.ecs_manager.component_for_entity(entity, comp_class)
         except KeyError:
             print(f'Component "{comp_str}" does not exist for entity "{alias}"({entity}).')
             raise ValueError()

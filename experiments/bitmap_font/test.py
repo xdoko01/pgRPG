@@ -215,7 +215,7 @@ if __name__ == '__main__':
     my_second_font = BitmapFont('experiments/bitmap_font/small_font.json', 16)
 
     # Yet another way ti init font (color included)
-    my_third_font = BitmapFont('experiments/ecs/resources/fonts/small_font.json', 16, pygame.Color('purple'))
+    my_third_font = BitmapFont('experiments/bitmap_font/small_font.json', 16, pygame.Color('purple'))
 
     # ANother font
     my_forth_font = BitmapFont('experiments/bitmap_font/red_gradient_capital_font.json')
@@ -240,12 +240,12 @@ if __name__ == '__main__':
         screen.blit(my_third_font.render_new(f'Rendertext\nthat is rendered\nonto multiple\nlines.', pygame.Color('yellow'), align='CENTER'), (260, 260))
 
         # Try different font
-        #screen.blit(my_forth_font.render_new(f'RENDER TEXT\nTHAT IS RENDERED\nONTO MULTIPLE\nLINES', align='CENTER'), (260, 160))
+        screen.blit(my_forth_font.render_new(f'RENDER TEXT\nTHAT IS RENDERED\nONTO MULTIPLE\nLINES', align='CENTER'), (260, 160))
 
 
         # Test printing of dictionaries
-        from pprint import pformat
-        screen.blit(my_third_font.render_new(f'{pformat(test_dict)}', pygame.Color('blue')), (10, 200))
+        #from pprint import pformat
+        #screen.blit(my_third_font.render_new(f'{pformat(test_dict)}', pygame.Color('blue')), (10, 200))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

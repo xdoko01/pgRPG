@@ -16,6 +16,11 @@ class Component(object):
     '''
 
     def __init__(self):
+        '''Called when the component is created.'''
+        pass
+
+    def reinit(self):
+        '''Called when configuration is changed.'''
         pass
 
     def __str__(self):

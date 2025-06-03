@@ -36,6 +36,11 @@ class Processor:
         self.exec_cycle_step = kwargs.get('step', 1)
         #self.skip_cycle = kwargs.get('skip_cycle', 0)
 
+    def reinit(self):
+        '''Used for repetitive initiation after change of configuration.
+        '''
+        pass
+
     def initialize(self, register):
         """Register the processor at the esper World"""
         raise NotImplementedError

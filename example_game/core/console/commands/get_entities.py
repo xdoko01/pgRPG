@@ -74,7 +74,7 @@ def cons_cmd_get_entities(game_ctx, params):
 
             # Print all components of entity/alias
             for component in game_ctx.engine.ecs_manager._world.components_for_entity(entity):
-                print(f'C: {component}')
+                print(f'C: {component.__class__}')
 
                 if list_all_attrs:
                     attrs = ''
