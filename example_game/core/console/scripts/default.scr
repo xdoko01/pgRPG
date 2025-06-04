@@ -1,0 +1,9 @@
+!print(f'Initiate engine ...')
+init_engine
+
+!print(f'Loading a scene ...')
+load_scene empty.jsonc
+
+
+
+

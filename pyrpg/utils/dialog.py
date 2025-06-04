@@ -109,7 +109,7 @@ import re # For removing C-style comments from JSON file
 
 import pygame
 from collections import namedtuple
-from .bitmap_font import BitmapFont
+from pgbitmapfont import BitmapFont
 
 # Define position as a namedtuple
 Pos = namedtuple('Pos', ['x', 'y'])
@@ -246,7 +246,7 @@ def display_dlg(target, position, dlg_obj, frame=None):
 
     # Blit dialog texts
     for dlg_surf in dlg_obj.get('texts', []):
-        target.blit(dlg_surf.surf, (position[0] + dlg_surf.pos.x, position[1] + dlg_surf.pos.y))
+        target.blit(dlg_surf.surf[0], (position[0] + dlg_surf.pos.x, position[1] + dlg_surf.pos.y))
 
     ##########################################
     # Blit frame level surfaces
@@ -268,7 +268,7 @@ def display_dlg(target, position, dlg_obj, frame=None):
 
             # Blit frame texts
             for dlg_surf in frame_obj.get('texts', []):
-                target.blit(dlg_surf.surf, (position[0] + dlg_surf.pos.x, position[1] + dlg_surf.pos.y))
+                target.blit(dlg_surf.surf[0], (position[0] + dlg_surf.pos.x, position[1] + dlg_surf.pos.y))
 
         except:
             # In case frame is not defined
@@ -385,7 +385,7 @@ def _get_dlg_texts(dlg_data, font_path=None):
         text_font = BitmapFont(font, size=size, color=color)
 
         # Render and store the text surface as DlgSurf
-        dlg_texts_obj.append(DlgSurf(surf=text_font.render(text, color=color, align=align), pos=Pos(position[0], position[1])))
+        dlg_texts_obj.append(DlgSurf(surf=text_font.render(text, fgcolor=color, align=align), pos=Pos(position[0], position[1])))
 
     # Return the list of texts
     return dlg_texts_obj
@@ -514,7 +514,7 @@ def _get_dlg_frame_texts(dlg_data, frame, font_path=None):
         text_font = BitmapFont(font, size=size, color=color)
 
         # Render and store the text surface as DlgSurf
-        dlg_frame_texts_obj.append(DlgSurf(surf=text_font.render(text, color=color, align=align), pos=Pos(position[0], position[1])))
+        dlg_frame_texts_obj.append(DlgSurf(surf=text_font.render(text, fgcolor=color, align=align), pos=Pos(position[0], position[1])))
 
     # Return the list of texts surfaces
     return dlg_frame_texts_obj

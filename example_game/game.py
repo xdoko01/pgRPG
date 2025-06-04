@@ -16,7 +16,7 @@ def main(argv):
     config_file = "example_game/config.jsonc"
 
     # Empty
-    scene_file = "empty.jsonc"
+    #scene_file = "empty.jsonc"
 
     # Games
     #scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES

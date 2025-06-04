@@ -412,7 +412,7 @@ def _init_display() -> None:
     logger.debug("Display initiated successfully.")
 
 def _init_console(app_module: str=None) -> None:
-    from pyrpg.core.console import Console
+    from pgconsole import Console
     global cons
     
     if cons is None:
@@ -438,18 +438,19 @@ def _init_console(app_module: str=None) -> None:
     logger.debug("Console initiated successfully.")
 
 def _init_fonts() -> None:
-    import pyrpg.utils as utils# for BitmapFont class
+    #import pyrpg.utils as utils# for BitmapFont class
+    from pgbitmapfont import BitmapFont
     from pygame import Color# for pygame.Color
 
     # Font for in-game dialog bubbles
-    FONTS["GAME_DEBUG_FONT_OBJ"] = utils.BitmapFont(FONTS["GAME_DEBUG_FONT"], color=FONTS.get("GAME_DEBUG_FONT_COLOUR"))
-    FONTS["PLAYER_TALK_FONT_OBJ"] = utils.BitmapFont(FONTS["PLAYER_TALK_FONT"], color=FONTS.get("PLAYER_TALK_FONT_COLOUR"))
+    FONTS["GAME_DEBUG_FONT_OBJ"] = BitmapFont(FONTS["GAME_DEBUG_FONT"], color=FONTS.get("GAME_DEBUG_FONT_COLOUR"))
+    FONTS["PLAYER_TALK_FONT_OBJ"] = BitmapFont(FONTS["PLAYER_TALK_FONT"], color=FONTS.get("PLAYER_TALK_FONT_COLOUR"))
 
     # Font for in-game messages such as 'item picked'
-    FONTS["GAME_MSG_FONT_OBJ"]= utils.BitmapFont(FONTS["GAME_MSG_FONT"], color=FONTS.get("GAME_MSG_FONT_COLOUR"))
+    FONTS["GAME_MSG_FONT_OBJ"]= BitmapFont(FONTS["GAME_MSG_FONT"], color=FONTS.get("GAME_MSG_FONT_COLOUR"))
 
     # Font or GUI manager
-    FONTS["GUI_MANAGER_FONT_OBJ"]= utils.BitmapFont(FONTS["GUI_MANAGER_FONT"], color=FONTS.get("GUI_MANAGER_FONT_COLOUR"))
+    FONTS["GUI_MANAGER_FONT_OBJ"]= BitmapFont(FONTS["GUI_MANAGER_FONT"], color=FONTS.get("GUI_MANAGER_FONT_COLOUR"))
 
     logger.debug("Fonts initiated successfully.")
 
