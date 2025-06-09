@@ -37,6 +37,8 @@ prev_game_state: State = None
 changed = False # If the change happened in current loop, set to True else false
 changed_game_state = False
 
+state_modules: dict = None
+
 def init(states: dict) -> None:
 
     print(f'{STATES=}')
@@ -66,6 +68,25 @@ def init(states: dict) -> None:
 
     global game_state
     game_state = state if state in game_states else None
+
+    ### NEW - initialize module for every state
+    from pyrpg.core.config import MODULEPATHS
+    from importlib import import_module
+
+    # Here all state modules are stored
+    global state_modules
+    state_modules = {}
+
+    for s in STATES["ALL_STATES"]:
+        print(s.name.lower())
+        try:
+            state_module = import_module(f'{MODULEPATHS["STATE_MODULE_PATH"]}.{s.name.lower()}')
+            state_modules[s] = state_module
+            logger.info(f'State module registered {state_modules[s]=}.')
+        except ModuleNotFoundError:
+            logger.info(f'State module not found for {s=}.')
+
+
 
 
 def get_avail_states() -> list:

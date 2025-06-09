@@ -5,9 +5,9 @@ def load_image(image_folder_path: Path, resize: tuple=None) -> pygame.image:
 	''' load and resize image from the given path
 	'''
 	try:
-		image = pygame.image.load(str(image_folder_path))
+		image = pygame.image.load(str(image_folder_path)).convert()
 		if resize: image = pygame.transform.scale(image, resize)
-		return image.convert()
+		return image
 	except AttributeError:
 		print(f'Unexpected error while loading an image "{str(image_folder_path)}".')
 		raise ValueError

@@ -34,6 +34,7 @@ def blit_background_animation():
         background_animation.last_image = (background_animation.last_image + 1) % background_animation.frames
 
     blit_image(background_animation.animation[background_animation.last_image])
+    
 
 
 ##### GUI

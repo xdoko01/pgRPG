@@ -33,6 +33,13 @@ free_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275),
 message_window = pygame_gui.windows.UIMessageWindow(rect=pygame.Rect((20,20), (200,100)), html_message = 'baf', manager=manager)
 test_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 10), (50, 50)), text='Hello', manager=manager, container=message_window)
 
+drop_down = pygame_gui.elements.UIDropDownMenu(
+	options_list=["one","two","three", "four"],
+	starting_option= "one",
+	relative_rect=pygame.Rect((20, 350), (150, 50)),
+	manager=manager,
+	container=None
+	)
 
 while is_running:
 	dt = clock.tick(60)
@@ -49,6 +56,8 @@ while is_running:
 				print('Bye World!')
 		if event.type == pygame_gui.UI_FILE_DIALOG_PATH_PICKED:
 			print(event.text)
+		if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
+			print("Selected option:", event.text)
 
 
 		manager.process_events(event)

@@ -1,0 +1,105 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_ui_1",
+	"title" : "test_ui_1",
+	"description" : "test_ui_1",
+	"objective" : "test_ui_1",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// clear the game window
+		["render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "splash_pyRPG.png", "resize": true}],
+		["gui_system.perform_gui_press:PerformGUIPress", {}],
+
+		// For processing commands from Pressed component
+		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+		// For processing events from button pressed
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["ON_BUTTON_PRESSED"]}],
+
+		// For removing of pressed flag
+		["gui_system.remove_flag_gui_flag_was_pressed_processor:RemoveFlagGUIFLagWasPressedProcessor", {}]
+	],
+
+	// What maps to load
+	"maps" : [],
+
+	// What dialogs to load
+	"dialogs": [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "btnRun",
+			"templates" : [], // no model needed
+			"components" : [
+				{"type" : "gui_button:GUIButton", "params" : {"name": "btnRun", "text": "Run", "x": 100, "y": 100, "width": 100, "height": 50}},
+				{"type" : "gui_pressable:Pressable", "params" : {"cmds": [["log", {"text": "First button pressed"}]]}} 
+			]
+		},
+				{
+			"id" : "btnExit",
+			"templates" : [], // no model needed
+			"components" : [
+				{"type" : "gui_button:GUIButton", "params" : {"name": "btnExit", "text": "Exit", "x": 100, "y": 200, "width": 100, "height": 50}},
+				{"type" : "gui_pressable:Pressable", "params" : {}}
+
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"ON_BUTTON_PRESSED",
+			{
+				"id": "ev_run_button_pressed",
+				"actions": [
+					"IF",
+						["==", ["VAR", "name"], "btnRun"],
+						[
+						"SEQ",
+							//["SCRIPT", "load_image", {"image_file" : "weather_effects/rainy/frame_00_delay-0.06s.gif"}],
+							["SCRIPT", "show_msg_window", {"html_text" : "Welcome to the <b>%scene_id</b> scene.<br/><br/>Good luck!"}],
+							["SCRIPT", "load_quest", {"scene_file" : "empty.jsonc"}]
+						]
+				]	
+			}
+		],
+		[
+			"ON_BUTTON_PRESSED",
+			{
+				"id": "ev_exit_button_pressed",
+				"actions": [
+					"IF",
+						["==", ["VAR", "name"], "btnExit"],
+						[
+						"SEQ",
+							//["SCRIPT", "load_image", {"image_file" : "weather_effects/rainy/frame_00_delay-0.06s.gif"}],
+							["SCRIPT", "show_msg_window", {"html_text" : "Exiting<br/>Come back soon!"}],
+							["SCRIPT", "exit", {}]
+						]
+				]	
+			}
+		]
+	]
+}

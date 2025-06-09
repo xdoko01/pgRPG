@@ -1,3 +1,5 @@
+ - there is some background shown while loading of a scene - should have parameter to show it or not show it
+ - fix the states modules to support console, cancel dialogs etc.
 
  - dict_utils including getting dict from file as a package
 

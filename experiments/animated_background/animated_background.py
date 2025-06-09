@@ -15,9 +15,10 @@ def load_image(image_folder_path: Path, resize: tuple=None) -> pygame.image:
 	''' load and resize image from the given path
 	'''
 	try:
-		image = pygame.image.load(str(image_folder_path))
+		image = pygame.image.load(str(image_folder_path)).convert()
 		if resize: image = pygame.transform.scale(image, resize)
-		return image.convert()
+		return image
+		#return image.convert()
 	except AttributeError:
 		print(f'Unexpected error while loading an image "{str(image_folder_path)}".')
 		raise ValueError
@@ -38,7 +39,10 @@ def load_animation(background_folder_path: Path, resize: tuple=None) -> list:
 	for path in pathlist:
 
 		try:
+			print(f'Adding image from {path=} to the list')
 			list_of_images.append(load_image(path, resize))
+			print(f'{list_of_images=}')
+
 			#path_in_str = str(path)
 			#print(path_in_str)
 			#image = pygame.image.load(str(path))
@@ -51,7 +55,8 @@ def load_animation(background_folder_path: Path, resize: tuple=None) -> list:
 
 	return list_of_images
 
-images = load_animation(Path('pyrpg/resources/images/background/'), (800, 450))
+images = load_animation(Path('example_game/resources/images/menu_background/waterfall/'), (800, 450))
+print(f'{images=}')
 
 
 while True:
@@ -59,4 +64,4 @@ while True:
 	for image in images:
 		window_surface.blit(image, (0, 0))
 		pygame.display.update()
-		pygame.time.wait(130)
+		pygame.time.wait(1000)

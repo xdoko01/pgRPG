@@ -260,6 +260,7 @@ def clear_scenes() -> None:
 def exit_game() -> None:
     _clear_game()
 
+'''
 def run(key_events, key_pressed, dt, debug: bool=False) -> State:
     # Check for End Game
     for event in key_events:
@@ -280,6 +281,7 @@ def run(key_events, key_pressed, dt, debug: bool=False) -> State:
     ecs_manager.process(events=key_events, keys=key_pressed, dt=dt, debug=debug)
 
     return State.GAME
+'''
 
 '''
 class Game:

@@ -18,6 +18,9 @@ def main(argv):
     # Empty
     #scene_file = "empty.jsonc"
 
+    # UI
+    #scene_file = "UI/test_button_pressed.jsonc"
+
     # Games
     #scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
     #scene_file = "games/sokoban/sokoban_new_level02.jsonc"

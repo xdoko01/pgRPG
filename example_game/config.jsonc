@@ -34,7 +34,8 @@
 		"SCRIPT_MODULE_PATH" : "core.scripts",
 		"COMMAND_MODULE_PATH" : "core.commands",
 		"PROCESSOR_MODULE_PATH": "core.processors",
-		"COMPONENT_MODULE_PATH": "core.components"
+		"COMPONENT_MODULE_PATH": "core.components",
+		"STATE_MODULE_PATH": "core.states"
 	},
 	
 
@@ -83,18 +84,18 @@
 
 	"STATES": {
 
-		"ALL_STATES": ["START_PROGRAM", "MAIN_MENU", "GAME", "PAUSE_GAME", "CONSOLE", "END_PROGRAM", "LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
-		"NON_GAME_STATES": ["START_PROGRAM", "MAIN_MENU", "CONSOLE", "END_PROGRAM", "LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
+		"ALL_STATES": ["START_PROGRAM", "MAIN_MENU", "GAME", "PAUSE_GAME", "CONSOLE", "END_PROGRAM", "LOAD_SCENE_MENU", "EXIT_GAME_DIALOG"],
+		"NON_GAME_STATES": ["START_PROGRAM", "MAIN_MENU", "CONSOLE", "END_PROGRAM", "LOAD_SCENE_MENU", "EXIT_GAME_DIALOG"],
 		"START_STATE": "START_PROGRAM",
 
 		"STATES_GRAPH": {
 			"START_PROGRAM"    : ["MAIN_MENU", "GAME", "CONSOLE"],
-			"MAIN_MENU"        : ["LOAD_QUEST_MENU", "EXIT_GAME_DIALOG"],
-			"LOAD_QUEST_MENU"  : ["MAIN_MENU", "GAME"],
-			"GAME"             : ["MAIN_MENU", "PAUSE_GAME", "CONSOLE"],
-			"PAUSE_GAME"       : ["GAME"],
-			"CONSOLE"          : ["GAME", "END_PROGRAM"],
-			"EXIT_GAME_DIALOG" : ["END_PROGRAM", "MAIN_MENU"],
+			"MAIN_MENU"        : ["LOAD_SCENE_MENU", "EXIT_GAME_DIALOG", "CONSOLE"],
+			"LOAD_SCENE_MENU"  : ["MAIN_MENU", "GAME", "CONSOLE"],
+			"GAME"             : ["MAIN_MENU", "PAUSE_GAME", "CONSOLE", "EXIT_GAME_DIALOG"],
+			"PAUSE_GAME"       : ["GAME", "CONSOLE"],
+			"CONSOLE"          : ["START_PROGRAM", "MAIN_MENU", "GAME", "PAUSE_GAME", "END_PROGRAM", "LOAD_SCENE_MENU", "EXIT_GAME_DIALOG"],
+			"EXIT_GAME_DIALOG" : ["END_PROGRAM", "MAIN_MENU", "CONSOLE"],
 			"END_PROGRAM"      : []
 		}
 	},
@@ -227,8 +228,8 @@
 			// Save all the logs from processor classes to the file
 			"core.processors" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-				//"handlers" : ["file_handler_proc"], // uncomment to log all the processors
-				"handlers" : ["null"], // do not log to file for speed
+				"handlers" : ["file_handler_proc"], // uncomment to log all the processors
+				//"handlers" : ["null"], // do not log to file for speed
 				"propagate" : false // Do not send messages from these loggers to parent (root) logger
 			},
 
