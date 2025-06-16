@@ -381,11 +381,11 @@ def _init_logging() -> None:
     logger.debug("Logging initiated successfully.")
 
 def _init_display() -> None:
-    global display
+    #global display
 
     # Always (for both init and reinit) check that the resolution is all right with the system
-    if pygame.display.mode_ok(size=display["RESOLUTION"]) == 0:
-        raise ValueError(f'Not supported resolution {display["RESOLUTION"]}.')
+    if pygame.display.mode_ok(size=DISPLAY["RESOLUTION"]) == 0:
+        raise ValueError(f'Not supported resolution {DISPLAY["RESOLUTION"]}.')
 
     # Upon first init of the game window
     if DISPLAY.get("WINDOW") is None:
