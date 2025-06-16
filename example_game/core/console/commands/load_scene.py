@@ -46,7 +46,7 @@ def cons_cmd_load_scene(game_ctx, params):
     # Loads the scene
     else:
         logger.info(f'Starting loading new scene with {game_ctx.engine=}')
-        game_ctx.engine.new_game(scene_file=all_params[1])
+        game_ctx.engine.load_scene(scene_file=all_params[1])
 
         logger.info(f'Current State is "{game_ctx.state_manager.state}".')
         

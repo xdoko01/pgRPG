@@ -19,6 +19,6 @@ def script_restart_quest(event, *args, **kwargs):
 
     scene = kwargs.get("scene")
 
-    main.engine.new_game(scene_file=scene)
+    main.engine.load_scene(scene_file=scene)
 
     return 0

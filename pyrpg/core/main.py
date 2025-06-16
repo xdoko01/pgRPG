@@ -41,7 +41,7 @@ def _init_game(scene_file: str) -> None:
     #engine.init() # Init can be removed as timed parameter is no longer passed
     global engine
     _init_engine()
-    engine.new_game(scene_file)
+    engine.load_scene(scene_file)
 
 def _init_state_modules() -> None:
     """Pass information about the managers to the state modules that

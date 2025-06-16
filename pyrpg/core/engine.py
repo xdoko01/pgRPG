@@ -6,10 +6,10 @@ import logging
 # Create logger
 logger = logging.getLogger(__name__)
 
-import pygame # for pygame.QUIT, pygame.KEYDOWN
-from pyrpg.core.config import KEYS
+#import pygame # for pygame.QUIT, pygame.KEYDOWN
+#from pyrpg.core.config import KEYS
 
-from pyrpg.core.config.states import State
+#from pyrpg.core.config.states import State
 
 #from pyrpg.core.managers import gui_manager  #import GUIManager
 import pyrpg.core.config.gui as gui_manager  #import GUIManager
@@ -211,7 +211,7 @@ def load_scene_from_def(scene_def: dict) -> Scene:
 
     return scene
 
-def new_game(scene_file: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
+def load_scene(scene_file: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
     """Loads new game from the scene"""
 
     logger.debug(f'Loading scene "{scene_file}".')

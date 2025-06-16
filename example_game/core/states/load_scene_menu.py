@@ -107,7 +107,7 @@ def run(key_events, key_pressed, dt) -> State:
         # On selecting a scene -> run a scene
         if event.type == UI_FILE_DIALOG_PATH_PICKED:
             logger.info(f"Loading scene file '{event.text}''.")
-            engine.new_game(event.text)
+            engine.load_scene(event.text)
             global _last_scene_path
             _last_scene_path = event.text
             return State.GAME

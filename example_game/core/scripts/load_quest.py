@@ -20,7 +20,7 @@ def script_load_quest(event, *args, **kwargs):
     scene_file = kwargs.get('scene_file')
 
     # Do not show progress information and do not clear anything
-    main.engine.new_game(scene_file=scene_file, clear_before_load=False, show_progress=False)
+    main.engine.load_scene(scene_file=scene_file, clear_before_load=False, show_progress=False)
 
     # Return success
     return 0

@@ -3,14 +3,18 @@
  - there is some background shown while loading of a scene - should have parameter to show it or not show it
  - change the progress bar so it is really a bar and shown at the bottom
  - change the progress bar so that animated background is not shown during the progress
-
+ - main.reinit() function do it more universal - select what all you want to reinit
  - dict_utils including getting dict from file as a package
 
 ## Current
+  - [x] - rename `engine.new_game` to `load_scene`
+  - [ ] - pass progress bar form `load_scene` to `load_scene_from_file` to `load_scene_from_def`
+  - [ ] - clear the `engine` code from unused things
+  - [ ] - rename `QUEST_START` event to `SCENE_START` event
   - [ ] - parameter that decides whether to show the loading progress - was there some time ago already, now gone
   - [ ] - console command that just toggles off the console + implement parameters to the commands not to toggle off console at the end to use with more complicated console scripts.
   - [ ] - toggle console without animation effect in an instance, one cycle without console and then back to the console - how to call all processors for one cycle
-  - [ ] - Start into empty console and run console script that loads the scene and everything - the complete load managed by the console script
+  - [x] - Start into empty console and run console script that loads the scene and everything - the complete load managed by the console script
   - [x] - prepare `load_scene` console command
   - [x] - prepare empty scene and load into it - just showing background picture
   - [ ] - Console hight should be dynamically calculated min(displayable_lines, display_lines from config)
@@ -40,7 +44,7 @@
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
   - [x] Show FPS also i fullscreen mode (config parameter)
-  - [ ] Branch - Fix console and make it more usable. It contains very old descriptions.
+  - [x] Branch - Fix console and make it more usable. It contains very old descriptions.
   - [x] Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
 
 ## To Do
