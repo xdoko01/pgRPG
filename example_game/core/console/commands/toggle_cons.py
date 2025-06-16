@@ -42,10 +42,16 @@ def cons_cmd_toggle_cons(game_ctx, params):
     if all_params[-1] in ('-h','--help', '?', 'help') or no_of_params > 0:
         print(instructions)
 
-    # Try to toggle fullscreen
+    # Try to toggle console
     else:
 
+        # If already in COnsole, revert back to original state
         if game_ctx.state_manager.state == game_ctx.State.CONSOLE:
-            game_ctx.state_manager.change_state(game_ctx.State.GAME)
-            game_ctx.cons.toggle()
-            return 0
+            game_ctx.cons.toggle(enable=False)
+            game_ctx.state_manager.revert_state()
+        
+        # If not in CONSOLE state, switch to console
+        else:
+            game_ctx.state_manager.change_state(game_ctx.State.CONSOLE)
+        
+        return 0

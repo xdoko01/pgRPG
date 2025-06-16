@@ -7,46 +7,66 @@ state in lower case.
 
 State module must consists of following functions:
 
-    - initialize() ... Function that registers the state with the StateManager.
-    - init() ... Function that passes all the necessary parameters to the state module so
-                it can operate.
+    - initialize() ... Function that registers the state with the state manager.
+    - init() ... Function that passes all the necessary parameters to the state module so it can operate.
 '''
 
 ######## INIT PART
 
-### DO NOT REMOVE - Support of command logging
+### DO NOT REMOVE
 import logging
 logger = logging.getLogger(__name__)
 
-import pyrpg.core.config.gui as gui_manager # for manipulation with game screen
-import pyrpg.core.config.sound as sound_manager # for menu sounds
+import sys
 import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pyrpg.core.config.states import State
 
-_initialized = False
-_inited = False
-_engine = None
+# Globals
+_initialized: bool = False
+_init: bool = False
 
 ### DO NOT REMOVE - Mandatory registration function
-#def initialize(register, module_name):
-#    '''State registers itself at StateManager under specific name
-#    that will be used to call the command. More then one name can 
-#    be used for the same command if needed.
-#    '''
-#    register(fnc=process, alias=module_name)  # mandatory, register the process under the name of the module
-#    register(fnc=init, alias=module_name+'_init')  # mandatory, register the init under module_init name
+def initialize(state: State, register_fnc) -> None:
+    '''State registers itself at state manager.
+    Called from state_manager.
+    
+    Parameters:
+        :param register_fnc: Function of state manager to register state module.
+        :type register_fnc: func ref
+    '''
+    register_fnc(state=state, module=sys.modules[__name__])  # mandatory, register the module by state manager
+    
+    global _initialized
+    _initialized = True # mark as initialized
 
-def init(engine) -> None:
-    print(f'Init called in START_PROGRAM module. {engine=}')
+### DO NOT REMOVE - Mandatory init function
+def init(*args, **kwargs) -> None:
+    '''Pass the parameters necessary for flawless function to the module.
+    '''
 
-    global _engine
-    _engine = engine
+    # Put any assignments here
+    # ...
 
-    global _inited
-    _inited = True
+    global _init
+    _init = True
 
-def run(key_events,key_pressed,dt) -> state_manager.State:
-    logger.debug(f'Start of "run" function.')
-    return state_manager.State.START_PROGRAM
+    logger.info(f'State module {sys.modules[__name__]} init done.')
 
+### DO NOT REMOVE - Mandatory clear function
 def clear() -> None:
-    raise NotImplementedError
+    '''Called when ending the program.
+    '''
+    # Put anything what needs to be derefferenced here
+    # ...
+
+    global _init
+    _init = False
+
+    logger.info(f'State module {sys.modules[__name__]} cleared.')
+
+### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
+def run(key_events,key_pressed,dt) -> State:
+    '''The main loop for the given state.
+    '''
+    # default to console
+    return State.CONSOLE

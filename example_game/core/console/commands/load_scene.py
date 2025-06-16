@@ -49,12 +49,15 @@ def cons_cmd_load_scene(game_ctx, params):
         game_ctx.engine.new_game(scene_file=all_params[1])
 
         logger.info(f'Current State is "{game_ctx.state_manager.state}".')
-
+        
+        # switch into GAME status
+        game_ctx.state_manager.change_state(game_ctx.State.GAME)
+        
         # Hide console in order for the camera resolution to take effect
-        if game_ctx.state_manager.state == game_ctx.State.CONSOLE:
-            logger.info(f'Changing State to GAME')
-            game_ctx.state_manager.change_state(game_ctx.State.GAME)
-            game_ctx.cons.toggle()
-            return 0
+        #if game_ctx.state_manager.state == game_ctx.State.CONSOLE:
+        #    logger.info(f'Changing State to GAME')
+        #    game_ctx.state_manager.change_state(game_ctx.State.GAME)
+        #    game_ctx.cons.toggle()
+        #    return 0
 
         return 0

@@ -1,17 +1,26 @@
-# Path to the pyrpg engine module
-pyrpg_path = "../pyrpg"
 
+"""
+python example_game/game.py -f UI/test_button_pressed.jsonc
+python example_game/game.py -h
+"""
 # Bring pyrpg package onto the path
-import sys, os, getopt
+import sys, os
 from pathlib import Path
 
+pyrpg_path = "../pyrpg"
 sys.path.append(os.path.abspath(Path(pyrpg_path)))
 
+def main(config_file: str, scene_file: str=None) -> None:
+    """Run the game using the CLI arguments."""
 
-def main(argv):
-    """Run the game using the CLI arguments"""
+    print(f"Starting with the following arguments: {scene_file=}, {config_file=}")
 
-    #console = True
+    # Load the framework using all the configs
+    import pyrpg
+    pyrpg.init(config_file=config_file, scene_file=scene_file)
+
+if __name__ == "__main__":
+
     scene_file = None
     config_file = "example_game/config.jsonc"
 
@@ -120,58 +129,12 @@ def main(argv):
     #scene_file = "tests/00_render/test_render_02.jsonc"
     #scene_file = "tests/00_render/test_render_01.jsonc"
 
+    # Parse the CLI for config and scene file
+    from argparse import ArgumentParser
 
-    usage_info = """
-DESCRIPTION
-    Game demonstration using pyrpg.
+    parser = ArgumentParser()
+    parser.add_argument("-f", "--file", help="Load particular scene file.The path must be relative to QUEST_PATH defined in configuration.",type=str)
+    parser.add_argument("-c", "--config", help="Load particular configuration file.", type=str)
+    args = parser.parse_args()
 
-OPTIONS
-    -h, --help 
-        Output usage information and exit.
-
-    --disable-console
-        Disable displaying of the console. By default, console is enabled.
-
-    -f FILE, --file FILE
-        Load particular scene file. Skips the menu and runs the scene immediatelly. The path must be relative to QUEST_PATH defined in configuration.
-
-    -c CONFIG_FILE, --config CONFIG_FILE
-        Load particular configuration file.
-
-EXAMPLES
-    game.py -h
-        Outputs usage information and exits.
-
-    game.py --disable-console
-        Run example game without console.
-
-    game.py --disable-console --file=tests/04_collisions/new_test_collisions_01.json
-        Run scene without console.
-"""
-
-    try:
-      opts, _ = getopt.getopt(argv, "hfc:",["help", "file=", "disable-console", "config="])
-    except getopt.GetoptError:
-      print(usage_info)
-      sys.exit(2)
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            print(usage_info)
-            sys.exit()
-        elif opt in ("--disable-console"):
-            console = False
-        elif opt in ("-f", "--file"):
-            scene_file = arg
-        elif opt in ("-c", "--config"):
-            config_file = arg
-
-    print(f"Starting with the following arguments:\n{scene_file=}\n{config_file=}")
-
-    # Load the framework using all the configs
-    import pyrpg
-    #pyrpg.init(config_file=config_file, console=console, scene_file=scene_file, timed=False)
-    #pyrpg.init(config_file=config_file, scene_file=scene_file, timed=False)
-    pyrpg.init(config_file=config_file, scene_file=scene_file)
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+    main(config_file=args.config or config_file, scene_file=args.file or scene_file)

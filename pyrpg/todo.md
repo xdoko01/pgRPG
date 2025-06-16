@@ -1,5 +1,8 @@
+ - make the check of state changes optional withonly warnings being displayed and not preventing the change of state completely
+ - state module main menu withbutton resume game??
  - there is some background shown while loading of a scene - should have parameter to show it or not show it
- - fix the states modules to support console, cancel dialogs etc.
+ - change the progress bar so it is really a bar and shown at the bottom
+ - change the progress bar so that animated background is not shown during the progress
 
  - dict_utils including getting dict from file as a package
 

@@ -1,6 +1,6 @@
-''' Module implementing the behavior wher program is in MAIN_MENU state 
+''' Module implementing the behavior wher program is in SETTINGS state 
 
-For tests call `python -m pyrpg.core.states.main_menu -v`
+For tests call `python -m pyrpg.core.states.settings -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -39,29 +39,31 @@ def initialize(state: State, register_fnc) -> None:
     global _initialized
     _initialized = True # mark as initialized
 
-from pygame_gui.elements import UIButton
+import pyrpg.core.main as main # for re-init after change of display configuration
+from pygame_gui.elements import UIDropDownMenu
+_resolution_dropdown: UIDropDownMenu = None
 
-_settings_button: UIButton = None
-_load_scene_button: UIButton = None
-_exit_game_button: UIButton = None
+from pyrpg.core.config import DISPLAY
 
 ### DO NOT REMOVE - Mandatory init function
 def init(*args, **kwargs) -> None:
     '''Pass the parameters necessary for flawless function to the module.
     '''
+    print(f'{DISPLAY["SUPPORTED_RESOLUTIONS"]=}')
 
-    global _settings_button
-    _settings_button = UIButton(relative_rect=pygame.Rect((150, 100), (100, 50)), text='Settings', manager=gui_manager.window_manager, container=None)
+    global _resolution_dropdown
+    _resolution_dropdown = UIDropDownMenu(
+        #options_list=[str(res)[10:] for res in DISPLAY["SUPPORTED_RESOLUTIONS"]],
+        #starting_option= str(DISPLAY["RESOLUTION"])[10:],
 
-    global _load_scene_button
-    _load_scene_button = UIButton(relative_rect=pygame.Rect((150, 175), (100, 50)), text='Load Scene', manager=gui_manager.window_manager, container=None)
+        options_list=[f"{res[0]}x{res[1]}" for res in DISPLAY["SUPPORTED_RESOLUTIONS"]],
+        starting_option= f"{DISPLAY["RESOLUTION"][0]}x{DISPLAY["RESOLUTION"][1]}",
+        relative_rect=pygame.Rect((200, 200), (250, 30)),
+        manager=gui_manager.window_manager,
+        container=None
+        )
     
-    global _exit_game_button
-    _exit_game_button = UIButton(relative_rect=pygame.Rect((150, 275), (100, 50)), text='Exit', manager=gui_manager.window_manager, container=None)
-
-    _settings_button.hide()
-    _load_scene_button.hide()
-    _exit_game_button.hide()
+    _resolution_dropdown.hide()
 
     global _init
     _init = True
@@ -82,24 +84,20 @@ def clear() -> None:
 
 
 import pygame
-from pygame_gui import UI_BUTTON_PRESSED
+from pygame_gui import UI_DROP_DOWN_MENU_CHANGED
 from pyrpg.core.config import gui as gui_manager
 
 def _show() -> None:
     '''Show the buttons when first time in MAIN_MENU state.
     '''
-    _settings_button.show()
-    _load_scene_button.show()
-    _exit_game_button.show()
-    logger.info(f'Main menu window showed')
+    _resolution_dropdown.show()
+    logger.info(f'Settings window showed')
 
 def _hide() -> None:
     '''Hide the buttons when leaving to other state.
     '''
-    _settings_button.hide()
-    _load_scene_button.hide()
-    _exit_game_button.hide()
-    logger.info(f'Main menu window hidden')
+    _resolution_dropdown.hide()
+    logger.info(f'Settings window hidden')
 
 ### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
 def run(key_events, key_pressed, dt) -> State:
@@ -117,26 +115,34 @@ def run(key_events, key_pressed, dt) -> State:
         if event.type == pygame.QUIT:
             return State.EXIT_GAME_DIALOG
 
-        # On pressing a button -> move to new state
-        elif event.type == UI_BUTTON_PRESSED:
+        # On changing the dropdown menu -> change configuration
+        elif event.type == UI_DROP_DOWN_MENU_CHANGED:
+
+
+            sep = event.text.find('x')
+            width = event.text[0:sep]
+            height = event.text[sep+1:]
+
+            print(f"Changed to {width=}, {height=}")
+
+            # Call change of resolution
+            DISPLAY["RESOLUTION"] = (int(width), int(height))
+
+            # Reinit after change of configuration
+            main.reinit()
             
-            # On pressing the Settings button -> switch to SETTINGS state
-            if event.ui_element == _settings_button:
-                logger.info(f'Accessing Settings window')
+            # Show again the Settings
+            _show()
+            
+            return State.SETTINGS
+
+        elif event.type == pygame.KEYDOWN:
+
+            # On pressing the ESC button -> go back to main menu
+            if event.key == pygame.K_ESCAPE:
                 _hide()
-                return State.SETTINGS
+                return State.MAIN_MENU
 
-            # On pressing the Load button -> switch to LOAD_STATE state
-            if event.ui_element == _load_scene_button:
-                logger.info(f'Accessing load scene window')
-                #_hide()
-                return State.LOAD_SCENE_MENU
-
-            # On pressing the Exit button -> switch to EXIT_GAME_DIALOG state
-            if event.ui_element == _exit_game_button:
-                logger.info(f'Accessing exit game window')
-                #_hide()
-                return State.EXIT_GAME_DIALOG
 
         gui_manager.process_events(event)
 
@@ -146,5 +152,5 @@ def run(key_events, key_pressed, dt) -> State:
 
     gui_manager.draw_gui()
 
-    return State.MAIN_MENU
+    return State.SETTINGS
 

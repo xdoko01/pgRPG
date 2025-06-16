@@ -19,7 +19,6 @@ def init(config_file: str, scene_file: str=None) -> None:
 
     # Initiate the core funcionalities / managers
     from pyrpg.core import main
-    #main.init(scene_file=scene_file, timed=timed)
     main.init(scene_file=scene_file)
     logger.info(f"Main module initiation done.")
 

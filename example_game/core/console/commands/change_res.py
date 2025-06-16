@@ -67,13 +67,17 @@ def cons_cmd_change_res(game_ctx, params):
             except ValueError:
                 print("Integer value 0/1 required for fullscreen settings")
 
+        # Reinit the whole program after change of display configuration
+        game_ctx.reinit()
+
+        '''
         # Init what is needed
         game_ctx.config.init(
              log_init=False,
              font_init=False,
              frame_init=False,
              sound_init=False,
-             state_init=False
+             state_init=False 
              )
         print(f'Config reinit done')
 
@@ -83,6 +87,9 @@ def cons_cmd_change_res(game_ctx, params):
         # Reinit all components by calling their reinit funftion
         game_ctx.engine.ecs_manager.reinit_components()
 
+        # Call init also on the State modules - should pe part of the state_init
+        game_ctx._init_state_modules()
+        '''
 
         # Hide console in order for the camera resolution to take effect
         if game_ctx.state_manager.state == game_ctx.State.CONSOLE:

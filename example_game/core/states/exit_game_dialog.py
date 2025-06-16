@@ -1,66 +1,86 @@
-''' Module implementing the behavior wher program is in START_PROGRAM state 
+''' Module implementing the behavior wher program is in EXIT_GAME_DIALOG state 
 
-For tests call `python -m pyrpg.core.states.start_program -v`
+For tests call `python -m pyrpg.core.states.exit_date_dialog -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
 
 State module must consists of following functions:
 
-    - initialize() ... Function that registers the state with the StateManager.
-    - init() ... Function that passes all the necessary parameters to the state module so
-                it can operate.
+    - initialize() ... Function that registers the state with the state manager.
+    - init() ... Function that passes all the necessary parameters to the state module so it can operate.
 '''
 
 ######## INIT PART
 
-### DO NOT REMOVE - Support of command logging
+######## INIT PART
+
+### DO NOT REMOVE
 import logging
 logger = logging.getLogger(__name__)
 
-import pyrpg.core.config.gui as gui_manager # for manipulation with game screen
-import pyrpg.core.config.sound as sound_manager # for menu sounds
+import sys
 import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pyrpg.core.config.states import State
 
-_initialized = False
-_inited = False
-_engine = None
-
-_exit_dialog = None
+# Globals
+_initialized: bool = False
+_init: bool = False
 
 ### DO NOT REMOVE - Mandatory registration function
-#def initialize(register, module_name):
-#    '''State registers itself at StateManager under specific name
-#    that will be used to call the command. More then one name can 
-#    be used for the same command if needed.
-#    '''
-#    register(fnc=process, alias=module_name)  # mandatory, register the process under the name of the module
-#    register(fnc=init, alias=module_name+'_init')  # mandatory, register the init under module_init name
+def initialize(state: State, register_fnc) -> None:
+    '''State registers itself at state manager.
+    Called from state_manager.
+    
+    Parameters:
+        :param register_fnc: Function of state manager to register state module.
+        :type register_fnc: func ref
+    '''
+    register_fnc(state=state, module=sys.modules[__name__])  # mandatory, register the module by state manager
+    
+    global _initialized
+    _initialized = True # mark as initialized
 
-def init(engine) -> None:
-    print(f'Init called in EXIT_GAME_DIALOG module. {engine=}')
+### DO NOT REMOVE - Mandatory init function
+def init(*args, **kwargs) -> None:
+    '''Pass the parameters necessary for flawless function to the module.
+    '''
 
-    global _engine
-    _engine = engine
+    # Put any assignments here
+    # ...
 
-    global _inited
-    _inited = True
+    global _init
+    _init = True
 
-def run(*args, **kwargs) -> state_manager.State:
-    print(f'RUn called in EXIT_GAME_DIALOG module.')
+    logger.info(f'State module {sys.modules[__name__]} init done.')
 
-    return state_manager.State.EXIT_GAME_DIALOG
+### DO NOT REMOVE - Mandatory clear function
+def clear() -> None:
+    '''Called when ending the program.
+    '''
+    # Put anything what needs to be derefferenced here
+    # ...
 
+    global _init
+    _init = False
 
+    logger.info(f'State module {sys.modules[__name__]} cleared.')
+
+### PUT ALL YOUR OPTIONAL IMPORTS HERE
+import pygame
 from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
-from pyrpg.core.config import GUI
-from pyrpg.core.config.states import State
 from pygame_gui.windows import UIConfirmationDialog
 from pygame import Rect
 
+import pyrpg.core.config.gui as gui_manager
+from pyrpg.core.config import GUI
+
+_exit_dialog: UIConfirmationDialog = None
 
 def _show() -> None:
-    '''Each time the exit dialog must be created. When closed it is destroyed automatically. '''
+    '''Each time the exit dialog must be created.
+    When closed it is destroyed automatically.
+    '''
     global _exit_dialog
     _exit_dialog = UIConfirmationDialog(
             #rect=Rect(self.gui_manager.gui_dlg_start, self.gui_manager.gui_dlg_dim),
@@ -71,24 +91,30 @@ def _show() -> None:
 
     logger.info(f'Exit dialog created')
 
-def _hide():
-    '''Hiding is not needed as dialog is destroyed upon closing'''
-    raise NotImplementedError
-
+### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
 def run(key_events, key_pressed, dt) -> State:
+    '''The main loop for the given state.
+    '''
 
     # If exit menu accessed from other game state, create new exit dialog
-    #if self.state_manager.changed_game_state:
-    if state_manager.changed:
-        _show()
+    if state_manager.changed: _show()
 
+    # Process the events
     for event in key_events:
-        if event.type == UI_CONFIRMATION_DIALOG_CONFIRMED:
-            logger.info(f'Exiting the game')
+
+        # On closing of the game window -> end the program
+        if event.type == pygame.QUIT:
             return State.END_PROGRAM
-        elif event.type == UI_WINDOW_CLOSE and state_manager.prev_game_state:
-            logger.info(f'Closing the exit window')
-            return state_manager.prev_game_state
+
+        # On closing of the dialog window -> revert back to the previous state
+        # On cancelation of the dialog -> revert back to the previous state
+        if event.type == UI_WINDOW_CLOSE and state_manager.prev_state:
+            state_manager.revert_state()
+            return state_manager.state
+
+        # On confirmation of the dialog -> end the program
+        elif event.type == UI_CONFIRMATION_DIALOG_CONFIRMED:
+            return State.END_PROGRAM
 
         gui_manager.process_events(event)
 
@@ -99,6 +125,3 @@ def run(key_events, key_pressed, dt) -> State:
     gui_manager.draw_gui()
 
     return State.EXIT_GAME_DIALOG
-
-def _clear() -> None:
-    pass

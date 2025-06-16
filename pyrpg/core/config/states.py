@@ -70,27 +70,56 @@ def init(states: dict) -> None:
     game_state = state if state in game_states else None
 
     ### NEW - initialize module for every state
+    ##from pyrpg.core.config import MODULEPATHS
+    ##from importlib import import_module
+
+    # Here all state modules are stored
+    ##global state_modules
+    ##state_modules = {}
+
+    ##for s in STATES["ALL_STATES"]:
+    ##    print(s.name.lower())
+    ##    try:
+    ##        state_module = import_module(f'{MODULEPATHS["STATE_MODULE_PATH"]}.{s.name.lower()}')
+    ##        state_modules[s] = state_module
+    ##        logger.info(f'State module registered {state_modules[s]=}.')
+    ##    except ModuleNotFoundError:
+    ##        logger.info(f'State module not found for {s=}.')
+
+    # Register all state modules in the state_modules dictionary where keys are the states
+    _initialize_state_modules()
+
+def _initialize_state_modules() -> None:
+    """Initialize and register all state modules with the state manager.
+    """
     from pyrpg.core.config import MODULEPATHS
     from importlib import import_module
 
-    # Here all state modules are stored
     global state_modules
     state_modules = {}
 
     for s in STATES["ALL_STATES"]:
-        print(s.name.lower())
         try:
             state_module = import_module(f'{MODULEPATHS["STATE_MODULE_PATH"]}.{s.name.lower()}')
-            state_modules[s] = state_module
-            logger.info(f'State module registered {state_modules[s]=}.')
+            state_module.initialize(state=s, register_fnc=_register_state_module)
         except ModuleNotFoundError:
             logger.info(f'State module not found for {s=}.')
 
 
+def _register_state_module(state: State, module) -> None:
+    """Register the state module. Called by the state module.
+    """
+    global state_modules
+    state_modules[state] = module
 
 
 def get_avail_states() -> list:
-    return state_graph.get(state)
+    """Return allowed states for continuation.
+    """
+    try:
+        return state_graph[state]
+    except KeyError:
+        raise ValueError(f"No available states for State '{state}'.")
 
 def change_state(new_state: str) -> None:
     '''Changes the game state and saves the previous state.'''

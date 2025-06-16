@@ -58,6 +58,14 @@ event_manager.init(exec_event_actions_fnc=script_manager.execute_event_actions)
 #sound_manager: SoundManager
 
 _scenes = {}
+_init: bool = False # is engine initiated?
+
+def get_init() -> bool:
+    '''Return information if engine is already initiated.
+    
+    :returns: True(initiated)/ False
+    '''
+    return _init
 
 def init() -> None:
 #def init(timed: bool=False) -> None:
@@ -115,6 +123,9 @@ def init() -> None:
         # Sound and Music
         "FNC_PLAY_SOUND": sound_manager.play_sound
     })
+
+    global _init
+    _init = True
 
     logger.info(f"Game initiated")
 

@@ -232,14 +232,21 @@ def _prep_conf_display(display_config: dict) -> dict:
     from functools import namedtuple
     Resolution = namedtuple("Resolution", ["width", "height"])
 
+    # Store all available resolutions of the system
+    display_config["SUPPORTED_RESOLUTIONS"] = [Resolution(width=res[0], height=res[1]) for res in pygame.display.list_modes()]
+
+    # Store the default environment resolution/ bitdepth
+    display_config["DEFAULT_RESOLUTION"] = Resolution(pygame.display.Info().current_w, pygame.display.Info().current_h)
+    display_config["DEFAULT_BITDEPTH"] = 0
+
     # Set automatically to native resolution if required
     if display_config["RESOLUTION"] == "DEFAULT":
-        display_config["RESOLUTION"] = Resolution(pygame.display.Info().current_w, pygame.display.Info().current_h)
+        display_config["RESOLUTION"] = display_config["DEFAULT_RESOLUTION"]
     else:
         display_config["RESOLUTION"] = Resolution(display_config["RESOLUTION"][0], display_config["RESOLUTION"][1])
 
     # Set the best bitdepth (default)
-    if display_config["BITDEPTH"] == "DEFAULT": display_config["BITDEPTH"] = 0
+    if display_config["BITDEPTH"] == "DEFAULT": display_config["BITDEPTH"] = display_config["DEFAULT_BITDEPTH"]
 
     return display_config
 
@@ -376,6 +383,11 @@ def _init_logging() -> None:
 def _init_display() -> None:
     global display
 
+    # Always (for both init and reinit) check that the resolution is all right with the system
+    if pygame.display.mode_ok(size=display["RESOLUTION"]) == 0:
+        raise ValueError(f'Not supported resolution {display["RESOLUTION"]}.')
+
+    # Upon first init of the game window
     if DISPLAY.get("WINDOW") is None:
         DISPLAY["WINDOW"] = pygame.display.set_mode(
             size=DISPLAY["RESOLUTION"],
@@ -386,6 +398,7 @@ def _init_display() -> None:
         # Set window title
         pygame.display.set_caption(DISPLAY["WIN_TITLE"])
 
+    # Upon reinit
     else:
         #Resize the resolution and/or switch to fullscreen 
 

@@ -1,68 +1,85 @@
-''' Module implementing the behavior wher program is in START_PROGRAM state 
+''' Module implementing the behavior wher program is in LOAD_SCENE_MENU state 
 
-For tests call `python -m pyrpg.core.states.start_program -v`
+For tests call `python -m pyrpg.core.states.load_scene_menu -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
 
 State module must consists of following functions:
 
-    - initialize() ... Function that registers the state with the StateManager.
-    - init() ... Function that passes all the necessary parameters to the state module so
-                it can operate.
+    - initialize() ... Function that registers the state with the state manager.
+    - init() ... Function that passes all the necessary parameters to the state module so it can operate.
 '''
 
 ######## INIT PART
 
-### DO NOT REMOVE - Support of command logging
+### DO NOT REMOVE
 import logging
 logger = logging.getLogger(__name__)
 
-import pyrpg.core.config.gui as gui_manager # for manipulation with game screen
-import pyrpg.core.config.sound as sound_manager # for menu sounds
+import sys
 import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pyrpg.core.config.states import State
 
+# Globals
+_initialized: bool = False
+_init: bool = False
+
+### DO NOT REMOVE - Mandatory registration function
+def initialize(state: State, register_fnc) -> None:
+    '''State registers itself at state manager.
+    Called from state_manager.
+    
+    Parameters:
+        :param register_fnc: Function of state manager to register state module.
+        :type register_fnc: func ref
+    '''
+    register_fnc(state=state, module=sys.modules[__name__])  # mandatory, register the module by state manager
+    
+    global _initialized
+    _initialized = True # mark as initialized
+
+### DO NOT REMOVE - Mandatory init function
+def init(*args, **kwargs) -> None:
+    '''Pass the parameters necessary for flawless function to the module.
+    '''
+
+    # Put any assignments here
+    # ...
+
+    global _init
+    _init = True
+
+    logger.info(f'State module {sys.modules[__name__]} init done.')
+
+### DO NOT REMOVE - Mandatory clear function
+def clear() -> None:
+    '''Called when ending the program.
+    '''
+    # Put anything what needs to be derefferenced here
+    # ...
+
+    global _init
+    _init = False
+
+    logger.info(f'State module {sys.modules[__name__]} cleared.')
+
+### PUT ALL YOUR OPTIONAL IMPORTS HERE
 from pyrpg.core.config import FILEPATHS #SCENE_PATH # for SCENE_PATH
+from pyrpg.core.config import GUI # for the dimensions of the window
+from pyrpg.core.config import gui as gui_manager
+from pyrpg.core import engine
 
-_initialized = False
-_inited = False
-_engine = None
+from pygame import Rect
+from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
+from pygame_gui.windows import UIFileDialog
 
+### GLOBALS
 _last_scene_path = FILEPATHS["SCENE_PATH"]
 _load_scene_window = None
 
-### DO NOT REMOVE - Mandatory registration function
-#def initialize(register, module_name):
-#    '''State registers itself at StateManager under specific name
-#    that will be used to call the command. More then one name can 
-#    be used for the same command if needed.
-#    '''
-#    register(fnc=process, alias=module_name)  # mandatory, register the process under the name of the module
-#    register(fnc=init, alias=module_name+'_init')  # mandatory, register the init under module_init name
-
-def init(engine) -> None:
-    print(f'Init called in START_PROGRAM module. {engine=}')
-
-    global _engine
-    _engine = engine
-
-    global _inited
-    _inited = True
-
-    logger.info(f"Load Scenes Menu dialog initiated.")
-
-
-
-#from pyrpg.core.config.paths import QUEST_PATH
-from pyrpg.core.config import FILEPATHS #SCENE_PATH # for SCENE_PATH
-from pyrpg.core.config import GUI
-from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE
-from pyrpg.core.config.states import State
-from pygame_gui.windows import UIFileDialog
-from pygame import Rect
-
-
 def _show() -> None:
+    '''Show the load dialog.'''
     global _load_scene_window
     _load_scene_window = UIFileDialog(
             #rect=Rect(self.gui_manager._gui_dlg_start, self.gui_manager._gui_dlg_dim),
@@ -76,26 +93,30 @@ def _show() -> None:
 
     logger.info(f"Load Scenes Menu dialog created.")
 
-def _hide():
-    raise NotImplementedError
-
+### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
 def run(key_events, key_pressed, dt) -> State:
-        
-    # If load scene menu accessed from other game state, create new dialog
-    #if state_manager.changed_game_state:
-    if state_manager.changed:
-        _show()
+    '''The main loop for the given state.
+    '''
 
+    # If load scene menu accessed from other game state, create new dialog
+    if state_manager.changed: _show()
+
+    # Process the events
     for event in key_events:
+
+        # On selecting a scene -> run a scene
         if event.type == UI_FILE_DIALOG_PATH_PICKED:
             logger.info(f"Loading scene file '{event.text}''.")
-            _engine.new_game(event.text)
+            engine.new_game(event.text)
             global _last_scene_path
             _last_scene_path = event.text
             return State.GAME
-        elif event.type == UI_WINDOW_CLOSE and state_manager.prev_game_state:
+
+        # On closing the window -> revert to the previous state
+        elif event.type == UI_WINDOW_CLOSE and state_manager.prev_state:
             logger.info(f"Closing Load Scenes Menu Dialog.")
-            return state_manager.prev_game_state
+            state_manager.revert_state()
+            return state_manager.state
 
         gui_manager.process_events(event)
 
@@ -104,9 +125,6 @@ def run(key_events, key_pressed, dt) -> State:
     gui_manager.blit_background_animation()
 
     gui_manager.draw_gui()
-    
 
     return State.LOAD_SCENE_MENU
 
-def _clear() -> None:
-    pass
