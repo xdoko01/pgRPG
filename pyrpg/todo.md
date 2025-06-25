@@ -1,20 +1,10 @@
- - make the check of state changes optional withonly warnings being displayed and not preventing the change of state completely
- - QUEST_START to Scene START
- - state module main menu withbutton resume game??
- - there is some background shown while loading of a scene - should have parameter to show it or not show it
- - change the progress bar so it is really a bar and shown at the bottom
-  - clear the menu and make it part of gui
-  - make it use configuration of the display
-  - is there some way to let the decision about progress in the scene definition?
-  - how to have many progress bars available and select them based on configuration? - nice to have
-   - in `load_scene_from_def` check the `scene["progress_bar"]`
-   - based on its value show the progress bar type
-
- - change the progress bar so that animated background is not shown during the progress
- - main.reinit() function do it more universal - select what all you want to reinit
- - dict_utils including getting dict from file as a package
-
 ## Current
+  - [ ] - dict_utils including getting dict from file as a package
+  - [ ] - main.reinit() function do it more universal - select what all you want to reinit
+  - [ ] - make the check of state changes optional withonly warnings being displayed and not preventing the change of state completely.
+  - [ ] - Change `QUEST_START` to `SCENE_LOADED` event
+  - [ ] - add Resume Game button in the main menu state
+  - [x] - adjust the progress bar based on the window resolution
   - [x] - rename `engine.new_game` to `load_scene`
   - [ ] - pass progress bar form `load_scene` to `load_scene_from_file` to `load_scene_from_def`
   - [ ] - clear the `engine` code from unused things
@@ -48,6 +38,9 @@
 
 
 ## Features
+  - [ ] many custom ProgressBars available and can be sellected in the scene file by configuration - for example
+  	`"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pyRPG.png", "bar": true}], // example how progress bar could be configured`
+
   - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
   - [ ] Some problem with `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
@@ -58,7 +51,7 @@
 ## To Do
  
   - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
-  - [ ] Progress bar is showing `number / None` - fix is problematic for unknown reason
+  
 
   - [ ] `do_parallel` to support skipping of cycles so that some commands run once per some amount of ticks and meanwhile return some default value
   - [ ] prepare `test_bb_value_in` and `test_bb_value_not_in` as a faster alternatives to `test_bb_values` that is using potentionally slow json logic
@@ -80,6 +73,7 @@
   - [ ] BUG - debug processor works onlywith one camera
   - [ ] BUG - when restarting scene in the `collect_coins` game, there is loading screen in the background
 
+  - [x] BUG - Progress bar is showing `number / None` - fix is problematic for unknown reason (closed 25.6.2025)
   - [x] BUG - The configurations are not properly merged when merging nested dictionaries - fix needed
   
   - [x] BUG - Template from existing entity using # ... add entities also into storage=self._template_definitions

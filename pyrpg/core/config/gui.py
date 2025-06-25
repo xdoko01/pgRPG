@@ -39,6 +39,7 @@ def blit_background_animation():
 
 #### PROGRESS BAR - START
 from threading import Thread
+from pyrpg.core.config import DISPLAY
 
 class ProgressBar():
     '''Class implementing the progress bar'''
@@ -89,7 +90,9 @@ class ProgressBar():
 
             blit_background_animation()
 
-            blit_bar(percent=self.progress/self.total*100)
+            percent = self.progress / self.total if self.total > 0 else 1
+            blit_bar(percent=percent, color=pygame.Color('red'), height=10)
+
             blit_text(f'{self.header} - {self.text} ... {self.progress} / {self.total}')
 
             flip()
@@ -97,8 +100,8 @@ class ProgressBar():
 #### PROGRESS BAR - END
 
 #### GUI - START
-import pygame.freetype
 import pygame_gui
+from pgbitmapfont import BitmapFont
 
 from collections import namedtuple
 
@@ -111,31 +114,23 @@ clock = pygame.time.Clock()
 screen_copy: pygame.Surface
 window_manager: pygame_gui.UIManager
 
+font: BitmapFont
 
 def init_gui(display: dict, fonts: dict) -> None:
-    # Initiate GUI manager
-    _init_gui(
-        win=display["WINDOW"], 
-        res=display["RESOLUTION"]
-    )
+    '''Initiate the main variables on init or change of configuration'''
+    global window
+    window = display["WINDOW"]
+
+    global screen_copy
+    screen_copy = pygame.Surface(display["RESOLUTION"])
+    
+    global window_manager
+    window_manager = pygame_gui.UIManager(display["RESOLUTION"])
+
     global font
     font = fonts["GUI_MANAGER_FONT_OBJ"] 
 
-    logger.info(f"GUI Manager initiated.")
-
-def _init_gui(win: pygame.Surface, res: Dim) -> None:
-
-    # At this moment, display is already created during initial configuration
-    global window
-    window = win
-
-    global screen_copy
-    screen_copy = pygame.Surface(res)
-    
-    global window_manager
-    window_manager = pygame_gui.UIManager(res)
-
-    logger.info(f"GUIManager initiated.")
+    logger.info(f"GUI initiated.")
 
 
 def process_events(event) -> None:
@@ -156,9 +151,9 @@ def blit_image(image: pygame.image=None):
 def blit_text(text: str, pos=(0,0)):
     window.blit(font.render(text)[0], pos)
 
-def blit_bar(percent: int) -> None:
-    
-    pygame.draw.rect(window, pygame.Color('blue'), (0, 0, int(percent / 100 * 640), 50))
+def blit_bar(percent: float, color: pygame.Color, height: int) -> None:
+    '''Show the bar on the bottom of the screen'''
+    pygame.draw.rect(window, color, (0, DISPLAY["RESOLUTION"][1] - height, int(percent * DISPLAY["RESOLUTION"][0]), height))
 
 def flip():
     """ Trigger displaying on the screen.
