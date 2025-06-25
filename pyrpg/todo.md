@@ -1,7 +1,15 @@
  - make the check of state changes optional withonly warnings being displayed and not preventing the change of state completely
+ - QUEST_START to Scene START
  - state module main menu withbutton resume game??
  - there is some background shown while loading of a scene - should have parameter to show it or not show it
  - change the progress bar so it is really a bar and shown at the bottom
+  - clear the menu and make it part of gui
+  - make it use configuration of the display
+  - is there some way to let the decision about progress in the scene definition?
+  - how to have many progress bars available and select them based on configuration? - nice to have
+   - in `load_scene_from_def` check the `scene["progress_bar"]`
+   - based on its value show the progress bar type
+
  - change the progress bar so that animated background is not shown during the progress
  - main.reinit() function do it more universal - select what all you want to reinit
  - dict_utils including getting dict from file as a package

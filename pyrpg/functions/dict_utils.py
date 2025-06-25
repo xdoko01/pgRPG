@@ -245,9 +245,108 @@ def get_all_dict_values(d: dict):
         else:
             yield val
 
+def _get_coll_len(coll, keys: list) -> int:
+    '''Get the length of collection on the path specified by sequence of keys.
+
+    Parameters:
+        :param coll: Collection that is being searched
+        :type coll: dict/list/tuple/set/...
+
+        :param keys: List of keys where new value should be found.
+        :type keys: list
+
+        :returns int: Length of the found collection.
+    '''
+    if len(keys) == 0: return len(coll)
+
+    sum = 0
+
+    if isinstance(coll, dict):
+        try:
+            if len(keys) == 1: # Yield the results
+                sub_coll = coll[keys[0]]
+                if sub_coll is not None:
+                    if isinstance(sub_coll, list) or isinstance(sub_coll, tuple) or isinstance(sub_coll, set):
+                        return sum + len(sub_coll)
+                    else:
+                        return  sum + 1
+                else:
+                    return 0 # is None
+            else:
+                # If some parts of path exist, continue
+                return sum +_get_coll_len(coll=coll[keys[0]], keys=keys[1:])
+        except KeyError:
+            return sum + 0 # key was not found in the dictionary, return 0
+
+    elif isinstance(coll, list) or isinstance(coll, tuple) or isinstance(coll, set):
+        for item in coll:
+            sum = sum  + _get_coll_len(coll=item, keys=keys)
+        return sum
+
+def get_coll_len(coll, path: str, sep: str='.'):
+    '''Get the length of value specified on the path from the collection.
+
+    Parameters:
+        :param coll: Collection that is being searched
+        :type coll: dict/list/tuple/set/...
+
+        :param path: List of keys in form of a string separated by sep
+                     where new value should be found.
+        :type path: str
+
+        :param sep: Separator used to separate the keys in path string
+        :type sep: str
+
+    Tests:
+        >>> ex = {\
+            'prereqs': [],\
+            'entities': [\
+                {\
+                    'id': 'NPC',\
+                    'components': [\
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}\
+                    ]\
+                },\
+                {\
+                    'id': 'PLAYER',\
+                    'components': [\
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},\
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},\
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}\
+                    ]\
+                }\
+            ]\
+        }
+
+        # Length of all components
+        >>> print(get_coll_len(coll=ex, path='entities/components', sep='/'))
+        6
+
+        # Length of all component types
+        >>> print(get_coll_len(coll=ex, path='entities/components/type', sep='/'))
+        6
+
+        # length of all entity ids
+        >>> print(get_coll_len(coll=ex, path='entities/id', sep='/'))
+        2
+
+        # Length of all healths
+        >>> print(get_coll_len(coll=ex, path='entities/components/params/health', sep='/'))
+        2
+
+        # Length of empty collection 
+        >>> print(get_coll_len(coll=ex, path='prereqs', sep='/'))
+        0
+    '''
+    keys = [] if path == '' else path.split(sep)
+    return _get_coll_len(coll=coll, keys=keys)
+
+
 def _get_coll_value(coll, keys: list):
     '''Get the value specified on the path (specified by sequence of keys) 
-    from the collection.
+    from the collection as a generator.
 
     Parameters:
         :param coll: Collection that is being searched
@@ -409,6 +508,32 @@ def merge_dicts(orig: dict, new: dict) -> dict:
 
 
 if __name__ == '__main__':
+    
+    
     import doctest
     doctest.testmod()
-
+    '''
+    ex = {
+            'prereqs': [],
+            'entities': [
+                {
+                    'id': 'NPC',
+                    'components': [
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [11,22,33]}}
+                    ]
+                },
+                {
+                    'id': 'PLAYER',
+                    'components': [
+                        {"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}},
+                        {"type" : "damageable:Damageable", "params" : {"health" : 100}},
+                        {"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000, 'handlers': [111,222,333]}}
+                    ]
+                }
+            ]
+        }
+    
+    print(get_coll_len(coll=ex, path='entities/components/params/health', sep='/'))
+    '''

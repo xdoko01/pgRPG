@@ -26,11 +26,15 @@ from pyrpg.core.managers import event_manager #import EventManager
 from pyrpg.core.managers import script_manager #import ScriptManager
 from pyrpg.core.managers import pathfind_manager #import PathfindManager
 
-from pyrpg.core.menus.progress_bar2 import ProgressBar2
+#from pyrpg.core.menus.progress_bar2 import ProgressBar2
+from pyrpg.core.config.gui import ProgressBar
+from contextlib import nullcontext # for empty progress bar/skipping progress bar
 
 from pyrpg.core.config import FILEPATHS, Path #SCENE_PATH, Path # for SCENE_PATH
 from pyrpg.core.events.event import Event
-from pyrpg.functions import get_dict_from_file, get_coll_value
+from pyrpg.functions import get_dict_from_file, get_coll_value, get_coll_len
+
+
 
 #####
 
@@ -129,7 +133,39 @@ def init() -> None:
 
     logger.info(f"Game initiated")
 
-def load_scene_from_file(scene_file: str) -> Scene:
+def load_scene(scene_file: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
+    """Loads new game from the scene file"""
+
+    logger.debug(f'Loading scene "{scene_file}".')
+
+    # Delete every game object
+    if clear_before_load: _clear_game()
+
+    # Load the scene, register it and create QUEST_START event
+    scene = load_scene_from_file(scene_file=scene_file, show_progress=show_progress)
+    
+    # Register the scene
+    _scenes[scene.alias] = scene
+    
+    # Create an SCENE_START event
+    event_manager.add_event(
+        Event("QUEST_START", 
+        None, 
+        None, 
+        params={
+            "filepath": scene.filepath,
+            "id": scene.id,
+            "alias": scene.alias,
+            "title": scene.title,
+            "description": scene.description,
+            "objective": scene.objective,
+            "stats": scene.stats
+        })
+    )
+
+    logger.info(f'Scene "{scene_file}" successfully loaded.')
+
+def load_scene_from_file(scene_file: str, show_progress: bool=False) -> Scene:
     """Reads file with the scene, translates it to scene definition
     and processes scene definition into game world objects.
     
@@ -138,6 +174,9 @@ def load_scene_from_file(scene_file: str) -> Scene:
                             scene definition (JSON/YAML/other).
         :type scene_file: str
 
+        :param show_progress: Show progress bar
+        :type show_progress: bool
+
         :returns: Scene object with basic scene information
     """
 
@@ -145,7 +184,7 @@ def load_scene_from_file(scene_file: str) -> Scene:
     scene_def = get_dict_from_file(filepath=Path(scene_file), dir=FILEPATHS["SCENE_PATH"])
 
     # Translate scene definition into the game objects
-    scene = load_scene_from_def(scene_def)
+    scene = load_scene_from_def(scene_def=scene_def, show_progress=show_progress)
 
     # Remember the path
     scene.filepath = scene_file
@@ -173,7 +212,7 @@ load_scene_def_fncs = [
     ["handlers", event_manager.load_handler]
 ]
 
-def load_scene_from_def(scene_def: dict) -> Scene:
+def load_scene_from_def(scene_def: dict, show_progress: bool=False) -> Scene:
     """Translates the scene definition into the objects representing the
     game world - entities, components, maps, dialogs, handlers, etc.
 
@@ -181,6 +220,9 @@ def load_scene_from_def(scene_def: dict) -> Scene:
         :param scene_def: Dictionary containing all information about the
                             scene.
         :type scene_def: dict
+
+        :param show_progress: Show progress bar
+        :type show_progress: bool
 
         :returns: Scene object with basic scene information
     """
@@ -196,48 +238,23 @@ def load_scene_from_def(scene_def: dict) -> Scene:
         # Get the data on the path to be processed
         data_to_process = get_coll_value(coll=scene_def, path=data_path, sep="/") # generator
 
-        logger.info(f'Start of processing of "{data_path}" for scene "{scene.alias}".')
+        # Get length of data for processing
+        data_to_process_len = get_coll_len(coll=scene_def, path=data_path, sep="/")
 
-        # Cycle this data and process them using progress bar
-        global gui_manager
-        with ProgressBar2(gui_manager=gui_manager, header="Loading", text=data_path) as progress:
+        logger.info(f'Start of processing of "{data_path}" for scene "{scene.alias}". Total {data_to_process_len} items.')
+
+        # Cycle this data and process them using progress bar if show_progress is set to True
+        with ProgressBar(header="Loading", text=data_path, total=data_to_process_len) if show_progress else nullcontext(lambda x: x) as progress:
             for item in progress(data_to_process):
                 logger.debug(f'About to process following item "{item}" using function "{process_fnc}".')
                 process_fnc(item)
 
-        logger.info(f'End of processing of "{data_path}" for scene "{scene.alias}".')
+        logger.info(f'End of processing of "{data_path}" for scene "{scene.alias}". Total {data_to_process_len} items.')
     
     logger.info(f'Loading objects for scene "{scene.alias}" has finished.')
 
     return scene
 
-def load_scene(scene_file: str, clear_before_load: bool=True, show_progress: bool=True) -> None:
-    """Loads new game from the scene"""
-
-    logger.debug(f'Loading scene "{scene_file}".')
-
-    # Delete every game object
-    if clear_before_load: _clear_game()
-
-    # Load the scene, register it and create QUEST_START event
-    scene = load_scene_from_file(scene_file=scene_file)
-    _scenes[scene.alias] = scene
-    event_manager.add_event(
-        Event("QUEST_START", 
-        None, 
-        None, 
-        params={
-            "filepath": scene.filepath,
-            "id": scene.id,
-            "alias": scene.alias,
-            "title": scene.title,
-            "description": scene.description,
-            "objective": scene.objective,
-            "stats": scene.stats
-        })
-    )
-
-    logger.info(f'Scene "{scene_file}" successfully loaded.')
 
 def _clear_game() -> None:
     """Clear all game related resources"""

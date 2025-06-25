@@ -7,6 +7,7 @@
 	"title" : "Empty Scene",
 	"description" : "Empty Scene",
 	"objective" : "Empty Scene",
+	"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pyRPG.png", "bar": true}], // example how progress bar could be configured
 
 	// What scenes need to be loaded before this one
 	"prereqs" : [],
