@@ -40,8 +40,15 @@ def initialize(state: State, register_fnc) -> None:
     _initialized = True # mark as initialized
 
 import pyrpg.core.main as main # for re-init after change of display configuration
+
 from pygame_gui.elements import UIDropDownMenu
 _resolution_dropdown: UIDropDownMenu = None
+
+from pygame_gui.elements import UILabel
+_res_dropdown_label: UILabel = None
+
+from pygame_gui.elements import UICheckBox
+_check_box: UICheckBox = None
 
 from pyrpg.core.config import DISPLAY
 
@@ -51,11 +58,20 @@ def init(*args, **kwargs) -> None:
     '''
     print(f'{DISPLAY["SUPPORTED_RESOLUTIONS"]=}')
 
+    # Resolution drop-down label
+    global _res_dropdown_label
+    _res_dropdown_label = UILabel(
+        relative_rect=pygame.Rect((100,200), (100, 50)),
+        text= "Resolution",
+        manager=gui_manager.window_manager,
+        container=None
+    )
+
+    _res_dropdown_label.hide()
+
+    # Resolution drop-down
     global _resolution_dropdown
     _resolution_dropdown = UIDropDownMenu(
-        #options_list=[str(res)[10:] for res in DISPLAY["SUPPORTED_RESOLUTIONS"]],
-        #starting_option= str(DISPLAY["RESOLUTION"])[10:],
-
         options_list=[f"{res[0]}x{res[1]}" for res in DISPLAY["SUPPORTED_RESOLUTIONS"]],
         starting_option= f"{DISPLAY["RESOLUTION"][0]}x{DISPLAY["RESOLUTION"][1]}",
         relative_rect=pygame.Rect((200, 200), (250, 30)),
@@ -64,6 +80,18 @@ def init(*args, **kwargs) -> None:
         )
     
     _resolution_dropdown.hide()
+
+    # Fullscreen check-box
+    global _check_box
+    _check_box = UICheckBox(
+        relative_rect=pygame.Rect((100,100), (30, 30)),
+        text="Fullscreen",
+        manager=gui_manager.window_manager,
+        container=None,
+        initial_state=DISPLAY["FULLSCREEN"]
+    )
+
+    _check_box.hide()
 
     global _init
     _init = True
@@ -84,19 +112,25 @@ def clear() -> None:
 
 
 import pygame
-from pygame_gui import UI_DROP_DOWN_MENU_CHANGED
+from pygame_gui import UI_DROP_DOWN_MENU_CHANGED, UI_CHECK_BOX_CHECKED, UI_CHECK_BOX_UNCHECKED
 from pyrpg.core.config import gui as gui_manager
 
 def _show() -> None:
     '''Show the buttons when first time in MAIN_MENU state.
     '''
+    _res_dropdown_label.show()
     _resolution_dropdown.show()
+    _check_box.show()
+
     logger.info(f'Settings window showed')
 
 def _hide() -> None:
     '''Hide the buttons when leaving to other state.
     '''
+    _res_dropdown_label.hide()
     _resolution_dropdown.hide()
+    _check_box.hide()
+
     logger.info(f'Settings window hidden')
 
 ### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
@@ -118,7 +152,6 @@ def run(key_events, key_pressed, dt) -> State:
         # On changing the dropdown menu -> change configuration
         elif event.type == UI_DROP_DOWN_MENU_CHANGED:
 
-
             sep = event.text.find('x')
             width = event.text[0:sep]
             height = event.text[sep+1:]
@@ -135,6 +168,32 @@ def run(key_events, key_pressed, dt) -> State:
             _show()
             
             return State.SETTINGS
+
+        # On changing the fullscreen checkbox, change to/from fullscreen
+        elif event.type == UI_CHECK_BOX_CHECKED:
+
+            DISPLAY["FULLSCREEN"] = True
+
+            # Reinit after change of configuration
+            main.reinit()
+            
+            # Show again the Settings
+            _show()
+            
+            return State.SETTINGS
+
+        elif event.type == UI_CHECK_BOX_UNCHECKED:
+
+            DISPLAY["FULLSCREEN"] = False
+
+            # Reinit after change of configuration
+            main.reinit()
+            
+            # Show again the Settings
+            _show()
+            
+            return State.SETTINGS
+
 
         elif event.type == pygame.KEYDOWN:
 

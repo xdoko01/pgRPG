@@ -41,6 +41,22 @@ drop_down = pygame_gui.elements.UIDropDownMenu(
 	container=None
 	)
 
+check_box = pygame_gui.elements.UICheckBox(
+	relative_rect=pygame.Rect((100,100), (30,30)),
+	text="Example Checkbox",
+	manager=manager,
+	container=None,
+	initial_state=False,
+	tool_tip_text="Tooltip text"
+)
+
+text = pygame_gui.elements.UILabel(
+	relative_rect=pygame.Rect((10,10), (100, 50)),
+	text= "Resolution Label",
+	manager=manager,
+	container=None
+)
+
 while is_running:
 	dt = clock.tick(60)
 
@@ -58,6 +74,11 @@ while is_running:
 			print(event.text)
 		if event.type == pygame_gui.UI_DROP_DOWN_MENU_CHANGED:
 			print("Selected option:", event.text)
+		if event.type == pygame_gui.UI_CHECK_BOX_CHECKED:
+			print("CHeckbox checked:", event)
+		if event.type == pygame_gui.UI_CHECK_BOX_UNCHECKED:
+			print("CHeckbox unchecked:", event)
+
 
 
 		manager.process_events(event)

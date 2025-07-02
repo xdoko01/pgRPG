@@ -50,6 +50,9 @@ def init(*args, **kwargs) -> None:
     '''Pass the parameters necessary for flawless function to the module.
     '''
 
+    global _resume_button
+    _resume_button = UIButton(relative_rect=pygame.Rect((150, 25), (100, 50)), text='Resume', manager=gui_manager.window_manager, container=None)
+
     global _settings_button
     _settings_button = UIButton(relative_rect=pygame.Rect((150, 100), (100, 50)), text='Settings', manager=gui_manager.window_manager, container=None)
 
@@ -59,6 +62,7 @@ def init(*args, **kwargs) -> None:
     global _exit_game_button
     _exit_game_button = UIButton(relative_rect=pygame.Rect((150, 275), (100, 50)), text='Exit', manager=gui_manager.window_manager, container=None)
 
+    _resume_button.hide()
     _settings_button.hide()
     _load_scene_button.hide()
     _exit_game_button.hide()
@@ -88,6 +92,7 @@ from pyrpg.core.config import gui as gui_manager
 def _show() -> None:
     '''Show the buttons when first time in MAIN_MENU state.
     '''
+    if state_manager.game_state is not None: _resume_button.show()
     _settings_button.show()
     _load_scene_button.show()
     _exit_game_button.show()
@@ -96,6 +101,7 @@ def _show() -> None:
 def _hide() -> None:
     '''Hide the buttons when leaving to other state.
     '''
+    _resume_button.hide()
     _settings_button.hide()
     _load_scene_button.hide()
     _exit_game_button.hide()
@@ -120,6 +126,12 @@ def run(key_events, key_pressed, dt) -> State:
         # On pressing a button -> move to new state
         elif event.type == UI_BUTTON_PRESSED:
             
+            # On pressing the Resume button -> switch to GAME state
+            if event.ui_element == _resume_button:
+                logger.info(f'Resuming to Game')
+                _hide()
+                return State.GAME
+
             # On pressing the Settings button -> switch to SETTINGS state
             if event.ui_element == _settings_button:
                 logger.info(f'Accessing Settings window')
