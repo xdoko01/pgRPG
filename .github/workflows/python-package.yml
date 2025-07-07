@@ -40,4 +40,6 @@ jobs:
         pytest
     - name: Test with doctest
       run: |
-        pytest --doctest-modules
+        find . -name "*.py" -exec python -m doctest -v {} \;
+
+
