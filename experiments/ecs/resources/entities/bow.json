@@ -1,8 +1,0 @@
-{
-	"id" : "bow",
-	"templates" : ["weapon"],
-	"components" : [
-		{"type" : "Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
-		{"type" : "Pickable", "params" : {}}
-	]
-}

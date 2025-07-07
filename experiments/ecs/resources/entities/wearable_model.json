@@ -1,8 +1,0 @@
-{
-	"id" : "wearable_model",
-	"templates" : ["model"],
-
-	"components" : [
-		{"type" : "Collidable", "params" : {"x" : 15, "y" : 15}}
-	]
-}
