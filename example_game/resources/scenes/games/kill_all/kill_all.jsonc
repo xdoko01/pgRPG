@@ -24,7 +24,7 @@
 	"processors" : [
 
 		// For events processing
-		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "DESTROYED", "CUST_UI_CONFIRM"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START", "DESTROYED", "CUST_UI_CONFIRM"]}],
 
 		// For commands
 		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
@@ -136,7 +136,7 @@
 	// How to handle events
 	"handlers" : [
 		[
-			"QUEST_START",
+			"SCENE_START",
 			{
 				"id": "h_start_game",
 				

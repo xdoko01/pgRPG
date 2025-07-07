@@ -70,7 +70,7 @@
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the scene - after first game screen is generated
-		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "SCORE", "ITEM_PICKUP", "CUST_UI_CONFIRM"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START", "SCORE", "ITEM_PICKUP", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
 
@@ -300,7 +300,7 @@
 	// How to handle events
 	"handlers": [
 		[
-			"QUEST_START",
+			"SCENE_START",
 			{
 				"id": "ev_collect_coins",
 				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to %id.<br/>Your goal is to collect coins with exact value of 500.<br/>Not less, not more!"}]

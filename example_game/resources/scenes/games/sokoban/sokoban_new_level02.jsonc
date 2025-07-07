@@ -96,7 +96,7 @@
 
 	"handlers": [
 		[
-			"QUEST_START",
+			"SCENE_START",
 			{
 				"id": "ev_level02_start",
 				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to next level <b>%id</b>.<br/>Your goal is AGAIN to place all the cranes on the market spots."}]

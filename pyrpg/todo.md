@@ -1,12 +1,11 @@
 ## Current
-  - [ ] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change.
+  - [x] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change. (2025-07-07)
   - [ ] - Settings screen option running in some dialog and having some Apply button.
-  - [ ] - How to go back from the settings screen to the Game? resume button>
+  - [x] - How to go back from the settings screen to the Game? resume button. (2025-07-07)
   - [ ] - dict_utils including getting dict from file as a package
   - [ ] - main.reinit() function do it more universal - select what all you want to reinit
   - [ ] - make the check of state changes optional with only warnings being displayed and not preventing the change of state completely.
   - [ ] - Change `QUEST_START` to `SCENE_LOADED` event
-  - [ ] - add Resume Game button in the main menu state
   - [x] - adjust the progress bar based on the window resolution
   - [x] - rename `engine.new_game` to `load_scene`
   - [x] - pass progress bar form `load_scene` to `load_scene_from_file` to `load_scene_from_def`

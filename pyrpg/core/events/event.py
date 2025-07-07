@@ -7,7 +7,7 @@ class Event:
 	EVENT_TYPES = ['COLLISION', 'TELEPORTATION', 'ITEM_PICKUP',\
 		 'WEARABLE_WEARED', 'WEAPON_ARMED', 'AMMO_PACK_ARMED', 'AMMO_PACK_DISARMED',\
 		 'DAMAGE', 'KILL', 'SCORE',\
-		 'QUEST_START', 'PHASE_START']
+		 'SCENE_START', 'PHASE_START']
 
 
 	def __init__(self, event_type, generator_obj, other_obj, params={}):

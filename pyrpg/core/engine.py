@@ -141,7 +141,7 @@ def load_scene(scene_file: str, clear_before_load: bool=True, show_progress: boo
     # Delete every game object
     if clear_before_load: _clear_game()
 
-    # Load the scene, register it and create QUEST_START event
+    # Load the scene, register it and create SCENE_START event
     scene = load_scene_from_file(scene_file=scene_file, show_progress=show_progress)
     
     # Register the scene
@@ -149,7 +149,7 @@ def load_scene(scene_file: str, clear_before_load: bool=True, show_progress: boo
     
     # Create an SCENE_START event
     event_manager.add_event(
-        Event("QUEST_START", 
+        Event("SCENE_START", 
         None, 
         None, 
         params={
@@ -473,11 +473,11 @@ class Game:
         # Delete every game object
         if clear_before_load: self._clear_game()
 
-        # Load the scene, register it and create QUEST_START event
+        # Load the scene, register it and create SCENE_START event
         scene = self.load_scene_from_file(filepath=filepath)
         self._scenes[scene.alias] = scene
         self.event_manager.add_event(
-            Event("QUEST_START", 
+            Event("SCENE_START", 
             self, 
             None, 
             params={

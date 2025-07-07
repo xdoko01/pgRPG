@@ -110,7 +110,7 @@
 
 		// EVENTS PROCESSING
 		// For events processing - display the dialog on the start of the scene - after first game screen is generated
-		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START"]}]
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}]
 
 	],
 
@@ -248,7 +248,7 @@
 	// How to handle events
 	"handlers": [
 		[
-			"QUEST_START",
+			"SCENE_START",
 			{
 				"id": "ev_scene_start",
 				"actions": 	[

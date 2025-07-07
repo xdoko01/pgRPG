@@ -46,7 +46,7 @@ processors:
 - ["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}]
 
   # For events processing - display the dialog on the start of the scene - after first game screen is generated
-- ["event_system.game_events_processor:GameEventsExProcessor", { process: QUEST_START}]
+- ["event_system.game_events_processor:GameEventsExProcessor", { process: SCENE_START}]
 
   # Flag removals
 - ["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}]
@@ -391,7 +391,7 @@ entities:
 
 # How to handle events
 handlers:
-  - - QUEST_START
+  - - SCENE_START
     - id: ev_info_msg
       actions:
         - SCRIPT
@@ -399,7 +399,7 @@ handlers:
         - title: "%filepath"
           html_text: "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
 
-  - - QUEST_START
+  - - SCENE_START
     - id: ev_scene_start
       actions:
         - SCRIPT

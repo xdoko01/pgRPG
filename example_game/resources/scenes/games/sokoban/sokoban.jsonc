@@ -74,7 +74,7 @@
 		["position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor", {"step": 1000}],
 
 		// For events processing - display the dialog on the start of the scene - after first game screen is generated
-		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["QUEST_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
+		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}],
 
 		// Removal at the end of the cycle
 
@@ -256,7 +256,7 @@
 	// How to handle events
 	"handlers": [
 		[
-			"QUEST_START",
+			"SCENE_START",
 			{
 				"id": "ev_start_game",
 				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%id</b>.<br/>Your goal is to place all the cranes on the market spots."}]

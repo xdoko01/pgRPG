@@ -24,7 +24,7 @@ def load_handler(handler_def: list) -> None:
 
     Example of handler_def
         [ 
-            "QUEST_START",
+            "SCENE_START",
             {
                 "id": "ev_start_game",
                 "actions": 	[
@@ -171,7 +171,7 @@ class EventManager:
 
             Example of handler_def
                     [ 
-                        "QUEST_START",
+                        "SCENE_START",
                         {
                             "id": "ev_start_game",
                             "actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%scene_id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
