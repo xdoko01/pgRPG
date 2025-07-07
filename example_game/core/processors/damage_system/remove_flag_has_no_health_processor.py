@@ -1,4 +1,4 @@
-__all__ = ['RemoveFlagWasDamagedByProcessor']
+__all__ = ['RemoveFlagHasNoHealthProcessor']
 
 import logging
 
