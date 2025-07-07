@@ -41,6 +41,11 @@ def initialize(state: State, register_fnc) -> None:
 
 import pyrpg.core.main as main # for re-init after change of display configuration
 
+'''
+from pygame_gui.elements import UIWindow
+_option_window: UIWindow = None
+'''
+
 from pygame_gui.elements import UIDropDownMenu
 _resolution_dropdown: UIDropDownMenu = None
 
@@ -57,6 +62,18 @@ def init(*args, **kwargs) -> None:
     '''Pass the parameters necessary for flawless function to the module.
     '''
     print(f'{DISPLAY["SUPPORTED_RESOLUTIONS"]=}')
+
+    # Options vindow
+    '''
+    global _option_window
+    _option_window = UIWindow(
+        rect=pygame.Rect((10,10), (500,500)),
+        draggable=False,
+        manager=gui_manager.window_manager
+    )
+
+    _option_window.hide()
+    '''
 
     # Resolution drop-down label
     global _res_dropdown_label
@@ -118,6 +135,7 @@ from pyrpg.core.config import gui as gui_manager
 def _show() -> None:
     '''Show the buttons when first time in MAIN_MENU state.
     '''
+    #_option_window.show()
     _res_dropdown_label.show()
     _resolution_dropdown.show()
     _check_box.show()
@@ -127,6 +145,7 @@ def _show() -> None:
 def _hide() -> None:
     '''Hide the buttons when leaving to other state.
     '''
+    #_option_window.hide()
     _res_dropdown_label.hide()
     _resolution_dropdown.hide()
     _check_box.hide()

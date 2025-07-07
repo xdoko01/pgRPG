@@ -1,6 +1,7 @@
 ## Current
+  - [ ] - GitHub actions clean pytest, doctest and Lint issues.
   - [x] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change. (2025-07-07)
-  - [ ] - Settings screen option running in some dialog and having some Apply button.
+  - [ ] - Settings screen option running in some dialog and having some Apply button. Problem that CHeckBox within UIWindow hiding is raising exception.
   - [x] - How to go back from the settings screen to the Game? resume button. (2025-07-07)
   - [ ] - dict_utils including getting dict from file as a package
   - [ ] - main.reinit() function do it more universal - select what all you want to reinit
