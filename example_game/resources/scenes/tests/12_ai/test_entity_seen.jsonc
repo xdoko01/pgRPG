@@ -145,7 +145,7 @@
 						"dx" : 0, "dy" : 8,
 						"accept_pos_fix_from_denylist" : [] // ["ALL"] // no one can move the player
 					}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		},
 		{

@@ -144,7 +144,7 @@
 				{"type" : "has_score:HasScore", "params" : {}},
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_pos_x" : 0, "screen_pos_y" : 0, "screen_width" : 640, "screen_height" : 480}}
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		}
 

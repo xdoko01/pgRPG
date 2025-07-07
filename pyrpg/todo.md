@@ -1,5 +1,5 @@
 ## Current
-  - [ ] - CHange the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change.
+  - [ ] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change.
   - [ ] - Settings screen option running in some dialog and having some Apply button.
   - [ ] - How to go back from the settings screen to the Game? resume button>
   - [ ] - dict_utils including getting dict from file as a package
