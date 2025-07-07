@@ -7,5 +7,5 @@ __pycache__
 # Ignore all backup directories
 **/backup
 
-# Ignore all backup experiments
+# Ignore all experiments directories
 **/experiments

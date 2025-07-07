@@ -5,12 +5,11 @@
   - [ ] - dict_utils including getting dict from file as a package
   - [ ] - main.reinit() function do it more universal - select what all you want to reinit
   - [ ] - make the check of state changes optional with only warnings being displayed and not preventing the change of state completely.
-  - [ ] - Change `QUEST_START` to `SCENE_LOADED` event
   - [x] - adjust the progress bar based on the window resolution
   - [x] - rename `engine.new_game` to `load_scene`
   - [x] - pass progress bar form `load_scene` to `load_scene_from_file` to `load_scene_from_def`
   - [ ] - clear the `engine` code from unused things
-  - [ ] - rename `QUEST_START` event to `SCENE_START` event
+  - [x] - rename `QUEST_START` event to `SCENE_START` event (2025-07-07)
   - [ ] - parameter that decides whether to show the loading progress - was there some time ago already, now gone
   - [ ] - console command that just toggles off the console + implement parameters to the commands not to toggle off console at the end to use with more complicated console scripts.
   - [ ] - toggle console without animation effect in an instance, one cycle without console and then back to the console - how to call all processors for one cycle
