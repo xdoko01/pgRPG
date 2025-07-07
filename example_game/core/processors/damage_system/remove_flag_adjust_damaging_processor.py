@@ -1,4 +1,4 @@
-__all__ = ['RemoveFlagAdjustDamagingdProcessor']
+__all__ = ['RemoveFlagAdjustDamagingProcessor']
 
 import logging
 

@@ -27,7 +27,7 @@ class RenderableModel(Component):
         >>> c = RenderableModel(**{"model" : "darkfemale.json", "action" : "idle"})
     '''
 
-    __slots__ = ['model', 'last_frame', 'last_time', 'is_action_frame', 'action']
+    __slots__ = ['model', 'model_file', 'last_frame', 'last_time', 'is_action_frame', 'action']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new RenderableModel component.
@@ -45,25 +45,27 @@ class RenderableModel(Component):
         super().__init__()
 
         # Get the model name
-        model_file = kwargs.get('model', '')
+        self.model_file = kwargs.get('model', '')
 
         # Get the initial action of the model
         self.action = kwargs.get('action', 'idle')
 
         # Check the model name and the action name for validity
         try:
-            assert isinstance(model_file, str), f'Model file name "{model_file}" is not valid.'
+            assert isinstance(self.model_file, str), f'Model file name "{self.model_file}" is not valid.'
             assert isinstance(self.action, str) and self.action in model.Model.ACTIONS, f'Action "{self.action}" is not allowed animation.'
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError
 
+        self.model_file = FILEPATHS["MODEL_PATH"] / Path(self.model_file)
+
         # Initiate new model
         try:
             #self.model = model.load_model(str(MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
-            self.model = model.load_model(FILEPATHS["MODEL_PATH"] / Path(model_file), (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
+            self.model = model.load_model(self.model_file, (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
         except:
-            print(f'Something went wrong during initiation of the model "{FILEPATHS["MODEL_PATH"] / Path(model_file)}"')
+            print(f'Something went wrong during initiation of the model "{self.model_file}"')
             # Notify component factory that initiation has failed
             raise ValueError
 
@@ -132,7 +134,7 @@ class RenderableModel(Component):
         '''
         try:
             #self.model = model.load_model(str(config.MODEL_PATH / model_file), (config.TILE_RES, config.TILE_RES))
-            self.model = model.load_model(MODEL_PATH / model_file, (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
+            self.model = model.load_model(self.model_file, (GAME["TILE_RES_PX"], GAME["TILE_RES_PX"]))
 
         except:
             raise ValueError
