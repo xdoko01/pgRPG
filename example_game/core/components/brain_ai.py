@@ -117,10 +117,10 @@ class BrainAI(Component):
                 self.generator = BList(list_def=kwargs, cmd_factory=cmd_factory)
             except InvalidBehaviorListError:
                 logger.error(f'The Behavior List is invalid. Substituing with default behavior.')
-                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+                self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=FILEPATHS["BTREE_PATH"], val_check=True)
         else:
             logger.error(f'The Behavior is invalid. Substituing with default behavior.')
-            self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=BTREE_PATH, val_check=True)
+            self.generator = BTree(tree_def=BrainAI.FAILSAFE_TREE, cmd_factory=cmd_factory, template_path=FILEPATHS["BTREE_PATH"], val_check=True)
 
 # Mock component for usage in tests
 @dataclass
