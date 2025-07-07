@@ -1,8 +1,0 @@
-{
-    "font_image" : "experiments/bitmap_font/red_gradient_capital_font.png",
-    "font_color" : "#FF0000",
-    "colorkey" : "#000000",
-    "separator_color" : "#7F7F7F",
-    "character_order" : ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!", "?", " "],
-    "spacing" : [1, 1]
-}

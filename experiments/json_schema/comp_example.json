@@ -1,9 +1,0 @@
-
-{
-	"$schema": "../../pyrpg/core/schemas/new/components/collidable.schema.json",
-	"type" : "collidable:Collidable",
-	"params" :  {
-		"velocity" : 5
-	}
-
-}

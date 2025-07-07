@@ -1,7 +1,0 @@
-{
-	"id" : "darkfemale",
-	"templates" : ["character_model"],
-	"components" : [
-		{"type" : "RenderableModel", "params" : {"model" : "darkfemale.json"}}		
-	]
-}
