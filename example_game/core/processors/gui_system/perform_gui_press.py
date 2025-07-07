@@ -1,4 +1,4 @@
-__all__ = ['GenerateCommandFromInputProcessor']
+__all__ = ['PerformGUIPress']
 
 import logging
 

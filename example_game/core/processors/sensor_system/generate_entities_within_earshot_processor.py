@@ -172,7 +172,7 @@ class GenerateEntitiesWithinEarshotFullProcessor(Processor):
             map = self.fnc_get_map(ent_pos.map)
 
             # 1/ filter all entities with pos component in radius and angle (and optionally displayed on the camera)
-            for oth_ent, (oth_pos, _) in filter(lambda x: filter_only_within_earshot_of_ent(ent_pos, ent_can_hear, x), self.world.get_components(Position, FlagDoMove)):
+            for oth_ent, (oth_pos, _) in filter(lambda x: filter_only_within_distance_from_ent(ent_pos, ent_can_hear.distance, x), self.world.get_components(Position, FlagDoMove)):
 
                 logger.debug(f'({self.cycle}) - Checking if Entity {ent} hears entity {oth_ent} with pos comp: {oth_pos}.')
 

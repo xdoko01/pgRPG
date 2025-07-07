@@ -89,8 +89,8 @@ def init(*args, **kwargs) -> None:
     # Resolution drop-down
     global _resolution_dropdown
     _resolution_dropdown = UIDropDownMenu(
-        options_list=[f"{res[0]}x{res[1]}" for res in DISPLAY["SUPPORTED_RESOLUTIONS"]],
-        starting_option= f"{DISPLAY["RESOLUTION"][0]}x{DISPLAY["RESOLUTION"][1]}",
+        options_list=[f'{res[0]}x{res[1]}' for res in DISPLAY["SUPPORTED_RESOLUTIONS"]],
+        starting_option= f'{DISPLAY["RESOLUTION"][0]}x{DISPLAY["RESOLUTION"][1]}',
         relative_rect=pygame.Rect((200, 200), (250, 30)),
         manager=gui_manager.window_manager,
         container=None
