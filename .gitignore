@@ -8,4 +8,4 @@ __pycache__
 **/backup
 
 # Ignore all experiments directories
-**/experiments
+experiments/
