@@ -110,7 +110,7 @@ class BTreeAI(Component):
             self.generator = BTree(
                 tree_def=BTreeAI.FAILSAFE_TREE, 
                 cmd_factory=cmd_factory, 
-                template_path=BTREE_PATH, 
+                template_path=FILEPATHS["BTREE_PATH"], 
                 val_check=True
             )
 

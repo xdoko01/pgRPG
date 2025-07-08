@@ -16,7 +16,7 @@ class BackgroundAnimation:
         self.last_time = pygame.time.get_ticks()
         self.frames = len(self.animation)
 
-background_animation: BackgroundAnimation
+background_animation: BackgroundAnimation | None = None
 
 def init_background_animation(display: dict, filepaths: dict, gui_conf: dict) -> None:
 
@@ -109,13 +109,13 @@ from collections import namedtuple
 Pos = namedtuple("Pos", ["x", "y"])
 Dim = namedtuple("Dim", ["width", "height"])
 
-window: pygame.Surface
+window: pygame.Surface | None = None
 clock = pygame.time.Clock()
 
-screen_copy: pygame.Surface
-window_manager: pygame_gui.UIManager
+screen_copy: pygame.Surface | None = None
+window_manager: pygame_gui.UIManager | None = None
 
-font: BitmapFont
+font: BitmapFont | None = None
 
 def init_gui(display: dict, fonts: dict) -> None:
     '''Initiate the main variables on init or change of configuration'''

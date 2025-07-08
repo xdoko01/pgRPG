@@ -122,7 +122,7 @@ class RenderableModel(object):
 				json_model_data = model_file.read()
 				model_data = json.loads(json_model_data)
 		except FileNotFoundError:
-			print(f"Model file {config.MODEL_PATH + json_file} not found.")
+			print(f"Model file not found.")
 			# Notify component factory that initiation has failed
 			raise ValueError
 

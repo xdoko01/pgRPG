@@ -39,7 +39,7 @@ def _init_game(scene_file: str) -> None:
     #from pyrpg.core import engine as e
     #engine = e
     #engine.init() # Init can be removed as timed parameter is no longer passed
-    global engine
+    #global engine
     _init_engine()
     engine.load_scene(scene_file, show_progress=True)
 

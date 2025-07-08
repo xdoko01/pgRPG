@@ -432,7 +432,7 @@ def _init_console(app_module: str=None) -> None:
         import pyrpg.core.config.console # because this module is used for functions displaying info on console
         # Load the console from utils
         cons = Console(
-            app=None, # configured lated
+            app=None, # configured later
             width=DISPLAY["RESOLUTION"].width,
             config=CONSOLE
         )

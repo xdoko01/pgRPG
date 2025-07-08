@@ -8,7 +8,7 @@ from pyrpg.core.events.event import Event
 
 _event_queue: list = []
 _exec_event_actions_fnc: callable
-_event_handlers:dict = {}  # Stores all event handlers from scenes and phases. Event is a dict key and value is list of handlers
+_event_handlers: dict = {}  # Stores all event handlers from scenes and phases. Event is a dict key and value is list of handlers
 
 logger.info(f"EventManager started.")
 

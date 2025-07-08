@@ -1,4 +1,5 @@
 ## Current
+  - [ ] - BUG - debug information upon hover raises error when trying to render the frame
   - [ ] - GitHub actions clean pytest, doctest and Lint issues.
   - [ ] - Make messagess work. Sript `add_msg` is corrupted. Plan the necessary processors handling message queue.
   - [x] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change. (2025-07-07)

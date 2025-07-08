@@ -234,23 +234,20 @@ if __name__ == '__main__':
         (4, 2): [((3, 2), 1), ((4, 1), 1)]
     }
 
-    # Instantiate Pathfind manager
-    pf_manager = PathfindManager()
-
     # Request paths calculation from the manager
-    path_req_0 = pf_manager.request_path(map_graph, (1,1), (4,2), 'BFS')
-    path_req_1 = pf_manager.request_path(map_graph, (4,2), (1,1), 'BFS_CHECKPOINTS')
-    path_req_2 = pf_manager.request_path(map_graph, (4,2), (1,1), 'BFS_CHECKPOINTS_W_FIRST')
+    path_req_0 = request_path(map_graph, (1,1), (4,2), 'BFS')
+    path_req_1 = request_path(map_graph, (4,2), (1,1), 'BFS_CHECKPOINTS')
+    path_req_2 = request_path(map_graph, (4,2), (1,1), 'BFS_CHECKPOINTS_W_FIRST')
 
     # Process the calculation - maximum 2 calc steps allowed
-    pf_manager.continue_pathfinding(max_steps=2)
-    pf_manager.continue_pathfinding(max_steps=2)
-    pf_manager.continue_pathfinding(max_steps=2)
-    pf_manager.continue_pathfinding(max_steps=20)
+    continue_pathfinding(max_steps=2)
+    continue_pathfinding(max_steps=2)
+    continue_pathfinding(max_steps=2)
+    continue_pathfinding(max_steps=20)
 
     # Retrieve the results
-    print(f'Request 0 results: {pf_manager.get_path(req_id=path_req_0)}')
-    print(f'Request 1 results: {pf_manager.get_path(req_id=path_req_1)}')
-    print(f'Request 2 results: {pf_manager.get_path(req_id=path_req_2)}')
+    print(f'Request 0 results: {get_path(req_id=path_req_0)}')
+    print(f'Request 1 results: {get_path(req_id=path_req_1)}')
+    print(f'Request 2 results: {get_path(req_id=path_req_2)}')
 
 # %%
