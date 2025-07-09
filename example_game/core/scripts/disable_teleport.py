@@ -7,6 +7,7 @@ XXXX
 import pyrpg.core.ecs.components as components
 import pyrpg.core.main as main
 
+
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''
     # Mandatory line
@@ -14,11 +15,15 @@ def initialize(register, module_name):
     # Optional names for the script
     register(fnc=script_disable_teleport, alias='disable_teleport')
 
+
 def script_disable_teleport(event=None, *args, **kwargs):
     ''' Remove the teleport possibilities from the teleport
     '''
 
-    main.engine.ecs_manager.remove_component(event.generator_obj, components.Collidable)
+    main.engine.ecs_manager.remove_component(
+        event.generator_obj,
+        components.Collidable
+    )
 
-    #Return success
+    # Return success
     return 0

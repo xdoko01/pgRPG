@@ -11,6 +11,7 @@ import pygame
 import random
 import pyrpg.core.main as main
 
+
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''
     # Mandatory line
