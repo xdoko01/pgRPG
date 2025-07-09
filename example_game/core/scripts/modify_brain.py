@@ -1,4 +1,18 @@
+'''
+Can be run from the console by putting following command
+
+XXXX
+'''
+
 import pyrpg.core.ecs.components as components
+import pyrpg.core.main as main
+
+def initialize(register, module_name):
+    '''Script registers itself at ScriptManager'''
+    # Mandatory line
+    register(fnc=script_modify_brain, alias=module_name)
+    # Optional names for the script
+    register(fnc=script_modify_brain, alias='modify_brain')
 
 def script_modify_brain(event=None, *args, **kwargs):
     ''' Called from scene as an reaction to event fulfilled
@@ -6,11 +20,11 @@ def script_modify_brain(event=None, *args, **kwargs):
     '''
 
     # Get the entity whose brain I will be working with
-    entity = engine.alias_to_entity.get(kwargs.get("entity", None))
+    entity = main.engine.ecs_manager.get_entity_id(entity_alias=kwargs.get("entity", None))
 
     # Get the brain of the entity
     try:
-        brain = engine.world.component_for_entity(entity, components.Brain)
+        brain = main.engine.ecs_manager.component_for_entity(entity, components.Brain)
 
         # Stop the brain
         brain.enabled = False

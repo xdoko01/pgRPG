@@ -505,7 +505,7 @@ if __name__ == "__main__":
             json_dlg_data = dlg_file.read()
             dlg_data = json.loads(re.sub("//.*", "", json_dlg_data, flags=re.MULTILINE))
     except FileNotFoundError:
-        print(f"Dialog file '{file}' not found.")
+        print(f"Dialog file '{dlg_file}' not found.")
         raise
 
     pprint(dlg_data)

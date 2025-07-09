@@ -7,7 +7,7 @@ from pyrpg.core.events.event import Event
 ###
 
 _event_queue: list = []
-_exec_event_actions_fnc: callable
+_exec_event_actions_fnc: callable = lambda x: None
 _event_handlers: dict = {}  # Stores all event handlers from scenes and phases. Event is a dict key and value is list of handlers
 
 logger.info(f"EventManager started.")
@@ -52,7 +52,7 @@ def load_handler(handler_def: list) -> None:
 
 def delete_handler(handler_id: str) -> None:
     """Deletes data for handler_id from handler storage _event_handlers."""
-    global _event_handlers
+    #global _event_handlers
 
     # Browse all event types, dind the handler_id key and delete the record
     for event_type in _event_handlers:
@@ -122,7 +122,7 @@ def _process_event(event: Event) -> None:
         _exec_event_actions_fnc(event, action)
 
 
-def process_events(process: list[Event.EVENT_TYPES]=None, ignore: list(Event.EVENT_TYPES)=None) -> None:
+def process_events(process: list=None, ignore: list=None) -> None:
     ''' Process particular game/scene event types that are specified on the input.
     '''
 

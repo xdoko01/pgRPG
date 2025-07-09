@@ -24,18 +24,18 @@ STATES["STATES_GRAPH"] = new_states_graph
 #print(f'{STATES=}')
 
 # Globals
-state_graph: dict
-all_states: list
-non_game_states: list
-game_states: list
+state_graph: dict | None = None
+all_states: list | None = None
+non_game_states: list | None = None
+game_states: list | None = None
 
-state: State
-prev_state: State = None
-game_state: State
-prev_game_state: State = None
+state: State | None = None
+prev_state: State | None = None
+game_state: State | None = None
+prev_game_state: State | None = None
 
-changed = False # If the change happened in current loop, set to True else false
-changed_game_state = False
+changed: bool = False # If the change happened in current loop, set to True else false
+changed_game_state: bool = False
 
 state_modules: dict = None
 
@@ -109,13 +109,14 @@ def _initialize_state_modules() -> None:
 def _register_state_module(state: State, module) -> None:
     """Register the state module. Called by the state module.
     """
-    global state_modules
+    #global state_modules
     state_modules[state] = module
 
 
 def get_avail_states() -> list:
     """Return allowed states for continuation.
     """
+    global state_graph
     try:
         return state_graph[state]
     except KeyError:

@@ -1,4 +1,5 @@
 ## Current
+  - [ ] - Refactor all `core/scripts/*`. Import not `main` but `ECSmanager`. In `initalize` function check that ecs_manager is initialized. Import `main` only where it is really used, for example `exit` command.
   - [ ] - BUG - debug information upon hover raises error when trying to render the frame
   - [ ] - GitHub actions clean pytest, doctest and Lint issues.
   - [ ] - Make messagess work. Sript `add_msg` is corrupted. Plan the necessary processors handling message queue.

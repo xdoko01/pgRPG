@@ -28,7 +28,7 @@ def init_background_animation(display: dict, filepaths: dict, gui_conf: dict) ->
     )
 
 def blit_background_animation():
-    global background_animation
+    #global background_animation
     if pygame.time.get_ticks() >= background_animation.last_time + background_animation.delay:
         background_animation.last_time = pygame.time.get_ticks()
         # blit background image
