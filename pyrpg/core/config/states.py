@@ -116,7 +116,7 @@ def _register_state_module(state: State, module) -> None:
 def get_avail_states() -> list:
     """Return allowed states for continuation.
     """
-    global state_graph
+    #global state_graph
     try:
         return state_graph[state]
     except KeyError:
