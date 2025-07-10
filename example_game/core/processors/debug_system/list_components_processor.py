@@ -24,9 +24,6 @@ class ListComponentsProcessor(Processor):
         self.comp_name = comp_name
         self.comp_class = eval(f'components.{comp_name}')
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Get all components comp_name and list their values

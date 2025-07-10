@@ -60,9 +60,6 @@ class PerformMovementProcessor(Processor):
 
         self.debug = debug
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Process entities having Motion and Position components. Basically,

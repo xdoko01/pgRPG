@@ -51,9 +51,6 @@ class PerformFactoryGenerationProcessor(Processor):
 
         self.create_entity_fnc = create_entity_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Get all Factory components that should generate the entity 

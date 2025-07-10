@@ -48,9 +48,6 @@ class GenerateCommandFromBTreeProcessor(Processor):
         # Reference to function for adding to command queue
         self.add_command_fnc = FNC_ADD_COMMAND
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Puts the proper command to the command queue.

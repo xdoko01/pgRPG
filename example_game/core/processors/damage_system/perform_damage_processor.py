@@ -62,9 +62,6 @@ class PerformDamageSingleProcessor(Processor):
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Detects entities that are about to be damaged and performs
@@ -164,9 +161,6 @@ class PerformDamageFullProcessor(Processor):
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that are about to be teleported and performs

@@ -57,9 +57,6 @@ class PerformArmAmmoProcessor(Processor):
         # Function that queues new event for processing
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects fighters that are about to arm the ammo and performs

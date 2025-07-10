@@ -80,9 +80,6 @@ class GenerateCollisionsOptimizedProcessor(Processor):
 
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Detect all collisions between visible entities and record them into 
@@ -244,9 +241,6 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
 
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Detect all collisions between visible entities and record them into 
@@ -401,9 +395,6 @@ class GenerateCollisionsNotOptimizedProcessor(Processor):
 
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Detect all collisions between visible entities and record them into 
@@ -555,9 +546,6 @@ class GenerateCollisionsNotOptimizedFullProcessor(Processor):
 
         self.add_event_fnc = add_event_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Detect all collisions between ALL entities and record them into

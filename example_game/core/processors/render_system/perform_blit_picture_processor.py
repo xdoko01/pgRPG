@@ -64,9 +64,6 @@ class PerformBlitPictureProcessor(Processor):
             self.picture = pygame.image.load(FILEPATHS["IMAGE_PATH"] / self.filepath)
             self.picture = pygame.transform.scale(self.picture, DISPLAY["RESOLUTION"])
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Blit Camera onto the screen.

@@ -48,9 +48,6 @@ class PerformClearWindowProcessor(Processor):
         self.window = window
         self.clear_color = clear_color
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Fill the game window with one solid color.

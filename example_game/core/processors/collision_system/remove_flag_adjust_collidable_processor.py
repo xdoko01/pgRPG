@@ -38,9 +38,6 @@ class RemoveFlagAdjustCollidableProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Removes the FlagAdjustCollidable flag.

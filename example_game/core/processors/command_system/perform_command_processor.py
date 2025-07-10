@@ -25,9 +25,6 @@ class PerformCommandProcessor(Processor):
         self.game_commands_handler = FNC_PROCESS_COMMANDS
         self.ecs_mng = REF_ECS_MNG
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Call external function that processes all commands

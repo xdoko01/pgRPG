@@ -48,9 +48,6 @@ class PerformDestroyEntitiesProcessor(Processor):
         self.add_event_fnc = add_event_fnc
         self.remove_entity_fnc = remove_entity_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Get all IsDestroyed components and based on ttl remove

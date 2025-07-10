@@ -48,9 +48,6 @@ class PerformClearCameraProcessor(Processor):
 
         self.clear_color = clear_color
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Fill the cameras with one solid color.

@@ -54,9 +54,6 @@ class GenerateEntitiesInSightProcessor(Processor):
         self.fnc_get_map = FNC_GET_MAP
         self.add_event_fnc = FNC_ADD_EVENT
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that are in sight.
@@ -149,9 +146,6 @@ class GenerateEntitiesInSightFullProcessor(Processor):
         super().__init__(*args, **kwargs)
         self.fnc_get_map = FNC_GET_MAP
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that are in sight.

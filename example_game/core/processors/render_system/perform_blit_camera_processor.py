@@ -47,9 +47,6 @@ class PerformBlitCameraProcessor(Processor):
 
         self.window = window
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Blit Camera onto the screen.

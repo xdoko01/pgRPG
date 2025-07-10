@@ -57,9 +57,6 @@ class PerformGUIPress(Processor):
         self.add_event_fnc = FNC_ADD_EVENT
 
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Process entities having Controllable component. Read user

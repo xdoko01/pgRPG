@@ -22,9 +22,6 @@ class PerformPathfindingCalculationProcessor(Processor):
         self.calc_path_handler = FNC_CALC_PATHS
         self.max_no_of_calcs = max_no_of_calcs
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Call external function that processes all commands

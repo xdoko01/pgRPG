@@ -18,7 +18,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
 from pyrpg.core.config.states import State
 
 # Globals
@@ -69,6 +68,9 @@ import pygame
 from pyrpg.core import engine
 from pyrpg.core.config import KEYS # for K_CONSOLE_TOGGLE, K_SAVE_GAME, K_LOAD_GAME
 
+# Global switch for the processors groups
+proc_group_id: str = 'default'
+
 ### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
 def run(key_events, key_pressed, dt, debug: bool=False) -> State:
     '''The main loop for the given state.
@@ -88,6 +90,16 @@ def run(key_events, key_pressed, dt, debug: bool=False) -> State:
                 #self.gui_manager.save_screen()
                 return State.MAIN_MENU
 
+            # On pushing the INVENTORY button ->
+            elif event.key == pygame.K_0:
+                # Toggle between inventory and default process group
+                global proc_group_id
+                if proc_group_id == 'default': 
+                    proc_group_id = 'inventory'
+                    state_manager.change_game_state to inventory
+                elif proc_group_id == 'inventory':
+                    proc_group_id = 'default'
+
             # On pushing the SAVE GAME button -> not implemented yet
             elif event.key == KEYS["K_SAVE_GAME"]:
                 raise NotImplementedError
@@ -103,7 +115,7 @@ def run(key_events, key_pressed, dt, debug: bool=False) -> State:
                 return State.CONSOLE
 
     # Run all the game processors
-    engine.ecs_manager.process(events=key_events, keys=key_pressed, dt=dt, debug=debug)
+    engine.ecs_manager.process(proc_group_id=proc_group_id, events=key_events, keys=key_pressed, dt=dt, debug=debug)
 
     # Repeat the cycle next time, if State was not changed by above events
     return State.GAME

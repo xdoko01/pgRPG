@@ -37,9 +37,6 @@ class RemoveFlagIsAnimationActionFrameProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Removes the flag that the projectile needs to be generated.

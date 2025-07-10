@@ -1,7 +1,12 @@
 ## Current
+  - [ ] - for state screens prepare some layout base on resolution config
+  - [ ] - prepare some dummy pytest file 
+  - [ ] - `gui.py` refactor, maybe use GUIContext to represent window, window_manager, etc. 
+  - [ ] - translations - json key:value in file, based on config, the specified file will be used print(trans("Some_text"))
+  - [ ] - multiple flow for processors depending on game state (so that inventory can be implemented)
   - [ ] - Refactor all `core/scripts/*`. Import not `main` but `ECSmanager`. In `initalize` function check that ecs_manager is initialized. Import `main` only where it is really used, for example `exit` command.
   - [ ] - BUG - debug information upon hover raises error when trying to render the frame
-  - [ ] - GitHub actions clean pytest, doctest and Lint issues.
+  - [x] - GitHub actions clean pytest, doctest and Lint issues.
   - [ ] - Make messagess work. Sript `add_msg` is corrupted. Plan the necessary processors handling message queue.
   - [x] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change. (2025-07-07)
   - [ ] - Settings screen option running in some dialog and having some Apply button. Problem that CHeckBox within UIWindow hiding is raising exception.

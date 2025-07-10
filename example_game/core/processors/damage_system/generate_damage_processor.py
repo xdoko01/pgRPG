@@ -52,9 +52,6 @@ class GenerateDamageSingleProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that are pickable + have collided and assigns
@@ -131,9 +128,6 @@ class GenerateDamageFullProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that are pickable + have collided and assigns

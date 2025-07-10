@@ -250,7 +250,7 @@ def load_scene_from_def(scene_def: dict, show_progress: bool=False) -> Scene:
                 process_fnc(item)
 
         logger.info(f'End of processing of "{data_path}" for scene "{scene.alias}". Total {data_to_process_len} items.')
-    
+
     logger.info(f'Loading objects for scene "{scene.alias}" has finished.')
 
     return scene

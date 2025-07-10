@@ -42,9 +42,6 @@ class GenerateSoundFXOnCreationProcessor(Processor):
         super().__init__(*args, **kwargs)
         self.play_sound_fnc = FNC_PLAY_SOUND
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Generates sound effect when entity is created from factory.

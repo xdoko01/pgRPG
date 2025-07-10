@@ -8,6 +8,7 @@ from typing import Any as _Any
 from typing import Tuple as _Tuple
 from typing import Iterable as _Iterable
 
+from collections import defaultdict # Added by xdoko01 to support processor groups
 
 version = '1.3'
 
@@ -41,9 +42,10 @@ class Processor:
         '''
         pass
 
-    def initialize(self, register):
+    def initialize(self, register, proc_group_id: str='default'):
         """Register the processor at the esper World"""
-        raise NotImplementedError
+        register(self, proc_group_id)
+        #raise NotImplementedError
 
     def process(self, *args, **kwargs):
         # increase cycle count
@@ -83,7 +85,8 @@ class World:
     frame of your game.
     """
     def __init__(self, timed=False):
-        self._processors = []
+        # self._processors = []
+        self._processors = defaultdict(list) # modified by xdoko01 to support processor groups
         self._next_entity_id = 0
         self._components = {}
         self._entities = {}
@@ -108,40 +111,50 @@ class World:
         self._entities.clear()
         self.clear_cache()
 
-    def add_processor(self, processor_instance: Processor, priority=0) -> None:
+    #def add_processor(self, processor_instance: Processor, priority=0) -> None:
+    def add_processor(self, processor_instance: Processor, priority=0, proc_group_id: str='default') -> None:
         """Add a Processor instance to the World.
 
         :param processor_instance: An instance of a Processor,
                subclassed from the Processor class
         :param priority: A higher number is processed first.
+
+        :param proc_group_id: To which group ID this processor is assigned.
         """
         assert issubclass(processor_instance.__class__, Processor)
         processor_instance.priority = priority
         processor_instance.world = self
 
-        #processor_instance.cycle = 0 # Added by xdoko01
-        #processor_instance.exec_cycle = 1 # Added by xdoko01 (execute every cycle by default)
+        #self._processors.append(processor_instance)
+        #self._processors.sort(key=lambda proc: proc.priority, reverse=True)
+        self._processors[proc_group_id].append(processor_instance) # changed by xdoko01 to support processor groups
+        self._processors[proc_group_id].sort(key=lambda proc: proc.priority, reverse=True) # changed by xdoko01 to support processor groups
 
-        self._processors.append(processor_instance)
-        self._processors.sort(key=lambda proc: proc.priority, reverse=True)
-
-    def remove_processor(self, processor_type: Processor) -> None:
+    #def remove_processor(self, processor_type: Processor) -> None:
+    def remove_processor(self, processor_type: Processor, proc_group_id: str='default') -> None: # changed by xdoko01  to suppoet processor groups
         """Remove a Processor from the World, by type.
 
         :param processor_type: The class type of the Processor to remove.
         """
-        for processor in self._processors:
+        #for processor in self._processors:
+        for processor in self._processors[proc_group_id]: # changed by xdoko01 to support processor groups
             if type(processor) == processor_type:
                 processor.world = None
-                self._processors.remove(processor)
+                self._processors[proc_group_id].remove(processor) # changed by xdoko01 to suppoet processor groups
 
     def clear_processors(self) -> None:
         """Remove all processors - ODO"""
-        for processor in self._processors.copy(): # copy must be iterated as we are deleting while iterating the same list
+        for proc_group_id, proc_group in self._processors.copy().items():
+            for processor in proc_group:
                 processor.world = None
-                self._processors.remove(processor)
+                self._processors[proc_group_id].remove(processor)
 
-    def get_processor(self, processor_type: _Type[P]) -> P:
+        #for processor in self._processors.copy(): # copy must be iterated as we are deleting while iterating the same list
+        #        processor.world = None
+        #        self._processors.remove(processor)
+
+    #def get_processor(self, processor_type: _Type[P]) -> P:
+    def get_processor(self, processor_type: _Type[P], proc_group_id: str='default') -> P: # changed by xdoko01 to support processor groups
         """Get a Processor instance, by type.
 
         This method returns a Processor instance by type. This could be
@@ -151,7 +164,11 @@ class World:
         :param processor_type: The type of the Processor you wish to retrieve.
         :return: A Processor instance that has previously been added to the World.
         """
-        for processor in self._processors:
+        #for processor in self._processors:
+        #    if type(processor) == processor_type:
+        #        return processor
+
+        for processor in self._processors[proc_group_id]:
             if type(processor) == processor_type:
                 return processor
 
@@ -519,19 +536,46 @@ class World:
         self._dead_entities.clear()
         self.clear_cache()
 
-    def _process(self, *args, **kwargs):
-        for processor in self._processors:
+    #def _process(self, *args, **kwargs):
+    #    for processor in self._processors:
+    #        processor.process(*args, **kwargs)
+
+    def _process(self, proc_group_id: str='default', *args, **kwargs):
+        for processor in self._processors[proc_group_id]:
             processor.process(*args, **kwargs)
 
-    def _timed_process(self, *args, **kwargs):
+    #def _timed_process(self, *args, **kwargs):
+    #    """Track Processor execution time for benchmarking."""
+    #    for processor in self._processors:
+    #        start_time = _time.process_time()
+    #        processor.process(*args, **kwargs)
+    #        process_time = int(round((_time.process_time() - start_time) * 1000, 2))
+    #        self.process_times[processor.__class__.__name__] = process_time
+
+    def _timed_process(self, proc_group_id: str='default', *args, **kwargs):
         """Track Processor execution time for benchmarking."""
-        for processor in self._processors:
+        for processor in self._processors[proc_group_id]:
             start_time = _time.process_time()
             processor.process(*args, **kwargs)
             process_time = int(round((_time.process_time() - start_time) * 1000, 2))
             self.process_times[processor.__class__.__name__] = process_time
 
-    def process(self, *args, **kwargs):
+
+    #def process(self, *args, **kwargs):
+    #    """Call the process method on all Processors, in order of their priority.
+
+    #    Call the *process* method on all assigned Processors, respecting their
+    #    optional priority setting. In addition, any Entities that were marked
+    #    for deletion since the last call to *World.process*, will be deleted
+    #    at the start of this method call.
+
+    #    :param args: Optional arguments that will be passed through to the
+    #                 *process* method of all Processors.
+    #    """
+    #    self._clear_dead_entities()
+    #    self._process(*args, **kwargs)
+
+    def process(self, proc_group_id: str='default', *args, **kwargs):
         """Call the process method on all Processors, in order of their priority.
 
         Call the *process* method on all assigned Processors, respecting their
@@ -543,18 +587,40 @@ class World:
                      *process* method of all Processors.
         """
         self._clear_dead_entities()
-        self._process(*args, **kwargs)
+        self._process(proc_group_id, *args, **kwargs)
 
-    def _finalize(self, *args, **kwargs):
+
+    #def _finalize(self, *args, **kwargs):
+    #    """ Add by xdoko01
+    #    """
+    #    for processor in self._processors:
+    #        try:
+    #            processor.finalize(*args, **kwargs)
+    #        except NotImplementedError:
+    #            raise ValueError(processor)
+
+    def _finalize(self, proc_group_id: str='default', *args, **kwargs):
         """ Add by xdoko01
         """
-        for processor in self._processors:
+        for processor in self._processors[proc_group_id]:
             try:
                 processor.finalize(*args, **kwargs)
             except NotImplementedError:
                 raise ValueError(processor)
 
-    def finalize(self, *args, **kwargs):
+    #def finalize(self, *args, **kwargs):
+    #    """ Added by xdoko01
+    #    Call the finalize method on all Processors, in order of their priority.
+
+    #    Call the *finalize* method on all assigned Processors, respecting their
+    #    optional priority setting.
+
+    #    :param args: Optional arguments that will be passed through to the
+    #                 *finalize* method of all Processors.
+    #    """
+    #    self._finalize(*args, **kwargs)
+
+    def finalize(self, proc_group_id: str='default', *args, **kwargs):
         """ Added by xdoko01
         Call the finalize method on all Processors, in order of their priority.
 

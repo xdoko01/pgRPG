@@ -44,9 +44,6 @@ class GenerateVisualFXOnCreationProcessor(Processor):
         super().__init__(*args, **kwargs)
         self.create_entity_fnc = create_entity_fnc
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Creates new entity containing visual fx on the creation spot.

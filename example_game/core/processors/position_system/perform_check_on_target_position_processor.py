@@ -44,9 +44,6 @@ class PerformCheckOnTargetPositionProcessor(Processor):
         super().__init__(*args, **kwargs)
         self.add_event_fnc = FNC_ADD_EVENT
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''  Detects entities that are pickable + have collided and assigns

@@ -60,9 +60,6 @@ class PerformRenderMessagesProcessor(Processor):
         self.pos = pos
         self.align = align
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         '''Display game messages on game window'''

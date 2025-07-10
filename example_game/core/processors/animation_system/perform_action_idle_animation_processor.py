@@ -52,10 +52,6 @@ class PerformActionIdleAnimationProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
-
     def process(self, *args, **kwargs):
         ''' Get all components with renderable model that have weapon armed and at
         the same time did not move nor attack.

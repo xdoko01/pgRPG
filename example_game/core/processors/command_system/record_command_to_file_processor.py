@@ -29,9 +29,6 @@ class RecordCommandToFileProcessor(Processor):
         # Counter of process cycles - initiate to 0 first cycle will be 1
         self.cycle_counter = 0
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Store the whole queue to the file - every cycle on every line

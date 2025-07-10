@@ -13,9 +13,6 @@ class GameEventsProcessor(Processor):
 
         self.game_event_handler = game_event_handler
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Call external function that processes all events
@@ -41,9 +38,12 @@ class GameEventsExProcessor(Processor):
         self.to_ignore = kwargs.get('ignore', None)
         self.to_process = kwargs.get('process', None)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
+    # Not needed, implemented in the super class
+    #def initialize(self, register, proc_group_id):
+    #    '''Processor registers itself at esper ECS World 
+    #    under specific processor group.
+    #    '''
+    #    register(self, proc_group_id)
 
     def process(self, *args, **kwargs):
         ''' Call external function that processes events

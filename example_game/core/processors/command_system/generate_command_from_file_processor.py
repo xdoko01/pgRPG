@@ -79,9 +79,6 @@ class GenerateCommandFromFileProcessor(Processor):
         else:
             return None
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Insert commands from the file to the queue based on the cycle number.

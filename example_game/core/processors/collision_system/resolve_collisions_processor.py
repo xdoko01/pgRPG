@@ -48,9 +48,6 @@ class ResolveCollisionsOptimizedProcessor(Processor):
         '''
         super().__init__(*args, **kwargs)
 
-    def initialize(self, register):
-        '''Processor registers itself at esper ECS World'''
-        register(self)
 
     def process(self, *args, **kwargs):
         ''' Moves entities to omit the collision.
