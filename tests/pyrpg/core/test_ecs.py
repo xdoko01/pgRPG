@@ -1,6 +1,5 @@
 import pytest
-from types import SimpleNamespace
-from __init__ import World, Component, Processor, SkipProcessorExecution
+from pyrpg.core.ecs import World, Component, Processor, SkipProcessorExecution
 
 # Dummy components
 class Position(Component):
