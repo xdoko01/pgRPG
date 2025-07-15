@@ -1,4 +1,10 @@
-import pytest
+# Bring pyrpg package onto the path
+import sys, os
+from pathlib import Path
+
+pyrpg_path = "../pyrpg"
+sys.path.append(os.path.abspath(Path(pyrpg_path)))
+
 from pyrpg.core.ecs import World, Component, Processor, SkipProcessorExecution
 
 # Dummy components
