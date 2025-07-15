@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.has_weapon -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class HasWeapon(Component):
     ''' Entity can pickup and arm a Weapon.

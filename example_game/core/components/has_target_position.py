@@ -5,7 +5,7 @@ Use 'python -m core.components.has_target_position -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 from pyrpg.core.config import GAME # for TILE_RES # in order to specify the position in pixel coords
 

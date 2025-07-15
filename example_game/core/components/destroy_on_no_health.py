@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.destroy_on_no_health -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class DestroyOnNoHealth(Component):
     ''' Entity is marked as IsDestroyed after having no health

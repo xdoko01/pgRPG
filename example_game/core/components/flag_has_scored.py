@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_has_scored -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagHasScored(Component):
     ''' Flag/tag to mark entity(generator) which has scored

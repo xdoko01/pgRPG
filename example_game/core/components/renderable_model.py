@@ -11,7 +11,7 @@ import pyrpg.core.models as model # For cached animated model in RenderableModel
 from pyrpg.core.config import GAME # For TILE_RES
 from pyrpg.core.config import FILEPATHS # MODEL_PATH # For MODEL_PATH
 from pathlib import Path
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class RenderableModel(Component):
     ''' Entity is displayable as animated model on the game screen.

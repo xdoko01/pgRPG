@@ -44,7 +44,8 @@
 		"K_CONSOLE_TOGGLE": "K_F9",
 		"K_SAVE_GAME": "K_F5",
 		"K_LOAD_GAME": "K_F6",
-		"K_PAUSE_GAME": "K_p"
+		"K_PAUSE_GAME": "K_p",
+		"K_INVENTORY_TOGGLE": "K_i"
 	},
 
 	"GAME": {
@@ -176,6 +177,13 @@
 				"mode": "w",
 				"encoding": "utf-8"
 			},
+			"file_handler_ecs": {
+				"class": "logging.FileHandler",
+				"formatter": "short_with_func",
+				"filename": "logs/ecs.log",
+				"mode": "w",
+				"encoding": "utf-8"
+			},
 			"file_handler_menu": {
 				"class": "logging.FileHandler",
 				"formatter": "short_with_func",
@@ -275,6 +283,15 @@
 			"pyrpg.core.managers" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				"handlers" : ["file_handler_mng"], // uncomment to log all the managers
+				//"handlers" : ["null"], // do not log to file for speed
+				//"handlers" : ["console"], // log to the text console
+				"propagate" : false // Do not send messages from these loggers to parent (root) logger
+			},
+
+			// Save all the logs from ECS classes to the file
+			"pyrpg.core.ecs" : {
+				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
+				"handlers" : ["file_handler_ecs"], // uncomment to log all the managers
 				//"handlers" : ["null"], // do not log to file for speed
 				//"handlers" : ["console"], // log to the text console
 				"propagate" : false // Do not send messages from these loggers to parent (root) logger

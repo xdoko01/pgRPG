@@ -91,14 +91,10 @@ def run(key_events, key_pressed, dt, debug: bool=False) -> State:
                 return State.MAIN_MENU
 
             # On pushing the INVENTORY button ->
-            elif event.key == pygame.K_0:
+            elif event.key == KEYS["K_INVENTORY_TOGGLE"]:
                 # Toggle between inventory and default process group
                 global proc_group_id
-                if proc_group_id == 'default': 
-                    proc_group_id = 'inventory'
-                    state_manager.change_game_state to inventory
-                elif proc_group_id == 'inventory':
-                    proc_group_id = 'default'
+                proc_group_id = 'inventory' if proc_group_id == 'default' else 'default'
 
             # On pushing the SAVE GAME button -> not implemented yet
             elif event.key == KEYS["K_SAVE_GAME"]:

@@ -6,7 +6,7 @@ module tests.
 '''
 import pyrpg.core.sounds.sound as sound # For cached sounds
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.config import FILEPATHS, Path #SOUND_PATH, Path # for SOUND_PATH, Path
 
 class SoundFXOnDamage(Component):

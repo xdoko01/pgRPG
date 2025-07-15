@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagHasArmedWeaponProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_has_armed_weapon import FlagHasArmedWeapon

@@ -3,7 +3,7 @@ __all__ = ['PerformRenderMessagesProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 from pyrpg.core.config import FONTS # for GAME_MSG_FONT 
 

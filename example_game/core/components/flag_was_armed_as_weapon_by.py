@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_was_armed_as_weapon_by -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagWasArmedAsWeaponBy(Component):
     ''' Weapon entity was armed as weapon by some other entity.

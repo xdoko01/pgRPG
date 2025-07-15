@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_is_about_to_be_teleported_by -v' t
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagIsAboutToBeTeleportedBy(Component):
     ''' Entity (potential teleportee) is about to be teleported by teleport, 

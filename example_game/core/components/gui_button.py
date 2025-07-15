@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.gui_button -v' to run
 module tests.
 '''
 import pygame
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.engine import gui_manager
 
 class GUIButton(Component):

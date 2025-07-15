@@ -4,7 +4,7 @@ import logging
 import pygame   # for pygame.time, pygame.font and pygame.Color
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position

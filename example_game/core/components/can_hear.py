@@ -5,7 +5,7 @@ Use 'python -m core.components.can_hear -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.config import GAME # for TILE_RES_PX - in order to re-calculate tile distance to px
 
 class CanHear(Component):

@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_was_damaged_by -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagWasDamagedBy(Component):
     ''' Entity was damaged by some other entities.

@@ -4,12 +4,12 @@ logger = logging.getLogger(__name__)
 
 from typing import Tuple
 
-from pyrpg.core.ecs.esper import World, Processor
+from pyrpg.core.ecs import World, Processor
 from pyrpg.core.config import FILEPATHS # ENTITY_PATH # for ENTITY_PATH
 from pyrpg.core.config import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
 from pyrpg.core.config import PYRPG # for TIMED parameter
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.functions import get_class_from_def
 from pyrpg.functions import translate # for creation of the component
 from pyrpg.functions import json_logic # for evaluating conditions for processor prerequisites
@@ -55,25 +55,9 @@ def process(proc_group_id, events, keys, dt: float, debug: bool):_world.process(
 ## PROCESSORS - START
 #####################
 
-def toggle_process_group(proc_group_1: str, proc_group_2: str) -> None:
-    '''Toggle between 2 process groups
-    
-    proc_groups_instances = {"default": [instance, instance, instance], "inventory": [instance, instance, instance]}
-    
-    active_proc_group = None | "default"
-
-    def set_proc_group (proc_group_id)
-     ... check that such group exists
-     ... check if it is already loaded
-     ... remove all processors from Esper
-     ... add the processors from proc_group_id to Esper
-
-    '''
-    pass
-
-
 def get_proc_class_from_def(proc_class_def):
     return get_class_from_def(proc_class_def, MODULEPATHS["PROCESSOR_MODULE_PATH"])
+
 
 def load_processor(processor_def: list) -> None:
     """Takes processor definition, creates instance and registers
@@ -89,6 +73,10 @@ def load_processor(processor_def: list) -> None:
 
     # Log the initiation of the processor
     logger.info(f'Processor "{processor_def}" initiated in processor group "{new_proc_group}".')
+
+    # Log all the processors in the processor group
+    logger.info(f'Process group "{new_proc_group}" now contains following processors "{_world._processors[new_proc_group]}".')
+
 
 def reinit_processors():
     """Used for re-init of processor parameters in case the configuration
@@ -147,6 +135,7 @@ def create_processor(processor_def: list) -> Tuple[Processor, str]:
     new_class = get_proc_class_from_def(class_def)
     assert new_class is not None, f"Unable to create class from definition {class_def=}"
 
+
     # Check that processor has everything that it needs to work in the game
     try:
         if not check_processor(new_class):
@@ -166,6 +155,9 @@ def create_processor(processor_def: list) -> Tuple[Processor, str]:
     # Overwrite the attributes with custom attributes from the json definition of the scene
     proc_attrs = {**proc_attrs, **cust_proc_class_attrs}
 
+    # Log the successfull creation of the processor
+    logger.info(f'Processor instance "{new_class}" created for group "{proc_group}".')
+
     # Initiate and return the processor class
     return new_class(**proc_attrs), proc_group
 
@@ -181,12 +173,15 @@ def clear_processors() -> None:
     _world.clear_processors()
     logger.info(f"All processors removed.")
 
-def delete_processor(proc_class_def: str) -> None:
+def delete_processor(proc_class_def: list) -> None:
     """Deletes the processor from the world."""
 
+    # Extract the processor group and processor definition
+    proc_group_id, proc_class_def = proc_class_def
+    
     proc_class = get_proc_class_from_def(proc_class_def)
     proc_class.finalize()
-    _world.remove_processor(proc_class)
+    _world.remove_processor(proc_class, proc_group_id)
     logger.info(f'Processor "{proc_class_def}" successfully removed.')
 
 #####################

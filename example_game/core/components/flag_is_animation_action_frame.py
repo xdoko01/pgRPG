@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_is_animation_action_frame -v' to r
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagIsAnimationActionFrame(Component):
     ''' Flag that the entity animation frame is marked as action frame

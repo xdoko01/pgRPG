@@ -5,7 +5,7 @@ Use 'python -m core.components.has_inventory -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.functions.dict_utils import get_all_dict_values
 
 class HasInventory(Component):

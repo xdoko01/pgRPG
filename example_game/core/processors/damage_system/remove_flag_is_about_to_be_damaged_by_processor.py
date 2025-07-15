@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagIsAboutToBeDamagedByProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_is_about_to_be_damaged_by import FlagIsAboutToBeDamagedBy

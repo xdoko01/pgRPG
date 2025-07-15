@@ -1,7 +1,7 @@
 __all__ = ['GameEventsProcessor', 'GameEventsExProcessor']
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 class GameEventsProcessor(Processor):
     ''' Original event processor that calls the function that processes 

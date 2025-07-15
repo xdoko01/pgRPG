@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.debug -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class Debug(Component):
     ''' Entity shows debug information.

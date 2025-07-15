@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.teleportable -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class Teleportable(Component):
     ''' Entity is a teleportable - i.e. on collision with entity having

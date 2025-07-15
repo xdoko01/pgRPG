@@ -4,7 +4,7 @@ GUIButton component implemented as a GUIButton class.
 Use 'python -m pyrpg.core.ecs.components.gui_button -v' to run
 module tests.
 '''
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.commands import cmd_factory
 
 class Pressable(Component):

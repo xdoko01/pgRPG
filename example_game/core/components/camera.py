@@ -6,7 +6,7 @@ module tests.
 '''
 
 from pygame import Surface
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.config import DISPLAY
 
 class Camera(Component):

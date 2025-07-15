@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.brain -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class Brain(Component):
     ''' Entity can perform commands stored in its brain. Contains commands

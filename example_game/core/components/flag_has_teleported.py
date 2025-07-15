@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_has_teleported -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagHasTeleported(Component):
     ''' Entity (teleport) has teleported some other entity.

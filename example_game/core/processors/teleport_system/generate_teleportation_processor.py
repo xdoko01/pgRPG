@@ -3,7 +3,7 @@ __all__ = ['GenerateTeleportationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.teleport import Teleport

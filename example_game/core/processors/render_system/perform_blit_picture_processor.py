@@ -6,7 +6,7 @@ import pygame
 from pyrpg.core.config import FILEPATHS, DISPLAY
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)

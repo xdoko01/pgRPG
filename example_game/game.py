@@ -25,7 +25,7 @@ if __name__ == "__main__":
     config_file = "example_game/config.jsonc"
 
     # Empty
-    #scene_file = "empty.jsonc"
+    scene_file = "empty.jsonc"
 
     # UI
     #scene_file = "UI/test_button_pressed.jsonc"
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     #scene_file = "tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear.jsonc"
     #scene_file = "tests/12_ai/guard_and_fight_back_if_ambushed_using_events.jsonc"
     #scene_file = "tests/12_ai/guard_and_fight_back_if_ambushed.jsonc"
-    scene_file = "tests/12_ai/guard_and_attack_on_sight.jsonc"
+    #scene_file = "tests/12_ai/guard_and_attack_on_sight.jsonc"
 
     #scene_file = "tests/12_ai/simple/test_damaged.jsonc"
     #scene_file = "tests/12_ai/simple/test_bb_value.jsonc"

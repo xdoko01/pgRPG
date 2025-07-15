@@ -3,7 +3,7 @@ __all__ = ['PerformDamageSingleProcessor', 'PerformDamageFullProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.damageable import Damageable

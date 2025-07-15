@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_create_from_factory -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagCreateFromFactory(Component):
     ''' Flag to create new entity from Factory component

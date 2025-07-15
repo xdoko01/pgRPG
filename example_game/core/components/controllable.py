@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from pyrpg.core.config import KEYS # for K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.commands import cmd_factory
 
 class Controllable(Component):

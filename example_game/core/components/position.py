@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.position -v' to run
 module tests.
 '''
 from dataclasses import dataclass
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from pyrpg.core.config import GAME # for TILE_RES_PX - in order to specify the position in tiles coordinates
 
 # TODO - is self.direction necessary? is not enough dir_name?

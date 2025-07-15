@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.ammo_pack -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 from .weapon import Weapon
 
 class AmmoPack(Component):

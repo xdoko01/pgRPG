@@ -9,7 +9,7 @@ import logging
 # Create logger
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 from pyrpg.core.commands import cmd_factory
 from pyrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError

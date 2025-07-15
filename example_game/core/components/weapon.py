@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.brain -v' to run
 module tests.
 '''
 import pyrpg.core.models as model
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class Weapon(Component):
     ''' Entity is a weapon if having this component. Weapon has its parameters

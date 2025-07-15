@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.visual_fx_on_damage -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class VisualFXOnDamage(Component):
     ''' Entity displays selected effect upon creatiom from factory.

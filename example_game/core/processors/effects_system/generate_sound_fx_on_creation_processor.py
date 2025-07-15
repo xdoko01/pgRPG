@@ -3,7 +3,7 @@ __all__ = ['GenerateSoundFXOnCreationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.sound_fx_on_creation import SoundFXOnCreation

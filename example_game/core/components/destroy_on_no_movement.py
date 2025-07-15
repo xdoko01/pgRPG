@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.destroy_on_no_movement -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class DestroyOnNoMovement(Component):
     ''' Entity is marked as IsDestroyed after it has stopped moving

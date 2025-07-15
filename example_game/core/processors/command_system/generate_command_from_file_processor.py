@@ -4,7 +4,7 @@ import logging
 import json
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 from pyrpg.core.commands import Command
 
 # Logger init

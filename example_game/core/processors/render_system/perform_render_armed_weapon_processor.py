@@ -3,7 +3,7 @@ __all__ = ['PerformRenderArmedWeaponProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs.esper import Processor, SkipProcessorExecution
+from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.render_data_from_parent import RenderDataFromParent

@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.flag_is_about_to_pick_entity -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class FlagIsAboutToPickEntity(Component):
     ''' Entity (potential picker) is about to pick some other entity (pickable), if capable

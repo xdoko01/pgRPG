@@ -5,7 +5,7 @@ Use 'python -m pyrpg.core.ecs.components.has_score -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs.components.component import Component
+from pyrpg.core.ecs import Component
 
 class HasScore(Component):
     ''' Entity can have score calculated.
