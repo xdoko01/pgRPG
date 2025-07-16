@@ -14,18 +14,9 @@ logger = logging.getLogger(__name__)
 import time as _time
 
 from functools import lru_cache as _lru_cache
-from typing import List as _List
-from typing import Type
-from typing import TypeVar as _TypeVar
-from typing import Any
-from typing import Iterable
+from typing import List, Type, Any, Iterable, Optional
 
 from collections import defaultdict # Added by xdoko01 to support processor groups
-
-version = '1.3'
-
-C = _TypeVar('C')
-P = _TypeVar('P')
 
 import sys
 
@@ -515,7 +506,7 @@ class World:
         return [query for query in self._get_components_opt(*component_types, **kwargs)]
 
 
-    def try_component(self, entity: int, component_type: type[Component]) -> Component | None:
+    def try_component(self, entity: int, component_type: type[Component]) -> Optional[Component]:
         """Try to get a single component type for an Entity.
 
         This method will return the requested Component if it exists, but
