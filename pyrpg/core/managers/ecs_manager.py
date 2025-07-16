@@ -83,9 +83,10 @@ def reinit_processors():
     has changed.
     """
     # Call init function on all registered processors _world._processors
-    for processor in _world._processors:
-        processor.reinit()
-        logger.info(f'Processor "{processor.__class__}" re-initiated.')
+    for proc_group_id in _world._processors:
+        for processor in _world._processors[proc_group_id]:
+            processor.reinit()
+            logger.info(f'Processor "{processor.__class__}" re-initiated.')
 
     logger.info(f'All processors re-initiated.')
 
@@ -178,7 +179,7 @@ def delete_processor(proc_class_def: list) -> None:
 
     # Extract the processor group and processor definition
     proc_group_id, proc_class_def = proc_class_def
-    
+
     proc_class = get_proc_class_from_def(proc_class_def)
     proc_class.finalize()
     _world.remove_processor(proc_class, proc_group_id)

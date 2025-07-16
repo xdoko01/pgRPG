@@ -1,12 +1,12 @@
 ## Current
   - [ ] - initialized for ECS manager and then use ECS manager imports for scripts/console scripts instead of main. But checking the initialized global first.
-  - [x] - fork old version of esper and modify it
-  - [x] - add logging to Esper, move component class into the Esper or split comonents / processors to separate files?
+  - [x] - fork old version of esper and modify it (2025-07-15)
+  - [x] - add logging to Esper, move component class into the ecs (2025-07-15)
   - [ ] - for state screens prepare some layout base on resolution config
   - [ ] - prepare some dummy pytest file 
   - [ ] - `gui.py` refactor, maybe use GUIContext to represent window, window_manager, etc. 
   - [ ] - translations - json key:value in file, based on config, the specified file will be used print(trans("Some_text"))
-  - [x] - multiple flow for processors depending on game state (so that inventory can be implemented)
+  - [x] - multiple flow for processors (processor groups) depending on game state (so that inventory can be implemented) (2025-07-15)
   - [ ] - Refactor all `core/scripts/*`. Import not `main` but `ECSmanager`. In `initalize` function check that ecs_manager is initialized. Import `main` only where it is really used, for example `exit` command.
   - [ ] - BUG - debug information upon hover raises error when trying to render the frame
   - [x] - GitHub actions clean pytest, doctest and Lint issues.
@@ -29,7 +29,7 @@
   - [x] - prepare `load_scene` console command
   - [x] - prepare empty scene and load into it - just showing background picture
   - [ ] - Console hight should be dynamically calculated min(displayable_lines, display_lines from config)
-  - [ ] - BUG - After calling console_command `change_res` the exit screen is not displaying the exit dialog - chaos in states and menus
+  - [x] - BUG - After calling console_command `change_res` the exit screen is not displaying the exit dialog (the MENU)- chaos in states and menus (2025-07-16)
   - [x] - BUG - logs are emptied after the console `change_res` console command
   - [x] - BUG - console command `get_components` does not work properly
   - [x] - BUG - console command `get_processors` does not work properly

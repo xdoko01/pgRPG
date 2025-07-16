@@ -56,6 +56,7 @@ class PerformBlitPictureProcessor(Processor):
         self.pos = pos
         self.resize = resize
         if self.resize: self.picture = pygame.transform.scale(self.picture, DISPLAY["RESOLUTION"])
+        self.picture = self.picture.convert_alpha()  # or .convert() if no transparency
 
     def reinit(self):
         '''Used for repetitive initiation after change of configuration.
@@ -63,6 +64,7 @@ class PerformBlitPictureProcessor(Processor):
         if self.resize: 
             self.picture = pygame.image.load(FILEPATHS["IMAGE_PATH"] / self.filepath)
             self.picture = pygame.transform.scale(self.picture, DISPLAY["RESOLUTION"])
+            self.picture = self.picture.convert_alpha()  # or .convert() if no transparency
 
 
     def process(self, *args, **kwargs):

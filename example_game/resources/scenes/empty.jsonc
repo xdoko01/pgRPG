@@ -27,7 +27,7 @@
 		// Default Processor Group
 		["render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "splash_pyRPG.png", "resize": true}],
 		
-		// Inventory Processor Group
+		// Inventory Processor Group 
 		["inventory", "render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "red_gradient_capital_font.png", "resize": true}]
 	],
 
