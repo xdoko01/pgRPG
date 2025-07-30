@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_adjust_damaging" contains
+''' Module "example_game.core.components.flag_adjust_damaging" contains
 FlagAdjustDamaging component implemented as a FlagAdjustDamaging class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_adjust_damaging -v' to run
+Use 'python -m example_game.core.components.flag_adjust_damaging -v' to run
 module tests.
 '''
 

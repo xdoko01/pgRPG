@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_has_no_health" contains
+''' Module "example_game.core.components.flag_has_no_health" contains
 FlagHasNoHealth component implemented as a FlagHasNoHealth class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_has_no_health -v' to run
+Use 'python -m example_game.core.components.flag_has_no_health -v' to run
 module tests.
 '''
 

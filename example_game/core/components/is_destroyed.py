@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.is_destroyed" contains
+''' Module "example_game.core.components.is_destroyed" contains
 IsDestroyed component implemented as a IsDestroyed class.
 
-Use 'python -m pyrpg.core.ecs.components.is_destroyed -v' to run
+Use 'python -m example_game.core.components.is_destroyed -v' to run
 module tests.
 '''
 

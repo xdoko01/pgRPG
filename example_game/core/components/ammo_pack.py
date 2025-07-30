@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.ammo_pack" contains
+''' Module "example_game.core.components.ammo_pack" contains
 AmmoPack component implemented as a AmmoPack class.
 
-Use 'python -m pyrpg.core.ecs.components.ammo_pack -v' to run
+Use 'python -m example_game.core.components.ammo_pack -v' to run
 module tests.
 '''
 

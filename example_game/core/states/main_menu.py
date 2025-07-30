@@ -123,6 +123,12 @@ def run(key_events, key_pressed, dt) -> State:
         if event.type == pygame.QUIT:
             return State.EXIT_GAME_DIALOG
 
+        elif event.type == pygame.KEYDOWN:
+
+            # On pushing the ESC button -> show exit dialog
+            if event.key == pygame.K_ESCAPE:
+                return State.EXIT_GAME_DIALOG
+
         # On pressing a button -> move to new state
         elif event.type == UI_BUTTON_PRESSED:
             

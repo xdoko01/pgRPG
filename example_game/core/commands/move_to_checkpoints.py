@@ -1,6 +1,6 @@
 ''' Module implementing MOVE_TO_CHECKPOINTS command 
 
-For tests call python -m pyrpg.core.commands.commands.new.move_to_checkpoints -v
+For tests call python -m example_game.core.commands.move_to_checkpoints -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

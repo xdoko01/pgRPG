@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_was_picked_by" contains
+''' Module "example_game.core.components.flag_was_picked_by" contains
 FlagWasPickedBy component implemented as a FlagWasPickedBy class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_was_picked_by -v' to run
+Use 'python -m example_game.core.components.flag_was_picked_by -v' to run
 module tests.
 '''
 

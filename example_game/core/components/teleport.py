@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.teleport" contains
+''' Module "example_game.core.components.teleport" contains
 Teleport component implemented as a Teleport class.
 
-Use 'python -m pyrpg.core.ecs.components.teleport -v' to run
+Use 'python -m example_game.core.components.teleport -v' to run
 module tests.
 '''
 

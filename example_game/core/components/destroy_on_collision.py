@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.destroy_on_collision" contains
+''' Module "example_game.core.components.destroy_on_collision" contains
 DestroyOnCollision component implemented as a DestroyOnCollision class.
 
-Use 'python -m pyrpg.core.ecs.components.destroy_on_collision -v' to run
+Use 'python -m example_game.core.components.destroy_on_collision -v' to run
 module tests.
 '''
 

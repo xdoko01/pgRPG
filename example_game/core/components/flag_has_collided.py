@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_has_collided" contains
+''' Module "example_game.core.components.flag_has_collided" contains
 FlagHasCollided component implemented as a FlagHasCollided class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_has_collided -v' to run
+Use 'python -m example_game.core.components.flag_has_collided -v' to run
 module tests.
 '''
 

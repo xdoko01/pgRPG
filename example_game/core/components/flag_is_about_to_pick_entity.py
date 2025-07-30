@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_is_about_to_pick_entity" contains
+''' Module "example_game.core.components.flag_is_about_to_pick_entity" contains
 FlagIsAboutToPickEntity component implemented as a FlagIsAboutToPickEntity class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_is_about_to_pick_entity -v' to run
+Use 'python -m example_game.core.components.flag_is_about_to_pick_entity -v' to run
 module tests.
 '''
 

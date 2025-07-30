@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_do_attack" contains
+''' Module "example_game.core.components.flag_do_attack" contains
 FlagDoAttack component implemented as a FlagDoAttack class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_do_attack -v' to run
+Use 'python -m example_game.core.components.flag_do_attack -v' to run
 module tests.
 '''
 

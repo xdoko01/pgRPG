@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.render_data_from_parent" contains
+''' Module "example_game.core.components.render_data_from_parent" contains
 RenderDataFromParent component implemented as a NewRenderPosition class.
 
-Use 'python -m pyrpg.core.ecs.components.render_data_from_parent -v' to run
+Use 'python -m example_game.core.components.render_data_from_parent -v' to run
 module tests.
 '''
 

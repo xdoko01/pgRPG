@@ -1,6 +1,6 @@
 ''' Module implementing WAIT command 
 
-For tests call python -m pyrpg.core.commands.commands.new.wait -v
+For tests call python -m example_game.core.commands.wait -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

@@ -1,6 +1,6 @@
 ''' Module implementing DO_PARALLEL command 
 
-For tests call python -m pyrpg.core.commands.commands.new.do_parallel -v
+For tests call python -m example_game.core.commands.do_parallel -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

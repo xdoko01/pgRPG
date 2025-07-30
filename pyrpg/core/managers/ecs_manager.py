@@ -267,7 +267,7 @@ def update_component(component_def: dict, entity_id: int) -> None:
         logger.error(f'Error in creation of component "{component_def}".')
         raise ValueError
 
-def remove_component(component_def: dict, entity_id: int) -> None:
+def delete_component(component_def: dict, entity_id: int) -> None:
     """Removes given component on given entity
     
     :param component_def: Dictionary specifying the component type
@@ -290,6 +290,22 @@ def remove_component(component_def: dict, entity_id: int) -> None:
 #####################
 ## TEMPLATES - START
 #####################
+
+def load_stored_template(template_id: str, entity_id: int) -> None:
+    """Loads template components from template definitions to entity_id.
+    """
+    # Get the template data
+    logger.info(f'**Preparing data for entity_id {entity_id} from template "{template_id}".')
+    template_entity_data = get_dict_params(definition=template_id, storage=_template_definitions, dir=FILEPATHS["ENTITY_PATH"])
+
+    # Create all entities from the template
+    logger.info(f'**Creating components for entity_id {entity_id} from template "{template_id}".')
+    try:
+        _update_entity(template_entity_data, entity_id=entity_id)
+    except ValueError:
+        logger.error(f'Error in creation of entity {entity_id} from template "{template_id}".')
+        raise ValueError
+
 
 def load_template(template_def: dict) -> None:
     """Stores the template definition from which new templates can be created.
@@ -447,6 +463,9 @@ def _update_entity(entity_def: dict, entity_id: int) -> None:
     # the previous components.
     for template_id in entity_def.get("templates", []):
 
+        load_stored_template(template_id=template_id, entity_id=entity_id)
+
+        '''
         # Get the template data
         logger.info(f'**Preparing data for entity_id {entity_id} from template "{template_id}".')
         template_entity_data = get_dict_params(definition=template_id, storage=_template_definitions, dir=FILEPATHS["ENTITY_PATH"])
@@ -458,7 +477,8 @@ def _update_entity(entity_def: dict, entity_id: int) -> None:
         except ValueError:
             logger.error(f'Error in creation of entity {entity_id} from template "{template_id}".')
             raise ValueError
-
+        '''
+        
     # Add/update components
     for component in entity_def.get("components", []):
         try:
@@ -470,7 +490,7 @@ def _update_entity(entity_def: dict, entity_id: int) -> None:
     # Remove components
     for component in entity_def.get("remove", []):
         try:
-            remove_component(component_def=component, entity_id=entity_id)
+            delete_component(component_def=component, entity_id=entity_id)
         except ValueError:
             logger.error(f'Error in removal of component of entity {entity_id} from definition "{component}".')
             raise ValueError

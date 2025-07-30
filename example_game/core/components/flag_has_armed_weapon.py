@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_has_armed_weapon" contains
+''' Module "example_game.core.components.flag_has_armed_weapon" contains
 FlagHasArmedWeapon component implemented as a FlagHasArmedWeapon class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_has_armed_weapon -v' to run
+Use 'python -m example_game.core.components.flag_has_armed_weapon -v' to run
 module tests.
 '''
 

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.damageable" contains
+''' Module "example_game.core.components.damageable" contains
 Damageable component implemented as a Damageable class.
 
-Use 'python -m pyrpg.core.ecs.components.damageable -v' to run
+Use 'python -m example_game.core.components.damageable -v' to run
 module tests.
 '''
 

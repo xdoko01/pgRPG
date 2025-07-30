@@ -1,6 +1,6 @@
 ''' Module implementing EXAMPLE command 
 
-For tests call python -m pyrpg.core.commands.commands.new.example -v
+For tests call python -m example_game.core.commands.example -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

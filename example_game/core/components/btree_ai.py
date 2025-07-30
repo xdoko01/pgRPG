@@ -1,4 +1,4 @@
-''' Module "pyrpg.core.ecs.components.btree" contains
+''' Module "example_game.core.components.btree" contains
 BTree component implemented as a BTree class.
 
 Use 'python -m core.components.btree_ai -v' to run

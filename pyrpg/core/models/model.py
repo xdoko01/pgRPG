@@ -344,6 +344,12 @@ class Model(object):
             return self.images.get(self.frames.get(action).get(direction).get('tiles')[frame_id].tileid)
         except (KeyError, AttributeError):
             return self.no_tile
+    
+    def get_idle_image(self):
+        """Static image for usage in inventory and similar.
+        """
+        return self.get_frame_image(action='idle', direction='down', frame_id=0)
+
 
     def is_action_frame(self, action, direction, frame_id):
         try:

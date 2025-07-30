@@ -23,47 +23,56 @@
 
 	// What processors to load
 	"processors" : [
-		// For commands
-		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
-		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+		// Default processor group
 
-		// For movement
-		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+			// For commands
+			["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+			["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+			["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
-		// For animation
-		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+			// For movement
+			["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
-		// For collisions
-		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
-		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+			// For animation
+			["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+			["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+			["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
-		// For pickup
-		["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
-		["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+			// For collisions
+			["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+			["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
-		// For displaying
-		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+			// For pickup
+			["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+			["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
 
-		// For events processing - display the dialog on the start of the scene - after first game screen is generated
-		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
+			// For displaying
+			["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+			["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+			["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+			["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+			["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+			["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+			["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-		// For clearing of processing of movements and collisions and pickups
-		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+			// For events processing - display the dialog on the start of the scene - after first game screen is generated
+			["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
 
-		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+			// For clearing of processing of movements and collisions and pickups
+			["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 
-		["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
-		["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-		["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+			["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+
+			["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}], // if attack command is used, this processor must be planned. Otherwise no movement will happen after pressing the attack button
+
+			["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+			["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}],
+
+		// Inventory Processor Group 
+			["inventory", "render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
+			["inventory", "render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}]
+
 
 	],
 	
@@ -129,7 +138,7 @@
 			"id" : "player01",
 			"templates" : [
 				"model/body/male/human/dark2", // model template
-				"controls/default" // control template
+				"controls/only_movement" // control template
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},

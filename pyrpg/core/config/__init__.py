@@ -292,8 +292,9 @@ def _prep_conf_keys(keys_config: dict) -> dict:
     for profile in keys_config["KEY_PROFILES"]: del(keys_config[profile])
     del(keys_config["KEY_PROFILES"])
 
+    # Key action behavior and profile should be skipped
     # Convert the rest of the keys
-    for k,v in keys_config.items(): keys_config[k] = _trans_key_from_str(v) if k not in ("K_PROFILE") else keys_config[k]
+    for k,v in keys_config.items(): keys_config[k] = _trans_key_from_str(v) if k not in ("K_PROFILE", "KEY_FEEDBACK") else keys_config[k]
 
     return keys_config
 
@@ -342,6 +343,9 @@ def _prep_conf_fonts(fonts_config: dict, filepaths_config: dict) -> dict:
     # Any necessary translation would go here. Now not needed.
     # Cannot create the BitmaFont object here as pygame.display is not initiated in init config
     # which is happening before the GUI manager is initiated.
+
+    # Font for inventory
+    fonts_config["GAME_INVENTORY_FONT"] = filepaths_config["FONT_PATH"] / fonts_config["GAME_INVENTORY_FONT"]
 
     # Font for in-game dialog bubbles
     fonts_config["GAME_DEBUG_FONT"] = filepaths_config["FONT_PATH"] / fonts_config["GAME_DEBUG_FONT"]
@@ -455,15 +459,18 @@ def _init_fonts() -> None:
     from pgbitmapfont import BitmapFont
     from pygame import Color# for pygame.Color
 
+    # Font for inventory
+    FONTS["GAME_INVENTORY_FONT_OBJ"] = BitmapFont(FONTS["GAME_INVENTORY_FONT"], fgcolor=FONTS.get("GAME_INVENTORY_FONT_COLOUR"), spacing=FONTS.get("GAME_INVENTORY_FONT_SPACING", (0,0)))
+
     # Font for in-game dialog bubbles
-    FONTS["GAME_DEBUG_FONT_OBJ"] = BitmapFont(FONTS["GAME_DEBUG_FONT"], color=FONTS.get("GAME_DEBUG_FONT_COLOUR"))
-    FONTS["PLAYER_TALK_FONT_OBJ"] = BitmapFont(FONTS["PLAYER_TALK_FONT"], color=FONTS.get("PLAYER_TALK_FONT_COLOUR"))
+    FONTS["GAME_DEBUG_FONT_OBJ"] = BitmapFont(FONTS["GAME_DEBUG_FONT"], fgcolor=FONTS.get("GAME_DEBUG_FONT_COLOUR"), spacing=FONTS.get("GAME_DEBUG_FONT_SPACING", (0,0)))
+    FONTS["PLAYER_TALK_FONT_OBJ"] = BitmapFont(FONTS["PLAYER_TALK_FONT"], fgcolor=FONTS.get("PLAYER_TALK_FONT_COLOUR"), spacing=FONTS.get("PLAYER_TALK_FONT_SPACING", (0,0)))
 
     # Font for in-game messages such as 'item picked'
-    FONTS["GAME_MSG_FONT_OBJ"]= BitmapFont(FONTS["GAME_MSG_FONT"], color=FONTS.get("GAME_MSG_FONT_COLOUR"))
+    FONTS["GAME_MSG_FONT_OBJ"]= BitmapFont(FONTS["GAME_MSG_FONT"], fgcolor=FONTS.get("GAME_MSG_FONT_COLOUR"), spacing=FONTS.get("GAME_MSG_FONT_SPACING", (0,0)))
 
     # Font or GUI manager
-    FONTS["GUI_MANAGER_FONT_OBJ"]= BitmapFont(FONTS["GUI_MANAGER_FONT"], color=FONTS.get("GUI_MANAGER_FONT_COLOUR"))
+    FONTS["GUI_MANAGER_FONT_OBJ"]= BitmapFont(FONTS["GUI_MANAGER_FONT"], fgcolor=FONTS.get("GUI_MANAGER_FONT_COLOUR"), spacing=FONTS.get("GUI_MANAGER_FONT_SPACING", (0,0)))
 
     logger.debug("Fonts initiated successfully.")
 

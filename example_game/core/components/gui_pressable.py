@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.gui_button" contains
+''' Module "example_game.core.components.gui_button" contains
 GUIButton component implemented as a GUIButton class.
 
-Use 'python -m pyrpg.core.ecs.components.gui_button -v' to run
+Use 'python -m example_game.core.components.gui_button -v' to run
 module tests.
 '''
 from pyrpg.core.ecs import Component

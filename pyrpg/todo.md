@@ -1,9 +1,28 @@
 ## Current
+  
+  - [ ] - Transfer the bur reports to the GitHub functionality.
+  - [ ] - Implement pause button to demonstrate the processor groups. SOme preocessors running and some stopped.
+  - [ ] - Naming functions in `ecs_manager` can be better.
+  - [x] - Finish getting key feedback into the `Controllable` component so that `toggle_control` can support it.
+  - [ ] - BUG `test_pickup_02` scene. In case that 2 items are dropped and their collision areas overlap then there is brutal slow down. How to find out which processor is causing the slow down effectivelly? `GameEventsExProcessor` is the problem -> `event_manager._event_queue` is getting bigger and bigger. Console Command for seeing stats of `event_manager` and other managers as well.
+        -  Every collision generates a record in `event_manager._event_queue` and the queue keeps on growing due to constant collision happening somewhere on the map. IMPLEMENT: that event queue must have some max capacity or events must have some TTL.
+        - IMPLEMENT into console header/footer KPI the length of the event queue.
+        - REVISIT the `process` and `ignore` mechanism of the `event_manager`. If process=SCENE_START then probably only these events should be in the event queue.
+ 
+  - [ ] - BUG - `Position` component `x` and `y` can have float value in it, why???? Fix to int only
+  - [ ] - Automate prep of configuration of fonts - now must be named one by one to add the path. Shoudl be automatic. Same with `init_fonts()`
+  - [ ] - Command `load_from_template` that will load any template with components on the entity.
+  - [x] - BUG - Once unimplemented attack action button is pressed, all controll stops working for some reason  - `test_pickup_02` scene. Something wrong in the attack command - resolved: was missing `RemoveFlagDoAttackProcessor` and hence `FlagDoAttack` components that prevents movement was always there.
+  - [x] - BUG - Fix the `collect_coins` game - currently it is reaching maximum of inventory items.
+  - [x] - Some mechanics in `Controllable` component to switch between more profile of keys - one for controlling the character, other for controlling the movements in inventory. Resolution: `toggle_controls` command where you can define new set of commands for keys.
+  - [x] - Pressing ESC in main menu leads to exit dialog
+  - [ ] - in ECS manager change `delete_component` to `ecs_remove_component` to distinguish that this is Esper call and not my call
+  - [x] - fix the debug font as there is no space between letters
   - [ ] - initialized for ECS manager and then use ECS manager imports for scripts/console scripts instead of main. But checking the initialized global first.
   - [x] - fork old version of esper and modify it (2025-07-15)
   - [x] - add logging to Esper, move component class into the ecs (2025-07-15)
   - [ ] - for state screens prepare some layout base on resolution config
-  - [ ] - prepare some dummy pytest file 
+  - [x] - prepare some dummy pytest file 
   - [ ] - `gui.py` refactor, maybe use GUIContext to represent window, window_manager, etc. 
   - [ ] - translations - json key:value in file, based on config, the specified file will be used print(trans("Some_text"))
   - [x] - multiple flow for processors (processor groups) depending on game state (so that inventory can be implemented) (2025-07-15)
@@ -51,6 +70,31 @@
 
 
 ## Features
+  - [ ] Implement some shaders based on the video from DaFluffyPotato on youtube
+  - [ ] Implement inventory 
+        - [x] Possibility to have different set of processors for different States
+        - [x] Implement new component `FlagShowInventory`
+          - can calculate the dimensions of inventory window based on `Camera` component (+reinit)
+        - [x] Implement new command `toggle_inventory` that after pressing an inventory key creates/deletes `FlagShowInventory` component + manipulates the `Controllable` component - disabling the controls or assigning different commands to them
+          - [x] in order to toggle inventory, I must be able that some keys should react on key up and not key down event. Otherwise the command will create and delete FlagShowInventory component many times before I lift my finger off the key.
+        
+        - [x] Prepare new command `toggle_controls` to enable/disable/exchange commands behind pressing of the keys
+        - [x] Prepare new scene to test the inventory
+        - [x] HasInventory must have also information about displayed inventory - apart from set also a list with 10 positions filled with `None`s.
+          - [x] Modify `HasInventory` to have the information in a form of a list.
+        - [ ] Throw item out of inventory
+          - [ ] Implement remove function in HasInventory to safelly remove from categories. Add it to dict utils.
+        - [ ] Show information about the item in the footer
+        - [x] Prepare commands for moving around the items in inventory using the arrow keys.
+           - [x] `toggle_controls` command must support also change in the key feedback schema 
+        - [ ] How to prevent pickable entity from being picked immediatelly after it was dropped?
+        - [x] Drag also to the empty slots
+        - [x] Adjust control component to support switching for alternate controls and control the inventory with arrows
+          - [x] new methods in `Controllable` component. `set_control_cmds` and `revert_control_cmds`
+        - [x] - Change the inventory so that `load_from_template` new command is used for change of controls. Prepare new templates for game controls and inventory controls.
+        - [x] Do not show the debug information while dragging
+        - [x] Show picture of item while dragging centered on the cursor
+
   - [ ] many custom ProgressBars available and can be sellected in the scene file by configuration - for example
   	`"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pyRPG.png", "bar": true}], // example how progress bar could be configured`
 
@@ -63,7 +107,7 @@
 
 ## To Do
  
-  - [ ] BUG - Why the FPS rate is decreasing in time... collisions???
+  - [ ] BUG - Why the FPS rate is decreasing in time... collisions??? - event queue is growing with every collision event
   
 
   - [ ] `do_parallel` to support skipping of cycles so that some commands run once per some amount of ticks and meanwhile return some default value

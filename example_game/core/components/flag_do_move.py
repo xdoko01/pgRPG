@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_do_move" contains
+''' Module "example_game.core.components.flag_do_move" contains
 FlagDoMove component implemented as a FlagDoMove class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_do_move -v' to run
+Use 'python -m example_game.core.components.flag_do_move -v' to run
 module tests.
 '''
 from dataclasses import dataclass

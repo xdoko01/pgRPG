@@ -6,12 +6,14 @@
 			"type": "controllable:Controllable",
 			"params":  {
 				"key_profile": "DEFAULT",
+				"key_feedback": {"UP": "HOLD", "DOWN": "HOLD", "LEFT": "HOLD", "RIGHT": "HOLD", "ATTACK": "HOLD", "INVENTORY": "UP"},
 				"control_cmds": {
 					"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
 					"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
 					"UP": [["move_dir_add", {"moves" : ["up"]}]],
 					"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
-					"ATTACK": [["attack", {}]]
+					"ATTACK": [["attack", {}]],
+					"INVENTORY": [["toggle_inventory", {}]]
 				}
 			}
 		}

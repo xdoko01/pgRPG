@@ -1,6 +1,6 @@
 ''' Module implementing TEST_CAN_SEE command 
 
-For tests call python -m pyrpg.core.commands.commands.new.test_can_see -v
+For tests call python -m example_game.core.commands.test_can_see -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

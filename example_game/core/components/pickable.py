@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.pickable" contains
+''' Module "example_game.core.components.pickable" contains
 Pickable component implemented as a Pickable class.
 
-Use 'python -m pyrpg.core.ecs.components.pickable -v' to run
+Use 'python -m example_game.core.components.pickable -v' to run
 module tests.
 '''
 

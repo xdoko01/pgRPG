@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.sound_fx_on_damage" contains
+''' Module "example_game.core.components.sound_fx_on_damage" contains
 SoundFXOnDamage component implemented as a SoundFXOnDamage class.
 
-Use 'python -m pyrpg.core.ecs.components.sound_fx_on_damage -v' to run
+Use 'python -m example_game.core.components.sound_fx_on_damage -v' to run
 module tests.
 '''
 import pyrpg.core.sounds.sound as sound # For cached sounds

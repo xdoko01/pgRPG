@@ -1,6 +1,6 @@
 ''' Module implementing RESET_BRAIN command 
 
-For tests call python -m pyrpg.core.commands.commands.new.reset_brain -v
+For tests call python -m example_game.core.commands.reset_brain -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

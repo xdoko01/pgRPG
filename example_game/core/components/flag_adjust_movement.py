@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_adjust_movement" contains
+''' Module "example_game.core.components.flag_adjust_movement" contains
 FlagAdjustMovement component implemented as a FlagAdjustMovement class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_adjust_movement -v' to run
+Use 'python -m example_game.core.components.flag_adjust_movement -v' to run
 module tests.
 '''
 

@@ -1,12 +1,15 @@
 __all__ = ['GenerateCommandFromInputProcessor']
 
 import logging
+import pygame
 
 # Parent super-class
 from pyrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.controllable import Controllable
+
+from pyrpg.core.config import KEYS
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -46,6 +49,24 @@ class GenerateCommandFromInputProcessor(Processor):
         # Reference to function for adding to command queue
         self.add_command_fnc = FNC_ADD_COMMAND
 
+    def _add_commands_to_queue(self, ent: int, cmds: list, desc: str=None) -> None:
+        '''Adds commands fromthe list to the command queue.
+
+            :param ent: Entity Id of the entity passing the commands to the command queue
+            :type ent: int
+
+            :param cmds: List of commands
+            :type cmds: list
+
+            :param desc: Additional description for logging
+            :type desc: str | None
+        '''
+
+        # Notice that it is not passing info about generator
+        for cmd in cmds: 
+            self.add_command_fnc(cmd=cmd, orig_entity_id=ent)
+            logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from input. {desc}')
+
 
     def process(self, *args, **kwargs):
         ''' Process entities having Controllable component. Read user
@@ -56,67 +77,35 @@ class GenerateCommandFromInputProcessor(Processor):
         except SkipProcessorExecution:
             return
 
-        """
-        def _add_cmds_to_queue(cmd_list, ent, cmd_add_fnc):
-            ''' Checks if entity is already part of the command. If not, fills owner of Controllable entity.
-            Further adds the command to the queue.
-
-            Parameters:
-                :param cmd_list: List of commands (tuples) defined in Controllable component to be processed
-                :type list:
-
-                :param ent: Entity - owner of Controllable component to be added as parameter to the command
-                            in case that entity is not already part of the command parameters from Controllable
-                            component.
-                :type ent: int
-
-                :param cmd_queue: Queue to which the resulting commands are passed
-                :type cmd_queue: reference to function
-            '''
-
-            # Perform every command in sequence - can be more than one defined in the list
-            for cmd in cmd_list:
-            
-                #cmd_name, cmd_params = cmd
-
-                # Ensure that proper 'entity' is passed as a command parameter - owner of Controllable component
-                # if not stated otherwise
-                #cmd_params = {**cmd[1], **{'entity' : ent}} if cmd[1].get('entity', None) is None else cmd[1]
-
-                # Add command to the queue
-                # cmd_queue.append((cmd[0], cmd_params))
-                #cmd_add_fnc((cmd[0], cmd_params))
-                #cmd_add_fnc((cmd_name, cmd_params), ent, None) 
-                cmd_add_fnc(cmd, entity_id=ent, generator=None) 
-
-
-                # debug
-                logger.debug(f'({self.cycle}) - Entity {ent} - Command "{cmd}" added to the cmd queue.')
-        """
-
         # Extract events and keys from parameter kwargs
-        # currently only keys are used but events might be usefull as well for mouse later
-        #events = kwargs.get('events', [])
-
         keys = kwargs.get('keys', [])
-        
+        events = kwargs.get('events', [])
+
         # Get all entities that are controllable - not necesserilly moveable as the input can be for static entity theoretically
         for ent, (control) in self.world.get_component(Controllable):
 
-            for cmd_str in ['UP', 'DOWN', 'LEFT', 'RIGHT', 'ATTACK']:
-                
-                # Check if the assigned key for the command was pressed
-                if keys[control.control_keys.get(cmd_str)]:
-                    # Add all associated commands to the command queue
-                    #_add_cmds_to_queue(inp.control_cmds.get(cmd_str), ent, self.add_command_fnc)
-                    #for cmd_name, cmd_params in control.control_cmds.get(cmd_str):
-                    for cmd in control.control_cmds.get(cmd_str):
-                        self.add_command_fnc(
-                            cmd=cmd,
-                            orig_entity_id=ent # notice there here not passing info about generator
-                        )
+            # Check all potential keys (command definitions) for activation - 'UP', 'DOWN', 'LEFT', 'RIGHT', etc...
+            for cmd_str in control.control_cmds.keys():
 
-                        logger.debug(f'({self.cycle}) - Entity {ent} - "{cmd=}" sent to the command manager - from input.')
+                # Get the actual key code to determine if key is pressed
+                key_code = control.control_keys[cmd_str]
+
+                # Get the activation mode on the key (holding key, press released, press)
+                #key_feedback_mod = KEYS["KEY_FEEDBACK"].get(cmd_str, 'HOLD')
+                key_feedback_mod = control.key_feedback[cmd_str]
+
+                # Activation by holding - default
+                if keys[key_code] and key_feedback_mod == 'HOLD':
+                    self._add_commands_to_queue(ent=ent, cmds=control.control_cmds.get(cmd_str), desc=key_feedback_mod)
+
+                # Activation at the moment of pressing / releasing the key
+                elif key_feedback_mod in ['UP', 'DOWN']:
+
+                    for event in events:
+                        if (event.type == pygame.KEYDOWN and event.key == key_code and key_feedback_mod == 'DOWN') or \
+                           (event.type == pygame.KEYUP and event.key == key_code and key_feedback_mod == 'UP'):
+
+                            self._add_commands_to_queue(ent=ent, cmds=control.control_cmds.get(cmd_str), desc=key_feedback_mod)
 
 
     def pre_save(self):

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.destroy_on_no_movement" contains
+''' Module "example_game.core.components.destroy_on_no_movement" contains
 DestroyOnNoMovement component implemented as a DestroyOnNoMovement class.
 
-Use 'python -m pyrpg.core.ecs.components.destroy_on_no_movement -v' to run
+Use 'python -m example_game.core.components.destroy_on_no_movement -v' to run
 module tests.
 '''
 

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_generated_from_factory" contains
+''' Module "example_game.core.components.flag_generated_from_factory" contains
 FlagGeneratedFromFactory component implemented as a FlagGeneratedFromFactory class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_generated_from_factory -v' to run
+Use 'python -m example_game.core.components.flag_generated_from_factory -v' to run
 module tests.
 '''
 

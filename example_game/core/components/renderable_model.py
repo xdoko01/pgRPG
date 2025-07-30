@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.renderable_model" contains
+''' Module "example_game.core.components.renderable_model" contains
 RenderableModel component implemented as a RenderableModel class.
 
-Use 'python -m pyrpg.core.ecs.components.renderable_model -v' to run
+Use 'python -m example_game.core.components.renderable_model -v' to run
 module tests.
 '''
 

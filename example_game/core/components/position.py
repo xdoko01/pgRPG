@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.position" contains
+''' Module "example_game.core.components.position" contains
 Position component implemented as a Position class.
 
-Use 'python -m pyrpg.core.ecs.components.position -v' to run
+Use 'python -m example_game.core.components.position -v' to run
 module tests.
 '''
 from dataclasses import dataclass

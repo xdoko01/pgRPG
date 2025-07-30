@@ -25,7 +25,7 @@ if __name__ == "__main__":
     config_file = "example_game/config.jsonc"
 
     # Empty
-    scene_file = "empty.jsonc"
+    #scene_file = "empty.jsonc"
 
     # UI
     #scene_file = "UI/test_button_pressed.jsonc"
@@ -88,6 +88,7 @@ if __name__ == "__main__":
     #scene_file = "tests/06_teleportation/test_teleportation_01"
 
     # 05_pickup
+    scene_file = "tests/05_pickup/test_pickup_02.jsonc"
     #scene_file = "tests/05_pickup/test_pickup_01.jsonc"
 
     # 04_collisions

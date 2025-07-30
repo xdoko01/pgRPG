@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.has_score" contains
+''' Module "example_game.core.components.has_score" contains
 Score component implemented as a HasScore class.
 
-Use 'python -m pyrpg.core.ecs.components.has_score -v' to run
+Use 'python -m example_game.core.components.has_score -v' to run
 module tests.
 '''
 

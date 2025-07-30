@@ -1,6 +1,6 @@
 ''' Module implementing FACE_TARGET command 
 
-For tests call python -m pyrpg.core.commands.commands.new.face_target -v
+For tests call python -m example_game.core.commands.face_target -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

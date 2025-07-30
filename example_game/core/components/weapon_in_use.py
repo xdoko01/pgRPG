@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.weapon_in_use" contains
+''' Module "example_game.core.components.weapon_in_use" contains
 WeaponInUse component implemented as a WeaponInUse class.
 
-Use 'python -m pyrpg.core.ecs.components.weapon_in_use -v' to run
+Use 'python -m example_game.core.components.weapon_in_use -v' to run
 module tests.
 '''
 

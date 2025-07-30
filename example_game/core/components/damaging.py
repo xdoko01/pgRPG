@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.damaging" contains
+''' Module "example_game.core.components.damaging" contains
 Damaging component implemented as a Damaging class.
 
-Use 'python -m pyrpg.core.ecs.components.damaging -v' to run
+Use 'python -m example_game.core.components.damaging -v' to run
 module tests.
 '''
 

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.visual_fx_on_creation" contains
+''' Module "example_game.core.components.visual_fx_on_creation" contains
 VisualFXOnCreation component implemented as a VisualFXOnCreation class.
 
-Use 'python -m pyrpg.core.ecs.components.visual_fx_on_creation -v' to run
+Use 'python -m example_game.core.components.visual_fx_on_creation -v' to run
 module tests.
 '''
 

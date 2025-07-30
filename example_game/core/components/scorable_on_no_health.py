@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.scorable_on_no_health" contains
+''' Module "example_game.core.components.scorable_on_no_health" contains
 ScorableOnNoHealth component implemented as a ScorableOnNoHealth class.
 
-Use 'python -m pyrpg.core.ecs.components.scorable_on_no_health -v' to run
+Use 'python -m example_game.core.components.scorable_on_no_health -v' to run
 module tests.
 '''
 

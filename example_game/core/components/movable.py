@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.movable" contains
+''' Module "example_game.core.components.movable" contains
 Movable component implemented as a Movable class.
 
-Use 'python -m pyrpg.core.ecs.components.movable -v' to run
+Use 'python -m example_game.core.components.movable -v' to run
 module tests.
 '''
 

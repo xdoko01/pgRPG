@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.new_collidable" contains
+''' Module "example_game.core.components.new_collidable" contains
 NewCollidable component implemented as a NewCollidable class.
 
-Use 'python -m pyrpg.core.ecs.components.new_collidable -v' to run
+Use 'python -m example_game.core.components.new_collidable -v' to run
 module tests.
 '''
 

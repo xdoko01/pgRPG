@@ -1,6 +1,6 @@
 ''' Module implementing LOG command 
 
-For tests call python -m pyrpg.core.commands.commands.new.log -v
+For tests call python -m example_game.core.commands.log -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

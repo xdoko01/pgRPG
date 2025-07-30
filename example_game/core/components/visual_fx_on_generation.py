@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.visual_fx_on_generation" contains
+''' Module "example_game.core.components.visual_fx_on_generation" contains
 VisualFXOnGeneration component implemented as a VisualFXOnGeneration class.
 
-Use 'python -m pyrpg.core.ecs.components.visual_fx_on_generation -v' to run
+Use 'python -m example_game.core.components.visual_fx_on_generation -v' to run
 module tests.
 '''
 

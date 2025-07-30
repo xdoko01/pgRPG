@@ -276,7 +276,7 @@ class PerformRenderDebugInfoProcessor(Processor):
 
                     # Blit debug text info gathered above - except brain process
                     text_surf = FONTS["GAME_DEBUG_FONT_OBJ"].render(pformat(debug.info)) # Text to Surface
-                    frame_surf = FRAMES["GAME_DEBUG_FRAME_OBJ"].render(text_surf) # Frame the debug text to surface
+                    frame_surf = FRAMES["GAME_DEBUG_FRAME_OBJ"].render(text_surf[0]) # Frame the debug text to surface
                     
                     camera.screen.blit(
                         frame_surf,

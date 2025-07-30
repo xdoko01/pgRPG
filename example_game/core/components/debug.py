@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.debug" contains
+''' Module "example_game.core.components.debug" contains
 Debug component implemented as a Debug class.
 
-Use 'python -m pyrpg.core.ecs.components.debug -v' to run
+Use 'python -m example_game.core.components.debug -v' to run
 module tests.
 '''
 

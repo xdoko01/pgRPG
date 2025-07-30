@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.visual_fx_on_collision" contains
+''' Module "example_game.core.components.visual_fx_on_collision" contains
 VisualFXOnCollision component implemented as a VisualFXOnCollision class.
 
-Use 'python -m pyrpg.core.ecs.components.visual_fx_on_collision -v' to run
+Use 'python -m example_game.core.components.visual_fx_on_collision -v' to run
 module tests.
 '''
 

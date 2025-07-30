@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.sound_fx_on_collision" contains
+''' Module "example_game.core.components.sound_fx_on_collision" contains
 SoundFXOnCollision component implemented as a SoundFXOnCollision class.
 
-Use 'python -m pyrpg.core.ecs.components.sound_fx_on_collision -v' to run
+Use 'python -m example_game.core.components.sound_fx_on_collision -v' to run
 module tests.
 '''
 import pyrpg.core.sounds.sound as sound # For cached sounds

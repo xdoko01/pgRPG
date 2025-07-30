@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.gui_flag_was_pressed" contains
+''' Module "example_game.core.components.gui_flag_was_pressed" contains
 GUIFlagWasPressed component implemented as a GUIFlagWasPressed class.
 
-Use 'python -m pyrpg.core.ecs.components.gui_flag_was_pressed -v' to run
+Use 'python -m example_game.core.components.gui_flag_was_pressed -v' to run
 module tests.
 '''
 

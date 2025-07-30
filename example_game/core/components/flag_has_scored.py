@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_has_scored" contains
+''' Module "example_game.core.components.flag_has_scored" contains
 FlagHasScored component implemented as a FlagHasScored class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_has_scored -v' to run
+Use 'python -m example_game.core.components.flag_has_scored -v' to run
 module tests.
 '''
 

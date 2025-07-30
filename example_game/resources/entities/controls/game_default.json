@@ -1,0 +1,21 @@
+{
+	"id" : "default",
+	"template": ["controls"],
+	"components": [
+		{
+			"type": "controllable:Controllable",
+			"params":  {
+				"key_profile": "DEFAULT",
+				"key_feedback": {"UP": "HOLD", "DOWN": "HOLD", "LEFT": "HOLD", "RIGHT": "HOLD", "ATTACK": "HOLD", "INVENTORY": "UP"},
+				"control_cmds": {
+					"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+					"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+					"UP": [["move_dir_add", {"moves" : ["up"]}]],
+					"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+					"ATTACK": [["attack", {}]],
+					"INVENTORY": [["toggle_inventory", {}], ["load_from_template", {"template_id": "controls/inventory_default"}]]
+				}
+			}
+		}
+	]
+}

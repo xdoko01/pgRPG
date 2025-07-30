@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.has_weapon" contains
+''' Module "example_game.core.components.has_weapon" contains
 HasWeapon component implemented as a HasWeapon class.
 
-Use 'python -m pyrpg.core.ecs.components.has_weapon -v' to run
+Use 'python -m example_game.core.components.has_weapon -v' to run
 module tests.
 '''
 

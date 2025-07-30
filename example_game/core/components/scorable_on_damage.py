@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.scorable_on_damage" contains
+''' Module "example_game.core.components.scorable_on_damage" contains
 ScorableOnDamage component implemented as a ScorableOnDamage class.
 
-Use 'python -m pyrpg.core.ecs.components.scorable_on_damage -v' to run
+Use 'python -m example_game.core.components.scorable_on_damage -v' to run
 module tests.
 '''
 

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.sound_fx_on_generation" contains
+''' Module "example_game.core.components.sound_fx_on_generation" contains
 SoundFXOnGeneration component implemented as a SoundFXOnGeneration class.
 
-Use 'python -m pyrpg.core.ecs.components.sound_fx_on_generation -v' to run
+Use 'python -m example_game.core.components.sound_fx_on_generation -v' to run
 module tests.
 '''
 import pyrpg.core.sounds.sound as sound # For cached sounds

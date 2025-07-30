@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.visual_fx_on_no_health" contains
+''' Module "example_game.core.components.visual_fx_on_no_health" contains
 VisualFXOnNoHealth component implemented as a VisualFXOnNoHealth class.
 
-Use 'python -m pyrpg.core.ecs.components.visual_fx_on_no_health -v' to run
+Use 'python -m example_game.core.components.visual_fx_on_no_health -v' to run
 module tests.
 '''
 

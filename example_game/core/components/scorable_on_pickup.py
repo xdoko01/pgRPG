@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.scorable_on_pickup" contains
+''' Module "example_game.core.components.scorable_on_pickup" contains
 ScorableOnPickup component implemented as a ScorableOnPickup class.
 
-Use 'python -m pyrpg.core.ecs.components.scorable_on_pickup -v' to run
+Use 'python -m example_game.core.components.scorable_on_pickup -v' to run
 module tests.
 '''
 

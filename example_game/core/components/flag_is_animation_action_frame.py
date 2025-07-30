@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_is_animation_action_frame" contains
+''' Module "example_game.core.components.flag_is_animation_action_frame" contains
 FlagIsAnimationActionFrame component implemented as a FlagIsAnimationActionFrame class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_is_animation_action_frame -v' to run
+Use 'python -m example_game.core.components.flag_is_animation_action_frame -v' to run
 module tests.
 '''
 

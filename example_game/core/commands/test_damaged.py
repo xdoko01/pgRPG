@@ -1,6 +1,6 @@
 ''' Module implementing TEST_DAMAGED command 
 
-For tests call python -m pyrpg.core.commands.commands.new.test_damaged -v
+For tests call python -m example_game.core.commands.test_damaged -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.visual_fx_on_damage" contains
+''' Module "example_game.core.components.visual_fx_on_damage" contains
 VisualFXOnDamage component implemented as a VisualFXOnDamage class.
 
-Use 'python -m pyrpg.core.ecs.components.visual_fx_on_damage -v' to run
+Use 'python -m example_game.core.components.visual_fx_on_damage -v' to run
 module tests.
 '''
 

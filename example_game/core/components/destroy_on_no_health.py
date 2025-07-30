@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.destroy_on_no_health" contains
+''' Module "example_game.core.components.destroy_on_no_health" contains
 DestroyOnNoHealth component implemented as a DestroyOnNoHealth class.
 
-Use 'python -m pyrpg.core.ecs.components.destroy_on_no_health -v' to run
+Use 'python -m example_game.core.components.destroy_on_no_health -v' to run
 module tests.
 '''
 

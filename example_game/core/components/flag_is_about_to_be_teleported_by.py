@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.flag_is_about_to_be_teleported_by" contains
+''' Module "example_game.core.components.flag_is_about_to_be_teleported_by" contains
 FlagIsAboutToBeTeleportedBy component implemented as a FlagIsAboutToBeTeleportedBy class.
 
-Use 'python -m pyrpg.core.ecs.components.flag_is_about_to_be_teleported_by -v' to run
+Use 'python -m example_game.core.components.flag_is_about_to_be_teleported_by -v' to run
 module tests.
 '''
 

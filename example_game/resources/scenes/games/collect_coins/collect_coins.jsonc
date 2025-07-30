@@ -284,7 +284,7 @@
 					}
 				},
 
-				{"type" : "has_inventory:HasInventory", "params" : {}},
+				{"type" : "has_inventory:HasInventory", "params" : {"max_items": 50}},
 
 				{"type" : "has_score:HasScore", "params" : {}},
 

@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.factory" contains
+''' Module "example_game.core.components.factory" contains
 Factory component implemented as a Factory class.
 
-Use 'python -m pyrpg.core.ecs.components.factory -v' to run
+Use 'python -m example_game.core.components.factory -v' to run
 module tests.
 '''
 

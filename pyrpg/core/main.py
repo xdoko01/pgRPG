@@ -119,7 +119,7 @@ def run():
         state_manager.change_state(
             state_manager.state_modules[state_manager.state].run(
                 key_events=key_events, # Keyboard, mouse and other events
-                key_pressed=pygame.key.get_pressed(),  # Pressed Keys
+                key_pressed=key_pressed,  # Pressed Keys
                 dt=dt
             )
         )

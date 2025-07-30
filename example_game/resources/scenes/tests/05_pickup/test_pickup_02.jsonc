@@ -1,0 +1,275 @@
+{
+	// JSON Schema for validation of the game parameters
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
+	// Basic data
+	"id" : "test_pickup_02",
+	"title" : "Inventory window test",
+	"description" : "Test inventory window",
+	"objective" : "POC of the pickup system",
+
+	// What scenes need to be loaded before this one
+	"prereqs" : [],
+
+	// What objects need to be cleaned first
+	"cleanup" : {
+		"processors": [],
+		"maps": [], 
+		"templates": [], 
+		"entities": [], 
+		"dialogs": [],
+		"handlers": []
+	},
+
+	// What processors to load
+	"processors" : [
+		// Default processor group
+
+			// For commands
+			["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
+			["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+			["command_system.perform_command_processor:PerformCommandProcessor", {}],
+
+			// For movement
+			["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+
+			// For animation
+			["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+			["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+			["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+			// For collisions
+			["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
+			["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+
+			// For pickup
+			["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
+			["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+
+			// For displaying
+			["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
+			["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
+			["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+			["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+			["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+			["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+			
+			// Processor for displaying the inventory window
+			["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
+
+			["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+
+			// For events processing - display the dialog on the start of the scene - after first game screen is generated
+			["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
+
+			// For clearing of processing of movements and collisions and pickups
+			["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+
+			["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
+
+			["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}], // if attack command is used, this processor must be planned. Otherwise no movement will happen after pressing the attack button
+
+			["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
+			["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
+			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+
+	],
+	
+	// What maps to load
+	"maps" : ["test_arena_sand"],
+
+	// What dialogs to load
+	"dialogs" : [],
+
+	// What templates to load
+	"templates": [],
+
+	// What entities to load
+	"entities" : [
+		{
+			"id" : "player01",
+			"templates" : [
+				"model/body/male/human/dark2", // model template
+				"controls/game_default" 
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitating pickup
+				//{
+				//	"type": "controllable:Controllable",
+				//	"params":  {
+				//		"key_profile": "DEFAULT",
+				//		"key_feedback": {"UP": "HOLD", "DOWN": "HOLD", "LEFT": "HOLD", "RIGHT": "HOLD", "ATTACK": "HOLD", "INVENTORY": "UP"}, 
+				//		"control_cmds": {
+				//			"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
+				//			"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
+				//			"UP": [["move_dir_add", {"moves" : ["up"]}]],
+				//			"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
+				//			"ATTACK": [],
+				//			"INVENTORY": [
+				//				["toggle_inventory", {}], 
+				//				["toggle_controls", {
+				//					"control_cmds": {
+				//						"LEFT": [["inventory_move_dir", {"move": "left"}]],
+				//						"RIGHT": [["inventory_move_dir", {"move":"right"}]],
+				//						"UP": [["inventory_move_dir", {"move": "up"}]],
+				//						"DOWN": [["inventory_move_dir", {"move": "down"}]],
+				//						"ATTACK": []
+				//					},
+				//					"key_feedback": {"UP": "DOWN", "DOWN": "DOWN", "LEFT": "DOWN", "RIGHT": "DOWN"} 
+				//				}]
+				//			]
+				//		},
+				//		"control_feedback": {}
+				//	}
+				//},
+
+				{"type" : "has_inventory:HasInventory", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
+				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
+			]
+		},
+		{
+			"id" : "item01",
+			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item02",
+			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 140, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item03",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 170, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item04",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 200, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item05",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 230, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item06",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 260, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item07",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 290, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item08",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 320, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item09",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 350, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		},
+		{
+			"id" : "item10",
+			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+
+				// New component for facilitationg pickup
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "position:Position", "params" : {"x" : 380, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		}
+	],
+
+	// How to handle events
+	"handlers": [
+		[
+			"SCENE_START",
+			{
+				"id": "ev_scene_start",
+				"actions": 	[
+					"SCRIPT",
+					"show_msg_window", 
+					{
+						"title": "%filepath",
+						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		]
+
+	]
+}

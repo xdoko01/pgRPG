@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.camera" contains
+''' Module "example_game.core.components.camera" contains
 Camera component implemented as a Camera class.
 
-Use 'python -m pyrpg.core.ecs.components.camera -v' to run
+Use 'python -m example_game.core.components.camera -v' to run
 module tests.
 '''
 

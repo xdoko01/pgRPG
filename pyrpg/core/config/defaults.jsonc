@@ -1,7 +1,7 @@
 {
 
 	"PYRPG": {
-		"TIMED": false
+		"TIMED": true  // Measure time of duration of individual processors
 	},
 
 	"STATES": {
@@ -66,11 +66,14 @@
 		// List of key profiles for manipulating of characters
 		"KEY_PROFILES": ["DEFAULT", "KEY_CONTROLS_1", "KEY_CONTROLS_2", "KEY_CONTROLS_3", "KEY_CONTROLS_4"],
 
-		"DEFAULT": {"UP": "K_UP", "DOWN": "K_DOWN", "LEFT": "K_LEFT", "RIGHT": "K_RIGHT", "ATTACK": "K_LCTRL"},
-		"KEY_CONTROLS_1": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null},
-		"KEY_CONTROLS_2": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null},
-		"KEY_CONTROLS_3": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null},
-		"KEY_CONTROLS_4": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null}
+		"DEFAULT": {"UP": "K_UP", "DOWN": "K_DOWN", "LEFT": "K_LEFT", "RIGHT": "K_RIGHT", "ATTACK": "K_LCTRL", "INVENTORY": "K_i"},
+		"KEY_CONTROLS_1": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null, "INVENTORY": null},
+		"KEY_CONTROLS_2": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null, "INVENTORY": null},
+		"KEY_CONTROLS_3": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null, "INVENTORY": null},
+		"KEY_CONTROLS_4": {"UP": null, "DOWN": null, "LEFT": null, "RIGHT": null, "ATTACK": null, "INVENTORY": null},
+
+		// What key action is triggering the key - HOLD ... always when pressed, UP ... on key up, DOWN ... on key down
+		"KEY_FEEDBACK": {"UP": "HOLD", "DOWN": "HOLD", "LEFT": "HOLD", "RIGHT": "HOLD", "ATTACK": "HOLD", "INVENTORY": "UP"} 
 	},
 
 	"GUI": {

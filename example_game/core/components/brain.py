@@ -1,7 +1,7 @@
-''' Module "pyrpg.core.ecs.components.brain" contains
+''' Module "example_game.core.components.brain" contains
 Brain component implemented as a Brain class.
 
-Use 'python -m pyrpg.core.ecs.components.brain -v' to run
+Use 'python -m example_game.core.components.brain -v' to run
 module tests.
 '''
 

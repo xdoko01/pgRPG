@@ -11,7 +11,9 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import time as _time
+#import time as _time
+
+import pygame # for get_ticks function
 
 from functools import lru_cache as _lru_cache
 from typing import List, Type, Any, Iterable, Optional
@@ -569,10 +571,19 @@ class World:
 
     def _timed_process(self, proc_group_id: str='default', *args, **kwargs):
         """Track Processor execution time for benchmarking."""
+        
+        '''old code using time library
         for processor in self._processors[proc_group_id]:
             start_time = _time.process_time()
             processor.process(*args, **kwargs)
             process_time = int(round((_time.process_time() - start_time) * 1000, 2))
+            self.process_times[processor.__class__.__name__] = process_time
+        '''
+
+        for processor in self._processors[proc_group_id]:
+            start_time = pygame.time.get_ticks()
+            processor.process(*args, **kwargs)
+            process_time = pygame.time.get_ticks() - start_time
             self.process_times[processor.__class__.__name__] = process_time
 
     def process(self, proc_group_id: str='default', *args, **kwargs) -> None:

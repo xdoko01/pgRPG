@@ -40,12 +40,12 @@
 	
 
 	"KEYS" : {
-		"KEY_CONTROLS_1": {"UP": "K_u", "DOWN": "K_j", "LEFT": "K_h", "RIGHT": "K_k", "ATTACK": "K_z"},
+		"KEY_CONTROLS_1": {"UP": "K_u", "DOWN": "K_j", "LEFT": "K_h", "RIGHT": "K_k", "ATTACK": "K_z", "INVENTORY": "K_i"},
 		"K_CONSOLE_TOGGLE": "K_F9",
 		"K_SAVE_GAME": "K_F5",
 		"K_LOAD_GAME": "K_F6",
 		"K_PAUSE_GAME": "K_p",
-		"K_INVENTORY_TOGGLE": "K_i"
+		"K_INVENTORY_TOGGLE": "K_q"
 	},
 
 	"GAME": {
@@ -62,8 +62,12 @@
 	},
 
 	"FONTS": {
+		"GAME_INVENTORY_FONT": "good_neighbours_font.json",
+		"GAME_INVENTORY_FONT_COLOUR": "#000001",
+
 		"GAME_DEBUG_FONT": "small_font.json",
 		"GAME_DEBUG_FONT_COLOUR": "#000001",
+		"GAME_DEBUG_FONT_SPACING": [1,1],
 
 		"PLAYER_TALK_FONT": "good_neighbours_font.json",
 		"PLAYER_TALK_FONT_COLOUR": "#000001",
@@ -260,7 +264,7 @@
 				//"handlers" : ["console"], // log to the text console
 				"propagate" : false // Do not send messages from these loggers to parent (root) logger
 			},
-	
+
 			// Save all the logs from behavior tree classes to the file
 			"pyrpg.core.commands.generators.btree" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -310,8 +314,8 @@
 			"core.commands" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				//"handlers" : ["console"], // uncomment to log all the commands
-				//"handlers" : ["file_handler_cmd"], // uncomment to log all the commands
-				"handlers" : ["null"], // do not log to file for speed
+				"handlers" : ["file_handler_cmd"], // uncomment to log all the commands
+				//"handlers" : ["null"], // do not log to file for speed
 				"propagate" : false // Do not send messages from these loggers to parent (root) logger
 			},
 	
