@@ -84,7 +84,8 @@ class Controllable(Component):
             'RIGHT': [('move_dir', {'moves' : ['right']})],
             'UP' : [('move_dir', {'moves' : ['up']})],
             'DOWN' : [('move_dir', {'moves' : ['down']})],
-            'ATTACK' : [('attack', {})]
+            'ATTACK' : [],
+            'INVENTORY' : []
         }
 
         control_cmds = kwargs.get("control_cmds", default_cmds)

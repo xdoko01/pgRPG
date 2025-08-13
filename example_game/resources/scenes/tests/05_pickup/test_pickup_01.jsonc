@@ -67,11 +67,9 @@
 
 			["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
 			["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}],
+			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
 
 		// Inventory Processor Group 
-			["inventory", "render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
-			["inventory", "render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}]
 
 
 	],

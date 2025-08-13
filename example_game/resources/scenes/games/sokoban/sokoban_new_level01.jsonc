@@ -136,7 +136,7 @@
 					"params" :  {
 						"key_profile" : "DEFAULT",
 						"control_cmds" : {
-							"ATTACK": [["none", {}]]
+							"ATTACK": []
 						}
 					}
 				},
@@ -165,7 +165,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "load_quest", {"scene_file" : "new/games/sokoban/sokoban_new_level02"}]
+						["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_new_level02"}]
 				]
 			}
 		],

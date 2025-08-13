@@ -57,7 +57,7 @@ class HasInventory(Component):
         try:
             assert isinstance(self.inventory, set), f'Inventory must be a set of entities.'
             assert isinstance(self.categories, dict), f'Categories of inventory must be a dict.'
-            assert len(self.inventory) <= 10, f'Too many items in the inventory'
+            assert len(self.inventory) <= self.max_items , f'Too many items in the inventory'
 
             # Add inventory to the slots - from start
             for slot_id, item in enumerate(self.inventory): self.slots[slot_id] = item

@@ -61,6 +61,10 @@
 		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
 		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
+
+		// Processor for displaying the inventory window
+		["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
+
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
 		// For events processing - display the dialog on the start of the scene - after first game screen is generated
@@ -180,7 +184,7 @@
 			"id" : "player01",
 			"templates" : [
 				"model/body/male/reptile/azure", // model template
-				"controls/default" // controls template
+				"controls/game_default" // controls template
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},

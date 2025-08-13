@@ -136,11 +136,17 @@ def process_events(process: list=None, ignore: list=None) -> None:
 
         # If event is to be ignored move it to the new queue
         if ignore is not None and event.event_type in ignore:
-            new_event_queue.append(event)
+
+            # Keep it in the event queue for later processing - but why? we should remove it I hope
+            #new_event_queue.append(event)
+            pass
 
         # If event is not in process list
         elif process is not None and event.event_type not in process:
-            new_event_queue.append(event)
+            
+            # Keep it in the event queue for later processing - but why? we should remove it I hope
+            #new_event_queue.append(event)
+            pass
 
         # Process the rest of the events
         else:

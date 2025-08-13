@@ -23,8 +23,8 @@
 
 	// What processors to load
 	"processors" : [
-		// Default processor group
 
+		// Default processor group
 			// For commands
 			["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
 			["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
@@ -45,6 +45,9 @@
 			// For pickup
 			["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
 			["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+
+			// For arming the weapon based on arm_weapon command
+			["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
 
 			// For displaying
 			["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -71,7 +74,14 @@
 
 			["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
 			["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
+			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}],
+
+			["arm_weapon_system.remove_flag_is_about_to_arm_weapon_processor:RemoveFlagIsAboutToArmWeaponProcessor", {}],
+			["arm_weapon_system.remove_flag_has_armed_weapon_processor:RemoveFlagHasArmedWeaponProcessor", {}],
+			["arm_weapon_system.remove_flag_was_armed_as_weapon_by_processor:RemoveFlagWasArmedAsWeaponByProcessor", {}],
+
+		// Pause processor group
+			["pause", "render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "pause.png", "resize": true}]
 
 	],
 	
@@ -82,7 +92,24 @@
 	"dialogs" : [],
 
 	// What templates to load
-	"templates": [],
+	"templates": [
+		// By using template with parameters it is easy to define position of any entity
+		{
+			"id": "t_tile_pos",
+			"vars": ["$tileX", "$tileY", "$map"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
+			]
+		},
+		{
+			"id" : "t_pickable_item",
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}},
+				{"type" : "pickable:Pickable", "params" :  {}},
+				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+			]
+		}
+	],
 
 	// What entities to load
 	"entities" : [
@@ -90,166 +117,167 @@
 			"id" : "player01",
 			"templates" : [
 				"model/body/male/human/dark2", // model template
-				"controls/game_default" 
+				"controls/game_default",   // controls template
+				"t_tile_pos(5, 5, test_arena_sand)" // position template
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitating pickup
-				//{
-				//	"type": "controllable:Controllable",
-				//	"params":  {
-				//		"key_profile": "DEFAULT",
-				//		"key_feedback": {"UP": "HOLD", "DOWN": "HOLD", "LEFT": "HOLD", "RIGHT": "HOLD", "ATTACK": "HOLD", "INVENTORY": "UP"}, 
-				//		"control_cmds": {
-				//			"LEFT": [["move_dir_add", {"moves" : ["left"]}]],
-				//			"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
-				//			"UP": [["move_dir_add", {"moves" : ["up"]}]],
-				//			"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
-				//			"ATTACK": [],
-				//			"INVENTORY": [
-				//				["toggle_inventory", {}], 
-				//				["toggle_controls", {
-				//					"control_cmds": {
-				//						"LEFT": [["inventory_move_dir", {"move": "left"}]],
-				//						"RIGHT": [["inventory_move_dir", {"move":"right"}]],
-				//						"UP": [["inventory_move_dir", {"move": "up"}]],
-				//						"DOWN": [["inventory_move_dir", {"move": "down"}]],
-				//						"ATTACK": []
-				//					},
-				//					"key_feedback": {"UP": "DOWN", "DOWN": "DOWN", "LEFT": "DOWN", "RIGHT": "DOWN"} 
-				//				}]
-				//			]
-				//		},
-				//		"control_feedback": {}
-				//	}
-				//},
-
 				{"type" : "has_inventory:HasInventory", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}},
+
+				{"type" : "has_weapon:HasWeapon", "params" :  {}}
+
 			]
 		},
 		{
-			"id" : "item01",
-			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
+			"id" : "spell_pack_01",
+			"templates" : [
+				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 10, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}}
 			]
 		},
 		{
-			"id" : "item02",
-			"templates" : ["model/ammo_pack/spellcast/fireball_spell_pack"],
+			"id" : "spell_pack_02",
+			"templates" : [
+				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 11, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 140, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}}
 			]
 		},
 		{
-			"id" : "item03",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
+			"id" : "spell_pack_03",
+			"templates" : [
+				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 12, test_arena_sand)" // position template
+			],
+			"components" : []
+		},
+		{
+			"id" : "spell_pack_04",
+			"templates" : [
+				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 13, test_arena_sand)" // position template
+			],
+			"components" : []
+		},
+		{
+			"id" : "spell_pack_05",
+			"templates" : [
+				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 14, test_arena_sand)" // position template
+			],
+			"components" : []
+		},
+		{	
+			"id" : "spell_pack_06",
+			"templates" : [
+				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 15, test_arena_sand)" // position template
+			],
+			"components" : []
+		},
 
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 170, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+		{
+			"id" : "arrows_pack_01",
+			"templates" : [
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(5, 12, test_arena_sand)" // position template
+			],
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
 			]
 		},
 		{
-			"id" : "item04",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 200, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-			]
+			"id" : "arrows_pack_02",
+			"templates" : [
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(5, 13, test_arena_sand)" // position template
+			],
+			"components" : []
 		},
 		{
-			"id" : "item05",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 230, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-			]
+			"id" : "arrows_pack_03",
+			"templates" : [
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(5, 14, test_arena_sand)" // position template
+			],
+			"components" : []
 		},
 		{
-			"id" : "item06",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 260, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-			]
+			"id" : "arrows_pack_04",
+			"templates" : [
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(5, 15, test_arena_sand)" // position template
+			],
+			"components" : []
 		},
 		{
-			"id" : "item07",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 290, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-			]
+			"id" : "arrows_pack_05",
+			"templates" : [
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(5, 16, test_arena_sand)" // position template
+			],
+			"components" : []
 		},
 		{
-			"id" : "item08",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 320, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-			]
+			"id" : "arrows_pack_06",
+			"templates" : [
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"t_pickable_item", // pickable template
+				"t_tile_pos(5, 17, test_arena_sand)" // position template
+			],
+			"components" : []
 		},
 		{
-			"id" : "item09",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"id" : "dagger_with_generator",
+			"templates" : [
+				"model/weapon/slash/dagger",
+				"t_pickable_item", // pickable template
+				"t_tile_pos(6, 18, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 350, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
-			]
-		},
-		{
-			"id" : "item10",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
-			"components" : [
-				{"type" : "debug:Debug", "params" : {}},
-
-				// New component for facilitationg pickup
-				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 380, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				// is Weapon
+				{"type" : "weapon:Weapon", "params" : {"type" : "sword"}},
+				// and Generator in one entity
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
+				{
+					"type" : "factory:Factory", 
+					"params" : {
+						"prescription" : {
+							"templates" : [], // Only collision zone is created, no sprite.
+							"components" : [
+								{"type" : "debug:Debug", "params" : {}},
+								{
+									"type" : "collidable:Collidable", 
+									"params" : {
+										"x" : 8, "y" : 8, 
+										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
+										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
+										}},
+								{"type" : "damaging:Damaging", "params" : {"damage" : 20}},
+								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}}
+							]
+						}
+					}
+				}
 			]
 		}
 	],

@@ -90,11 +90,11 @@ def run(key_events, key_pressed, dt, debug: bool=False) -> State:
                 #self.gui_manager.save_screen()
                 return State.MAIN_MENU
 
-            # On pushing the INVENTORY button ->
-            elif event.key == KEYS["K_INVENTORY_TOGGLE"]:
-                # Toggle between inventory and default process group
+            # On pushing the PAUSE button ->
+            elif event.key == KEYS["K_PAUSE_GAME"]:
+                # Toggle between pause and default process group
                 global proc_group_id
-                proc_group_id = 'inventory' if proc_group_id == 'default' else 'default'
+                proc_group_id = 'pause' if proc_group_id == 'default' else 'default'
 
             # On pushing the SAVE GAME button -> not implemented yet
             elif event.key == KEYS["K_SAVE_GAME"]:

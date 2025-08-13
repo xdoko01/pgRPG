@@ -37,8 +37,8 @@ class FlagShowInventory(Component):
 
         self.inventory_comp: Component = inventory_comp
         self.camera_comp: Component = camera_comp
-        self.inv_win_rect: Rect = None
-        self.inv_slot_rect: Rect = None
+        self.inv_win_rect: Rect | None = None
+        self.inv_slot_rect: Rect | None = None
         self.inv_slot_rects: list[Rect] = []
         self.inv_slot_border_rects: list[Rect] = []
 

@@ -8,11 +8,11 @@
 				"key_profile": "DEFAULT",
 				"key_feedback": {"UP": "DOWN", "DOWN": "DOWN", "LEFT": "DOWN", "RIGHT": "DOWN", "ATTACK": "DOWN", "INVENTORY": "UP"},
 				"control_cmds": {
-                    "LEFT": [["inventory_move_dir", {"move": "left"}]],
-                    "RIGHT": [["inventory_move_dir", {"move":"right"}]],
-                    "UP": [["inventory_move_dir", {"move": "up"}]],
-                    "DOWN": [["inventory_move_dir", {"move": "down"}]],
-                    "ATTACK": [],
+					"LEFT": [["inventory_move_dir", {"move": "left"}]],
+					"RIGHT": [["inventory_move_dir", {"move":"right"}]],
+					"UP": [["inventory_move_dir", {"move": "up"}]],
+					"DOWN": [["inventory_move_dir", {"move": "down"}]],
+					"ATTACK": [["inventory_action", {}]],
 					"INVENTORY": [["toggle_inventory", {}], ["load_from_template", {"template_id": "controls/game_default"}]]
 				}
 			}

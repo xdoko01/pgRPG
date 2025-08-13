@@ -1,17 +1,29 @@
 ## Current
-  
-  - [ ] - Transfer the bur reports to the GitHub functionality.
-  - [ ] - Implement pause button to demonstrate the processor groups. SOme preocessors running and some stopped.
+  - [ ] - finish with `test_pickup_02.jsonc` and open a new test `arm_weapon_from_inventory.jsonc`
+  - [ ] - BUG - find out why attacking is never stopping
+  - [ ] - BUG - find out why there is no idle image for the bow
+  - [ ] - implement `arm_ammo` command
+  - [ ] - implement some graphics to see the weapons
+  - [ ] - implement dropping of weapon/ammo that is armed - and for all inventory items - similar system to `pickup` system
+        - `FlagIsAboutToDropEntity` + `HasInventory` -> `PerformDropProcessor` -> `FlagWasDroppedBy` + `FlagHasDropped` + event `ITEM_DROP`
+        
+  - [ ] - finish the inventory and arming weapons. After that try to fix Sokoban collision zones. After that collision with the walls must be flawless. After it improve the speed of generation of the map on the screen. After that client/server game.
+  - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
+  - [x] - change the `test_pickup_02` scene to the proper scene using templates for entities.
+  - [ ] - proper dropping of inventory items
+  - [ ] - Transfer the bug reports to the GitHub functionality.
+  - [x] - Implement pause button to demonstrate the processor groups. SOme preocessors running and some stopped.
   - [ ] - Naming functions in `ecs_manager` can be better.
   - [x] - Finish getting key feedback into the `Controllable` component so that `toggle_control` can support it.
-  - [ ] - BUG `test_pickup_02` scene. In case that 2 items are dropped and their collision areas overlap then there is brutal slow down. How to find out which processor is causing the slow down effectivelly? `GameEventsExProcessor` is the problem -> `event_manager._event_queue` is getting bigger and bigger. Console Command for seeing stats of `event_manager` and other managers as well.
+
+  - [x] - BUG `test_pickup_02` scene. In case that 2 items are dropped and their collision areas overlap then there is brutal slow down. How to find out which processor is causing the slow down effectivelly? `GameEventsExProcessor` is the problem -> `event_manager._event_queue` is getting bigger and bigger. Console Command for seeing stats of `event_manager` and other managers as well.
         -  Every collision generates a record in `event_manager._event_queue` and the queue keeps on growing due to constant collision happening somewhere on the map. IMPLEMENT: that event queue must have some max capacity or events must have some TTL.
         - IMPLEMENT into console header/footer KPI the length of the event queue.
         - REVISIT the `process` and `ignore` mechanism of the `event_manager`. If process=SCENE_START then probably only these events should be in the event queue.
  
   - [ ] - BUG - `Position` component `x` and `y` can have float value in it, why???? Fix to int only
   - [ ] - Automate prep of configuration of fonts - now must be named one by one to add the path. Shoudl be automatic. Same with `init_fonts()`
-  - [ ] - Command `load_from_template` that will load any template with components on the entity.
+  - [x] - Command `load_from_template` that will load any template with components on the entity.
   - [x] - BUG - Once unimplemented attack action button is pressed, all controll stops working for some reason  - `test_pickup_02` scene. Something wrong in the attack command - resolved: was missing `RemoveFlagDoAttackProcessor` and hence `FlagDoAttack` components that prevents movement was always there.
   - [x] - BUG - Fix the `collect_coins` game - currently it is reaching maximum of inventory items.
   - [x] - Some mechanics in `Controllable` component to switch between more profile of keys - one for controlling the character, other for controlling the movements in inventory. Resolution: `toggle_controls` command where you can define new set of commands for keys.
@@ -71,6 +83,17 @@
 
 ## Features
   - [ ] Implement some shaders based on the video from DaFluffyPotato on youtube
+  - [ ] Implement Showing weapons in the game
+        - Once you go into inventory and select a weapon and press ACTION button, the weapon is automatically selected and armed.
+        - Once you go into inventory and select an ammo pack and press action button, the ammo pack is automatically armed.
+        - Create a new command for arming in Inventory.
+         - But first recognize in RenderInventory if Weapon and if AmmoPack.
+
+        - [ ] Implement `FlagShowWeaponary` with details about the displaying
+        - [ ] Upon having `HasWeapon` component show the slots - for weapon and for generator
+        - [ ] Upon having `WeaponInUse` component, show which weapon is selected
+        - [ ] Drag weapon (`Weapon`) and generator (`AmmoPack`) from Inventory to weaponary
+
   - [ ] Implement inventory 
         - [x] Possibility to have different set of processors for different States
         - [x] Implement new component `FlagShowInventory`
@@ -82,12 +105,12 @@
         - [x] Prepare new scene to test the inventory
         - [x] HasInventory must have also information about displayed inventory - apart from set also a list with 10 positions filled with `None`s.
           - [x] Modify `HasInventory` to have the information in a form of a list.
+        - [ ] How to prevent pickable entity from being picked immediatelly after it was dropped?
         - [ ] Throw item out of inventory
-          - [ ] Implement remove function in HasInventory to safelly remove from categories. Add it to dict utils.
+          - [ ] Implement remove function in HasInventory to safely remove from categories. Add it to dict utils.
         - [ ] Show information about the item in the footer
         - [x] Prepare commands for moving around the items in inventory using the arrow keys.
            - [x] `toggle_controls` command must support also change in the key feedback schema 
-        - [ ] How to prevent pickable entity from being picked immediatelly after it was dropped?
         - [x] Drag also to the empty slots
         - [x] Adjust control component to support switching for alternate controls and control the inventory with arrows
           - [x] new methods in `Controllable` component. `set_control_cmds` and `revert_control_cmds`
@@ -106,9 +129,6 @@
   - [x] Fix running in 1920x1080 fullscreen - how to tell video component to get the system configuration - to cover the full screen?
 
 ## To Do
- 
-  - [ ] BUG - Why the FPS rate is decreasing in time... collisions??? - event queue is growing with every collision event
-  
 
   - [ ] `do_parallel` to support skipping of cycles so that some commands run once per some amount of ticks and meanwhile return some default value
   - [ ] prepare `test_bb_value_in` and `test_bb_value_not_in` as a faster alternatives to `test_bb_values` that is using potentionally slow json logic

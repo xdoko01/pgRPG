@@ -37,5 +37,6 @@ def cons_get_info_footer():
     '''Returns info that is displayed in the console's footer'''
 
     loaded_quests = MAIN_GAME_MODULE.engine._scenes.keys() if MAIN_GAME_MODULE.engine else 'N/A'
+    ev_queue_len = len(MAIN_GAME_MODULE.engine.event_manager._event_queue) if  MAIN_GAME_MODULE.engine else 'N/A'
 
-    return f'Loaded scenes: {loaded_quests}'
+    return f'Loaded scenes: {loaded_quests} | Events Queued: {ev_queue_len}'

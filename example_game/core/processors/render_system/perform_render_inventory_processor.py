@@ -13,6 +13,8 @@ from core.components.has_inventory import HasInventory
 from core.components.renderable_model import RenderableModel
 from core.components.flag_show_inventory import FlagShowInventory
 from core.components.position import Position
+from core.components.weapon import Weapon
+from core.components.ammo_pack import AmmoPack
 
 from pyrpg.core.config import FONTS, FRAMES # for GAME_DEBUG_FONT 
 
@@ -98,6 +100,27 @@ class PerformRenderInventoryProcessor(Processor):
                 2
             ) 
 
+            ####
+            # Write the information about the selected item - at least tne entity_alias
+            ####
+            if has_inventory.slots[flag_show_inventory.selected_slot_id] is not None:
+                
+                # Gather the information about inventory item
+                inv_item_info = ''
+
+                # If weapon, write the info from Weapon component
+                inv_item_weapon = self.world.try_component(has_inventory.slots[flag_show_inventory.selected_slot_id], Weapon)
+                inv_item_info = inv_item_info + f'Weapon: {inv_item_weapon.type}' if inv_item_weapon else inv_item_info
+
+                # If ammo pack, write the info from AmmoPack component
+                inv_item_ammo_pack = self.world.try_component(has_inventory.slots[flag_show_inventory.selected_slot_id], AmmoPack)
+                inv_item_info = inv_item_info +  f'For Weapon: {inv_item_ammo_pack.weapon}, Ammo: {inv_item_ammo_pack.type}' if inv_item_ammo_pack else inv_item_info
+
+                # Concatenate the information
+                text_surf = FONTS["GAME_INVENTORY_FONT_OBJ"].render(inv_item_info) # Text to Surface
+                camera.screen.blit(text_surf[0], (flag_show_inventory.inv_win_rect.x,flag_show_inventory.inv_win_rect.y))
+
+
             ###
             # MOUSE CONTROL
             ###
@@ -134,7 +157,6 @@ class PerformRenderInventoryProcessor(Processor):
             if self.dragging:
                 # Hide the mouse cursor
                 pygame.mouse.set_visible(False)
-                print(f"Showing picture of {self.drag_item_id} - {self.drag_item_model}")
                 camera.screen.blit(self.drag_item_model, (mouse_x - flag_show_inventory.inv_slot_rect.width / 2, mouse_y - flag_show_inventory.inv_slot_rect.height / 2))
 
             ###

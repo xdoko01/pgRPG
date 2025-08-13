@@ -44,8 +44,7 @@
 		"K_CONSOLE_TOGGLE": "K_F9",
 		"K_SAVE_GAME": "K_F5",
 		"K_LOAD_GAME": "K_F6",
-		"K_PAUSE_GAME": "K_p",
-		"K_INVENTORY_TOGGLE": "K_q"
+		"K_PAUSE_GAME": "K_p"
 	},
 
 	"GAME": {
@@ -63,7 +62,7 @@
 
 	"FONTS": {
 		"GAME_INVENTORY_FONT": "good_neighbours_font.json",
-		"GAME_INVENTORY_FONT_COLOUR": "#000001",
+		"GAME_INVENTORY_FONT_COLOUR": "#FFFFFF",
 
 		"GAME_DEBUG_FONT": "small_font.json",
 		"GAME_DEBUG_FONT_COLOUR": "#000001",
