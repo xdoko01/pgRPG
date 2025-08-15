@@ -214,7 +214,7 @@ class PerformRenderInventoryProcessor(Processor):
                         drop_coord_map = position.map
 
                         # Drop by creating Position component for the dropped item
-                        inv_item_model = self.world.add_component(
+                        self.world.add_component(
                             self.drag_item_id, 
                             Position(
                                 x=drop_coord_x, 

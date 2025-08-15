@@ -72,6 +72,28 @@ class HasInventory(Component):
             # Notify component factory that initiation has failed
             raise ValueError
 
+
+    def add(self, entity_id: int, category: str=None) -> None:
+        '''Safely add entity_id from the inventory's data structures.
+        '''
+
+        # Check that there is still space in the inventory for the entity
+        if self.max_items <= len(self.inventory):
+            return
+
+        # Add the entity into the HasInventory inventory set
+        self.inventory.add(entity_id)
+
+        # Add the entity into the HasInventory categories dictionary, if category defined
+        if category:
+            add_dict_value(self.categories, category, entity_id)
+
+        # Add the entity to the first empty slot
+        for slot_id, item in enumerate(self.slots):
+            if item is None:
+                self.slots[slot_id] = entity_id
+                break
+
     def remove_by_entity_id(self, entity_id: int) -> None:
         '''Safely remove entity_id from the inventory's data structures.
         '''

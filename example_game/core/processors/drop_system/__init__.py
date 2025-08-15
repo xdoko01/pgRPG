@@ -1,0 +1,4 @@
+from .perform_drop_processor import PerformDropProcessor
+from .remove_flag_has_dropped_processor import RemoveFlagHasDroppedProcessor
+from .remove_flag_is_about_to_drop_entity_processor import RemoveFlagIsAboutToDropEntityProcessor
+from .remove_flag_was_dropped_by_processor import RemoveFlagWasDroppedByProcessor

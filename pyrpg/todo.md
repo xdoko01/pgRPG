@@ -1,4 +1,17 @@
 ## Current
+  - [ ] - prepare some helping function that receives Position and Collidable component for 2 entities on input and returns if those collide or not. Similar for collisions with the map.
+
+  - [x] - implement `PerformDisarmWeaponProcessor` and corresponding components and events
+  - [ ] - function to remove entity id from `HasInventory` categories + `ITEM_DROP` event enhance same parameters as `ITEM_PICK`
+  - [x] - algorithm to find some free area to drop! for `PerformDropProcessor`
+        - 8 positions for drop - randomly select one from it - sort them randomly
+        - iterate all entities with Position component and Collidable component.
+        - for all those check if the candidate position is colliding with some entity
+        - additionally check if colliding with some tile
+        - if all above is ok, place drop the entity there
+        - if one of above is wrong, select from the next 7 positions and return the above
+        - if you are at the last posiition and it cannot be used, place it there anyways.
+
   - [ ] - finish with `test_pickup_02.jsonc` and open a new test `arm_weapon_from_inventory.jsonc`
   - [ ] - BUG - find out why attacking is never stopping
   - [ ] - BUG - find out why there is no idle image for the bow
@@ -6,7 +19,7 @@
   - [ ] - implement some graphics to see the weapons
   - [ ] - implement dropping of weapon/ammo that is armed - and for all inventory items - similar system to `pickup` system
         - `FlagIsAboutToDropEntity` + `HasInventory` -> `PerformDropProcessor` -> `FlagWasDroppedBy` + `FlagHasDropped` + event `ITEM_DROP`
-        
+
   - [ ] - finish the inventory and arming weapons. After that try to fix Sokoban collision zones. After that collision with the walls must be flawless. After it improve the speed of generation of the map on the screen. After that client/server game.
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
   - [x] - change the `test_pickup_02` scene to the proper scene using templates for entities.

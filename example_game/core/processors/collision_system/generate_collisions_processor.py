@@ -129,7 +129,7 @@ class GenerateCollisionsOptimizedProcessor(Processor):
                     # Position of the other entity in collision_candidates
                     ent_other_idx = ent_moved_idx + 1 + ent_other_idx
 
-                    # AABB comaprison - Collision happened
+                    # AABB comparison - Collision happened
                     if (pos_moved.map == pos_other.map and
                         pos_moved.x + coll_moved.dx - coll_moved.x < pos_other.x + coll_other.dx + coll_other.x and
                         pos_moved.x + coll_moved.dx + coll_moved.x > pos_other.x + coll_other.dx - coll_other.x and

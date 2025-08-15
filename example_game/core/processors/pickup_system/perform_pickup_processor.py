@@ -74,6 +74,10 @@ class PerformPickupProcessor(Processor):
         # Get all entities that have Inventory and FlagIsAboutToPickEntity - those are candidates for successful pickers
         for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(HasInventory, FlagIsAboutToPickEntity):
 
+            # Safely add the item to the HasInventory, if possible
+            has_inventory.add(entity_id=flag_is_about_to_pick_entity.entity_for_pickup, category=flag_is_about_to_pick_entity.category)
+    
+            '''
             # Check that there is still space in the inventory for the entity
             if has_inventory.max_items <= len(has_inventory.inventory):
                 logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_pick_entity.entity_for_pickup} cannot be picked by entity {ent_picker}. Inventory is full.')
@@ -91,6 +95,7 @@ class PerformPickupProcessor(Processor):
                 if item is None:
                     has_inventory.slots[slot_id] = flag_is_about_to_pick_entity.entity_for_pickup
                     break
+            '''
 
             # Remove Position component from the item so that it is not displayable on the map - item is picked
             self.world.remove_component(flag_is_about_to_pick_entity.entity_for_pickup, Position) 
