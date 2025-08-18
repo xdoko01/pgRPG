@@ -5,7 +5,7 @@
 	// Basic data
 	"id" : "test_pickup_01",
 	"title" : "Pickup Test",
-	"description" : "Test pickup processors",
+	"description" : "Test pickup processors - without the option to display inventory. Inventory can be checked by hovering over the player.",
 	"objective" : "POC of the pickup system",
 
 	// What scenes need to be loaded before this one
@@ -68,9 +68,6 @@
 			["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
 			["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
 			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}]
-
-		// Inventory Processor Group 
-
 
 	],
 	
@@ -158,7 +155,7 @@
 
 				// New component for facilitationg pickup
 				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 110, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		},
@@ -170,7 +167,7 @@
 
 				// New component for facilitationg pickup
 				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 140, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"x" : 240, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		},
@@ -182,7 +179,7 @@
 
 				// New component for facilitationg pickup
 				{"type" : "pickable:Pickable", "params" :  {}},
-				{"type" : "position:Position", "params" : {"x" : 170, "y" : 450, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"x" : 270, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
 			]
 		}

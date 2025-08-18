@@ -49,7 +49,9 @@ class PerformRenderArmedAmmoProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = []
+    PREREQ = [
+        'allOf', 'render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor'
+    ]
 
     __slots__ = []
 

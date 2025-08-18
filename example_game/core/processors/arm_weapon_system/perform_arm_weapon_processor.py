@@ -46,7 +46,11 @@ class PerformArmWeaponProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf', 'arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor']
+    PREREQ = [
+        'OR', 
+            'arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor', 
+            'TRUE' # above processor for automatic arming of weapon is optional anc can be substituted by manual arm_weapon command
+    ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.

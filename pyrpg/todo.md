@@ -1,8 +1,36 @@
 ## Current
+  - [ ] - new test for arming and disarming a weapon using command ()
+  - [ ] - implement some graphics to see the weapons
+        - part of inventory render if HasWeapon component exists
+        
+  - [ ] - `arm_ammo` command and flow + disarm
   - [ ] - prepare some helping function that receives Position and Collidable component for 2 entities on input and returns if those collide or not. Similar for collisions with the map.
 
+  - [ ] - implement `arm_ammo` command + disarm ammo processors
+  - [ ] - finish the inventory and arming weapons. After that try to fix Sokoban collision zones. After that collision with the walls must be flawless. After it improve the speed of generation of the map on the screen. After that client/server game.
+  - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
+
+  - [x] - `ITEM_DROP` event enhance same parameters as `ITEM_PICK`
+  - [x] - function to remove entity id from `HasInventory` categories - created in `dict_utils` function `del_dict_value`
+  - [x] - BUG - Error in `test_arm_weapon_02` after arming by command, the entity is permanently walking - this was caused due to missing animation processors `PerformActionAnimationProcessor` and `PerformActionIdleAnimationProcessor`.
+  - [x] - BUG - find out why there is no idle image for the bow - the action: idle was defined in the model, but it was pointing to empty image tile in the model spritesheet. Some spritesheets are special and need to be handled manualli in the Tiles SW. 
+  - [x] - BUG - find out why attacking is never stopping - `RemoveFlagDoAttackProcessor` was missing
+  - [x] - PREREQ is not halting when defined processor is missing. Why? - Because it was only logging warning and nothing else. Now I have changed the logic of `ecs_manager.create_processor` to raise `ValueError`.
+  - [x] - missing some pictures in inventory (idle)
+  - [x] - Divide the render inventory processor to 2 parts - command part (mouse) and render part
+  - [x] - BUG - find out why in `test_pickup_03.jsonc` I can pickup more than 10 items
+  - [x] - BUG - find out why the items are dropped on each other and not next to each other in `test_pickup_03.jsonc`
+  - [x] - implement dropping of weapon/ammo that is armed - and for all inventory items - similar system to `pickup` system
+        - `FlagIsAboutToDropEntity` + `HasInventory` -> `PerformDropProcessor` -> `FlagWasDroppedBy` + `FlagHasDropped` + event `ITEM_DROP`
+
+  - [x] - change the `test_pickup_02` scene to the proper scene using templates for entities.
+  - [x] - proper dropping of inventory items
+  - [ ] - Transfer the bug reports to the GitHub functionality.
+  - [x] - Implement pause button to demonstrate the processor groups. SOme preocessors running and some stopped.
+  - [ ] - Naming functions in `ecs_manager` can be better.
+  - [x] - Finish getting key feedback into the `Controllable` component so that `toggle_control` can support it.
   - [x] - implement `PerformDisarmWeaponProcessor` and corresponding components and events
-  - [ ] - function to remove entity id from `HasInventory` categories + `ITEM_DROP` event enhance same parameters as `ITEM_PICK`
+
   - [x] - algorithm to find some free area to drop! for `PerformDropProcessor`
         - 8 positions for drop - randomly select one from it - sort them randomly
         - iterate all entities with Position component and Collidable component.
@@ -11,23 +39,6 @@
         - if all above is ok, place drop the entity there
         - if one of above is wrong, select from the next 7 positions and return the above
         - if you are at the last posiition and it cannot be used, place it there anyways.
-
-  - [ ] - finish with `test_pickup_02.jsonc` and open a new test `arm_weapon_from_inventory.jsonc`
-  - [ ] - BUG - find out why attacking is never stopping
-  - [ ] - BUG - find out why there is no idle image for the bow
-  - [ ] - implement `arm_ammo` command
-  - [ ] - implement some graphics to see the weapons
-  - [ ] - implement dropping of weapon/ammo that is armed - and for all inventory items - similar system to `pickup` system
-        - `FlagIsAboutToDropEntity` + `HasInventory` -> `PerformDropProcessor` -> `FlagWasDroppedBy` + `FlagHasDropped` + event `ITEM_DROP`
-
-  - [ ] - finish the inventory and arming weapons. After that try to fix Sokoban collision zones. After that collision with the walls must be flawless. After it improve the speed of generation of the map on the screen. After that client/server game.
-  - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
-  - [x] - change the `test_pickup_02` scene to the proper scene using templates for entities.
-  - [ ] - proper dropping of inventory items
-  - [ ] - Transfer the bug reports to the GitHub functionality.
-  - [x] - Implement pause button to demonstrate the processor groups. SOme preocessors running and some stopped.
-  - [ ] - Naming functions in `ecs_manager` can be better.
-  - [x] - Finish getting key feedback into the `Controllable` component so that `toggle_control` can support it.
 
   - [x] - BUG `test_pickup_02` scene. In case that 2 items are dropped and their collision areas overlap then there is brutal slow down. How to find out which processor is causing the slow down effectivelly? `GameEventsExProcessor` is the problem -> `event_manager._event_queue` is getting bigger and bigger. Console Command for seeing stats of `event_manager` and other managers as well.
         -  Every collision generates a record in `event_manager._event_queue` and the queue keeps on growing due to constant collision happening somewhere on the map. IMPLEMENT: that event queue must have some max capacity or events must have some TTL.

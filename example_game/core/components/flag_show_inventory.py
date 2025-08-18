@@ -22,7 +22,10 @@ class FlagShowInventory(Component):
         >>> c = FlagShowInventory()
     '''
 
-    __slots__ = ['camera_comp', 'inv_win_rect', 'inv_slot_rects', 'inv_slot_border_rects', 'selected_slot_id', 'slots_per_row']
+    __slots__ = ['camera_comp', 'inv_win_rect', 'inv_slot_rects', 'inv_slot_border_rects', 
+                 'selected_slot_id', 'mouse_focused_slot_id', 'slots_per_row', 
+                 'dragging', 'drag_item_id', 'drag_start_slot_id', 'drag_stop_slot_id', 'drag_item_model'
+    ]
 
     def __init__(self, inventory_comp: Component, camera_comp: Component=None, slots_per_row: int=5):
         ''' Initiate values for the new FlagShowInventory component.
@@ -44,6 +47,13 @@ class FlagShowInventory(Component):
 
         self.slots_per_row = slots_per_row # How many slots show in each row
         self.selected_slot_id: int = 0 # Inventory slot Id of the currently selected slot
+        self.mouse_focused_slot_id: int|None = None # Remember on which slot mouse is focused
+
+        self.dragging: bool = False # Keep information if dragging is in progress, to inform render processor to display dragged item
+        self.drag_item_id = None
+        self.drag_start_slot_id = None
+        self.drag_stop_slot_id = None
+        self.drag_item_model = None
 
         # Init the inventory window dimensions
         self.reinit()

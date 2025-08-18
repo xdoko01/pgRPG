@@ -75,8 +75,10 @@ class PerformPickupProcessor(Processor):
         for ent_picker, (has_inventory, flag_is_about_to_pick_entity) in self.world.get_components(HasInventory, FlagIsAboutToPickEntity):
 
             # Safely add the item to the HasInventory, if possible
-            has_inventory.add(entity_id=flag_is_about_to_pick_entity.entity_for_pickup, category=flag_is_about_to_pick_entity.category)
-    
+            picked_up_entity = has_inventory.add(entity_id=flag_is_about_to_pick_entity.entity_for_pickup, category=flag_is_about_to_pick_entity.category)
+
+            # In case pickup was not successful, do not continue with removing Position, Camera and generation of event
+            if not picked_up_entity: continue
             '''
             # Check that there is still space in the inventory for the entity
             if has_inventory.max_items <= len(has_inventory.inventory):

@@ -23,15 +23,15 @@
 
 	// What processors to load
 	"processors" : [
-		// For commands
+	// For commands
 		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
 		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
 		["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
-		// For movement
+	// For movement
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
-		// For animation
+	// For animation
 		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
 		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
 		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
@@ -39,19 +39,19 @@
 		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
-		// For collisions
+	// For collisions
 		["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
 		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
-		// For pickup
+	// For pickup
 		["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
 		["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
 
-		// For Arming of a Weapon
+	// For Arming of a Weapon
 		["arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor", {}],
 		["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
 
-		// For displaying
+	// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
 		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
 		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
@@ -61,17 +61,15 @@
 		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
 		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-
-		// Processor for displaying the inventory window
-		["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
-
+		["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}], // Processor for displaying the inventory window
 		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-		// For events processing - display the dialog on the start of the scene - after first game screen is generated
+	// For events processing - display the dialog on the start of the scene - after first game screen is generated
 		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START", "WEAPON_ARMED"]}],
 
-		// For clearing of processing of movements and collisions and pickups
+	// For clearing of processing of movements and collisions and pickups
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
+		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}], // if attack command is used, this processor must be planned. Otherwise no movement will happen after pressing the attack button
 
 		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 

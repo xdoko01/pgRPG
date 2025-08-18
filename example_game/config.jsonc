@@ -232,8 +232,8 @@
 			// Save all the logs from component classes to the file
 			"core.components" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
-				//"handlers" : ["file_handler_comp"], // uncomment to log all the processors
-				"handlers" : ["null"],  // do not log to file for speed
+				"handlers" : ["file_handler_comp"], // uncomment to log all the processors
+				//"handlers" : ["null"],  // do not log to file for speed
 				"propagate" : false // Do not send messages from these loggers to parent (root) logger
 			},
 	

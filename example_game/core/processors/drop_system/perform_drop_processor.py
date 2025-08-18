@@ -74,7 +74,8 @@ class PerformDropProcessor(Processor):
 
             # Remove the item from HasInventory
             has_inventory.remove_by_entity_id(entity_id=flag_is_about_to_drop_entity.entity_for_drop)
-
+            logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_drop_entity.entity_for_drop} has been removed from HasInventory of Entity {ent_dropper}.')
+            
             '''Find free space to drop the entity
                 - 8 positions for drop - randomly select one from it - sort them randomly
                 - iterate all entities with Position component and Collidable component.
@@ -85,9 +86,10 @@ class PerformDropProcessor(Processor):
                 - if you are at the last posiition and it cannot be used, place it there anyways.
             '''
             # Get the Collidable component for dropped entity if there is any
+            coll_gap = 5 # additional gap between dropper and the dropped object to prevent accidental collisions
             collidable_dropped = self.world.try_component(flag_is_about_to_drop_entity.entity_for_drop, Collidable)
-            collidable_dropped_x = (collidable_dropped.x + collidable_dropped.dx) if collidable_dropped is not None else 0
-            collidable_dropped_y = (collidable_dropped.y + collidable_dropped.dy) if collidable_dropped is not None else 0
+            collidable_dropped_x = (collidable_dropped.x + collidable_dropped.dx) + coll_gap if collidable_dropped is not None else 0
+            collidable_dropped_y = (collidable_dropped.y + collidable_dropped.dy) + coll_gap if collidable_dropped is not None else 0
 
             # Get the Collidable component for dropper entity if there is any
             collidable_dropper_x = (collidable.x + collidable.dx) if collidable is not None else 0
@@ -107,6 +109,8 @@ class PerformDropProcessor(Processor):
 
             # Shuffle the positions randomly
             random.shuffle(drop_pos_dirs)
+            logger.debug(f'({self.cycle}) - Entity {ent_dropper} has following directions for dropping attempts: {drop_pos_dirs}')
+
 
             # Initiate search for the non problematic position
             drop_pos_x = None
@@ -116,13 +120,20 @@ class PerformDropProcessor(Processor):
             # Try if the possition in given direction is available, if not continue with next one
             for drop_pos_dir in drop_pos_dirs:
 
+                logger.debug(f'({self.cycle}) - Entity {ent_dropper} - trying drop position direction {drop_pos_dir}.')
+
                 # Calculate the candidate position
                 drop_pos_x = position.x + (drop_pos_dir[0] * collidable_dropper_x) + (drop_pos_dir[0] * collidable_dropped_x)
                 drop_pos_y = position.y + (drop_pos_dir[1] * collidable_dropper_y) + (drop_pos_dir[1] * collidable_dropped_y)
                 drop_pos_map = position.map
 
+                # Remember if some entity is in collision with dropped entity
+                collision_detected = False
+
                 # Iterate all entities with Position component and Collidable component.
                 for ent_col, (position_col, collidable_col) in self.world.get_components(Position, Collidable):
+
+                    logger.debug(f'({self.cycle}) - Checking for collision for dropped Entity {flag_is_about_to_drop_entity.entity_for_drop} and other entity {ent_col}.')
 
                     # Check if the dropped item position might be colliding with some other collidable entity
                     # AABB comaprison - if Collision happened - try another direction
@@ -132,40 +143,32 @@ class PerformDropProcessor(Processor):
                         drop_pos_y + collidable_dropped.dy - collidable_dropped.y < position_col.y + collidable_col.dy + collidable_col.y and
                         drop_pos_y + collidable_dropped.dy + collidable_dropped.y > position_col.y + collidable_col.dy - collidable_col.y):
 
-                        logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_drop_entity.entity_for_drop} has collided with Entity {ent_col}.')
+                        logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_drop_entity.entity_for_drop} HAS collided with Entity {ent_col} on direction {drop_pos_dir}.')
+                        collision_detected = True
                         break # try next direction
+                    else:
+                        logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_drop_entity.entity_for_drop} HAS NO collision with Entity {ent_col} on direction {drop_pos_dir}.')
 
                     # Check if additionally colliding with some tile
                 
                 # If everything went ok, end
-                break
+                if not collision_detected:
+                    logger.debug(f'({self.cycle}) - No colision identified for entity {flag_is_about_to_drop_entity.entity_for_drop}.')
+                    break # log and try next direction
             
+            # Best possition found
+            logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_drop_entity.entity_for_drop} will be placed on direction {drop_pos_dir}.')
+
             # Create Position on the found non problematic coordinates or the last coordinates
             self.world.add_component(
                 flag_is_about_to_drop_entity.entity_for_drop, 
                 Position(
-                    x=drop_pos_x, 
-                    y=drop_pos_y, 
+                    x=int(drop_pos_x), 
+                    y=int(drop_pos_y), 
                     map=drop_pos_map
                 )
             )
-
-            '''
-            # Find some free area for drop
-            drop_coord_x = int(position.x + random.randint(64, 128))
-            drop_coord_y = int(position.y + random.randint(64, 128))
-            drop_coord_map = position.map
-
-            # Drop by creating Position component for the dropped item
-            self.world.add_component(
-                flag_is_about_to_drop_entity.entity_for_drop, 
-                Position(
-                    x=drop_coord_x, 
-                    y=drop_coord_y, 
-                    map=drop_coord_map
-                )
-            )
-            '''
+            logger.debug(f'({self.cycle}) - Position component created for dropped entity {flag_is_about_to_drop_entity.entity_for_drop}.')
 
             # Assign FlagWasDroppedBy component to the dropped entity
             self.world.add_component(flag_is_about_to_drop_entity.entity_for_drop, FlagWasDroppedBy(dropper=ent_dropper))
@@ -176,17 +179,23 @@ class PerformDropProcessor(Processor):
             logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_drop_entity.entity_for_drop} was dropped by entity {ent_dropper}.')
 
             # Report that item was dropped - generate event
-            pickup_event = Event(
+            drop_event = Event(
                 'ITEM_DROP', 
                 flag_is_about_to_drop_entity.entity_for_drop, 
                 ent_dropper, 
                 params={
                     'item' : flag_is_about_to_drop_entity.entity_for_drop, 
-                    'dropper' : ent_dropper
+                    'dropper' : ent_dropper,
+                    'categories' :  flag_is_about_to_drop_entity.categories,
+                    # amount of remaining items in all categories where the entoty_id was present
+                    'amount_in_categories' : [
+                        len(get_dict_value(d=has_inventory.categories, path=cat, not_found=[]))
+                        for cat in flag_is_about_to_drop_entity.categories
+                    ]
                 }
             )
 
-            self.add_event_fnc(pickup_event)
+            self.add_event_fnc(drop_event)
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

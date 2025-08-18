@@ -15,22 +15,24 @@ class FlagIsAboutToDropEntity(Component):
 
     '''
 
-    __slots__ = ['entity_for_drop']
+    __slots__ = ['entity_for_drop', 'categories']
 
-    def __init__(self, entity_for_drop=None):
+    def __init__(self, entity_for_drop, categories):
         ''' Initiate value for the new FlagIsAboutToDropEntity component.
 
         Parameters:
             :param entity_for_drop: Entity ID to be dropped
             :type entity_for_drop: int
 
-            :param category: Category of pickable entity, used for storage in the proper inventory category
-            :type category: str
+            :param categories: List of categories where entity id was assigned and is being removed from
+            :type categories: list
 
         '''
         super().__init__()
 
         self.entity_for_drop = entity_for_drop
+        self.categories = categories
+
 
 
 if __name__ == '__main__':

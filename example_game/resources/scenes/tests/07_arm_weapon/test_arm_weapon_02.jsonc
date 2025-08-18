@@ -3,10 +3,10 @@
 	"$schema": "../../../../core/schemas/scene.schema.json",
 
 	// Basic data
-	"id" : "test_pickup_02",
-	"title" : "Inventory window test",
-	"description" : "Test inventory window - inventory with picked up items can be displayed by pressing 'i'",
-	"objective" : "POC of the pickup system with inventory window displaying",
+	"id" : "test_arm_weapon_02",
+	"title" : "Arming weapon using action key on Wepon in inventory window",
+	"description" : "Arming weapon using action key on Wepon in inventory window - using inventory_action command",
+	"objective" : "POC of arming through inventory",
 
 	// What scenes need to be loaded before this one
 	"prereqs" : [],
@@ -24,48 +24,66 @@
 	// What processors to load
 	"processors" : [
 
-		// Default processor group
-			// For commands
+	// Default processor group
+		// For commands
 			["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
 			["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
+
+			// Control mouse actions in inventory
+			["command_system.generate_command_from_mouse_processor:GenerateCommandFromMouseProcessor", {}],
+
 			["command_system.perform_command_processor:PerformCommandProcessor", {}],
 
-			// For movement
+		// For movement
 			["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
 
-			// For animation
+		// For animation
 			["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
 			["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
 			["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
-			// For collisions
+		// For animation
+			["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
+			["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
+			["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
+			["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
+			["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}], // once IsDestroyed component is used, this processor must be present
+			["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+
+		// For collisions
 			["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
 			["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
 
-			// For pickup
+		// For pickup
 			["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
 			["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
 
-			// For arming the weapon based on arm_weapon command
+		// For Arming of a Weapon
+			// Following processor commented out for manual arming of the weapon and not automatic during pickup
+			//["arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor", {}],
 			["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
 
-			// For displaying
+		// For dropping 
+ 			["drop_system.perform_drop_processor:PerformDropProcessor", {}],
+
+		// For displaying
 			["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
 			["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
 			["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
 			["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
+			["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
 			["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
+			["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
+
 			["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-			
 			// Processor for displaying the inventory window
 			["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
-
 			["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
-			// For events processing - display the dialog on the start of the scene - after first game screen is generated
+		// For events processing - display the dialog on the start of the scene - after first game screen is generated
 			["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
 
-			// For clearing of processing of movements and collisions and pickups
+		// For clearing of processing of movements and collisions and pickups
 			["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 
 			["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
@@ -80,7 +98,12 @@
 			["arm_weapon_system.remove_flag_has_armed_weapon_processor:RemoveFlagHasArmedWeaponProcessor", {}],
 			["arm_weapon_system.remove_flag_was_armed_as_weapon_by_processor:RemoveFlagWasArmedAsWeaponByProcessor", {}],
 
-		// Pause processor group - initiated by pressing 'P' button
+			["drop_system.remove_flag_is_about_to_drop_entity_processor:RemoveFlagIsAboutToDropEntityProcessor", {}],
+			["drop_system.remove_flag_has_dropped_processor:RemoveFlagHasDroppedProcessor", {}],
+			["drop_system.remove_flag_was_dropped_by_processor:RemoveFlagWasDroppedByProcessor", {}],
+
+
+	// Pause processor group - initiated by pressing 'P' button
 			["pause", "render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "pause.png", "resize": true}]
 
 	],
@@ -123,15 +146,16 @@
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "has_inventory:HasInventory", "params" :  {}},
+				{"type" : "has_weapon:HasWeapon", "params" :  {}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		},
 		{
-			"id" : "spell_pack_01",
+			"id" : "iron_arrows_pack",
 			"templates" : [
-				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"model/ammo_pack/shoot/iron_arrows_pack", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(6, 10, test_arena_sand)" // position template
 			],
@@ -140,9 +164,9 @@
 			]
 		},
 		{
-			"id" : "spell_pack_02",
+			"id" : "wooden_arrows_pack",
 			"templates" : [
-				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(6, 11, test_arena_sand)" // position template
 			],
@@ -151,7 +175,7 @@
 			]
 		},
 		{
-			"id" : "spell_pack_03",
+			"id" : "fireball_spell_pack",
 			"templates" : [
 				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
 				"t_pickable_item", // pickable template
@@ -160,27 +184,27 @@
 			"components" : []
 		},
 		{
-			"id" : "spell_pack_04",
+			"id" : "copper_coin",
 			"templates" : [
-				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"model/item/coin/copper_coin", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(6, 13, test_arena_sand)" // position template
 			],
 			"components" : []
 		},
 		{
-			"id" : "spell_pack_05",
+			"id" : "golden_coin",
 			"templates" : [
-				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"model/item/coin/golden_coin", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(6, 14, test_arena_sand)" // position template
 			],
 			"components" : []
 		},
 		{	
-			"id" : "spell_pack_06",
+			"id" : "silver_coin",
 			"templates" : [
-				"model/ammo_pack/spellcast/fireball_spell_pack", // model template
+				"model/item/coin/silver_coin", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(6, 15, test_arena_sand)" // position template
 			],
@@ -188,9 +212,9 @@
 		},
 
 		{
-			"id" : "arrows_pack_01",
+			"id" : "quiver",
 			"templates" : [
-				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"model/weapon/accessories/quiver", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 12, test_arena_sand)" // position template
 			],
@@ -199,45 +223,45 @@
 			]
 		},
 		{
-			"id" : "arrows_pack_02",
+			"id" : "bow_metal_big",
 			"templates" : [
-				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"model/weapon/shoot/bow_metal_big", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 13, test_arena_sand)" // position template
 			],
 			"components" : []
 		},
 		{
-			"id" : "arrows_pack_03",
+			"id" : "bow_recurved_wooden",
 			"templates" : [
-				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"model/weapon/shoot/bow_recurved_wooden", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 14, test_arena_sand)" // position template
 			],
 			"components" : []
 		},
 		{
-			"id" : "arrows_pack_04",
+			"id" : "warhammer",
 			"templates" : [
-				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"model/weapon/slash/warhammer", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 15, test_arena_sand)" // position template
 			],
 			"components" : []
 		},
 		{
-			"id" : "arrows_pack_05",
+			"id" : "axe2",
 			"templates" : [
-				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"model/weapon/slash/axe2", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 16, test_arena_sand)" // position template
 			],
 			"components" : []
 		},
 		{
-			"id" : "arrows_pack_06",
+			"id" : "shovel",
 			"templates" : [
-				"model/ammo_pack/shoot/wooden_arrows_pack", // model template
+				"model/weapon/thrust/shovel", // model template
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 17, test_arena_sand)" // position template
 			],

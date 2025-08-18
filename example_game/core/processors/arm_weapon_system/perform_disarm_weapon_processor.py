@@ -18,7 +18,7 @@ from pyrpg.core.events.event import Event
 # Logger init
 logger = logging.getLogger(__name__)
 
-class PerformArmWeaponProcessor(Processor):
+class PerformDisarmWeaponProcessor(Processor):
     ''' Detects entities that are about to disarm weapon and performs
     the actual disarming, if the fighter is capable.
 

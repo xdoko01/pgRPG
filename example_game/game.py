@@ -81,15 +81,17 @@ if __name__ == "__main__":
     #scene_file = "tests/08_arm_ammo/test_arm_ammo_01"
 
     # 07_arm_weapon
-    scene_file = "tests/07_arm_weapon/test_arm_weapon_01"
+    scene_file = "tests/07_arm_weapon/test_arm_weapon_02"
+    #scene_file = "tests/07_arm_weapon/test_arm_weapon_01"
 
     # 06_teleportation
     #scene_file = "tests/06_teleportation/test_teleportation_02"
     #scene_file = "tests/06_teleportation/test_teleportation_01"
 
-    # 05_pickup
-    #scene_file = "tests/05_pickup/test_pickup_02.jsonc"
-    #scene_file = "tests/05_pickup/test_pickup_01.jsonc"
+    # 05_pickup & drop
+    #scene_file = "tests/05_pickup&drop/test_pickup_03.jsonc"
+    #scene_file = "tests/05_pickup&drop/test_pickup_02.jsonc"
+    #scene_file = "tests/05_pickup&drop/test_pickup_01.jsonc"
 
     # 04_collisions
     #scene_file = "tests/04_collisions/test_collisions_05.yaml"

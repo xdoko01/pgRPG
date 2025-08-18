@@ -24,7 +24,7 @@ def _create_dict_list(path: list, value) -> dict:
     
     return new_dict
 
-def _create_dict_str(path: str, value, sep: str='.') -> dict:
+def _create_dict_str(path: str, value, sep: str='.') -> None:
     '''Create a dictionary(tree) specified by path and
     put the value to the deepest key.
 
@@ -48,6 +48,132 @@ def _create_dict_str(path: str, value, sep: str='.') -> dict:
 
     return _create_dict_list(path.split(sep), value)
 
+def get_dict_keys_having_value(d: dict, value, sep: str|None=None) -> list:
+    '''Get the list of dictionary keys in which the value is present.
+
+    Parameters:
+        :param d: Dictionary that is being searched for value
+        :type d: dict
+
+        :param value: Searched value
+        :type value: any
+
+        :param sep: Dictionary path separator. If none then put the keys in the list. Else merge them to string using the separator.
+        :type sep: str | None
+
+    Tests:
+        >>> d = {"items": {\
+                    "weapons": {"sword": {"weapon": [2, 3]}},\
+                    "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
+                }\
+            }
+        >>> res = get_dict_keys_having_value(d, 3)
+        >>> print(res)
+        [['items', 'weapons', 'sword', 'weapon'], ['items', 'coins', 'copper']]
+
+        >>> res = get_dict_keys_having_value(d, 3, sep='.')
+        >>> print(res)
+        ['items.weapons.sword.weapon', 'items.coins.copper']
+    '''
+    results = []
+
+    def recursive_search(obj, path):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                recursive_search(v, path + [k])
+        elif isinstance(obj, (list, set, tuple)):
+            # only record path once if value is inside
+            if value in obj:
+                results.append(path)
+            # still check deeper (in case of nested dicts inside list)
+            for item in obj:
+                if isinstance(item, dict):
+                    recursive_search(item, path)
+        else:
+            if obj == value:
+                results.append(path)
+
+    recursive_search(d, [])
+
+    if sep is not None:
+        return [sep.join(keys) for keys in results]
+    return results
+
+
+def del_dict_value(d: dict, value) -> dict:
+    '''Delete specific value from all (even nested) places in the dictionary.
+    Returns new dictionaly without the values.
+
+    Parameters:
+        :param d: Dictionary that is being modified (by deleting value)
+        :type d: dict
+
+        :param value: Value to be deleted
+        :type value: any
+
+    Tests:
+        >>> d = {"items": {\
+                    "weapons": {"sword": {"weapon": [2, 3]}},\
+                    "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
+                }\
+            }
+        >>> del_dict_value(d, 3)
+        >>> print(d)
+        {'items': {'weapons': {'sword': {'weapon': [2]}}, 'coins': {'golden': [10, 22, 33], 'copper': [1, 2]}}}
+    '''
+
+    if not isinstance(d, dict):
+        raise TypeError("Input must be a dictionary")
+
+    def recursive_clean(obj):
+        if isinstance(obj, dict):
+            keys_to_delete = []
+            for k, val in obj.items():
+                if val == value:
+                    keys_to_delete.append(k)
+                else:
+                    new_val = recursive_clean(val)
+                    if new_val is None or new_val == value:
+                        keys_to_delete.append(k)
+                    else:
+                        obj[k] = new_val
+            for k in keys_to_delete:
+                del obj[k]
+            return obj
+
+        elif isinstance(obj, list):
+            i = 0
+            while i < len(obj):
+                if obj[i] == value:
+                    obj.pop(i)
+                else:
+                    new_val = recursive_clean(obj[i])
+                    if new_val is None or new_val == value:
+                        obj.pop(i)
+                    else:
+                        obj[i] = new_val
+                        i += 1
+            return obj
+
+        elif isinstance(obj, set):
+            to_remove = {item for item in obj if item == v}
+            to_add = set()
+            for item in list(obj):
+                if item != value:
+                    new_val = recursive_clean(item)
+                    if new_val is None or new_val == value:
+                        to_remove.add(item)
+                    elif new_val != item:
+                        to_remove.add(item)
+                        to_add.add(new_val)
+            obj.difference_update(to_remove)
+            obj.update(to_add)
+            return obj
+
+        else:
+            return obj if obj != value else None
+
+    recursive_clean(d)
 
 def set_dict_value(d: dict, path: str, value, sep: str='.') -> None:
     '''Create a new path in the dictionary and
@@ -343,7 +469,6 @@ def get_coll_len(coll, path: str, sep: str='.'):
     keys = [] if path == '' else path.split(sep)
     return _get_coll_len(coll=coll, keys=keys)
 
-
 def _get_coll_value(coll, keys: list):
     '''Get the value specified on the path (specified by sequence of keys) 
     from the collection as a generator.
@@ -376,7 +501,6 @@ def _get_coll_value(coll, keys: list):
     elif isinstance(coll, list) or isinstance(coll, tuple) or isinstance(coll, set):
         for item in coll:
             yield from _get_coll_value(coll=item, keys=keys)
-
 
 def get_coll_value(coll, path: str, sep: str='.'):
     '''Get the value specified on the path from the collection.

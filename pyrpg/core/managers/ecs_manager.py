@@ -95,6 +95,12 @@ def check_proc_in_world(proc_class_def: str) -> bool:
     game world. Returns True in case the prerequisit processor is present in the game world.
     Else, returns False.
     """
+    # Special case of processor definition is string "TRUE" (always present). It is used in 
+    # situations when some prerequisite is optional but still we want to have it specified for
+    # readability.
+    if proc_class_def.upper() == 'TRUE': return True
+    
+    # Get the class from string definition
     check_class = get_proc_class_from_def(proc_class_def)
 
     # Verify that the processor class has been already instantiated in the game world
@@ -141,11 +147,12 @@ def create_processor(processor_def: list) -> Tuple[Processor, str]:
     try:
         if not check_processor(new_class):
             logger.warning(f'Processor "{new_class.__name__}" did not pass all the checks. Game might work incorrectly!')
+            raise ValueError(f'Processor "{new_class.__name__}" did not pass all the checks.')
         else:
             logger.info(f'Processor "{new_class.__name__}" has passed all the checks successfully!')
     except ValueError:
         logger.error(f'Error during checking of the of processor "{new_class.__name__}".')
-        raise ValueError(f'Error during checking of the of processor "{new_class.__name__}".')
+        raise ValueError(f'Error during checking of the of processor.')
 
     # Get all attributes of the processor class
     proc_attrs = new_class.__init__.__code__.co_varnames[1:]

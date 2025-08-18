@@ -4,10 +4,12 @@ HasInventory component implemented as a HasInventory class.
 Use 'python -m core.components.has_inventory -v' to run
 module tests.
 '''
+# Logger init
+import logging
+logger = logging.getLogger(__name__)
 
 from pyrpg.core.ecs import Component
-from pyrpg.functions.dict_utils import get_all_dict_values
-from pyrpg.functions.dict_utils import add_dict_value
+from pyrpg.functions.dict_utils import add_dict_value, del_dict_value, get_all_dict_values
 
 class HasInventory(Component):
     ''' Entity has inventory - can pick items and add it to the inventory.
@@ -73,13 +75,18 @@ class HasInventory(Component):
             raise ValueError
 
 
-    def add(self, entity_id: int, category: str=None) -> None:
-        '''Safely add entity_id from the inventory's data structures.
-        '''
+    def add(self, entity_id: int, category: str=None) -> int|None:
+        '''Safely add entity_id to the inventory's data structures.
 
+        :returns int: Entity Id of picked up item or None if pickup is not possible (full inventory)
+        '''
+        
+        logger.debug(f'About to add {entity_id=} of {category=} to the inventory. Pre-add status: {self.max_items=}, {len(self.inventory)=}')
+        
         # Check that there is still space in the inventory for the entity
         if self.max_items <= len(self.inventory):
-            return
+            logger.debug(f'No more space in inventory')
+            return None
 
         # Add the entity into the HasInventory inventory set
         self.inventory.add(entity_id)
@@ -93,6 +100,8 @@ class HasInventory(Component):
             if item is None:
                 self.slots[slot_id] = entity_id
                 break
+        
+        return entity_id
 
     def remove_by_entity_id(self, entity_id: int) -> None:
         '''Safely remove entity_id from the inventory's data structures.
@@ -103,8 +112,8 @@ class HasInventory(Component):
         # Remove from slots
         self.slots = [self.slots[slot_id] if self.slots[slot_id] != entity_id else None for slot_id in range(len(self.slots))]
 
-        # TODO - REmove from categories
-        pass
+        # Remove from categories
+        del_dict_value(d=self.categories, value=entity_id)
 
     def remove_by_slot_id(self, slot_id: int) -> None:
         '''Safely remove entity_id stored in the slots[slot_id] from the inventory's data structures.
@@ -115,9 +124,8 @@ class HasInventory(Component):
         # Remove from slots
         self.slots[slot_id] = None
 
-        # TODO - REmove from categories
-        pass
-
+        # Remove from categories
+        del_dict_value(d=self.categories, value=self.slots[slot_id])
 
 if __name__ == '__main__':
     import doctest

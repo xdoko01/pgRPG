@@ -40,8 +40,11 @@ from types import ModuleType # for type hint on importing the ecs_manager module
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
+from pyrpg.functions.dict_utils import get_dict_keys_having_value
+
 from core.components.flag_is_about_to_drop_entity import FlagIsAboutToDropEntity
 from core.components.has_inventory import HasInventory
+
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -124,14 +127,18 @@ def process(
     logger.debug(f'{ctx=}')
 
     # Entity (dropper - probably player or NPC) must have HasInventory component containing the item in order to successfully drop te item
+    has_inventory: HasInventory
     has_inventory = ecs_mng.try_component(entity_id, HasInventory)
 
     # If Entity (dropper) does not have HasWeapon component or does not contain the item - FAILURE
     if has_inventory is None or item_entity_id not in has_inventory.inventory: return CommandStatus.FAILURE
 
+    # Find out the category of the dropped entity id in the HasInventory - list of category names where the entity id is present
+    categories = get_dict_keys_having_value(d=has_inventory.categories, value=entity_id, sep='.') 
+
     # Create FlagIsAboutToDropEntity component to the entity (probably player or NPC)
-    ecs_mng.add_component(entity_id, FlagIsAboutToDropEntity(entity_for_drop=item_entity_id))
-    logger.debug(f'{entity_id=} - component FlagIsAboutToDropEntity created with params {item_entity_id=}')
+    ecs_mng.add_component(entity_id, FlagIsAboutToDropEntity(entity_for_drop=item_entity_id, categories=categories))
+    logger.debug(f'{entity_id=} - component FlagIsAboutToDropEntity created with params {item_entity_id=}, {categories=}')
 
     # Processor PerformDropProcessor now drops the item
 
