@@ -17,7 +17,7 @@ class FlagWasDroppedBy(Component):
 
     __slots__ = ['dropper']
 
-    def __init__(self, dropper=None):
+    def __init__(self, dropper):
         ''' Initiate value for the new FlagWasDroppedBy component.
 
         Parameters:

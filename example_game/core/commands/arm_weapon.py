@@ -41,7 +41,9 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from core.components.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
+from core.components.flag_is_about_to_disarm_weapon import FlagIsAboutToDisarmWeapon
 from core.components.has_weapon import HasWeapon
+from core.components.weapon_in_use import WeaponInUse
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -126,10 +128,27 @@ def process(
     logger.debug(f'{ctx=}')
 
     # Entity (figher - probably player or NPC) must have HasWeapon component in order to successfully arm the weapon
-    has_weapon = ecs_mng.try_component(entity_id, HasWeapon)
+    has_weapon: HasWeapon = ecs_mng.try_component(entity_id, HasWeapon)
 
     # If Entity (figher) does not have HasWeapon component then it cannot arm any weapon - FAILURE
     if has_weapon is None: return CommandStatus.FAILURE
+
+    ''' Handled while processing FlagIsAboutToArmWeapon
+    # Before arming the weapon, you must disarm the currently armed weapon if there is any
+    armed_weapon_entity_id = has_weapon.weapons[weapon_type]["weapon"]
+
+    if armed_weapon_entity_id is not None:
+            ecs_mng.add_component(entity_id, FlagIsAboutToDisarmWeapon(weapon=armed_weapon_entity_id, type=weapon_type))
+            logger.debug(f'{entity_id=} - component FlagIsAboutToDisarmWeapon created with params {armed_weapon_entity_id=}, {weapon_type=}.')
+
+    # Also, you need to disarm te weapon that entity is currently using
+    weapon_in_use: WeaponInUse = ecs_mng.try_component(entity_id, WeaponInUse)
+    weapon_in_use_entity_id = has_weapon.weapons[weapon_in_use.type]["weapons"]
+    
+    if weapon_in_use_entity_id is not None:
+            ecs_mng.add_component(entity_id, FlagIsAboutToDisarmWeapon(weapon=weapon_in_use_entity_id, type=weapon_in_use.type))
+            logger.debug(f'{entity_id=} - component FlagIsAboutToDisarmWeapon created with params {weapon_in_use_entity_id=}, {weapon_in_use.type=}.')
+    '''
 
     # Create FlagIsAboutToArmWeapon component to the entity (probably player or NPC)
     ecs_mng.add_component(entity_id, FlagIsAboutToArmWeapon(weapon=weapon_entity_id, type=weapon_type))

@@ -11,6 +11,7 @@ from core.components.weapon_in_use import WeaponInUse
 from core.components.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
 from core.components.flag_has_armed_weapon import FlagHasArmedWeapon
 from core.components.flag_was_armed_as_weapon_by import FlagWasArmedAsWeaponBy
+from core.components.flag_is_about_to_disarm_weapon import FlagIsAboutToDisarmWeapon
 
 # For creation of events
 from pyrpg.core.events.event import Event
@@ -71,12 +72,18 @@ class PerformArmWeaponProcessor(Processor):
             return
 
         # Get all entities that have HasWeapon and FlagIsAboutToArmWeapon - those are candidates for successful arming
-        for ent_fighter, (has_weapon, flag_is_about_to_arm_weapon) in self.world.get_components(HasWeapon, FlagIsAboutToArmWeapon):
+        for ent_fighter, (has_weapon, flag_is_about_to_arm_weapon, weapon_in_use) in self.world.get_components_opt(HasWeapon, FlagIsAboutToArmWeapon, optional=WeaponInUse):
 
-            # Check that there is place for the weapon to be armed
-            # If there is a place, put the reference to HasWeapon slot
-            # If there is not a place, rewrite it anyway - all is in inventory so the old weapon will remain in the inventory. Later, we can force changing of
-            # some weapon by simply assigning FlagIsAboutToArmWeapon to some fighter and this processor will change it
+            # First disarm currently used weapon
+            weapon_in_use_entity_id = has_weapon.weapons[weapon_in_use.type]["weapon"] if weapon_in_use is not None else None
+
+            logger.debug(f'({self.cycle}) - Currently used weapon before arming a new one {weapon_in_use_entity_id=}.')
+
+            if weapon_in_use_entity_id is not None:
+                    self.world.add_component(ent_fighter, FlagIsAboutToDisarmWeapon(weapon=weapon_in_use_entity_id, type=weapon_in_use.type))
+                    logger.debug(f'({self.cycle}) - component FlagIsAboutToDisarmWeapon created with params {weapon_in_use_entity_id=}, {weapon_in_use.type=}.')
+
+            # Arm the new weapon
             try:
                 has_weapon.weapons[flag_is_about_to_arm_weapon.type]["weapon"] = flag_is_about_to_arm_weapon.weapon
             except KeyError:

@@ -1,0 +1,39 @@
+{
+	"$id": "sound_fx_on_arm_weapon.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "SoundFXOnArmWeapon Component",
+	"description": "Schema validating the SoundFXOnArmWeapon component.",
+
+	"examples" : [
+		{"type" : "sound_fx_on_arm_weapon:SoundFXOnArmWeapon", "params" : {"sound" : "weapon_armed.mp3"}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "sound_fx_on_arm_weapon:SoundFXOnArmWeapon" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the SoundFXOnArmWeapon component class - 'sound'.",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["sound"],
+			"properties": {
+				"sound" : {
+					"$ref": "../definitions.schema.json#/definitions/sound_file"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+	
+}

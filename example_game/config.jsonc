@@ -72,7 +72,7 @@
 		"PLAYER_TALK_FONT_COLOUR": "#000001",
 
 		"GAME_MSG_FONT": "good_neighbours_font.json",
-		"GAME_MSG_FONT_COLOUR":  "#000001",
+		"GAME_MSG_FONT_COLOUR":  "#FFFFFF",
 
 		"GUI_MANAGER_FONT": "good_neighbours_font.json",
 		"GUI_MANAGER_FONT_COLOUR": "white"

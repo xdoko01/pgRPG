@@ -27,7 +27,8 @@
 		{"$ref": "components/is_destroyed.schema.json"},
 		{"$ref": "components/pickable.schema.json"},
 		{"$ref": "components/renderable_model.schema.json"},
-		
+
+		{"$ref": "components/sound_fx_on_arm_weapon.schema.json"},
 		{"$ref": "components/sound_fx_on_collision.schema.json"},
 		{"$ref": "components/sound_fx_on_creation.schema.json"},
 		{"$ref": "components/sound_fx_on_generation.schema.json"},

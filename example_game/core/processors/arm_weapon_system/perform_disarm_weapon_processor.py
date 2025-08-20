@@ -11,6 +11,8 @@ from core.components.weapon_in_use import WeaponInUse
 from core.components.flag_is_about_to_disarm_weapon import FlagIsAboutToDisarmWeapon
 from core.components.flag_has_disarmed_weapon import FlagHasDisarmedWeapon
 from core.components.flag_was_disarmed_as_weapon_by import FlagWasDisarmedAsWeaponBy
+from core.components.render_data_from_parent import RenderDataFromParent
+from core.components.flag_has_dropped import FlagHasDropped
 
 # For creation of events
 from pyrpg.core.events.event import Event
@@ -46,7 +48,10 @@ class PerformDisarmWeaponProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf', 'arm_weapon_system.generate_disarm_weapon_processor:GenerateDisarmWeaponProcessor']
+    PREREQ = [
+        'allOf', 
+            'arm_weapon_system.generate_disarm_weapon_processor:GenerateDisarmWeaponProcessor'
+    ]
 
     def __init__(self, add_event_fnc, *args, **kwargs):
         ''' Init the processor.
@@ -67,41 +72,50 @@ class PerformDisarmWeaponProcessor(Processor):
             return
 
         # Get all entities that have HasWeapon and FlagIsAboutToDisarmWeapon - those are candidates for successful disarming
-        for ent_fighter, (has_weapon, flag_is_about_to_disarm_weapon, weapon_in_use) in self.world.get_components_opt(HasWeapon, FlagIsAboutToDisarmWeapon, optional=WeaponInUse):
+        for ent_fighter, (has_weapon, flag_is_about_to_disarm_weapon, weapon_in_use) in self.world.get_components(HasWeapon, FlagIsAboutToDisarmWeapon, WeaponInUse):
 
-            # Remember if the actual weapon was one of the armed weapons
-            weapon_disarmed_from_use = False
+            """
+            ARM WEAPON
+             - mark currently used weapon for disarming (WeaponInUse)
+             - arm new weapon in both HasWeapon and WeaponInUse
+            DISARM WEAPON
+             - 2 cases
+              - AFRER ARMING a new weapon - !!!new weapon already can be armed in HasWeapon and WeaponInUse!!! - by FlagHasArmedWeapon component
+                - set the disarm and render flags on the disarmed weapon
+              - AFTER DROPPING of armed weapon - !!! if result of dropping the old weapon is still in use in HasWeapon and WeaponInUse!!!
+                - set the disarm and render flags on the disarmed weapon
+                - remove from HasWeapon
+                - remove weaponInUse
+             """
 
-            # Check if the weapon was armed, i.e. was in HasWeapon.weapons. If yes, remove it from there. If no, do nothing.
-            try:
-                if has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"] == flag_is_about_to_disarm_weapon.weapon:
-                    
-                    # Remove weapon from weapons available for fight
-                    has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"] = None
-                    weapon_disarmed_from_use = True
+            # Remove the rendering data necessery to render weapon together with entity animations (no longer needed on disarmed weapon)
+            self.world.remove_component(flag_is_about_to_disarm_weapon.weapon, RenderDataFromParent)
+            logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_weapon.weapon} - RenderDataFromParent  component was removed.')
 
-                    # Report that disarming a weapon occured - generate event
-                    arm_weapon_event = Event('WEAPON_DISARMED', flag_is_about_to_disarm_weapon.weapon, ent_fighter, params={'weapon' : flag_is_about_to_disarm_weapon.weapon, 'fighter' : ent_fighter})
-                    self.add_event_fnc(arm_weapon_event)
+            # Report that disarming a weapon occured - generate event
+            arm_weapon_event = Event('WEAPON_DISARMED', flag_is_about_to_disarm_weapon.weapon, ent_fighter, params={'weapon' : flag_is_about_to_disarm_weapon.weapon, 'fighter' : ent_fighter})
+            self.add_event_fnc(arm_weapon_event)
 
-                    # Assign FlagWasDisarmedAsWeaponBy component to the weapon entity
-                    self.world.add_component(flag_is_about_to_disarm_weapon.weapon, FlagWasDisarmedAsWeaponBy(fighter=ent_fighter))
-                    logger.debug(f'({self.cycle}) - Weapon {flag_is_about_to_disarm_weapon.weapon} ({flag_is_about_to_disarm_weapon.type}) was armed by entity {ent_fighter}.')
+            # Assign FlagWasDisarmedAsWeaponBy component to the weapon entity
+            self.world.add_component(flag_is_about_to_disarm_weapon.weapon, FlagWasDisarmedAsWeaponBy(fighter=ent_fighter))
+            logger.debug(f'({self.cycle}) - Weapon {flag_is_about_to_disarm_weapon.weapon} ({flag_is_about_to_disarm_weapon.type}) was disarmed by entity {ent_fighter}.')
 
-                    # Assign FlagHasDisarmedWeapon component to the fighter entity
-                    self.world.add_component(ent_fighter, FlagHasDisarmedWeapon(weapon=flag_is_about_to_disarm_weapon.weapon))
-                    logger.debug(f'({self.cycle}) - Entity {ent_fighter} has armed weapon {flag_is_about_to_disarm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
+            # Assign FlagHasDisarmedWeapon component to the fighter entity
+            self.world.add_component(ent_fighter, FlagHasDisarmedWeapon(weapon=flag_is_about_to_disarm_weapon.weapon))
+            logger.debug(f'({self.cycle}) - Entity {ent_fighter} has disarmed weapon {flag_is_about_to_disarm_weapon.weapon} of type {flag_is_about_to_disarm_weapon.type}.')
 
-            except KeyError:
-                logger.error(f'({self.cycle}) - Weapon {flag_is_about_to_disarm_weapon.weapon} is of incorrect type {flag_is_about_to_disarm_weapon.type}.')
-                raise ValueError
-  
-            # Check if the weapon was in hand, i.e. was in WeaponInUse. If yes, remove the component completely, if no, do nothing.
-            if weapon_disarmed_from_use and weapon_in_use.type == flag_is_about_to_disarm_weapon.type:
+            # Remove the disarmed weapon from HasWeapon component, if not already substituted by newly armed weapon
+            if has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"] == flag_is_about_to_disarm_weapon.weapon:
+                
+                # Remove weapon from weapons available for fight
+                logger.debug(f'({self.cycle}) - Entity {ent_fighter} - Weapon in HasWeapon was set from {has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"]} to None.')
+                has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"] = None
+
+            # Remove the WeaponInUse component, if it is pointing do disarmed weapon
+            if has_weapon.weapons[weapon_in_use.type]["weapon"] is None: # and weapon_in_use.type == flag_is_about_to_disarm_weapon.type and 
                 self.world.remove_component(ent_fighter, WeaponInUse)
-                logger.debug(f'({self.cycle}) - Entity {ent_fighter} removed weapon {flag_is_about_to_disarm_weapon.weapon} of type {flag_is_about_to_disarm_weapon.type} from its hand.')
+                logger.debug(f'({self.cycle}) - Entity {ent_fighter} - WeaponInUse component was removed.')
 
-            # Here can be potentially other logic of getting other weapon in hand when the disarmed weapon was put away from hand.
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

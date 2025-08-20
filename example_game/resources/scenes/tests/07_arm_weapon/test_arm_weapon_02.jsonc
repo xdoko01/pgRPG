@@ -58,13 +58,20 @@
 			["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
 			["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
 
-		// For Arming of a Weapon
-			// Following processor commented out for manual arming of the weapon and not automatic during pickup
-			//["arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor", {}],
-			["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
-
 		// For dropping 
  			["drop_system.perform_drop_processor:PerformDropProcessor", {}],
+
+		// For Arming of a Weapon
+			// Following processor commented out for manual arming of the weapon and not automatic during pickup
+			["arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor", {}],
+			["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
+
+		// For arming sound effects
+			["effects_system.generate_sound_fx_on_arm_weapon_processor:GenerateSoundFXOnArmWeaponProcessor", {}],
+
+		// For Disarming of a weapon
+			["arm_weapon_system.generate_disarm_weapon_processor:GenerateDisarmWeaponProcessor", {}],
+			["arm_weapon_system.perform_disarm_weapon_processor:PerformDisarmWeaponProcessor", {}],
 
 		// For displaying
 			["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
@@ -78,10 +85,14 @@
 			["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
 			// Processor for displaying the inventory window
 			["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}],
+	
 			["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
 
+			// Messages must be printed after PerformBlitCameraProcessor otherwise overwritten by the camera window immediatelly
+			["render_system.perform_render_messages_processor:PerformRenderMessagesProcessor", {}],
+
 		// For events processing - display the dialog on the start of the scene - after first game screen is generated
-			["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
+			["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START", "WEAPON_ARMED"]}],
 
 		// For clearing of processing of movements and collisions and pickups
 			["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
@@ -101,6 +112,10 @@
 			["drop_system.remove_flag_is_about_to_drop_entity_processor:RemoveFlagIsAboutToDropEntityProcessor", {}],
 			["drop_system.remove_flag_has_dropped_processor:RemoveFlagHasDroppedProcessor", {}],
 			["drop_system.remove_flag_was_dropped_by_processor:RemoveFlagWasDroppedByProcessor", {}],
+
+			["arm_weapon_system.remove_flag_is_about_to_disarm_weapon_processor:RemoveFlagIsAboutToDisarmWeaponProcessor", {}],
+			["arm_weapon_system.remove_flag_has_disarmed_weapon_processor:RemoveFlagHasDisarmedWeaponProcessor", {}],
+			["arm_weapon_system.remove_flag_was_disarmed_as_weapon_by_processor:RemoveFlagWasDisarmedAsWeaponByProcessor", {}],
 
 
 	// Pause processor group - initiated by pressing 'P' button
@@ -160,7 +175,7 @@
 				"t_tile_pos(6, 10, test_arena_sand)" // position template
 			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}}
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon": "bow", "type": "iron_arrows"}}
 			]
 		},
 		{
@@ -171,7 +186,7 @@
 				"t_tile_pos(6, 11, test_arena_sand)" // position template
 			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}}
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon": "bow", "type": "wooden_arrows"}}
 			]
 		},
 		{
@@ -181,7 +196,9 @@
 				"t_pickable_item", // pickable template
 				"t_tile_pos(6, 12, test_arena_sand)" // position template
 			],
-			"components" : []
+			"components" : [
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon": "spell", "type": "fireball"}}
+			]
 		},
 		{
 			"id" : "copper_coin",
@@ -219,7 +236,7 @@
 				"t_tile_pos(5, 12, test_arena_sand)" // position template
 			],
 			"components" : [
-				{"type" : "weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
 		{
@@ -229,7 +246,10 @@
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 13, test_arena_sand)" // position template
 			],
-			"components" : []
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+				{"type" : "sound_fx_on_arm_weapon:SoundFXOnArmWeapon", "params" : {"sound" : "arrow-hit.mp3"}}
+			]
 		},
 		{
 			"id" : "bow_recurved_wooden",
@@ -238,7 +258,10 @@
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 14, test_arena_sand)" // position template
 			],
-			"components" : []
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
+				{"type" : "sound_fx_on_arm_weapon:SoundFXOnArmWeapon", "params" : {"sound" : "arrow-hit.mp3"}}
+			]
 		},
 		{
 			"id" : "warhammer",
@@ -247,7 +270,9 @@
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 15, test_arena_sand)" // position template
 			],
-			"components" : []
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type": "sword", "max_projectiles" : 5}}
+			]
 		},
 		{
 			"id" : "axe2",
@@ -256,7 +281,9 @@
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 16, test_arena_sand)" // position template
 			],
-			"components" : []
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type": "sword", "max_projectiles" : 5}}
+			]
 		},
 		{
 			"id" : "shovel",
@@ -265,7 +292,9 @@
 				"t_pickable_item", // pickable template
 				"t_tile_pos(5, 17, test_arena_sand)" // position template
 			],
-			"components" : []
+			"components" : [
+				{"type" : "weapon:Weapon", "params" : {"type": "spear", "max_projectiles" : 5}}
+			]
 		}
 	],
 
@@ -281,6 +310,19 @@
 					{
 						"title": "%filepath",
 						"html_text": "<b>Scene ID:</b> %id<br/><b>Title:</b> %title<br/><b>Description:</b> %description<br/><b>Objective:</b> %objective<br/><br/><b>Stats:</b> %stats"
+					}
+				]
+			}
+		],
+		[
+			"WEAPON_ARMED",
+			{
+				"id": "ev_weapon_armed",
+				"actions": 	[
+					"SCRIPT",
+					"add_msg", 
+					{
+						"text": "Weapon entity id '%weapon' was armed by '%fighter'."
 					}
 				]
 			}

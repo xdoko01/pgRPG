@@ -1,15 +1,26 @@
 ## Current
-  - [ ] - new test for arming and disarming a weapon using command ()
-  - [ ] - implement some graphics to see the weapons
-        - part of inventory render if HasWeapon component exists
-        
-  - [ ] - `arm_ammo` command and flow + disarm
-  - [ ] - prepare some helping function that receives Position and Collidable component for 2 entities on input and returns if those collide or not. Similar for collisions with the map.
+  
+
+  - [ ] - new component `Armed` to mark `Weapon` and `AmmoPack` as armed in `HasWeapon` component
+  
+  - [ ] - BUG - fix always attacking in `test_arm_ammo_01` - probably not removed `FlagDoAttack` component
 
   - [ ] - implement `arm_ammo` command + disarm ammo processors
+  - [ ] - implement `wear` processors
+
+
+  - [ ] - prepare some helping function that receives Position and Collidable component for 2 entities on input and returns if those collide or not. Similar for collisions with the map.
+
   - [ ] - finish the inventory and arming weapons. After that try to fix Sokoban collision zones. After that collision with the walls must be flawless. After it improve the speed of generation of the map on the screen. After that client/server game.
+
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
+  - [x] - json validation for new components of `drop` and `disarm` systems
+  - [x] - audio FX for arming a weapon
+  - [x] - add messages about arming weapons to `test_arm_weapon_02` test scene.
+  - [x] - BUG - in `test_arm_weapon_02` fragments of weapon sprites are being generated on the map after arming different weapon - this is because `RenderFromParent` component remains on the weapon entity even though it is no longer armed. Before arm command, disarm command must be executed to nice and clear remove the previous weapon. Only after nicely disarmed, the new weapon can be armed. Also disarm processor might be before arm processor (but this is probably not needed)
+  - [x] - `arm_ammo` command and flow + disarm
+  - [x] - BUG - in `test_arm_weapon_02` not disarming when dropping a weapon - fixed by putting the disarm processors in place
   - [x] - `ITEM_DROP` event enhance same parameters as `ITEM_PICK`
   - [x] - function to remove entity id from `HasInventory` categories - created in `dict_utils` function `del_dict_value`
   - [x] - BUG - Error in `test_arm_weapon_02` after arming by command, the entity is permanently walking - this was caused due to missing animation processors `PerformActionAnimationProcessor` and `PerformActionIdleAnimationProcessor`.
@@ -25,7 +36,6 @@
 
   - [x] - change the `test_pickup_02` scene to the proper scene using templates for entities.
   - [x] - proper dropping of inventory items
-  - [ ] - Transfer the bug reports to the GitHub functionality.
   - [x] - Implement pause button to demonstrate the processor groups. SOme preocessors running and some stopped.
   - [ ] - Naming functions in `ecs_manager` can be better.
   - [x] - Finish getting key feedback into the `Controllable` component so that `toggle_control` can support it.
@@ -65,7 +75,7 @@
   - [ ] - Refactor all `core/scripts/*`. Import not `main` but `ECSmanager`. In `initalize` function check that ecs_manager is initialized. Import `main` only where it is really used, for example `exit` command.
   - [ ] - BUG - debug information upon hover raises error when trying to render the frame
   - [x] - GitHub actions clean pytest, doctest and Lint issues.
-  - [ ] - Make messagess work. Sript `add_msg` is corrupted. Plan the necessary processors handling message queue.
+  - [x] - Make messagess work. Sript `add_msg` is corrupted. Plan the necessary processors handling message queue.
   - [x] - Change the scenes that are single screended to use `screen_fill` parameter of `Camera` component in order to keep whole screen filled after resolution change. (2025-07-07)
   - [ ] - Settings screen option running in some dialog and having some Apply button. Problem that CHeckBox within UIWindow hiding is raising exception.
   - [x] - How to go back from the settings screen to the Game? resume button. (2025-07-07)

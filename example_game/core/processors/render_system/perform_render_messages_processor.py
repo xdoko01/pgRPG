@@ -28,11 +28,12 @@ class PerformRenderMessagesProcessor(Processor):
         -   no messages are displayed
 
     Where the processor should be planned?
+        -   after PerformBlitCameraProcessor - otherwise, messages are overwritten by camera window
         -   before PerformRenderDebugInfoProcessor
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = []
+    PREREQ = ['allOf', 'render_system.perform_blit_camera_processor:PerformBlitCameraProcessor']
 
     __slots__ = ['window', 'game_messages', 'pos', 'align']
 
@@ -78,13 +79,15 @@ class PerformRenderMessagesProcessor(Processor):
         for msg in messages:
 
             # Generate surface for blitting
-            msg_surf = FONTS["GAME_MSG_FONT"].render(msg.text, align=self.align)
+            msg_surf = FONTS["GAME_MSG_FONT_OBJ"].render(msg.text, align=self.align)
 
             # Blit the surface
-            self.window.blit(msg_surf, (pos[0], pos[1]))
+            self.window.blit(msg_surf[0], (pos[0], pos[1]))
 
             # Move the offset for the next message to display
-            pos[1] += msg_surf.get_height()
+            pos[1] += msg_surf[0].get_height()
+
+
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 
