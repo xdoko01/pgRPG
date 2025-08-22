@@ -41,9 +41,9 @@ from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from core.components.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
-from core.components.flag_is_about_to_disarm_weapon import FlagIsAboutToDisarmWeapon
 from core.components.has_weapon import HasWeapon
-from core.components.weapon_in_use import WeaponInUse
+from core.components.weapon import Weapon
+
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -53,7 +53,6 @@ def init(
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         weapon_entity_id: int,
-        weapon_type: str,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -88,7 +87,6 @@ def process(
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
         weapon_entity_id: int,
-        weapon_type: str,
         # 'Private' attributes that have been prepared by init function
         # The rest of parameters, if needed
         **cmd_kwargs
@@ -149,10 +147,13 @@ def process(
             ecs_mng.add_component(entity_id, FlagIsAboutToDisarmWeapon(weapon=weapon_in_use_entity_id, type=weapon_in_use.type))
             logger.debug(f'{entity_id=} - component FlagIsAboutToDisarmWeapon created with params {weapon_in_use_entity_id=}, {weapon_in_use.type=}.')
     '''
+    # If Entity (weapon) must have Weapon component, otherwise - FAILURE
+    weapon: Weapon = ecs_mng.try_component(weapon_entity_id, Weapon)
+    if weapon is None: return CommandStatus.FAILURE
 
     # Create FlagIsAboutToArmWeapon component to the entity (probably player or NPC)
-    ecs_mng.add_component(entity_id, FlagIsAboutToArmWeapon(weapon=weapon_entity_id, type=weapon_type))
-    logger.debug(f'{entity_id=} - component FlagIsAboutToArmWeapon created with params {weapon_entity_id=}, {weapon_type=}.')
+    ecs_mng.add_component(entity_id, FlagIsAboutToArmWeapon(weapon=weapon_entity_id, type=weapon.type))
+    logger.debug(f'{entity_id=} - component FlagIsAboutToArmWeapon created with params {weapon_entity_id=}, {weapon.type=}.')
 
     # Processor PerformArmWeapon now arms the weapon
 

@@ -1,6 +1,6 @@
-''' Module implementing INVENTORY_ACTION command 
+''' Module implementing DISARM_AMMO command 
 
-For tests call python -m example_game.core.commands.inventory_action -v
+For tests call python -m example_game.core.commands.disarm_ammo -v
 
 Command module represents one command only. The name of the module must be the same as the name of the
 command.
@@ -40,15 +40,8 @@ from types import ModuleType # for type hint on importing the ecs_manager module
 from pyrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from core.components.flag_show_inventory import FlagShowInventory
-from core.components.has_inventory import HasInventory
-from core.components.weapon import Weapon
-from core.components.ammo_pack import AmmoPack
-from core.components.factory import Factory
-
-from .arm_weapon import process as cmd_arm_weapon
-from .arm_ammo import process as cmd_arm_ammo
-
+from core.components.flag_is_about_to_disarm_ammo import FlagIsAboutToDisarmAmmo
+from core.components.has_weapon import HasWeapon
 
 # DO NOT REMOVE - Mandatory function
 def init(
@@ -57,6 +50,8 @@ def init(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
+        ammo_entity_id: int,
+        ammo_type: str,
         # The rest of parameters, if needed
         **cmd_kwargs
     ) -> None:
@@ -90,6 +85,8 @@ def process(
         entity_id: int,
         ctx: CommandContext,
         # 'Public' attributes specific to this command and used while calling the command
+        ammo_entity_id: int,
+        ammo_type: str,
         # 'Private' attributes that have been prepared by init function
         # The rest of parameters, if needed
         **cmd_kwargs
@@ -128,64 +125,20 @@ def process(
     # Comment out, if you want see the stats about the commandd
     logger.debug(f'{ctx=}')
 
-    # Get the FlagShowInventory component. If does not exists then no inventory action can be done (no inventory shown) and it is a FAILURE
-    flag_show_inventory: FlagShowInventory = ecs_mng.try_component(entity_id, FlagShowInventory)
-    has_inventory: HasInventory = ecs_mng.try_component(entity_id, HasInventory)
+    # Entity (dropper - probably player or NPC) must have HasWeapon component in order to successfully disarm the ammo
+    has_weapon: HasWeapon = ecs_mng.try_component(entity_id, HasWeapon)
 
-    if flag_show_inventory is None or has_inventory is None:
-        return CommandStatus.FAILURE
+    # If Entity (figher) does not have HasWeapon component then it cannot disarm any ammo - FAILURE
+    if has_weapon is None: return CommandStatus.FAILURE
 
-    # Get the entity_id of the selected inventory item
-    inv_item_entity_id = has_inventory.slots[flag_show_inventory.selected_slot_id]
+    # Create FlagIsAboutToDisarmAmmo component to the entity (probably player or NPC)
+    ecs_mng.add_component(entity_id, FlagIsAboutToDisarmAmmo(ammo=ammo_entity_id, type=ammo_type))
+    logger.debug(f'{entity_id=} - component FlagIsAboutToDisarmAmmo created with params {ammo_entity_id=}, {ammo_type=}.')
 
-    # Try arming the entity using arm_command
-    arm_weapon_res: CommandStatus = cmd_arm_weapon(
-        ecs_mng=ecs_mng,
-        entity_id=entity_id,
-        ctx=ctx,
-        weapon_entity_id=inv_item_entity_id,
-        **cmd_kwargs
-    )
+    # Processor PerformDisarmAmmo now disarms the ammo
 
-    '''
-    weapon: Weapon = ecs_mng.try_component(inv_item_entity_id, Weapon)
-    if weapon is not None:
-        # Assign weapon in HasWeapon component to the correct type
-        arm_weapon_res = cmd_arm_weapon(
-            ecs_mng=ecs_mng,
-            entity_id=entity_id,
-            ctx=ctx,
-            weapon_entity_id=inv_item_entity_id,
-            **cmd_kwargs
-        )
-    '''
-    # Try arming the entity using arm_ammo
-    arm_ammo_res: CommandStatus = cmd_arm_ammo(
-        ecs_mng=ecs_mng,
-        entity_id=entity_id,
-        ctx=ctx,
-        ammo_entity_id=inv_item_entity_id,
-        **cmd_kwargs
-    )
-
-    '''
-    # In case that item has AmmoPack and Factory component, arm the ammo
-    ammo: AmmoPack = ecs_mng.try_component(inv_item_entity_id, AmmoPack)
-    factory: Factory = ecs_mng.try_component(inv_item_entity_id, Factory)
-
-    if ammo is not None and factory is not None:
-        # Assign weapon in HasWeapon component to the correct type
-        arm_ammo_res = cmd_arm_ammo(
-            ecs_mng=ecs_mng,
-            entity_id=entity_id,
-            ctx=ctx,
-            ammo_entity_id=inv_item_entity_id,
-            **cmd_kwargs
-        )
-    '''
-
-    # if at least one of the arming commands suceeds, return success. Otherwise, return failure.
-    return CommandStatus.SUCCESS if arm_weapon_res == CommandStatus.SUCCESS or arm_ammo_res == CommandStatus.SUCCESS else CommandStatus.FAILURE
+    # Return success
+    return CommandStatus.SUCCESS
 
 
 if __name__ == '__main__':

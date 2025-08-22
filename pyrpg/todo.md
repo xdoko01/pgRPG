@@ -1,11 +1,7 @@
 ## Current
-  
 
-  - [ ] - new component `Armed` to mark `Weapon` and `AmmoPack` as armed in `HasWeapon` component
-  
-  - [ ] - BUG - fix always attacking in `test_arm_ammo_01` - probably not removed `FlagDoAttack` component
-
-  - [ ] - implement `arm_ammo` command + disarm ammo processors
+  - [ ] - add inventory to all test cases from 09 projectiles onwards
+  - [ ] - in commands, check that some processors exists, otherwise the command will not be executed (disarming commands)
   - [ ] - implement `wear` processors
 
 
@@ -15,6 +11,10 @@
 
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
+  - [x] - BUG - `FlagIsAnimationActionFrame` remains on player01 entity in arm weapon and ammo test scenes - removal processor was missing.
+  - [x] - implement `arm_ammo` command + disarm ammo processors
+  - [x] - BUG - in `test_arm_ammo_01` after picking upAmmo the game is frozen and ESC button needs to be pressed
+  - [x] - BUG - fix always attacking in `test_arm_ammo_01` - probably not removed `FlagDoAttack` component
   - [x] - json validation for new components of `drop` and `disarm` systems
   - [x] - audio FX for arming a weapon
   - [x] - add messages about arming weapons to `test_arm_weapon_02` test scene.

@@ -70,6 +70,7 @@
 	// For clearing of processing of movements and collisions and pickups
 		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
 		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}], // if attack command is used, this processor must be planned. Otherwise no movement will happen after pressing the attack button
+		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
 
 		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
 
