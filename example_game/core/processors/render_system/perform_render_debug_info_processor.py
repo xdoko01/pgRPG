@@ -19,6 +19,8 @@ from core.components.has_score import HasScore
 from core.components.brain_ai import BrainAI
 from core.components.can_see import CanSee
 from core.components.can_hear import CanHear
+from core.components.has_weapon import HasWeapon
+from core.components.weapon_in_use import WeaponInUse
 
 from ..functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
 from ..functions import get_arrow_points # for drawing of arrows
@@ -81,7 +83,21 @@ class PerformRenderDebugInfoProcessor(Processor):
             return
 
         # Show debug information on all cameras
-        for _, (camera) in self.world.get_component(Camera):
+        for ent_cam, (camera) in self.world.get_component(Camera):
+
+            # Show HasWeapon and WeaponInUse info if available
+            has_weapon = self.world.try_component(ent_cam, HasWeapon)
+            if has_weapon is not None:
+                camera.screen.blit(
+                    FONTS["GAME_DEBUG_FONT_OBJ"].render(pformat(has_weapon.weapons))[0], 
+                    (0, 50)
+            )
+            weapon_in_use = self.world.try_component(ent_cam, WeaponInUse)
+            if weapon_in_use is not None:
+                camera.screen.blit(
+                    FONTS["GAME_DEBUG_FONT_OBJ"].render(pformat(weapon_in_use) + ', ' + weapon_in_use.type)[0], 
+                    (0, 250)
+            )
 
             # Get position and model status info
             for _, (position, debug, renderable) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Debug, RenderableModel)):

@@ -68,7 +68,7 @@ class GenerateDisarmWeaponProcessor(Processor):
 
             # Otherwise it is armed and can be disarmed
             self.world.add_component(flag_was_dropped_by.dropper, FlagIsAboutToDisarmWeapon(weapon=ent_weapon, type=weapon.type))
-            logger.debug(f'({self.cycle}) - Entity {flag_was_dropped_by.dropper} is trying to arm as weapon entity {ent_weapon}.')
+            logger.debug(f'({self.cycle}) - Entity {flag_was_dropped_by.dropper} is trying to disarm as weapon entity {ent_weapon}.')
 
 
     def pre_save(self):

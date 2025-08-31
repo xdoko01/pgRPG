@@ -1,0 +1,12 @@
+{
+	"id" : "t_thing_weapon_bow_bow_wooden",
+
+	"templates" : [
+		"thing/weapon/bow",	// parent
+		"model/weapon/shoot/bow_wooden" // model
+	],
+
+	"components" : [
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

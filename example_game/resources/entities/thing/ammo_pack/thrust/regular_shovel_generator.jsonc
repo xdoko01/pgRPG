@@ -1,0 +1,27 @@
+{
+	"id" : "regular_shovel_generator",
+
+	"templates" : [
+		"thing/ammo_pack/thrust"
+	],
+
+	"vars": [
+		"$damage"
+	],
+
+	"components" : [
+
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_shovel_thrust"}},
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "regular_shovel_thrust",
+					"templates" : [
+						["thing/ammo/thrust/regular_shovel_thrust", ["$damage"]]
+					]
+				}
+			}
+		}
+	]
+}

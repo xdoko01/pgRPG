@@ -1,0 +1,12 @@
+{
+	"id" : "t_thing_weapon_bow_bow_metal_big",
+
+	"templates" : [
+		"thing/weapon/bow",	// parent
+		"model/weapon/shoot/bow_metal_big" // model
+	],
+
+	"components" : [
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

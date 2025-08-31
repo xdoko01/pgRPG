@@ -70,12 +70,10 @@ class PerformDisarmAmmoProcessor(Processor):
         except SkipProcessorExecution:
             return
 
-        logger.debug(f'({self.cycle}) - Processor PerformDisarmAmmoProcessor starts.')
-
         # Get all entities that have HasWeapon and FlagIsAboutToDisarmAmmo - those are candidates for successful disarming
         for ent_fighter, (has_weapon, flag_is_about_to_disarm_ammo) in self.world.get_components(HasWeapon, FlagIsAboutToDisarmAmmo):
 
-            logger.debug(f'({self.cycle}) - Entity {ent_fighter} is trying to disamr the ammo.')
+            logger.debug(f'({self.cycle}) - Entity {ent_fighter} is trying to disarm the ammo.')
 
             """
             ARM WEAPON
@@ -91,10 +89,16 @@ class PerformDisarmAmmoProcessor(Processor):
                 - remove weaponInUse
              """
 
+            '''
             # Remove the rendering data necessary to render ammo together with entity animations (no longer needed on disarmed weapon)
-            self.world.remove_component(flag_is_about_to_disarm_ammo.ammo, RenderDataFromParent)
-            logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_ammo.ammo} - RenderDataFromParent  component was removed.')
-
+            # It is possible that this component was already removed by disarm weapon system - in case weapon and ammo pack are merged into one entity
+            try:
+                self.world.remove_component(flag_is_about_to_disarm_ammo.ammo, RenderDataFromParent)
+                logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_ammo.ammo} - RenderDataFromParent  component was removed.')
+            except KeyError:
+                logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_ammo.ammo} - has no RenderDataFromParent  component. Continuing.')
+            '''
+            
             # Report that disarming an ammo occured - generate event
             arm_ammo_event = Event('AMMO_PACK_DISARMED', flag_is_about_to_disarm_ammo.ammo, ent_fighter, params={'ammo' : flag_is_about_to_disarm_ammo.ammo, 'fighter' : ent_fighter})
             self.add_event_fnc(arm_ammo_event)

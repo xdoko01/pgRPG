@@ -106,9 +106,11 @@ def process(
         logger.debug(f'{entity_id=}. FlagShowInventory removed.')
 
     else:
-        camera_comp = ecs_mng.try_component(entity_id, Camera)
-        inventory_comp = ecs_mng.try_component(entity_id, HasInventory)
+        camera_comp: Camera = ecs_mng.try_component(entity_id, Camera)
+        inventory_comp: HasInventory = ecs_mng.try_component(entity_id, HasInventory)
 
+        if camera_comp is None or inventory_comp is None: return CommandStatus.FAILURE
+        
         ecs_mng.add_component(entity_id, FlagShowInventory(inventory_comp=inventory_comp, camera_comp=camera_comp, slots_per_row=slots_per_row))
         logger.debug(f'{entity_id=}. FlagShowInventory added.')
 

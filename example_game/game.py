@@ -75,7 +75,7 @@ if __name__ == "__main__":
     #scene_file = "tests/09_projectiles/test_projectile_score_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_damage.jsonc"
-    scene_file = "tests/09_projectiles/test_projectile_collision"
+    #scene_file = "tests/09_projectiles/test_projectile_collision"
 
     # 08_arm_ammo
     #scene_file = "tests/08_arm_ammo/test_arm_ammo_01"

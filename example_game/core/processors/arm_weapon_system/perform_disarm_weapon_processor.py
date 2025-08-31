@@ -72,7 +72,8 @@ class PerformDisarmWeaponProcessor(Processor):
             return
 
         # Get all entities that have HasWeapon and FlagIsAboutToDisarmWeapon - those are candidates for successful disarming
-        for ent_fighter, (has_weapon, flag_is_about_to_disarm_weapon, weapon_in_use) in self.world.get_components(HasWeapon, FlagIsAboutToDisarmWeapon, WeaponInUse):
+        #for ent_fighter, (has_weapon, flag_is_about_to_disarm_weapon, weapon_in_use) in self.world.get_components(HasWeapon, FlagIsAboutToDisarmWeapon, WeaponInUse):
+        for ent_fighter, (has_weapon, flag_is_about_to_disarm_weapon) in self.world.get_components(HasWeapon, FlagIsAboutToDisarmWeapon):
 
             """
             ARM WEAPON
@@ -88,9 +89,15 @@ class PerformDisarmWeaponProcessor(Processor):
                 - remove weaponInUse
              """
 
+            '''
             # Remove the rendering data necessery to render weapon together with entity animations (no longer needed on disarmed weapon)
-            self.world.remove_component(flag_is_about_to_disarm_weapon.weapon, RenderDataFromParent)
-            logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_weapon.weapon} - RenderDataFromParent  component was removed.')
+            # It is possible that this component was already removed by disarm ammo system - in case weapon and ammo pack are merged into one entity
+            try:
+                self.world.remove_component(flag_is_about_to_disarm_weapon.weapon, RenderDataFromParent)
+                logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_weapon.weapon} - RenderDataFromParent  component was removed.')
+            except KeyError:
+               logger.debug(f'({self.cycle}) - Entity {flag_is_about_to_disarm_weapon.weapon} - has no RenderDataFromParent  component. Continuing.')
+            '''
 
             # Report that disarming a weapon occured - generate event
             arm_weapon_event = Event('WEAPON_DISARMED', flag_is_about_to_disarm_weapon.weapon, ent_fighter, params={'weapon' : flag_is_about_to_disarm_weapon.weapon, 'fighter' : ent_fighter})
@@ -111,11 +118,12 @@ class PerformDisarmWeaponProcessor(Processor):
                 logger.debug(f'({self.cycle}) - Entity {ent_fighter} - Weapon in HasWeapon was set from {has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"]} to None.')
                 has_weapon.weapons[flag_is_about_to_disarm_weapon.type]["weapon"] = None
 
+            '''
             # Remove the WeaponInUse component, if it is pointing do disarmed weapon
             if has_weapon.weapons[weapon_in_use.type]["weapon"] is None: # and weapon_in_use.type == flag_is_about_to_disarm_weapon.type and 
                 self.world.remove_component(ent_fighter, WeaponInUse)
                 logger.debug(f'({self.cycle}) - Entity {ent_fighter} - WeaponInUse component was removed.')
-
+            '''
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

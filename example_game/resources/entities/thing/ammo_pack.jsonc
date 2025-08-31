@@ -1,0 +1,8 @@
+{
+	"id" : "ammo_pack",
+	"templates" : ["thing"],
+	"components" : [
+		{"type" : "pickable:Pickable", "params" :  {}},
+		{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+	]
+}

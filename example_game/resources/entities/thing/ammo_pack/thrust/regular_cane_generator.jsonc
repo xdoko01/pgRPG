@@ -1,0 +1,27 @@
+{
+	"id" : "regular_cane_generator",
+
+	"templates" : [
+		"thing/ammo_pack/thrust"
+	],
+
+	"vars": [
+		"$damage"
+	],
+
+	"components" : [
+
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_cane_thrust"}},
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "regular_spear_thrust",
+					"templates" : [
+						["thing/ammo/thrust/regular_cane_thrust", ["$damage"]]
+					]
+				}
+			}
+		}
+	]
+}

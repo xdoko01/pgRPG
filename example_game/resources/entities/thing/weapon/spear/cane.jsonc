@@ -1,0 +1,12 @@
+{
+	"id" : "t_thing_weapon_spear_cane",
+
+	"templates" : [
+		"thing/weapon/spear",	// parent
+		"model/weapon/thrust/cane" // model
+	],
+
+	"components" : [
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"id" : "thing",
+	"components" : [
+
+		{"type" : "debug:Debug", "params" : {}}
+
+	]
+}

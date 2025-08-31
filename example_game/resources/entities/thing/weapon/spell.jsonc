@@ -1,0 +1,11 @@
+{
+	"id" : "spell",
+
+	"templates" : [
+		"thing/weapon"
+	],
+
+	"components" : [
+		{"type" : "weapon:Weapon", "params" : {"type" : "spell"}}
+	]
+}

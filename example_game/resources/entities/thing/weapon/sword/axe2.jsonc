@@ -1,0 +1,12 @@
+{
+	"id" : "t_thing_weapon_sword_axe2",
+
+	"templates" : [
+		"thing/weapon/sword",	// parent
+		"model/weapon/slash/axe2" // model
+	],
+
+	"components" : [
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

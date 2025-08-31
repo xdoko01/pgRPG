@@ -1,0 +1,29 @@
+{
+	"id" : "fireball_spell_pack",
+
+	"templates" : [
+		"thing/ammo_pack/spellcast",
+		"model/ammo_pack/spellcast/fireball_spell_pack"
+	],
+	
+	"vars": [
+		"$count" // number of spells in the pack
+	],
+	
+	"components" : [
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball_spells"}},
+		
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "fireball_spell",
+					"templates" : [
+						"thing/ammo/spellcast/fireball_spell($ttl=2000, $damage=55, $velocity=100, $acc=3)"
+					]
+				},
+				"max_units": "$count"
+			}
+		}
+	]
+}

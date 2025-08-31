@@ -72,7 +72,8 @@ class PerformArmAmmoProcessor(Processor):
         # Get all entities that have HasWeapon and RemoveFlagIsAboutToArmWeaponProcessor - those are candidates for successful arming
         for ent_fighter, (has_weapon, has_inventory, flag_is_about_to_arm_ammo, weapon_in_use) in self.world.get_components_opt(HasWeapon, HasInventory, FlagIsAboutToArmAmmo, optional=WeaponInUse):
 
-            # First disarm currently used ammo
+            '''
+            # First disarm currently used ammo 
             ammo_in_use_entity_id = has_weapon.weapons[weapon_in_use.type]["generator"] if weapon_in_use is not None else None
 
             logger.debug(f'({self.cycle}) - Currently used ammo before arming a new one {ammo_in_use_entity_id=}.')
@@ -81,10 +82,27 @@ class PerformArmAmmoProcessor(Processor):
             if ammo_in_use_entity_id is not None:
                     self.world.add_component(ent_fighter, FlagIsAboutToDisarmAmmo(ammo=ammo_in_use_entity_id, type=weapon_in_use.type))
                     logger.debug(f'({self.cycle}) - component FlagIsAboutToDisarmAmmo created with params {ammo_in_use_entity_id=}, {weapon_in_use.type=}.')
+            '''
+
+            # Get entity_id of the currently armed ammo of the type that we are trying to arm
+            armed_ammo_entity_id = has_weapon.weapons[flag_is_about_to_arm_ammo.weapon]["generator"]
+            logger.debug(f'({self.cycle}) - Currently armed ammo before arming a new one {armed_ammo_entity_id=}.')
+
+            logger.debug(f'({self.cycle}) - Trying to arm ammo entity in FlagIsAboutToArmAmmo {flag_is_about_to_arm_ammo.ammo=}.')
+
+            # If trying to arm the weapon that is already armed, skip it and do nothing
+            if armed_ammo_entity_id == flag_is_about_to_arm_ammo.ammo: 
+                logger.debug(f'({self.cycle}) - Trying to arm the ammo that is already armed. {armed_ammo_entity_id=}. Skipping arming')
+                continue
+
+            if armed_ammo_entity_id is not None:
+                self.world.add_component(ent_fighter, FlagIsAboutToDisarmAmmo(ammo=armed_ammo_entity_id, type=flag_is_about_to_arm_ammo.weapon))
+                logger.debug(f'({self.cycle}) - component FlagIsAboutToDisarmAmmo created with params {armed_ammo_entity_id=}, {flag_is_about_to_arm_ammo.weapon=}.')
 
             # Always arm the ammo
             try:
                 has_weapon.weapons[flag_is_about_to_arm_ammo.weapon]["generator"] = flag_is_about_to_arm_ammo.ammo
+                logger.debug(f'({self.cycle}) - HasWeapon component: {has_weapon.weapons}.')
             except KeyError:
                 logger.error(f'({self.cycle}) - Ammo for {flag_is_about_to_arm_ammo.weapon} is of incorrect type "{flag_is_about_to_arm_ammo.weapon}".')
                 raise ValueError

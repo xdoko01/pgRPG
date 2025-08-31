@@ -1,0 +1,10 @@
+{
+	"id" : "ammo",
+	"templates" : ["thing"],
+	"components" : [
+
+		// all ammo expolde on collision for debug purposesses
+		{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
+
+	]
+}

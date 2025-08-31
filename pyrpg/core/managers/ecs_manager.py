@@ -55,6 +55,11 @@ def process(proc_group_id, events, keys, dt: float, debug: bool):_world.process(
 ## PROCESSORS - START
 #####################
 
+def get_proc_perf(sort=False) -> dict:
+    '''Returns dictionary with performance information of processors.
+    '''
+    return {k: v for k, v in sorted(_world.process_times.items(), key=lambda item: item[1], reverse=True)} if sort else _world.process_times
+
 def get_proc_class_from_def(proc_class_def):
     return get_class_from_def(proc_class_def, MODULEPATHS["PROCESSOR_MODULE_PATH"])
 

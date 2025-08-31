@@ -1,15 +1,31 @@
 {
 	"id" : "iron_arrow",
-	"templates" : ["thing/ammo/shoot", "model/ammo/shoot/iron_arrow"],
+	
+	"templates" : [
+		"thing/ammo/shoot", // parent
+		"model/ammo/shoot/iron_arrow" // model
+	],
+	
+	"vars": [
+		"$ttl", // movement duration
+		"$damage", 
+		"$velocity", 
+		"$acc" // acceleration
+	],
+
 	"components" : [
 
-		{"type" : "brain:Brain", "params" : {"commands" : [
-			[0, 	"new_move_auto", {}] // duration is not specified so the movement is infinite
-			]}},
+		{
+			"type" : "brain_ai:BrainAI",
+			"params" : {
+				"cmd_list" : [
+					{"command": ["move_auto", {"duration_ms": "$ttl"}]} // duration is not specified so the movement is infinite
+				]
+			}
+		},
 
-		{"type" : "damaging:Damaging", "params" : {"damage" : 35}},
-
-		{"type" : "movable:Movable", "params" :  {"velocity" : 400, "accelerate" : -3}},
+		{"type" : "damaging:Damaging", "params" : {"damage" : "$damage"}},
+		{"type" : "movable:Movable", "params" :  {"velocity" : "$velocity", "accelerate" : "$acc"}},
 		{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
 		{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 		{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}

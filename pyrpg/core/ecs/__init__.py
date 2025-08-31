@@ -131,7 +131,7 @@ class World:
         self._entities = {}
         self._dead_entities = set()
         if timed:
-            self.process_times = {}
+            self.process_times = defaultdict(int) # modified by xdoko01 to support summed times
             self._process = self._timed_process
 
     def clear_cache(self) -> None:
@@ -584,7 +584,7 @@ class World:
             start_time = pygame.time.get_ticks()
             processor.process(*args, **kwargs)
             process_time = pygame.time.get_ticks() - start_time
-            self.process_times[processor.__class__.__name__] = process_time
+            self.process_times[processor.__class__.__name__] += process_time # cumulate the process times in ms
 
     def process(self, proc_group_id: str='default', *args, **kwargs) -> None:
         """Call the process method on all Processors, in order of their priority.

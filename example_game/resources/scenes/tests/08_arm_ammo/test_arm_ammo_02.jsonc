@@ -29,103 +29,99 @@
 	//////////////////////////
 
 		// For commands
-			["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}], // cmds from keyboard controlls
-			["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}], // cmds from command generators such as behavior trees
-			["command_system.generate_command_from_mouse_processor:GenerateCommandFromMouseProcessor", {}], // cmds from mouse controlls
-			["command_system.perform_command_processor:PerformCommandProcessor", {}], // process the command queue
+		["command_system:GenerateCommandFromInputProcessor", {}], // cmds from keyboard controlls
+		["command_system:GenerateCommandFromBrainProcessor", {}], // cmds from command generators such as behavior trees
+		["command_system:GenerateCommandFromMouseProcessor", {}], // cmds from mouse controlls
+		["command_system:PerformCommandProcessor", {}], // process the command queue
 
 		// For movement
-			["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		["movement_system:PerformMovementProcessor", {}],
 
 		// For animation
-			["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-			["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
-			["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
-			["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-			["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}], // once IsDestroyed component is used, this processor must be present
-			["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system:PerformMovementAnimationProcessor", {}],
+		["animation_system:PerformActionAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
+		["animation_system:PerformActionIdleAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
+		["animation_system:PerformIdleAnimationProcessor", {}],
+		["animation_system:PerformExpireAnimationProcessor", {}], // once IsDestroyed component is used, this processor must be present
+		["animation_system:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
-			["collision_system.generate_collisions_processor:GenerateCollisionsOptimizedProcessor", {}],
-			["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+		["collision_system:GenerateCollisionsProcessor", {}],
+		["collision_system:ResolveCollisionsProcessor", {}],
 
 		// For pickup
-			["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
-			["pickup_system.perform_pickup_processor:PerformPickupProcessor", {}],
+		["pickup_system:GeneratePickupProcessor", {}],
+		["pickup_system:PerformPickupProcessor", {}],
 
 		// For Arming of a Weapon
-			["arm_weapon_system.generate_arm_weapon_processor:GenerateArmWeaponProcessor", {}], // Following processor commented out for manual arming of the weapon and not automatic during pickup
-			["arm_weapon_system.perform_arm_weapon_processor:PerformArmWeaponProcessor", {}],
-			["effects_system.generate_sound_fx_on_arm_weapon_processor:GenerateSoundFXOnArmWeaponProcessor", {}], // For arming sound effects
+		["arm_weapon_system:GenerateArmWeaponProcessor", {}], // Following processor commented out for manual arming of the weapon and not automatic during pickup
+		["arm_weapon_system:PerformArmWeaponProcessor", {}],
+		["effects_system:GenerateSoundFXOnArmWeaponProcessor", {}], // For arming sound effects
 
 		// For Arming of an Ammo
-			["arm_ammo_system.generate_arm_ammo_processor:GenerateArmAmmoProcessor", {}],
-			["arm_ammo_system.perform_arm_ammo_processor:PerformArmAmmoProcessor", {}],
+		["arm_ammo_system:GenerateArmAmmoProcessor", {}],
+		["arm_ammo_system:PerformArmAmmoProcessor", {}],
 
 		// For dropping 
- 			["drop_system.perform_drop_processor:PerformDropProcessor", {}],
+ 		["drop_system:PerformDropProcessor", {}],
 
 		// For Disarming of a weapon
-			["arm_weapon_system.generate_disarm_weapon_processor:GenerateDisarmWeaponProcessor", {}],
-			["arm_weapon_system.perform_disarm_weapon_processor:PerformDisarmWeaponProcessor", {}],
+		["arm_weapon_system:GenerateDisarmWeaponProcessor", {}],
+		["arm_weapon_system:PerformDisarmWeaponProcessor", {}],
 
 		// For Disarming of an Ammo
-			["arm_ammo_system.generate_disarm_ammo_processor:GenerateDisarmAmmoProcessor", {}],
-			["arm_ammo_system.perform_disarm_ammo_processor:PerformDisarmAmmoProcessor", {}],
+		["arm_ammo_system:GenerateDisarmAmmoProcessor", {}],
+		["arm_ammo_system:PerformDisarmAmmoProcessor", {}],
 
+		// For setting armed weapon into Use
+		["arm_weapon_system:PerformSetWeaponIntoUseProcessor", {}],
 
 		// For displaying
-			["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-			["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-			["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-			//["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-			["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
-			["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-			["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
-			["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
-			["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}], // for debug info about entities
-			["render_system.perform_render_inventory_processor:PerformRenderInventoryProcessor", {}], // for showing inventory window
-			["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}], // blitting cameras
-			["render_system.perform_render_messages_processor:PerformRenderMessagesProcessor", {}], // blitting messages
+		["render_system:PerformClearWindowProcessor", {}],
+		["render_system:PerformClearCameraProcessor", {}],
+		["render_system:PerformScrollCameraProcessor", {}],
+		["render_system:PerformRenderMapProcessor", {}],
+		["render_system:GenerateRenderDataFromParentProcessor", {}],
+		["render_system:PerformRenderModelProcessor", {}],
+		["render_system:PerformRenderArmedWeaponProcessor", {}],
+		["render_system:PerformRenderArmedAmmoProcessor", {}],
+		["render_system:PerformRenderDebugInfoProcessor", {}], // for debug info about entities
+		["render_system:PerformRenderInventoryProcessor", {}], // for showing inventory window
+		["render_system:PerformBlitCameraProcessor", {}], // blitting cameras
+		["render_system:PerformRenderMessagesProcessor", {}], // blitting messages
 
 		// For events processing
-			["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START", "WEAPON_ARMED","AMMO_PACK_ARMED"]}],
+		["event_system:GameEventsExProcessor", {"process" : ["SCENE_START", "WEAPON_ARMED","AMMO_PACK_ARMED"]}],
 
 		// For clearing of components (usually Flags) at the end of each cycle
-			["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-			["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
-			["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}], // if attack command is used, this processor must be planned. Otherwise no movement will happen after pressing the attack button
-			["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		["movement_system:RemoveFlagDoMoveProcessor", {}],
+		["collision_system:RemoveFlagHasCollidedProcessor", {}],
+		["attack_system:RemoveFlagDoAttackProcessor", {}], // if attack command is used, this processor must be planned. Otherwise no movement will happen after pressing the attack button
+		["animation_system:RemoveFlagIsAnimationActionFrameProcessor", {}],
 
-			// Clear pickups
-			["pickup_system.remove_flag_is_about_to_pick_entity_processor:RemoveFlagIsAboutToPickEntityProcessor", {}],
-			["pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor", {}],
-			["pickup_system.remove_flag_was_picked_by_processor:RemoveFlagWasPickedByProcessor", {}],
+		["pickup_system:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		["pickup_system:RemoveFlagHasPickedProcessor", {}],
+		["pickup_system:RemoveFlagWasPickedByProcessor", {}],
 			
-			// Clear arming weapons
-			["arm_weapon_system.remove_flag_is_about_to_arm_weapon_processor:RemoveFlagIsAboutToArmWeaponProcessor", {}],
-			["arm_weapon_system.remove_flag_has_armed_weapon_processor:RemoveFlagHasArmedWeaponProcessor", {}],
-			["arm_weapon_system.remove_flag_was_armed_as_weapon_by_processor:RemoveFlagWasArmedAsWeaponByProcessor", {}],
+		["arm_weapon_system:RemoveFlagIsAboutToArmWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagHasArmedWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagWasArmedAsWeaponByProcessor", {}],
 
-			// Clear arming ammos
-			["arm_ammo_system.remove_flag_is_about_to_arm_ammo_processor:RemoveFlagIsAboutToArmAmmoProcessor", {}],
-			["arm_ammo_system.remove_flag_has_armed_ammo_processor:RemoveFlagHasArmedAmmoProcessor", {}],
-			["arm_ammo_system.remove_flag_was_armed_as_ammo_by_processor:RemoveFlagWasArmedAsAmmoByProcessor", {}],
+		["arm_ammo_system:RemoveFlagIsAboutToArmAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagHasArmedAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagWasArmedAsAmmoByProcessor", {}],
 
-			// Clear droppings
-			["drop_system.remove_flag_is_about_to_drop_entity_processor:RemoveFlagIsAboutToDropEntityProcessor", {}],
-			["drop_system.remove_flag_has_dropped_processor:RemoveFlagHasDroppedProcessor", {}],
-			["drop_system.remove_flag_was_dropped_by_processor:RemoveFlagWasDroppedByProcessor", {}],
+		["drop_system:RemoveFlagIsAboutToDropEntityProcessor", {}],
+		["drop_system:RemoveFlagHasDroppedProcessor", {}],
+		["drop_system:RemoveFlagWasDroppedByProcessor", {}],
 
-			// Clear disarming weapons
-			["arm_weapon_system.remove_flag_is_about_to_disarm_weapon_processor:RemoveFlagIsAboutToDisarmWeaponProcessor", {}],
-			["arm_weapon_system.remove_flag_has_disarmed_weapon_processor:RemoveFlagHasDisarmedWeaponProcessor", {}],
-			["arm_weapon_system.remove_flag_was_disarmed_as_weapon_by_processor:RemoveFlagWasDisarmedAsWeaponByProcessor", {}],
+		["arm_weapon_system:RemoveFlagIsAboutToDisarmWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagHasDisarmedWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagWasDisarmedAsWeaponByProcessor", {}],
 
-			// Clear disarming ammos
-			["arm_ammo_system.remove_flag_is_about_to_disarm_ammo_processor:RemoveFlagIsAboutToDisarmAmmoProcessor", {}],
-			["arm_ammo_system.remove_flag_has_disarmed_ammo_processor:RemoveFlagHasDisarmedAmmoProcessor", {}],
-			["arm_ammo_system.remove_flag_was_disarmed_as_ammo_by_processor:RemoveFlagWasDisarmedAsAmmoByProcessor", {}],
+		["arm_ammo_system:RemoveFlagIsAboutToDisarmAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagHasDisarmedAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagWasDisarmedAsAmmoByProcessor", {}],
 
 
 	//////////////////////////
@@ -179,29 +175,64 @@
 			]
 		},
 		{
+			"id" : "w_crossbow",
+			"templates" : [
+				"thing/ammo_pack/thrust/crossbow_arrows_pack($arrows_count=100)", // ammo pack
+				"thing/weapon/spear/crossbow", // weapon must be second to overwrite the renderable model of ammo pack
+				"t_tile_pos(7, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+				{"type" : "debug:Debug", "params" : {}}
+			]
+		},
+		//{
+		//	"id" : "w_crossbow",
+		//	"templates" : [
+		//		"model/weapon/thrust/crossbow", // model template
+		//		"t_pickable_item", // pickable template
+		//		"t_tile_pos(7, 7, test_arena_sand)" // position template
+		//	],
+		//	"components" : [
+		//		{"type" : "weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}},
+		//		{"type" : "sound_fx_on_arm_weapon:SoundFXOnArmWeapon", "params" : {"sound" : "arrow-hit.mp3"}}
+		//	]
+		//},
+
+		{
 			"id" : "iron_arrows_pack",
 			"templates" : [
-				"model/ammo_pack/shoot/iron_arrows_pack", // model template
-				"t_pickable_item", // pickable template
+				["thing/ammo_pack/shoot/iron_arrows_pack", { "$arrows_count": 10}],
 				"t_tile_pos(6, 10, test_arena_sand)" // position template
 			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon": "bow", "type": "iron_arrows"}},
-				{
-					"type" : "factory:Factory", 
-					"params" : {
-						"max_units" : 5,
-						"prescription" : {
-							"templates" : ["model/ammo/shoot/iron_arrow"],
-							"components" : [
-								{"type" : "debug:Debug", "params" : {}}
-							]
-						} 
-					}
-				}
-
+				{"type" : "debug:Debug", "params" : {}}
 			]
 		},
+
+		//{
+		//	"id" : "iron_arrows_pack",
+		//	"templates" : [
+		//		"model/ammo_pack/shoot/iron_arrows_pack", // model template
+		//		"t_pickable_item", // pickable template
+		//		"t_tile_pos(6, 10, test_arena_sand)" // position template
+		//	],
+		//	"components" : [
+		//		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon": "bow", "type": "iron_arrows"}},
+		//		{
+		//			"type" : "factory:Factory", 
+		//			"params" : {
+		//				"max_units" : 5,
+		//				"prescription" : {
+		//					"templates" : ["model/ammo/shoot/iron_arrow"],
+		//					"components" : [
+		//						{"type" : "debug:Debug", "params" : {}}
+		//					]
+		//				} 
+		//			}
+		//		}
+		//	]
+		//},
+
 		{
 			"id" : "wooden_arrows_pack",
 			"templates" : [

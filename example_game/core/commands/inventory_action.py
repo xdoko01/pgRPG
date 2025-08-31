@@ -48,6 +48,7 @@ from core.components.factory import Factory
 
 from .arm_weapon import process as cmd_arm_weapon
 from .arm_ammo import process as cmd_arm_ammo
+from .use_weapon import process as cmd_use_weapon
 
 
 # DO NOT REMOVE - Mandatory function
@@ -133,10 +134,16 @@ def process(
     has_inventory: HasInventory = ecs_mng.try_component(entity_id, HasInventory)
 
     if flag_show_inventory is None or has_inventory is None:
+        logger.debug(f'{entity_id=} - component FlagShowInventory or HasInventory do not exist, failure.')
         return CommandStatus.FAILURE
 
     # Get the entity_id of the selected inventory item
     inv_item_entity_id = has_inventory.slots[flag_show_inventory.selected_slot_id]
+    
+    # In case focus is on empty slot without any entity/item - return failure
+    if inv_item_entity_id is None:
+        logger.debug(f'{entity_id=} - No entity in the slot, failure.')
+        return CommandStatus.FAILURE
 
     # Try arming the entity using arm_command
     arm_weapon_res: CommandStatus = cmd_arm_weapon(
@@ -146,19 +153,22 @@ def process(
         weapon_entity_id=inv_item_entity_id,
         **cmd_kwargs
     )
+    logger.debug(f'{entity_id=} - Command arm_weapon result: {arm_weapon_res=}')
 
-    '''
-    weapon: Weapon = ecs_mng.try_component(inv_item_entity_id, Weapon)
-    if weapon is not None:
-        # Assign weapon in HasWeapon component to the correct type
-        arm_weapon_res = cmd_arm_weapon(
+    """
+    # Try switching the weapon for usage if arming was successful
+    if arm_weapon_res == CommandStatus.SUCCESS: 
+        weapon: Weapon = ecs_mng.try_component(inv_item_entity_id, Weapon) # if arming was successful, Weapon component exists
+
+        use_weapon_res: CommandStatus = cmd_use_weapon(
             ecs_mng=ecs_mng,
             entity_id=entity_id,
             ctx=ctx,
-            weapon_entity_id=inv_item_entity_id,
-            **cmd_kwargs
+            weapon_type=weapon.type
         )
-    '''
+        logger.debug(f'{entity_id=} - Command use_weapon result: {use_weapon_res=}')
+    """
+
     # Try arming the entity using arm_ammo
     arm_ammo_res: CommandStatus = cmd_arm_ammo(
         ecs_mng=ecs_mng,
@@ -167,22 +177,7 @@ def process(
         ammo_entity_id=inv_item_entity_id,
         **cmd_kwargs
     )
-
-    '''
-    # In case that item has AmmoPack and Factory component, arm the ammo
-    ammo: AmmoPack = ecs_mng.try_component(inv_item_entity_id, AmmoPack)
-    factory: Factory = ecs_mng.try_component(inv_item_entity_id, Factory)
-
-    if ammo is not None and factory is not None:
-        # Assign weapon in HasWeapon component to the correct type
-        arm_ammo_res = cmd_arm_ammo(
-            ecs_mng=ecs_mng,
-            entity_id=entity_id,
-            ctx=ctx,
-            ammo_entity_id=inv_item_entity_id,
-            **cmd_kwargs
-        )
-    '''
+    logger.debug(f'{entity_id=} - Command arm_ammo result: {arm_ammo_res=}')
 
     # if at least one of the arming commands suceeds, return success. Otherwise, return failure.
     return CommandStatus.SUCCESS if arm_weapon_res == CommandStatus.SUCCESS or arm_ammo_res == CommandStatus.SUCCESS else CommandStatus.FAILURE

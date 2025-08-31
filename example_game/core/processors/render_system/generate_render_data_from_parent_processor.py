@@ -59,16 +59,16 @@ class GenerateRenderDataFromParentProcessor(Processor):
         for ent_parent, (position, renderable_model, has_weapon, weapon_in_use) in self.world.get_components(Position, RenderableModel, HasWeapon, WeaponInUse):
 
             # Prepare render data for Weapon that is armed
-            ent_weapon_in_use = has_weapon.weapons[weapon_in_use.type]["weapon"]
-
-            self.world.add_component(ent_weapon_in_use, RenderDataFromParent(parent_pos_comp=position, x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
-            logger.debug(f'({self.cycle}) - Entity {ent_weapon_in_use} (weapon) gained render data from {ent_parent}.')
+            #ent_weapon_in_use = has_weapon.weapons[weapon_in_use.type]["weapon"]
+            if ent_weapon_in_use := has_weapon.weapons[weapon_in_use.type]["weapon"]:
+                self.world.add_component(ent_weapon_in_use, RenderDataFromParent(parent_pos_comp=position, x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
+                logger.debug(f'({self.cycle}) - Entity {ent_weapon_in_use} (weapon) gained render data from {ent_parent}.')
 
             # Prepare render data for Ammo that is on Weapon that is armed
-            ent_ammo_in_use = has_weapon.weapons[weapon_in_use.type]["generator"]
-
-            self.world.add_component(ent_ammo_in_use, RenderDataFromParent(parent_pos_comp=position, x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
-            logger.debug(f'({self.cycle}) - Entity {ent_ammo_in_use} (ammo) gained render data from {ent_parent}.')
+            #ent_ammo_in_use = has_weapon.weapons[weapon_in_use.type]["generator"]
+            if ent_ammo_in_use := has_weapon.weapons[weapon_in_use.type]["generator"]:
+                self.world.add_component(ent_ammo_in_use, RenderDataFromParent(parent_pos_comp=position, x=position.x, y=position.y, dir_name=position.dir_name, action=renderable_model.action, last_frame=renderable_model.last_frame))
+                logger.debug(f'({self.cycle}) - Entity {ent_ammo_in_use} (ammo) gained render data from {ent_parent}.')
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

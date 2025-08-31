@@ -1,4 +1,4 @@
-__all__ = ['GameEventsProcessor', 'GameEventsExProcessor']
+__all__ = ['GameEventsExProcessor']
 
 # Parent super-class
 from pyrpg.core.ecs import Processor, SkipProcessorExecution

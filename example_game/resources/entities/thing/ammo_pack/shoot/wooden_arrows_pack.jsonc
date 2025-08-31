@@ -1,0 +1,27 @@
+{
+	"id" : "wooden_arrows_pack",
+	"templates" : [
+		"thing/ammo_pack/shoot", 
+		"model/ammo_pack/shoot/wooden_arrows_pack"
+	],
+	"vars": [
+		"$arrows_count" // number of arrows in the pack
+	],
+	
+	"components" : [
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows"}},
+		
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "iron_arrow",
+					"templates" : [
+						"thing/ammo/shoot/iron_arrow($ttl=1500, $damage=25, $velocity=300, $acc=-3)"
+					]
+				},
+				"max_units": "$arrows_count"
+			}
+		}
+	]
+}

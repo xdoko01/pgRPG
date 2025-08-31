@@ -1,0 +1,28 @@
+{
+	"id" : "regular_axe1_slash",
+
+	"templates" : [
+		"thing/ammo/slash" // parent
+	],
+
+	"vars" : [
+		"$damage"
+	],
+
+	"components" : [
+
+		{"type" : "damaging:Damaging", "params" : {"damage" : "$damage"}},
+
+		{
+			"type" : "collidable:Collidable", 
+			"params" : {
+				"x" : 8, "y" : 8, 
+				"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
+				"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
+			}
+		},
+
+		{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
+		{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}}
+	]
+}

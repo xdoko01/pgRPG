@@ -1,0 +1,27 @@
+{
+	"id" : "regular_steelwand_female_generator",
+
+	"templates" : [
+		"thing/ammo_pack/slash"
+	],
+
+	"vars": [
+		"$damage"
+	],
+
+	"components" : [
+
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_steelwand_female_slash"}},
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "regular_dagger_slash",
+					"templates" : [
+						["thing/ammo/slash/regular_steelwand_female_slash", ["$damage"]]
+					]
+				}
+			}
+		}
+	]
+}

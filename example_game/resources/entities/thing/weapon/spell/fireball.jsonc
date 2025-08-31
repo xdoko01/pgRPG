@@ -1,0 +1,13 @@
+{
+	"id" : "t_thing_weapon_spell_fireball",
+
+	"templates" : [
+		"thing/weapon/spell"	// parent
+		// no model
+	],
+
+	"components" : [
+		{"type" : "pickable:Pickable", "params" : {}},
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}}
+	]
+}

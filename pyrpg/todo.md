@@ -1,9 +1,126 @@
 ## Current
+  - json validator for `FlagSetWeaponInUse` component
+  - BUG - weapon and ammo as separate entities, when bow is dropped, then ammo has texture on map.
 
+  - in `PerformDisarmWeapon` component fire a new component for removing the WeaponInUse component
+   maybe to have processor `RemoveRenderDataFromParent` + flag `FlagRemoveDataFromParent`(entity_ids) that will handle all the removals
+    - 
+
+  - BUG - pickup `spear`(1) and next pickup `bow`(7). After bow pickup the spear texture remains lying on the ground.
+    - the reason is that FlagDIsarmWeapon is not created when bow is picked up.
+    - the `PerformArmWeaponProcessor` is triggering disarm only for the already armed weapon of type `bow` and no other. In fact this is correct. If I am arming bow and there is already another bow in the bow slot, I need to disarm the bow occupying the slot. And I do not want to disarm the spear as I an not trying to replace any weapon in the spear slot.
+    - Also it is clear that RenderParentData component is closely repated to WeaponInUse component and no other. It is not relevant for arming/disarming but for manipulation with WeaponInUse component. When assigning WeaponInUse, I need to make sure that RenderDataFromParent is removed from all other weapon components (as I can only use one weapon at one time)
+
+  - fix arming from the inventory - 
+  - some textures incorrecly being placed when working with inventory RenderDataFromParent
+
+  - Implement processor that will set WeaponInUse automatically when weapon is armed.
+    - this should work also for the arm command - generates FlagWasArmed and as a reaction WeaponInUse will be created.
+
+  - 
+{
+  'GenerateCommandFromInputProcessor': 175, 
+  'GenerateCommandFromMouseProcessor': 19, 
+  `'GenerateCommandFromBrainProcessor'`: 616, 
+  'PerformCommandProcessor': 971, 
+  `'PerformMovementProcessor'`: 665, 
+  'PerformMovementAnimationProcessor': 154, 
+  'PerformActionAnimationProcessor': 41, 
+  'PerformActionIdleAnimationProcessor': 69, 
+  `'PerformIdleAnimationProcessor'`: 635, 
+  'PerformExpireAnimationProcessor': 17, 
+  `'PerformFrameUpdateProcessor'`: 796, 
+  'GenerateProjectileFactoryDataProcessor': 31, 
+  'PerformFactoryGenerationProcessor': 31, 
+  'PerformAdjustCollidableProcessor': 8, 
+  'PerformAdjustMovementProcessor': 6, 
+  'GenerateCollisionsOptimizedProcessor': 193, 
+  'ResolveCollisionsOptimizedProcessor': 18, 
+  'GenerateDestroyOnCollisionProcessor': 11, 
+  'GenerateDestroyOnStoppedMovementProcessor': 9, 
+  'PerformDestroyEntitiesProcessor': 12, 
+  'GeneratePickupProcessor': 12, 
+  'PerformPickupProcessor': 18, 
+  'GenerateArmWeaponProcessor': 11, 
+  'PerformArmWeaponProcessor': 8, 
+  'GenerateArmAmmoProcessor': 16, 
+  'PerformArmAmmoProcessor': 11, 
+  'PerformDropProcessor': 5, 
+  'GenerateDisarmWeaponProcessor': 13, 
+  'PerformDisarmWeaponProcessor': 11, 
+  'GenerateDisarmAmmoProcessor': 10, 
+  'PerformDisarmAmmoProcessor': 7, 
+  'PerformSetWeaponIntoUseProcessor': 6, 
+  'GenerateSoundFXOnArmWeaponProcessor': 8, 
+  'GenerateVisualFXOnCollisionProcessor': 12, 
+  'GenerateSoundFXOnCollisionProcessor': 12, 
+  'PerformClearWindowProcessor': 196, 
+  'PerformClearCameraProcessor': 154, 
+  'PerformScrollCameraProcessor': 34, 
+  `'PerformRenderMapProcessor'`: 1767, 
+  'GenerateRenderDataFromParentProcessor': 283, 
+  'PerformRenderModelProcessor': 331, 
+  'PerformRenderArmedWeaponProcessor': 56, 
+  'PerformRenderArmedAmmoProcessor': 16, 
+  `'PerformRenderDebugInfoProcessor'`: 1657, 
+  'PerformRenderInventoryProcessor': 17, 
+  'PerformBlitCameraProcessor': 285, 
+  'PerformRenderMessagesProcessor': 12, 
+  `'GameEventsExProcessor'`: 1677,   *Something must be done about this*
+  'RemoveFlagDoMoveProcessor': 361, 
+  'RemoveFlagAdjustMovementProcessor': 26, 
+  'RemoveFlagHasStoppedMovementProcessor': 7, 
+  'RemoveFlagHasCollidedProcessor': 9, 
+  'RemoveFlagAdjustCollidableProcessor': 9, 
+  'RemoveFlagDoAttackProcessor': 20, 
+  'RemoveFlagIsAnimationActionFrameProcessor': 6, 
+  'RemoveFlagCreateFromFactoryProcessor': 9, 
+  'RemoveFlagGeneratedFromFactoryProcessor': 9, 
+  'RemoveFlagIsAboutToPickEntityProcessor': 8, 
+  'RemoveFlagHasPickedProcessor': 9, 
+  'RemoveFlagWasPickedByProcessor': 9, 
+  'RemoveFlagIsAboutToArmWeaponProcessor': 13, 
+  'RemoveFlagHasArmedWeaponProcessor': 11, 
+  'RemoveFlagWasArmedAsWeaponByProcessor': 8, 
+  'RemoveFlagIsAboutToArmAmmoProcessor': 9, 
+  'RemoveFlagHasArmedAmmoProcessor': 15, 
+  'RemoveFlagWasArmedAsAmmoByProcessor': 4, 
+  'RemoveFlagIsAboutToDropEntityProcessor': 9, 
+  'RemoveFlagHasDroppedProcessor': 6, 
+  'RemoveFlagWasDroppedByProcessor': 14, 
+  'RemoveFlagIsAboutToDisarmWeaponProcessor': 10, 
+  'RemoveFlagHasDisarmedWeaponProcessor': 8, 
+  'RemoveFlagWasDisarmedAsWeaponByProcessor': 13, 
+  'RemoveFlagIsAboutToDisarmAmmoProcessor': 10, 
+  'RemoveFlagHasDisarmedAmmoProcessor': 10, 
+  'RemoveFlagWasDisarmedAsAmmoByProcessor': 9
+}
+
+  - if you want to display arming of the arrow then ammo pack(generator) and weapon must be 2 separate entities with 2 Renderable Models. If weapon and ammo pack are merged into one entity then only one renderable model (probably weapon) is displayed and the animation of arming an arrow is missing/overridden by weapon.
+
+
+  - [ ] - BUG in `test_projectile_collisions` - arming weapons from inventory is unpredictable and does not work correct in all cases (must be repeated sometimes to work). The problem is following:
+     - in situation that Weapon and AmmoPack are merged into one entity
+     - and when you pickup othermerged entity
+     - perform arm will change WeaponInUse type
+     - this type is then used for disarming the weapon which is wrong
+
+     - change the HasWeapon and WeaponInUse system
+      1. Arming weapon is only gettin weapon in HasWeapon slot and removing it from there, same with ammo
+      2. Using weapon is having it in WeaponInUse component
+      3. divide arming processor and setting wepon in use processor
+       - create new processor for setting weapon in Use separatelly
+        - as a reaction for weapon armed we can have set in use processor.
+      4. revisit the commands
+
+  - [ ] - fix json validation so that templates are not only strings but also the other variants
   - [ ] - add inventory to all test cases from 09 projectiles onwards
   - [ ] - in commands, check that some processors exists, otherwise the command will not be executed (disarming commands)
   - [ ] - implement `wear` processors
 
+  - [ ] - showing of message should happen on camera not on window
+  - [ ] - by pressing enter and esc on the exit dialog either confirming exit or dismissing the exit dialog.
+  - [ ] - test recording to the file also commands and actions that are done in inventory - will it be recorded? 
 
   - [ ] - prepare some helping function that receives Position and Collidable component for 2 entities on input and returns if those collide or not. Similar for collisions with the map.
 
@@ -11,6 +128,9 @@
 
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
+  - [x] - applying inventory command on empty slot results if disaster. Fix arm weapon command
+  - [x] - prepare a new console command for the same getting _world.process_times - `proc_perf` command
+  - [x] - have the time procesor statistics summed up accross all cycles, not just one cycle - because it is fragments of ms for each 
   - [x] - BUG - `FlagIsAnimationActionFrame` remains on player01 entity in arm weapon and ammo test scenes - removal processor was missing.
   - [x] - implement `arm_ammo` command + disarm ammo processors
   - [x] - BUG - in `test_arm_ammo_01` after picking upAmmo the game is frozen and ESC button needs to be pressed

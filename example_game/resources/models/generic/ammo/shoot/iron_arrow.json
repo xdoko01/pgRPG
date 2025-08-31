@@ -6,7 +6,7 @@
  "name":"iron_arrow",
  "spacing":0,
  "tilecount":12,
- "tiledversion":"1.3.1",
+ "tiledversion":"1.11.2",
  "tileheight":64,
  "tiles":[
         {
@@ -38,7 +38,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"walk"
+                 "value":"move"
                 }, 
                 {
                  "name":"direction",
@@ -89,7 +89,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"walk"
+                 "value":"move"
                 }, 
                 {
                  "name":"direction",
@@ -140,7 +140,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"walk"
+                 "value":"move"
                 }, 
                 {
                  "name":"direction",
@@ -191,7 +191,7 @@
                 {
                  "name":"action",
                  "type":"string",
-                 "value":"walk"
+                 "value":"move"
                 }, 
                 {
                  "name":"direction",
@@ -216,5 +216,5 @@
  "tilewidth":64,
  "transparentcolor":"#000000",
  "type":"tileset",
- "version":1.2
+ "version":"1.10"
 }

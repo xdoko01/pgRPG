@@ -12,6 +12,7 @@ from core.components.flag_is_about_to_arm_weapon import FlagIsAboutToArmWeapon
 from core.components.flag_has_armed_weapon import FlagHasArmedWeapon
 from core.components.flag_was_armed_as_weapon_by import FlagWasArmedAsWeaponBy
 from core.components.flag_is_about_to_disarm_weapon import FlagIsAboutToDisarmWeapon
+from core.components.flag_set_weapon_into_use import FlagSetWeaponIntoUse
 
 # For creation of events
 from pyrpg.core.events.event import Event
@@ -29,9 +30,11 @@ class PerformArmWeaponProcessor(Processor):
         -   FlagIsAboutToArmWeapon
         -   FlagHasArmedWeapon
         -   FlagWasArmedAsWeaponBy
+        -   FlagSetWeaponInUse
 
     Related processors:
         -   GenerateArmWeaponProcessor
+        -   PerformSetWeaponInUseProcessor
         -   RemoveFlagIsAboutToArmWeaponProcessor
         -   RemoveFlagWasArmedAsWeaponByProcessor
         -   RemoveFlagHasArmedWeaponProcessor
@@ -74,6 +77,7 @@ class PerformArmWeaponProcessor(Processor):
         # Get all entities that have HasWeapon and FlagIsAboutToArmWeapon - those are candidates for successful arming
         for ent_fighter, (has_weapon, flag_is_about_to_arm_weapon, weapon_in_use) in self.world.get_components_opt(HasWeapon, FlagIsAboutToArmWeapon, optional=WeaponInUse):
 
+            '''
             # First disarm currently used weapon
             weapon_in_use_entity_id = has_weapon.weapons[weapon_in_use.type]["weapon"] if weapon_in_use is not None else None
 
@@ -82,10 +86,44 @@ class PerformArmWeaponProcessor(Processor):
             if weapon_in_use_entity_id is not None:
                     self.world.add_component(ent_fighter, FlagIsAboutToDisarmWeapon(weapon=weapon_in_use_entity_id, type=weapon_in_use.type))
                     logger.debug(f'({self.cycle}) - component FlagIsAboutToDisarmWeapon created with params {weapon_in_use_entity_id=}, {weapon_in_use.type=}.')
+            '''
+            ########
+            # Automatically set the Weapon for usage
+            ########
 
+            # Set containing entity IDs that are currently armed on the position - as input into FlagSetWeaponIntoUse
+            prev_armed_weapon_ammo_dict = has_weapon.weapons[weapon_in_use.type] if weapon_in_use is not None else dict()
+            prev_armed_entity_ids = set(filter(lambda x: x is not None, prev_armed_weapon_ammo_dict.values()))
+
+            # Automatically set the armed weapon for usage 
+            self.world.add_component(ent_fighter, FlagSetWeaponIntoUse(type=flag_is_about_to_arm_weapon.type, prev_ent_ids=prev_armed_entity_ids))
+            logger.debug(f'({self.cycle}) - Entity {ent_fighter} has set weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type} in use.')
+
+            ########
+            # Disarm the weapon that is occupying the slot for the new weapon
+            ########
+
+            # Get entity_id of the currently armed weapon of the type that we are trying to arm
+            armed_weapon_entity_id = has_weapon.weapons[flag_is_about_to_arm_weapon.type]["weapon"]
+            logger.debug(f'({self.cycle}) - Currently armed weapon in the slot {flag_is_about_to_arm_weapon.type} before arming a new one {armed_weapon_entity_id=}.')
+
+            # If trying to arm the weapon that is already armed, skip it and do nothing
+            if armed_weapon_entity_id == flag_is_about_to_arm_weapon.weapon: 
+                logger.debug(f'({self.cycle}) - Trying to arm the weapon that is already armed. {armed_weapon_entity_id=}. Skipping arming')
+                continue
+
+            # Disarm currently armed weapon occupying the position for the new weapon
+            if armed_weapon_entity_id is not None :
+                    self.world.add_component(ent_fighter, FlagIsAboutToDisarmWeapon(weapon=armed_weapon_entity_id, type=flag_is_about_to_arm_weapon.type))
+                    logger.debug(f'({self.cycle}) - Component FlagIsAboutToDisarmWeapon created with params {armed_weapon_entity_id=}, {flag_is_about_to_arm_weapon.type=}.')
+
+            ########
             # Arm the new weapon
+            ########
+
             try:
                 has_weapon.weapons[flag_is_about_to_arm_weapon.type]["weapon"] = flag_is_about_to_arm_weapon.weapon
+                logger.debug(f'({self.cycle}) - HasWeapon component: {has_weapon.weapons}.')
             except KeyError:
                 logger.error(f'({self.cycle}) - Weapon {flag_is_about_to_arm_weapon.weapon} is of incorrect type {flag_is_about_to_arm_weapon.type}.')
                 raise ValueError
@@ -102,9 +140,11 @@ class PerformArmWeaponProcessor(Processor):
             self.world.add_component(ent_fighter, FlagHasArmedWeapon(weapon=flag_is_about_to_arm_weapon.weapon))
             logger.debug(f'({self.cycle}) - Entity {ent_fighter} has armed weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
 
+            '''
             # Assign WeaponInUse component to the fighter entity ['type', 'action', 'idle_action']
             self.world.add_component(ent_fighter, WeaponInUse(type=flag_is_about_to_arm_weapon.type))
-            logger.debug(f'({self.cycle}) - Entity {ent_fighter} is now using weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}.')
+            logger.debug(f'({self.cycle}) - Entity {ent_fighter} is now using weapon {flag_is_about_to_arm_weapon.weapon} of type {flag_is_about_to_arm_weapon.type}. WeaponInUse assigned')
+            '''
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

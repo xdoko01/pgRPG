@@ -1,6 +1,8 @@
 # Arming
 from .generate_arm_weapon_processor import GenerateArmWeaponProcessor
 from .perform_arm_weapon_processor import PerformArmWeaponProcessor
+from .perform_set_weapon_into_use_processor import PerformSetWeaponIntoUseProcessor
+
 from .remove_flag_has_armed_weapon_processor import RemoveFlagHasArmedWeaponProcessor
 from .remove_flag_is_about_to_arm_weapon_processor import RemoveFlagIsAboutToArmWeaponProcessor
 from .remove_flag_was_armed_as_weapon_by_processor import RemoveFlagWasArmedAsWeaponByProcessor

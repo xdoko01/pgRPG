@@ -1,0 +1,12 @@
+{
+	"id" : "sword",
+
+	"templates" : [
+		"thing/weapon"
+	],
+
+	"components" : [
+		{"type" : "weapon:Weapon", "params" : {"type" : "sword"}},
+		{"type" : "pickable:Pickable", "params" : {}}
+	]
+}

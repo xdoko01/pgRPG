@@ -1,0 +1,27 @@
+{
+	"id" : "crossbow_arrows_pack",
+	"templates" : [
+		"thing/ammo_pack/thrust", 
+		"model/ammo_pack/shoot/iron_arrows_pack"
+	],
+	"vars": [
+		"$arrows_count" // number of arrows in the pack
+	],
+	
+	"components" : [
+		{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "iron_arrows"}},
+		
+		{
+			"type" : "factory:Factory", 
+			"params" : {
+				"prescription" : {
+					"id" : "iron_arrow",
+					"templates" : [
+						"thing/ammo/shoot/iron_arrow($ttl=1000, $damage=35, $velocity=400, $acc=-3)"
+					]
+				},
+				"max_units": "$arrows_count"
+			}
+		}
+	]
+}

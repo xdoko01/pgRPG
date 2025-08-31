@@ -33,10 +33,10 @@ class AmmoPack(Component):
         try:
 
             # Weapon type to which the AmmoPack belongs
-            self.weapon = kwargs.get('weapon')
+            self.weapon = kwargs['weapon']
 
             # AmmoPack type to distinguish among different ammo for the same weapon
-            self.type = kwargs.get('type')
+            self.type = kwargs['type']
 
         except KeyError:
             # Notify component factory that initiation has failed
@@ -45,7 +45,7 @@ class AmmoPack(Component):
 
         # Assert that ammo pack type exists in list of WEAPONS.keys
         try:
-            assert isinstance(self.weapon, str) and self.weapon in Weapon.WEAPONS, f'Unknown weapon type "{self.type}" for {self.__class__} component.'
+            assert isinstance(self.weapon, str) and self.weapon in Weapon.WEAPONS, f'Unknown weapon type "{self.weapon}" for {self.__class__} component.'
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError
