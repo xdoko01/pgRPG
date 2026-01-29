@@ -14,8 +14,11 @@ from core.components.movable import Movable
 from core.components.flag_has_collided import FlagHasCollided
 from pyrpg.functions import sign
 
+from pyrpg.core.config import GAME # for TILE_RES_PX
+
 # Logger init
 logger = logging.getLogger(__name__)
+
 
 class ResolveCollisionsOptimizedProcessor(Processor):
     ''' Process collisions stored in component FlagHasCollided and do not
@@ -43,7 +46,7 @@ class ResolveCollisionsOptimizedProcessor(Processor):
         'collision_system:GenerateCollisionsProcessor'
     ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,*args, **kwargs):
         ''' Init the processor.
         '''
         super().__init__(*args, **kwargs)
@@ -90,9 +93,13 @@ class ResolveCollisionsOptimizedProcessor(Processor):
                     position.x += sign(correction_vect.x) * collidable.position_fix_walkaround_mode
                     position.y += correction_vect.y
 
+                # Keep position as an integer
+                #position.x = round(position.x)
+                #position.y = round(position.y)
 
-                logger.debug(f'({self.cycle}) - Entity {ent} corrected after collision with entity {coll_ent} - New possition: [{position.x}, {position.y}]')
+                logger.debug(f'({self.cycle}) - Entity {ent} corrected after collision with entity {coll_ent} - Orig pos: [{position.lastx}, {position.lasty}] -> New pos: [{position.x}, {position.y}]')
 
+                
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to
         non-serializable components

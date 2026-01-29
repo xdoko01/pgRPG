@@ -30,6 +30,7 @@
 
 		// For movement
 		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		["collision_system:ResolveMapCollisionsProcessor", {}], // first round of map fixes
 
 		// For animation
 		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
@@ -39,6 +40,7 @@
 		// For collisions
 		["collision_system:GenerateCollisionsProcessor", {}],
 		["collision_system.resolve_collisions_processor:ResolveCollisionsOptimizedProcessor", {}],
+		["collision_system:ResolveMapCollisionsProcessor", {}], // second round of map fixes
 
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],

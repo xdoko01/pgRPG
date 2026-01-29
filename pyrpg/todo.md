@@ -1,5 +1,26 @@
 ## Current
-  - json validator for `FlagSetWeaponInUse` component
+
+  - TODO: filters for entities - if I want to clean all entities that start with wallXXxXX, I should be able to write `wall*` and all entities starting with the word `wall` should be cleaned
+
+  - Camera is on the spring. After the movement stops it moves slower than the object and when movement stops it reaches slowly the centre (PerformScrollCameraProcessor)
+    - camera_pos, entity_pos, link_length
+    - entity_pos = camera_pos
+    - if no movement
+      - move camera towards entity_pos
+    - if movement
+      - if entity_pos - camera_pos > link_length + movement
+        - move camera towards entity_pos
+      OR
+      - the greater the distance between entity_pos and camera_pos the bigger the vector towards entity_pos 
+
+      F = -k * y ... k ...tuhost, y ... vzdalenost mezi entity a camera pos
+       vypocti vektor mezi camera a entity position
+       vynasob ho nejakou tuhosti
+       posun kameru smerem k entity o tento vektor
+
+
+  - walls are entities - this resolves the problem with physicks of moving box into box into box and into the wall
+
   - BUG - weapon and ammo as separate entities, when bow is dropped, then ammo has texture on map.
 
   - in `PerformDisarmWeapon` component fire a new component for removing the WeaponInUse component

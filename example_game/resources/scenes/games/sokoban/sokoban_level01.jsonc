@@ -5,7 +5,7 @@
 	"objective" : "Push all the boxes on the marked spots.",
 
 	// What scenes need to be loaded before this one 
-	"prereqs" : ["games/sokoban/sokoban_new"],
+	"prereqs" : ["games/sokoban/sokoban"],
 
 	"cleanup" : {
 		"processors": [],
@@ -24,7 +24,24 @@
 
 	"templates": [
 		
-		// Following is template without variables
+		// Wall does not have texture here as texture is part of the map rendering here
+		{
+			"id": "t_wall",
+			"components": [
+				{"type" : "debug:Debug", "params" : {}},
+				{
+					"type" : "collidable:Collidable",
+					"params" :  {
+						"x" : 32, 
+						"y" : 32, 
+						"position_fix_walkaround_mode": true,
+						"accept_pos_fix_from_denylist" : ["ALL"] // noone can move the wall
+					}
+				}
+			]
+		},
+
+
 		{
 			"id": "t_crate",
 
@@ -52,15 +69,63 @@
 				{"type" : "collidable:Collidable", "params" :  {
 					"x" : 30, 
 					"y" : 30, 
-					"position_fix_walkaround_mode" : false // can be pushed only straight
-					}
+					"position_fix_walkaround_mode": false // can be pushed only straight
+					//"accept_pos_fix_from_denylist" : ["ALL"], // noone can move me
+					//"accept_pos_fix_from_allowlist" : ["player01"] // only player can move the crate	
+				}
 				}
 
 			]
 		}
 	],
 
+
 	"entities" : [
+
+		// Define walls as entities - hence it is not needed to resolve collisions agains the walls
+		{"id": "wall03x01", "templates": ["t_wall", "t_tile_pos(3, 1, game_sokoban_lvl01)"]},
+		{"id": "wall04x01", "templates": ["t_wall", "t_tile_pos(4, 1, game_sokoban_lvl01)"]},
+		{"id": "wall05x01", "templates": ["t_wall", "t_tile_pos(5, 1, game_sokoban_lvl01)"]},
+		{"id": "wall06x01", "templates": ["t_wall", "t_tile_pos(6, 1, game_sokoban_lvl01)"]},
+		{"id": "wall07x01", "templates": ["t_wall", "t_tile_pos(7, 1, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x02", "templates": ["t_wall", "t_tile_pos(1, 2, game_sokoban_lvl01)"]},
+		{"id": "wall02x02", "templates": ["t_wall", "t_tile_pos(2, 2, game_sokoban_lvl01)"]},
+		{"id": "wall03x02", "templates": ["t_wall", "t_tile_pos(3, 2, game_sokoban_lvl01)"]},
+		{"id": "wall07x02", "templates": ["t_wall", "t_tile_pos(7, 2, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x03", "templates": ["t_wall", "t_tile_pos(1, 3, game_sokoban_lvl01)"]},
+		{"id": "wall07x03", "templates": ["t_wall", "t_tile_pos(7, 3, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x04", "templates": ["t_wall", "t_tile_pos(1, 4, game_sokoban_lvl01)"]},
+		{"id": "wall02x04", "templates": ["t_wall", "t_tile_pos(2, 4, game_sokoban_lvl01)"]},
+		{"id": "wall03x04", "templates": ["t_wall", "t_tile_pos(3, 4, game_sokoban_lvl01)"]},
+		{"id": "wall07x04", "templates": ["t_wall", "t_tile_pos(7, 4, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x05", "templates": ["t_wall", "t_tile_pos(1, 5, game_sokoban_lvl01)"]},
+		{"id": "wall03x05", "templates": ["t_wall", "t_tile_pos(3, 5, game_sokoban_lvl01)"]},
+		{"id": "wall04x05", "templates": ["t_wall", "t_tile_pos(4, 5, game_sokoban_lvl01)"]},
+		{"id": "wall07x05", "templates": ["t_wall", "t_tile_pos(7, 5, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x06", "templates": ["t_wall", "t_tile_pos(1, 6, game_sokoban_lvl01)"]},
+		{"id": "wall03x06", "templates": ["t_wall", "t_tile_pos(3, 6, game_sokoban_lvl01)"]},
+		{"id": "wall07x06", "templates": ["t_wall", "t_tile_pos(7, 6, game_sokoban_lvl01)"]},
+		{"id": "wall08x06", "templates": ["t_wall", "t_tile_pos(8, 6, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x07", "templates": ["t_wall", "t_tile_pos(1, 7, game_sokoban_lvl01)"]},
+		{"id": "wall08x07", "templates": ["t_wall", "t_tile_pos(8, 7, game_sokoban_lvl01)"]},
+		
+		{"id": "wall01x08", "templates": ["t_wall", "t_tile_pos(1, 8, game_sokoban_lvl01)"]},
+		{"id": "wall08x08", "templates": ["t_wall", "t_tile_pos(8, 8, game_sokoban_lvl01)"]},
+
+		{"id": "wall01x09", "templates": ["t_wall", "t_tile_pos(1, 9, game_sokoban_lvl01)"]},
+		{"id": "wall02x09", "templates": ["t_wall", "t_tile_pos(2, 9, game_sokoban_lvl01)"]},
+		{"id": "wall03x09", "templates": ["t_wall", "t_tile_pos(3, 9, game_sokoban_lvl01)"]},
+		{"id": "wall04x09", "templates": ["t_wall", "t_tile_pos(4, 9, game_sokoban_lvl01)"]},
+		{"id": "wall05x09", "templates": ["t_wall", "t_tile_pos(5, 9, game_sokoban_lvl01)"]},
+		{"id": "wall06x09", "templates": ["t_wall", "t_tile_pos(6, 9, game_sokoban_lvl01)"]},
+		{"id": "wall07x09", "templates": ["t_wall", "t_tile_pos(7, 9, game_sokoban_lvl01)"]},
+		{"id": "wall08x09", "templates": ["t_wall", "t_tile_pos(8, 9, game_sokoban_lvl01)"]},
 
 		// New entity created from one template without parameters and one template using parameters
 		{
@@ -84,6 +149,8 @@
 				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 5, "map" : "game_sokoban_lvl01"}}
 			]
 		},
+		
+		// New entity created using already existing entity + overriding the component manually
 		{
 			"id": "crate04",
 			"templates": ["crate01"],
@@ -126,8 +193,9 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 30, "y" : 30,
-						"position_fix_walkaround_mode" : false // can pushed only straight
+						"x" : 15, "y" : 25, "dx": 0, "dy": 5,
+						"position_fix_walkaround_mode": false // can pushed only straight
+						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player
 					}
 				},
 
@@ -141,10 +209,8 @@
 					}
 				},
 
-				{"type" : "has_score:HasScore", "params" : {}},
-
-				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
+				{"type" : "movable:Movable", "params" :  {"velocity" : 80}},
+				{"type" : "camera:Camera", "params" : {"always_center": true, "screen_fill": true}}
 			]
 		}
 
@@ -165,7 +231,7 @@
 				"actions": [
 					"IF",
 						["==", ["VAR", "from"], "ev_all_crates_in_place"],
-						["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_new_level02"}]
+						["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_level02"}]
 				]
 			}
 		],

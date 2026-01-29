@@ -36,9 +36,11 @@
 		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
 
 		// For collisions
+
 		["collision_system:GenerateCollisionsProcessor", {}],
 		["collision_system:ResolveCollisionsProcessor", {}],
 		["collision_system:ResolveMapCollisionsProcessor", {}],
+
 
 		// For sight - run once per 10 cycles
 		["sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor", {"step": 100}],

@@ -23,97 +23,149 @@
 	// What processors to load
 	"processors" : [
 
-		// For commands
-		["command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor", {}],
-		["command_system.generate_command_from_brain_processor:GenerateCommandFromBrainProcessor", {}],
-		["command_system.perform_command_processor:PerformCommandProcessor", {}],
+	//////////////////////////
+	// Default processor group
+	//////////////////////////
 
-		// For movement - projectile must have FlagDoMove in order to move and not fail to idle
-		// ideally if some command can be in place to tell him to move in his brain - new_move_auto command
-		["movement_system.perform_movement_processor:PerformMovementProcessor", {}],
+		// For commands
+		["command_system:GenerateCommandFromInputProcessor", {}], // cmds from keyboard controlls
+		["command_system:GenerateCommandFromMouseProcessor", {}], // cmds from mouse controlls - for inventory screen manipulation
+		["command_system:GenerateCommandFromBrainProcessor", {}], // cmds from command generators such as behavior trees
+		["command_system:PerformCommandProcessor", {}], // process the command queue
+
+		// For movement
+		["movement_system:PerformMovementProcessor", {}],
 
 		// For animation
-		["animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor", {}],
-		["animation_system.perform_action_animation_processor:PerformActionAnimationProcessor", {}],
-		["animation_system.perform_action_idle_animation_processor:PerformActionIdleAnimationProcessor", {}],
-		["animation_system.perform_idle_animation_processor:PerformIdleAnimationProcessor", {}],
-		["animation_system.perform_expire_animation_processor:PerformExpireAnimationProcessor", {}],
-		["animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor", {}],
+		["animation_system:PerformMovementAnimationProcessor", {}],
+		["animation_system:PerformActionAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
+		["animation_system:PerformActionIdleAnimationProcessor", {}], // once WeaponInUse component is used, this processor must be present
+		["animation_system:PerformIdleAnimationProcessor", {}],
+		["animation_system:PerformExpireAnimationProcessor", {}], // once IsDestroyed component is used, this processor must be present
+		["animation_system:PerformFrameUpdateProcessor", {}],
 
-		// NEW - For projectile data generation
-		["attack_system.generate_projectile_factory_data_processor:GenerateProjectileFactoryDataProcessor", {}],
-
-		// NEW - For generation of projectile from factory and projectile data
-		["factory_system.perform_factory_generation_processor:PerformFactoryGenerationProcessor", {}],
-
-		// NEW - adjust collision component of the entity - mainly for factory generated entities
-		["collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor", {}],
-
-		// NEW - adjust movable component of the entity - mainly for factory generated entities
-		["movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor", {}],
-
-		// NEW - adjust damaging component of the entity - mainly for factory generated entities
-		["damage_system.perform_adjust_damaging_processor:PerformAdjustDamagingProcessor", {}],
+		// For projectile data generation
+		["attack_system:GenerateProjectileFactoryDataProcessor", {}],
+		["factory_system:PerformFactoryGenerationProcessor", {}],
+		["collision_system:PerformAdjustCollidableProcessor", {}], // adjust collision component of the entity - mainly for factory generated entities
+		["movement_system:PerformAdjustMovementProcessor", {}], // adjust movable component of the entity - mainly for factory generated entities
+		["damage_system:PerformAdjustDamagingProcessor", {}], // (*NEW*) adjust damaging component of the entity - mainly for factory generated entities
 
 		// For collisions
 		["collision_system:GenerateCollisionsProcessor", {}],
 		["collision_system:ResolveCollisionsProcessor", {}],
 		
-		// NEW - For damages
+		// (*NEW*) - For damages
 		["damage_system:GenerateDamageProcessor", {}],
 		["damage_system:PerformDamageProcessor", {}],
 
-		// For destroy
-		["destroy_system.generate_destroy_on_collision_processor:GenerateDestroyOnCollisionProcessor", {}],
-		["destroy_system.generate_destroy_on_stopped_movement_processor:GenerateDestroyOnStoppedMovementProcessor", {}],
-		["destroy_system.generate_destroy_on_no_health_processor:GenerateDestroyOnNoHealthProcessor", {}],
+		// (*NEW*) For destroy
+		["destroy_system:GenerateDestroyOnCollisionProcessor", {}],
+		["destroy_system:GenerateDestroyOnStoppedMovementProcessor", {}],
+		["destroy_system:GenerateDestroyOnNoHealthProcessor", {}], // (*NEW*)
+		["destroy_system:PerformDestroyEntitiesProcessor", {}],
 
-		["destroy_system.perform_destroy_entities_processor:PerformDestroyEntitiesProcessor", {}],
+		// For pickup
+		["pickup_system:GeneratePickupProcessor", {}],
+		["pickup_system:PerformPickupProcessor", {}],
+
+		// For Arming of a Weapon
+		["arm_weapon_system:GenerateArmWeaponProcessor", {}], // Following processor commented out for manual arming of the weapon and not automatic during pickup
+		["arm_weapon_system:PerformArmWeaponProcessor", {}],
+
+		// For Arming of an Ammo
+		["arm_ammo_system:GenerateArmAmmoProcessor", {}],
+		["arm_ammo_system:PerformArmAmmoProcessor", {}],
+
+		// For dropping 
+ 		["drop_system:PerformDropProcessor", {}],
+
+		// For Disarming of a weapon
+		["arm_weapon_system:GenerateDisarmWeaponProcessor", {}],
+		["arm_weapon_system:PerformDisarmWeaponProcessor", {}],
+
+		// For Disarming of an Ammo
+		["arm_ammo_system:GenerateDisarmAmmoProcessor", {}],
+		["arm_ammo_system:PerformDisarmAmmoProcessor", {}],
+
+		// For setting armed weapon into Use
+		["arm_weapon_system:PerformSetWeaponIntoUseProcessor", {}],
 
 		// For visual and sound effects
-		["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
-		["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
-		["effects_system.generate_sound_fx_on_damage_processor:GenerateSoundFXOnDamageProcessor", {}],
-
+		["effects_system:GenerateSoundFXOnArmWeaponProcessor", {}],
+		["effects_system:GenerateVisualFXOnCollisionProcessor", {}],
+		["effects_system:GenerateSoundFXOnCollisionProcessor", {}],
+		["effects_system:GenerateSoundFXOnDamageProcessor", {}], // (*NEW*)
 
 		// For displaying on screen
-		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
-		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
-		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
-		["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
-		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
-		["render_system.perform_render_armed_weapon_processor:PerformRenderArmedWeaponProcessor", {}],
-		["render_system.perform_render_armed_ammo_processor:PerformRenderArmedAmmoProcessor", {}],
-		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],
-		["render_system.perform_blit_camera_processor:PerformBlitCameraProcessor", {}],
+		["render_system:PerformClearWindowProcessor", {}],
+		["render_system:PerformClearCameraProcessor", {}],
+		["render_system:PerformScrollCameraProcessor", {}],
+		["render_system:PerformRenderMapProcessor", {}],
+		["render_system:GenerateRenderDataFromParentProcessor", {}],
+		["render_system:PerformRenderModelProcessor", {}],
+		["render_system:PerformRenderArmedWeaponProcessor", {}],
+		["render_system:PerformRenderArmedAmmoProcessor", {}],
+		["render_system:PerformRenderDebugInfoProcessor", {}],
+		["render_system:PerformRenderInventoryProcessor", {}], // for showing inventory window
+		["render_system:PerformBlitCameraProcessor", {}],
+		["render_system:PerformRenderMessagesProcessor", {}], // display messages
 
-
-		// For events processing - display the dialog on the start of the scene - after first game screen is generated
-		["event_system.game_events_processor:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
+		// For events processing
+		["event_system:GameEventsExProcessor", {"process" : ["SCENE_START"]}],
 
 		// Removal of obsolete flags
-		["movement_system.remove_flag_do_move_processor:RemoveFlagDoMoveProcessor", {}],
-		["movement_system.remove_flag_adjust_movement_processor:RemoveFlagAdjustMovementProcessor", {}],
-		["movement_system.remove_flag_has_stopped_movement_processor:RemoveFlagHasStoppedMovementProcessor", {}],
+		["movement_system:RemoveFlagDoMoveProcessor", {}],
+		["movement_system:RemoveFlagAdjustMovementProcessor", {}],
+		["movement_system:RemoveFlagHasStoppedMovementProcessor", {}],
 
-		["collision_system.remove_flag_has_collided_processor:RemoveFlagHasCollidedProcessor", {}],
-		["collision_system.remove_flag_adjust_collidable_processor:RemoveFlagAdjustCollidableProcessor", {}],
-		["attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor", {}],
-		["animation_system.remove_flag_is_animation_action_frame_processor:RemoveFlagIsAnimationActionFrameProcessor", {}],
-		["factory_system.remove_flag_create_from_factory_processor:RemoveFlagCreateFromFactoryProcessor", {}],
-		["factory_system.remove_flag_generated_from_factory_processor:RemoveFlagGeneratedFromFactoryProcessor", {}],
+		["collision_system:RemoveFlagHasCollidedProcessor", {}],
+		["collision_system:RemoveFlagAdjustCollidableProcessor", {}],
+		
+		["attack_system:RemoveFlagDoAttackProcessor", {}],
 
+		["animation_system:RemoveFlagIsAnimationActionFrameProcessor", {}],
+		
+		["factory_system:RemoveFlagCreateFromFactoryProcessor", {}],
+		["factory_system:RemoveFlagGeneratedFromFactoryProcessor", {}],
 
-		["damage_system.remove_flag_is_about_to_be_damaged_by_processor:RemoveFlagIsAboutToBeDamagedByProcessor", {}],
-		["damage_system.remove_flag_was_damaged_by_processor:RemoveFlagWasDamagedByProcessor", {}],
-		["damage_system.remove_flag_has_damaged_processor:RemoveFlagHasDamagedProcessor", {}],
-		["damage_system.remove_flag_adjust_damaging_processor:RemoveFlagAdjustDamagingProcessor", {}],
-		["damage_system.remove_flag_has_no_health_processor:RemoveFlagHasNoHealthProcessor", {}]
+		["pickup_system:RemoveFlagIsAboutToPickEntityProcessor", {}],
+		["pickup_system:RemoveFlagHasPickedProcessor", {}],
+		["pickup_system:RemoveFlagWasPickedByProcessor", {}],
+			
+		["arm_weapon_system:RemoveFlagIsAboutToArmWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagHasArmedWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagWasArmedAsWeaponByProcessor", {}],
 
+		["arm_ammo_system:RemoveFlagIsAboutToArmAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagHasArmedAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagWasArmedAsAmmoByProcessor", {}],
+
+		["drop_system:RemoveFlagIsAboutToDropEntityProcessor", {}],
+		["drop_system:RemoveFlagHasDroppedProcessor", {}],
+		["drop_system:RemoveFlagWasDroppedByProcessor", {}],
+
+		["arm_weapon_system:RemoveFlagIsAboutToDisarmWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagHasDisarmedWeaponProcessor", {}],
+		["arm_weapon_system:RemoveFlagWasDisarmedAsWeaponByProcessor", {}],
+
+		["arm_ammo_system:RemoveFlagIsAboutToDisarmAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagHasDisarmedAmmoProcessor", {}],
+		["arm_ammo_system:RemoveFlagWasDisarmedAsAmmoByProcessor", {}],
+
+		["damage_system:RemoveFlagIsAboutToBeDamagedByProcessor", {}], //(*NEW*)
+		["damage_system:RemoveFlagWasDamagedByProcessor", {}], //(*NEW*)
+		["damage_system:RemoveFlagHasDamagedProcessor", {}], //(*NEW*)
+		["damage_system:RemoveFlagAdjustDamagingProcessor", {}], //(*NEW*)
+		["damage_system:RemoveFlagHasNoHealthProcessor", {}], //(*NEW*)
 
 		// For logging performance of processors - timed must be True for this processor to work
 		//["debug_system.debug_processor_performance_processor:DebugProcessorPerformanceProcessor", {}]
+	
+	//////////////////////////
+	// Pause processor group - initiated by pressing 'P' button
+	//////////////////////////
+		["pause", "render_system:PerformBlitPictureProcessor", {"filepath": "pause.png", "resize": true}]
 	],
 
 	// What maps to load
@@ -123,197 +175,252 @@
 	"dialogs": [],
 
 	// What templates to load
-	"templates": [],
+	"templates": [
+		
+		// By using template with parameters it is easy to define position of any entity
+		{
+			"id": "t_tile_pos",
+			"vars": ["$tileX", "$tileY", "$map"],
+			"components": [
+				{"type" : "position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
+			]
+		}
+	],
 
 	// What entities to load
 	"entities" : [
-		
-		// Spear
+
 		{
-			"id" : "spear_generator",
-			"templates" : [], // no model needed
+			"id" : "w_spear",
+			"templates" : [
+				"thing/ammo_pack/thrust/regular_spear_generator($damage=35)", // ammo pack
+				"thing/weapon/spear/spear", // weapon
+				"t_tile_pos(5, 5, test_arena_sand)" // position template
+
+			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spear", "type" : "regular_spear_thrust"}},
-				{
-					"type" : "factory:Factory", 
-					"params" : {
-						"prescription" : {
-							"id": "spear_generator_impact_zone",
-							"templates" : [], // Only collision zone is created, no sprite.
-							"components" : [
-								{"type" : "debug:Debug", "params" : {}},
-
-								{
-									"type" : "collidable:Collidable", 
-									"params" : {
-										"x" : 8, "y" : 8, 
-										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
-										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
-										}},
-								
-								{"type" : "damaging:Damaging", "params" : {"damage" : 10}},
-
-								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
-
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
-
-							]
-						}
-					}
-				}
 			]
 		},
-
 		{
-			"id" : "long_spear",
-			"templates" : ["model/weapon/thrust/spear"],
+			"id" : "w_shovel",
+			"templates" : [
+				"thing/ammo_pack/thrust/regular_shovel_generator($damage=5)", // ammo pack
+				"thing/weapon/spear/shovel", // weapon
+				"t_tile_pos(6, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "weapon:Weapon", "params" : {"type" : "sword",	"max_projectiles" : 5}}
 			]
 		},
-
-
-		// Dagger
 		{
-			"id" : "sword_generator",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"id" : "w_crossbow",
+			"templates" : [
+				"thing/ammo_pack/thrust/crossbow_arrows_pack($arrows_count=100)", // ammo pack
+				"thing/weapon/spear/crossbow", // weapon - must be loaded after ammo pack otherwise ammo pack renderable model will overwrite weapons renderable model
+				"t_tile_pos(7, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "regular_sword_slash"}},
-				{
-					"type" : "factory:Factory", 
-					"params" : {
-						"prescription" : {
-							"id": "sword_generator_impact_zone",
-							"templates" : [], // Only collision zone is created, no sprite.
-							"components" : [
-								{"type" : "debug:Debug", "params" : {}},
-
-								{
-									"type" : "collidable:Collidable", 
-									"params" : {
-										"x" : 8, "y" : 8, 
-										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
-										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
-										}},
-								
-								{"type" : "damaging:Damaging", "params" : {"damage" : 20}},
-
-								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "is_destroyed:IsDestroyed", "params" : {"ttl" : 0}},
-
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
-
-
-							]
-						}
-					}
-				}
 			]
 		},
-
 		{
-			"id" : "long_sword",
-			"templates" : ["model/weapon/slash/dagger"],
+			"id" : "w_cane",
+			"templates" : [
+				"thing/ammo_pack/thrust/regular_cane_generator($damage=3)", // ammo pack
+				"thing/weapon/spear/cane", // weapon
+				"t_tile_pos(8, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "weapon:Weapon", "params" : {"type" : "spear",	"max_projectiles" : 5}}
 			]
 		},
-
-
-		// wooden_arrows_pack AmmoPack is Factory for generation of arrows
 		{
-			"id" : "wooden_arrows_pack",
-			"templates" : ["model/ammo_pack/shoot/wooden_arrows_pack"],
+			"id" : "w_fireball_spell",
+			"templates" : [
+				"thing/ammo_pack/spellcast/fireball_spell_pack($count=100)", // ammo pack
+				"thing/weapon/spell/fireball", // weapon
+				"t_tile_pos(9, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
-				{
-					"type" : "factory:Factory", 
-					"params" : {
-						"prescription" : {
-							"id": "wooden_arrows_pack_arrow",
-							"templates" : ["model/ammo/shoot/wooden_arrow"],
-							"components" : [
-								{"type" : "debug:Debug", "params" : {}},
-								
-								{
-									"type" : "brain_ai:BrainAI",
-									"params" : {
-										"cmd_list" : [
-											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
-										]
-									}
-								},
-				
-								{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
-
-								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
-								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
-
-
-							]
-						}
-					}
-				}
 			]
 		},
-
 		{
-			"id" : "wooden_bow",
-			"templates" : ["model/weapon/shoot/bow_wooden_big"],
+			"id" : "w_dagger",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_dagger_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/dagger", // weapon
+				"t_tile_pos(10, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}}
 			]
 		},
-
 		{
-			"id" : "spell_pack",
-			"templates" : [],
+			"id" : "w_bow_metal_big",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_metal_big", // weapon
+				"t_tile_pos(11, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "spell", "type" : "fireball"}},
-				{
-					"type" : "factory:Factory", 
-					"params" : {
-						"prescription" : {
-							"id": "spell_pack_arrow",
-							"templates" : ["model/ammo/shoot/wooden_arrow"],
-							"components" : [
-								{"type" : "debug:Debug", "params" : {}},
-
-								{
-									"type" : "brain_ai:BrainAI",
-									"params" : {
-										"cmd_list" : [
-											{"command": ["move_auto", {}]} // duration is not specified so the movement is infinite
-										]
-									}
-								},
-
-								{"type" : "damaging:Damaging", "params" : {"damage" : 50}},
-
-								{"type" : "movable:Movable", "params" :  {"velocity" : 500}},
-								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
-								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
-								
-								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
-
-
-							]
-						}
-					}
-				}
 			]
 		},
-
 		{
-			"id" : "spell_ability",
-			"templates" : [],
+			"id" : "w_bow_metal",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_metal", // weapon
+				"t_tile_pos(12, 5, test_arena_sand)" // position template
+			],
 			"components" : [
-				{"type" : "weapon:Weapon", "params" : {"type" : "spell",	"max_projectiles" : 5}}
+			]
+		},
+		{
+			"id" : "w_bow_recurved_blue",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_recurved_blue", // weapon
+				"t_tile_pos(13, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_bow_recurved_red",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_recurved_red", // weapon
+				"t_tile_pos(14, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_bow_recurved_wooden",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_recurved_wooden", // weapon
+				"t_tile_pos(15, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_bow_recurved_yellow",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_recurved_yellow", // weapon
+				"t_tile_pos(16, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_bow_wooden_big",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_wooden_big", // weapon
+				"t_tile_pos(17, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_bow_wooden_skeleton",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_wooden_skeleton", // weapon
+				"t_tile_pos(18, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_bow_wooden",
+			"templates" : [
+				"thing/ammo_pack/shoot/iron_arrows_pack($arrows_count=20)", // ammo pack
+				"thing/weapon/bow/bow_wooden", // weapon
+				"t_tile_pos(19, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_axe1",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_axe1_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/axe1", // weapon
+				"t_tile_pos(20, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_axe2",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_axe2_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/axe2", // weapon
+				"t_tile_pos(21, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_pickaxe",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_pickaxe_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/pickaxe", // weapon
+				"t_tile_pos(22, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_steelwand_fem",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_steelwand_female_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/steelwand_female", // weapon
+				"t_tile_pos(23, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_warhammer",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_warhammer_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/warhammer", // weapon
+				"t_tile_pos(24, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_woodwand_fem",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_woodwand_female_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/woodwand_female", // weapon
+				"t_tile_pos(25, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_woodwand_mal",
+			"templates" : [
+				"thing/ammo_pack/slash/regular_woodwand_male_generator($damage=20)", // ammo pack
+				"thing/weapon/sword/woodwand_male", // weapon
+				"t_tile_pos(26, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+			]
+		},
+		{
+			"id" : "w_woodwand_mal_with_fireballs",
+			"templates" : [
+				"thing/ammo_pack/spellcast/fireball_spell_pack($count=100)", // ammo pack from spells
+				"thing/weapon/sword/woodwand_male", // weapon
+				"t_tile_pos(27, 5, test_arena_sand)" // position template
+			],
+			"components" : [
+				// Override the ammoPack from spells to be available for sword weapon
+				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "sword", "type" : "fireball_spells"}}
 			]
 		},
 
@@ -321,7 +428,7 @@
 			"id" : "player01",
 			"templates" : [
 				"model/body/male/human/white",
-				"controls/default"
+				"controls/game_default"
 			],
 			"components" : [
 
@@ -335,24 +442,11 @@
 					}
 				},
 
-				// Bow is armed and preselected as the active weapon
-				{"type" : "has_weapon:HasWeapon", "params" : {
-					"weapons" : {
-						"bow" : {"weapon" : "wooden_bow", "generator" : "wooden_arrows_pack"},
-						"sword" : {"weapon" : "long_sword", "generator" : "sword_generator"},
-						"spear" : {"weapon" : "long_spear", "generator" : "spear_generator"},
-						"spell" : {"weapon" : "spell_ability", "generator" : "spell_pack"}
-
-					}
-				}},
-
-				//{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "bow"}},
-				{"type" : "weapon_in_use:WeaponInUse", "params" :  {"type" : "spear"}},
-
+				{"type" : "has_weapon:HasWeapon", "params" : {}},
+				{"type" : "has_inventory:HasInventory", "params" : {}},
 				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				// {"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 				{"type" : "camera:Camera", "params" : {"always_center": false}}
 
 			]
@@ -409,19 +503,12 @@
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
 
-				// Move right - left
-				//{"type" : "brain:Brain", "params" : {"commands" : [
-				//	[0, 	"new_move_to", {"x" : 1000, "y" : 450}],
-				//	[1, 	"new_move_to", {"x" : 10, "y" : 450}],
-				//	[0, 	"goto", {}]
-				//]}},
 				{
 					"type" : "brain_ai:BrainAI",
 					"params" : {
-						"blackboard": {},
-						"cmd_list": [
-							{"command": ["move_to_target", {"target": "player01", "proximity_px": 50, "change_dir_ms": 500}]},
-							{"command": ["attack", {"attack_time_ms": 500}]},
+						"cmd_list" : [
+							{"command": ["move_to_pos_px", {"pos": [1000, 450]}]},
+							{"command": ["move_to_pos_px", {"pos": [10, 450]}]},
 							{"type": "Goto", "jmp_to": 0}
 						]
 					}

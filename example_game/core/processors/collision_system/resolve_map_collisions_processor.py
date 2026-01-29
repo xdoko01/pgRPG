@@ -8,6 +8,7 @@ from pyrpg.core.ecs import Processor, SkipProcessorExecution
 # Used components
 from core.components.position import Position
 from core.components.collidable import Collidable
+from core.components.flag_has_collided import FlagHasCollided
 
 from pyrpg.core.config import GAME # for TILE_RES_PX
 
@@ -68,9 +69,68 @@ class ResolveMapCollisionsProcessor(Processor):
                 collision_map.check_collision((int(pos_moved.x + coll_moved.dx + coll_moved.x) // GAME["TILE_RES_PX"]), (int(pos_moved.y + coll_moved.dy - coll_moved.y) // GAME["TILE_RES_PX"])) or
                 collision_map.check_collision((int(pos_moved.x + coll_moved.dx + coll_moved.x) // GAME["TILE_RES_PX"]), (int(pos_moved.y + coll_moved.dy + coll_moved.y) // GAME["TILE_RES_PX"]))):
 
-                # Fix position for the entity that has moved
+                logger.debug(f'({self.cycle}) - Entity {ent_moved} hit the map wall on position [{pos_moved.x}, {pos_moved.y}]. Back to Original possition: [{pos_moved.lastx}, {pos_moved.lasty}]')
+
+                # Rollback to original position for the entity that has moved into the wall
                 pos_moved.x = pos_moved.lastx
                 pos_moved.y = pos_moved.lasty
+
+                # Rollback to original position the entities that have collided with the entity that hit the wall
+                # This should go recursivelly
+
+                # Keep list of entities that might pushed our ent_moved into the wall
+                ents_to_check: list = []
+                ents_to_check.append(ent_moved)
+
+                # Keep the set of all already fixed entity_ids
+                ents_fixed: set = {ent_moved}
+
+                ents_checked: set = set()
+
+                while ents_to_check:
+
+                    ent_to_check = ents_to_check.pop(0)
+                    
+                    # Do not check already checked entity
+                    if ent_to_check in ents_checked: 
+                        logger.debug(f'({self.cycle}) - Entity {ent_to_check} was already checked before. Skipping. {ents_to_check=}, {ents_checked=}')
+                        continue
+
+                    # Entity ent_to_check not yet checked, proceed with checks
+                    logger.debug(f'({self.cycle}) - Entity {ent_to_check} is being checked if it has collided with someone. {ents_to_check=}, {ents_checked=}')
+
+                    flag_has_collided = self.world.try_component(ent_to_check, FlagHasCollided)
+                    collisions = [] if flag_has_collided is None else flag_has_collided.collisions
+                    
+                    logger.debug(f'({self.cycle}) - Entity {ent_to_check} has collided with {collisions}. Those will be verified')
+
+                    for collision in collisions:
+
+                        # Information about collision with other entity
+                        coll_ent, correction_vect, apply_fix, accept_fix, walkaround_mode = collision
+                        
+                        # Append the entity to the list to check
+                        ents_to_check.append(coll_ent)
+                        logger.debug(f'({self.cycle}) - Entity {ent_to_check} collided with {coll_ent=}. Adding to {ents_to_check=}.')
+
+                        # Rollback the position if not already done
+                        if coll_ent not in ents_fixed:
+                            coll_ent_pos = self.world.component_for_entity(coll_ent, Position)
+                            logger.debug(f'({self.cycle}) - Entity {coll_ent} intermediarly hit the entity that hit the wall. Curr Pos: [{coll_ent_pos.x}, {coll_ent_pos.y}]. Back to Original possition: [{coll_ent_pos.lastx}, {coll_ent_pos.lasty}]')
+
+                            #coll_ent_pos.x = coll_ent_pos.lastx
+                            #coll_ent_pos.y = coll_ent_pos.lasty
+
+                            ents_fixed.add(coll_ent)
+                    
+                    ents_checked.add(ent_to_check)
+
+
+            #else: #no collision with the map
+            #    pos_moved.lastx = pos_moved.x
+            #    pos_moved.lasty = pos_moved.y
+            #    pos_moved.lastmap = pos_moved.map
+
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -105,12 +105,6 @@
 										]
 									}
 								},
-		
-								//{"type" : "LinearMotion", "params" : {"speed" : 200}},
-								//{"type" : "Motion", "params" : {"dx" : 0, "dy" : 0}},
-								//{"type" : "Damaging", "params" : {"damage" : 5}},
-								//{"type" : "DeleteOnCollision", "params" : {}},
-
 								{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8}}
 							]

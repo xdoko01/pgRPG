@@ -7,6 +7,8 @@ logger = logging.getLogger(__name__)
 # all the necessary configurations, bring them to life (init display, console, logging, ...)
 import pyrpg.core.config as config
 import sys
+from pprint import pprint, pformat # for pretty printing in the console
+
 config.init(main_module=sys.modules[__name__]) # return the reference to the main module to the config module in order to use it for console functions getting info about the game
 
 # Load selected configuration objects to the main module so that it can be used
