@@ -4,6 +4,8 @@ logger = logging.getLogger(__name__)
 
 from typing import Tuple
 
+from fnmatch import fnmatchcase # UNIX-like wildcards in load/clean functions
+
 from pyrpg.core.ecs import World, Processor
 from pyrpg.core.config import FILEPATHS # ENTITY_PATH # for ENTITY_PATH
 from pyrpg.core.config import MODULEPATHS # for COMPONENT_MODULE_PATH, PROCESSOR_MODULE_PATH
@@ -336,6 +338,21 @@ def delete_template(template_id: str) -> None:
 
     logger.info(f'Template "{template_id}" successfully removed.')
 
+def delete_templates_pattern(template_pattern: str) -> None:
+    """Deletes all templates which id matches the template_pattern (UNIX-style wildcards).
+    For example: "t_crate*" deletes all templates which id start with "t_crate".
+    """
+
+    logger.debug(f'About to delete templates with name matching pattern "{template_pattern}".')
+
+    match = lambda k: fnmatchcase(k, template_pattern)
+
+    # Iterate the dictionary with templates _template_definitions
+    # Perform delete_template on all those that match.
+    for tid in _template_definitions.copy().keys():
+        if match(tid):
+            delete_template(template_id=tid)
+
 #####################
 ## TEMPLATES - END
 #####################
@@ -578,6 +595,22 @@ def delete_entity(entity_alias: str=None, entity_id: int=None) -> None:
     _unregister_entity_lookup(entity_id=entity_id, entity_alias=entity_alias)
 
     logger.info(f'Entity id {entity_id=} / {entity_alias or "unknown"} successfully removed.')
+
+def delete_entities_pattern(entity_alias_pattern: str) -> None:
+    """Deletes all entities which alias matches the entity_alias_patern (UNIX-style wildcards).
+    For example: "wall*" deletes all entities which aliases start with "wall"
+    """
+
+    logger.debug(f'About to delete entities with aliases matching pattern "{entity_alias_pattern}".')
+
+    match = lambda k: fnmatchcase(k, entity_alias_pattern)
+
+    # Get all entity aliases and entity IDs matching the pattern from _alias_to_entity dictionary.
+    # Perform delete_entity on all those that match.
+    for alias, id in _alias_to_entity.copy().items():
+        if match(alias):
+            delete_entity(entity_alias=alias, entity_id=id)
+
 
 #####################
 ## ENTITIES - END

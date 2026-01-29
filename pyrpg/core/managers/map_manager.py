@@ -2,6 +2,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from fnmatch import fnmatchcase # UNIX-like wildcards in load/clean functions
+
 from pyrpg.core.maps.map import Map
 
 _maps = dict()
@@ -26,6 +28,19 @@ def delete_map(map_name: str) -> None:
         del _maps[map_name]
         logger.info(f'Map "{map_name}" successfully removed.')
 
+def delete_maps_pattern(map_name_pattern: str) -> None:
+    '''Deletes all maps that match the map_name_pattern
+    (UNIX-style expression).
+    '''
+    logger.debug(f'About to delete maps with names matching pattern "{map_name_pattern}".')
+
+    match = lambda k: fnmatchcase(k, map_name_pattern)
+
+    # Get all map_names matchint the pattern from _maps dictionary.
+    # Perform delete_map on all those that match.
+    for map_name in _maps.copy().keys():
+        if match(map_name):
+            delete_map(map_name)    
 
 def clear_maps() -> None:
     '''Dereference and delete all maps.'''

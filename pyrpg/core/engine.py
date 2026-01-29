@@ -197,11 +197,11 @@ def load_scene_from_file(scene_file: str, show_progress: bool=False) -> Scene:
 load_scene_def_fncs = [
     ["prereqs", load_scene_from_file],
     ["cleanup/processors", ecs_manager.delete_processor],
-    ["cleanup/maps", map_manager.delete_map],
-    ["cleanup/templates", ecs_manager.delete_template],
-    ["cleanup/entities", ecs_manager.delete_entity],
-    ["cleanup/dialogs", dialog_manager.delete_dialog],
-    ["cleanup/handlers", event_manager.delete_handler],
+    ["cleanup/maps", map_manager.delete_maps_pattern], # no-pattern version map_manager.delete_map
+    ["cleanup/templates", ecs_manager.delete_templates_pattern], # no-pattern version ecs_manager.delete_template
+    ["cleanup/entities", ecs_manager.delete_entities_pattern], # no-patern version ecs_manager.delete_entity
+    ["cleanup/dialogs", dialog_manager.delete_dialogs_pattern], # no-patern version dialog_manager.delete_dialog
+    ["cleanup/handlers", event_manager.delete_handlers_pattern], # no-patern version event_manager.delete_handler
     ["processors", ecs_manager.load_processor],
     ["maps", map_manager.load_map],
     ["dialogs", dialog_manager.load_dialog],

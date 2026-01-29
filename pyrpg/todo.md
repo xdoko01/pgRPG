@@ -1,7 +1,5 @@
 ## Current
 
-  - TODO: filters for entities - if I want to clean all entities that start with wallXXxXX, I should be able to write `wall*` and all entities starting with the word `wall` should be cleaned
-
   - Camera is on the spring. After the movement stops it moves slower than the object and when movement stops it reaches slowly the centre (PerformScrollCameraProcessor)
     - camera_pos, entity_pos, link_length
     - entity_pos = camera_pos
@@ -149,6 +147,7 @@
 
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
+  - [x] - cleanup functions are now using regular expressions. It is no longer needed to name every entity alias that you want to remove at the beginning of the scene. You can just use UNIX-like wildcard such as "wall*" to remove every entity with alias beginning with "wall". The same can be used for cleaning maps, handlers, templates and dialogs.
   - [x] - applying inventory command on empty slot results if disaster. Fix arm weapon command
   - [x] - prepare a new console command for the same getting _world.process_times - `proc_perf` command
   - [x] - have the time procesor statistics summed up accross all cycles, not just one cycle - because it is fragments of ms for each 

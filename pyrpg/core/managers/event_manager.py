@@ -2,6 +2,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from fnmatch import fnmatchcase # UNIX-like wildcards in load/clean functions
+
 from pyrpg.core.events.event import Event
 
 ###
@@ -54,12 +56,25 @@ def delete_handler(handler_id: str) -> None:
     """Deletes data for handler_id from handler storage _event_handlers."""
     #global _event_handlers
 
-    # Browse all event types, dind the handler_id key and delete the record
+    # Browse all event types, find the handler_id key and delete the record
     for event_type in _event_handlers:
         handler = _event_handlers[event_type].get(handler_id, None)
         if handler is not None:
             del _event_handlers[event_type][handler_id]
             logger.info(f'Handler "{handler_id}" for event "{event_type}" successfully removed.')
+
+def delete_handlers_pattern(handler_id_pattern: str) -> None:
+    """Deletes all handlers matching the handler_id_pattern (UNIX-style wildcards).
+    """
+
+    logger.debug(f'About to delete handlers with ids matching pattern "{handler_id_pattern}".')
+
+    match = lambda k: fnmatchcase(k, handler_id_pattern)
+
+    for event_type in _event_handlers:
+        for handler_id in _event_handlers[event_type].copy().keys():
+            if match(handler_id):
+                delete_handler(handler_id)
 
 def create_event(type: str, params: dict) -> Event:
     """Create an instance of new event from dictionary."""

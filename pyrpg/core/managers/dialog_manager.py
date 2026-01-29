@@ -2,6 +2,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from fnmatch import fnmatchcase # UNIX-like wildcards in load/clean functions
+
 import pyrpg.utils.dialog as dialog
 
 from pyrpg.core.config import FILEPATHS # DIALOG_PATH, IMAGE_PATH, FONT_PATH, Path # for DIALOG_PATH, IMAGE_PATH, FONT_PATH
@@ -77,6 +79,18 @@ def delete_dialog(dialog_name: str) -> None:
     if _dialogs.get(dialog_name, None):
         del _dialogs[dialog_name]
         logger.info(f'Dialog "{dialog_name}" successfully removed.')
+
+def delete_dialogs_pattern(dialog_name_pattern: str) -> None:
+    """Deletes all dialogs matching the dialog_name_pattern (UNIX-style wildcards).
+    """
+
+    logger.debug(f'About to delete dialogs with names matching pattern "{dialog_name_pattern}".')
+
+    match = lambda k: fnmatchcase(k, dialog_name_pattern)
+
+    for dialog_name in _dialogs.copy().keys():
+        if match(dialog_name):
+            delete_dialog(dialog_name)
 
 def clear_dialogs() -> None:
     '''Dereference and delete all dialogs.'''

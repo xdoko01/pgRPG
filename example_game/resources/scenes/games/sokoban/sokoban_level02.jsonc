@@ -12,22 +12,28 @@
 		"maps": ["game_sokoban_lvl01"], // Clean the map from previous level
 		"templates": ["t_crate"], // Clean the template from level01. In Level02 similar will be created with different target zone. Or maybe it would be cleaner to have t_crate in socoban_new and override it only with the HasTargetPosition component
 		"entities": [
-					 // Walls from level01 are not needed
-					 "wall03x01", "wall04x01", "wall05x01", "wall06x01", "wall07x01",	 
-					 "wall01x02", "wall02x02", "wall03x02", "wall07x02",
-					 "wall01x03", "wall07x03",
-		 			 "wall01x04", "wall02x04", "wall03x04", "wall07x04",
-		 			 "wall01x05", "wall03x05", "wall04x05", "wall07x05",
-		 			 "wall01x06", "wall03x06", "wall07x06", "wall08x06",
-		 			 "wall01x07", "wall08x07",
-					 "wall01x08", "wall08x08",
-		 			 "wall01x09", "wall02x09", "wall03x09", "wall04x09", "wall05x09", "wall06x09", "wall07x09", "wall08x09",
+			// Walls from level01 are not needed - delete all entities that start with "wall" alias
+			"wall*",
+			//"wall03x01", "wall04x01", "wall05x01", "wall06x01", "wall07x01",	 
+			//"wall01x02", "wall02x02", "wall03x02", "wall07x02",
+			//"wall01x03", "wall07x03",
+		 	//"wall01x04", "wall02x04", "wall03x04", "wall07x04",
+		 	//"wall01x05", "wall03x05", "wall04x05", "wall07x05",
+		 	//"wall01x06", "wall03x06", "wall07x06", "wall08x06",
+		 	//"wall01x07", "wall08x07",
+			//"wall01x08", "wall08x08",
+		 	//"wall01x09", "wall02x09", "wall03x09", "wall04x09", "wall05x09", "wall06x09", "wall07x09", "wall08x09",
 
-		 			 // Crates from level01 are not needed
-					 "crate01", "crate02", "crate03", "crate04", "crate05", "crate06", "crate07"
+		 	// Crates from level01 are not needed - delete all entities that start with "crate" alias
+			"crate*"
+			//"crate01", "crate02", "crate03", "crate04", "crate05", "crate06", "crate07"}}
 		], 
 		"dialogs": [],
-		"handlers": ["ev_start_game", "ev_restart_confirmed", "ev_all_crates_in_place"]
+		"handlers": [
+			// Handlers from previous level are not needed - delete all handlers
+			"*"
+			//"ev_start_game", "ev_restart_confirmed", "ev_all_crates_in_place"
+		]
 	},
 
 	"processors" : [],
