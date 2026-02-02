@@ -38,9 +38,10 @@
 		//["collision_system:ResolveMapCollisionsProcessor", {}], 
 
 
-		// For visual and sound effects concerning collisions
+		// For visual and sound effects concerning collisions and movements
+		["effects_system.generate_sound_fx_on_movement_processor:GenerateSoundFXOnMovementProcessor", {}], // moving player is producing steps sound
 		//["effects_system.generate_visual_fx_on_collision_processor:GenerateVisualFXOnCollisionProcessor", {}],
-		//["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}],
+		["effects_system.generate_sound_fx_on_collision_processor:GenerateSoundFXOnCollisionProcessor", {}], //cranes are producing sound
 
 		// For pickup
 		//["pickup_system.generate_pickup_processor:GeneratePickupProcessor", {}],
@@ -110,7 +111,12 @@
 			"SCENE_START", // Run first level upon load
 			{
 				"id": "ev_start_game",
-				"actions": 	["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_level01"}]
+				"actions": 	[
+					"SEQ",
+						["SCRIPT", "load_image", {"image_file" : "sokoban_splash.png"}],
+						["SCRIPT", "play_music", {"music_file" : "dungeon_theme.flac", "volume": 0.5}],
+						["SCRIPT", "load_quest", {"scene_file" : "games/sokoban/sokoban_level01"}]
+				]
 			}
 		]
 	]

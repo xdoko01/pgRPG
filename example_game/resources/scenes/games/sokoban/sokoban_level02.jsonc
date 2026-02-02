@@ -53,7 +53,7 @@
 			"templates": ["thing/item/crate/wooden_crate"],
 			
 			"components": [
-				{"type" : "debug:Debug", "params" : {}},
+				//{"type" : "debug:Debug", "params" : {}},
 				
 				{
 					"type" : "has_target_position:HasTargetPosition", 
@@ -68,6 +68,8 @@
 						]
 					}
 				},
+
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" :  {"sound" : "scrapes/scrape-1.ogg", "volume": 0.3}},
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {

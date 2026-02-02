@@ -21,6 +21,18 @@ def play_sound(sound_obj: pygame.mixer.Sound, stop_before_playback: bool=False) 
     pygame.mixer.Sound.play(sound_obj)
     logger.debug(f'Sound "{sound_obj}" played.')
 
+def play_music(music_file: str, volume: float) -> None:    
+    """Loads and starts playing music.
+    """    
+
+    pygame.mixer.music.load(music_file)
+    pygame.mixer.music.play()
+    logger.debug(f'Music "{music_file}" starts to play.')
+
+    if volume: 
+        pygame.mixer.music.set_volume(volume)
+        logger.debug(f'Music volume set to "{volume}".')
+
 def get_sound_cache_info():
     return get_cache_info()
 

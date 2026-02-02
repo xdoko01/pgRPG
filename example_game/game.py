@@ -35,7 +35,7 @@ if __name__ == "__main__":
     #scene_file = "games/sokoban/sokoban_level02.jsonc"
     #scene_file = "games/sokoban/sokoban_level01.jsonc"    
     #scene_file = "games/sokoban/sokoban.jsonc"                
-    #scene_file = "games/collect_coins/collect_coins.jsonc"
+    scene_file = "games/collect_coins/collect_coins.jsonc"
 
     # 12_ai
     #scene_file = "tests/12_ai/test_entity_seen.jsonc" # old, does not work, fix it

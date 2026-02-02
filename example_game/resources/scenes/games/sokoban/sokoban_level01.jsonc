@@ -1,4 +1,6 @@
 {
+	"$schema": "../../../../core/schemas/scene.schema.json",
+
 	"id" : "sokoban_level01", 
 	"title": "Sokoban - Level 1",
 	"description" : "Simple Sokoban-like game, the aim is to push all the boxes on the marked spots.",
@@ -28,7 +30,8 @@
 		{
 			"id": "t_wall",
 			"components": [
-				{"type" : "debug:Debug", "params" : {}},
+				//{"type" : "debug:Debug", "params" : {}},
+
 				{
 					"type" : "collidable:Collidable",
 					"params" :  {
@@ -48,7 +51,7 @@
 			"templates": ["thing/item/crate/wooden_crate"],
 			
 			"components": [
-				{"type" : "debug:Debug", "params" : {}},
+				//{"type" : "debug:Debug", "params" : {}},
 				
 				{
 					"type" : "has_target_position:HasTargetPosition", 
@@ -64,6 +67,8 @@
 						]
 					}
 				},
+
+				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" :  {"sound" : "scrapes/scrape-1.ogg", "volume": 0.3}},
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {
@@ -188,7 +193,9 @@
 			],
 			"components" : [
 
-				{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+				//{"type" : "debug:Debug", "params" : {"movement" : {"width" : 1, "color" : [0, 255, 0]}}},
+
+				{"type" : "sound_fx_on_movement:SoundFXOnMovement", "params" :  {"sound": "steps/leaves02.ogg", "volume": 0.1}},
 
 				{
 					"type" : "collidable:Collidable", 
@@ -221,7 +228,7 @@
 			"SCENE_START",
 			{
 				"id": "ev_start_game",
-				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%id</b>.<br/>Your goal is to place all the cranes on the market spots."}]
+				"actions": 	["SCRIPT", "show_msg_window", {"html_text" : "Welcome to <b>%id</b>.<br/>Your goal is to place all the cranes on the marked spots."}]
 			}
 		],
 		[
@@ -256,8 +263,8 @@
 								"SCRIPT", 
 								"show_confirm_dlg", 
 								{
-									"title": "Play again?",
-									"long_desc" : "Do you want to play again?",
+									"title": "Proceed to the next level",
+									"long_desc" : "Do you want to proceed to the next level?",
 									"event_type": "CUST_UI_CONFIRM",
 									"event_params" : {
 										"from": "ev_all_crates_in_place"

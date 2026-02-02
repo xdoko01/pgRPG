@@ -23,6 +23,8 @@
 		"BTREE_PATH" : "resources/btrees/",
 		"MAP_PATH" : "resources/maps/",
 		"SOUND_PATH" : "resources/sounds/",
+		"MUSIC_PATH" : "resources/music/",
+
 		"LOG_PATH" : "logs/",
 		"SAVE_PATH" : "save/",
 		"CONSOLE_SCRIPT_PATH" : "core/console/scripts/",

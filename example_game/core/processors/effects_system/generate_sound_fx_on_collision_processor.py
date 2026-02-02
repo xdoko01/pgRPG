@@ -53,6 +53,9 @@ class GenerateSoundFXOnCollisionProcessor(Processor):
 
         for ent, (flag_has_collided, sfx_on_collision) in self.world.get_components(FlagHasCollided, SoundFXOnCollision):
 
+            # Set the volume for the sound
+            sfx_on_collision.sound.set_volume(sfx_on_collision.volume)
+
             # Use play sound fnc to play the effect
             self.play_sound_fnc(sfx_on_collision.sound)
 

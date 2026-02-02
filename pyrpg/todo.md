@@ -1,5 +1,11 @@
 ## Current
 
+  
+  - something as default script executed at the beginning the console is started? Does this already exist?
+  - TODO: add volume parameter to all sound effects and to all sound processors to take it into consideration
+  - nice-to-have  take camera view into consideration when sound
+  - console commands to support UNIX-like patterns 
+
   - Camera is on the spring. After the movement stops it moves slower than the object and when movement stops it reaches slowly the centre (PerformScrollCameraProcessor)
     - camera_pos, entity_pos, link_length
     - entity_pos = camera_pos
@@ -15,9 +21,6 @@
        vypocti vektor mezi camera a entity position
        vynasob ho nejakou tuhosti
        posun kameru smerem k entity o tento vektor
-
-
-  - walls are entities - this resolves the problem with physicks of moving box into box into box and into the wall
 
   - BUG - weapon and ammo as separate entities, when bow is dropped, then ammo has texture on map.
 
@@ -147,6 +150,9 @@
 
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
+  - [ ] - music and sound volume into the configs
+  - [x] - music playback - new script `play_music` that can be triggered by event. Example usage is in `sokoban` game.
+  - [x] - walls are entities - this resolves the problem with physicks of moving box into box into box and into the wall. Piloted with `sokoban` game. `ResolveMapCollisionsProcessor` is hence not needed.
   - [x] - cleanup functions are now using regular expressions. It is no longer needed to name every entity alias that you want to remove at the beginning of the scene. You can just use UNIX-like wildcard such as "wall*" to remove every entity with alias beginning with "wall". The same can be used for cleaning maps, handlers, templates and dialogs.
   - [x] - applying inventory command on empty slot results if disaster. Fix arm weapon command
   - [x] - prepare a new console command for the same getting _world.process_times - `proc_perf` command

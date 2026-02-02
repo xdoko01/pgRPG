@@ -22,7 +22,7 @@ class SoundFXOnCollision(Component):
         >>> c = SoundFXOnCollision(**{"sound" : "explosion.wav"})
     '''
 
-    __slots__ = ['sound']
+    __slots__ = ['sound', 'volume']
 
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the new SoundFXOnCollision component.
@@ -30,15 +30,23 @@ class SoundFXOnCollision(Component):
         Parameters:
             :param sound: Filename of the sound effect - reference to sound file.
             :type sound: str
+
+            :param volume: Volume of the effect. (optional, default = 1.0)
+            :type sound: str
+
         '''
         super().__init__()
 
         # Get the sound file name
         sound_file = kwargs.get('sound')
 
+        # Get the volume or set the default value if not set
+        self.volume = kwargs.get('volume', 1.0)
+
         # Check the sound_file name for validity
         try:
             assert isinstance(sound_file, str), f'Sound file name "{sound_file}" is not valid.'
+            assert isinstance(self.volume, float) and 0.0 <= self.volume <= 1, f'Volume must be between 0.0 and 1.0. Current value "{self.volume}" is not valid.'
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError

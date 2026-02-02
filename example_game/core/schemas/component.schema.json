@@ -34,6 +34,7 @@
 		{"$ref": "components/sound_fx_on_generation.schema.json"},
 		{"$ref": "components/sound_fx_on_damage.schema.json"},
 		{"$ref": "components/sound_fx_on_no_health.schema.json"},
+		{"$ref": "components/sound_fx_on_movement.schema.json"},
 
 		{"$ref": "components/teleport.schema.json"},
 		{"$ref": "components/teleportable.schema.json"},

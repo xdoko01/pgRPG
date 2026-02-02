@@ -4,8 +4,8 @@ Can be run from the console by putting following command
 XXXX
 '''
 import pygame
-from pyrpg import main
-from pyrpg.core.config.filepaths import IMAGE_PATH # for IMAGE_PATH
+import pyrpg.core.main as main
+from pyrpg.core.config import FILEPATHS  # for IMAGE_PATH
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''
@@ -21,7 +21,7 @@ def script_load_image(event, *args, **kwargs):
     image_file = kwargs.get('image_file')
 
     # Do not show progress information and do not clear anything
-    main.gui_manager.blit_image(image=pygame.image.load(IMAGE_PATH / image_file))
+    main.gui_manager.blit_image(image=pygame.image.load(FILEPATHS["IMAGE_PATH"] / image_file))
 
     # Return success
     return 0
