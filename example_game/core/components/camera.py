@@ -73,7 +73,7 @@ class Camera(Component):
         self.map_screen_rect = (0, 0, 0, 0)
 
         # Offset variables necessary for camera functionality - Offset is calculated by the 
-        # UpdateCameraOffsetProcessor
+        # PerformScrollCameraProcessor or PerformScrollDelayedCameraProcessor
         self.offset_x = 0
         self.offset_y = 0
 

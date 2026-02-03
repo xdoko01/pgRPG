@@ -76,7 +76,7 @@
 						"RIGHT": [["move_dir_add", {"moves" : ["right"]}]],
 						"UP": [["move_dir_add", {"moves" : ["up"]}]],
 						"DOWN": [["move_dir_add", {"moves" : ["down"]}]],
-						"attack" :  [
+						"ATTACK" :  [
 							[
 								"reset_brain", 
 								{

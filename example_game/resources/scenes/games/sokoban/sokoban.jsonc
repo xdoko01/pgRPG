@@ -57,7 +57,7 @@
 		// For displaying on screen
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
 		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_scroll_delayed_camera_processor:PerformScrollDelayedCameraProcessor", {}],
 		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
 		//["render_system.generate_render_data_from_parent_processor:GenerateRenderDataFromParentProcessor", {}],
 		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],

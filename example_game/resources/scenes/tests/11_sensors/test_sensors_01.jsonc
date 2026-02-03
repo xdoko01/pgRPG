@@ -49,7 +49,7 @@
 		// For displaying
 		["render_system.perform_clear_window_processor:PerformClearWindowProcessor", {}],
 		["render_system.perform_clear_camera_processor:PerformClearCameraProcessor", {}],
-		["render_system.perform_scroll_camera_processor:PerformScrollCameraProcessor", {}],
+		["render_system.perform_scroll_delayed_camera_processor:PerformScrollDelayedCameraProcessor", {"delay": 0.005}], // delayed camera effect
 		["render_system.perform_render_map_processor:PerformRenderMapProcessor", {}],
 		["render_system.perform_render_model_processor:PerformRenderModelProcessor", {}],
 		["render_system.perform_render_debug_info_processor:PerformRenderDebugInfoProcessor", {}],

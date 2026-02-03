@@ -1,23 +1,4 @@
-### advantages and disadvantages of using events in behavioral tree definition
-  1. Using events
-    - Pros
-      - easier and leaner behavior tree
-      - do_paralel having only 2 commands, one checking the change on the blackboard and other for actual behavior
-      - can define in processors how many cycles should be skipped for processing the events, hence can tune the performance
-    - Cons
-      - cannot use blackboard values in handlers definitions (^ character is only evaluated for commands in command manager)
-      - more text to write
-      - additional processors for event handling
-  
-  2. Using custom test commands
-    - Pros
-      - less text
-      - can use blackboard values everywhere
-      - no additional processors
-    - Cons
-      - complicated do_parallel command having many commands inside
-      - must implement many test commands instead of just processing the event
-
+## Dev Log - some years missing
 
 ### 2024-06-28 First prototype of behavior tree using events to modify the Brain's blackboard value
   - Now, the behavior of the NPC can be changed upon receiving the event. For that to happen, handler for that event must be defined to change the blackboard value of the NPC's brain. NPC's brain must contain tests that are checking the blackboard value for changes and processor for handling the needed events must be set. Example of such scene is `guard_and_fight_back_if_ambushed_using_events.jsonc`.

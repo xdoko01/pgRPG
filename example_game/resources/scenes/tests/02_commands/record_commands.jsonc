@@ -5,7 +5,7 @@
 	// Basic data
 	"id" : "record_commands",
 	"title" : "Command Recording Test",
-	"description" : "Test recording commands to the file",
+	"description" : "Test recording commands to the file recorded_commands.rec",
 	"objective" : "POC of recording commands into the file",
 
 	// What scenes need to be loaded before this one

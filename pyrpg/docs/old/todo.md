@@ -6,22 +6,6 @@
   - nice-to-have  take camera view into consideration when sound
   - console commands to support UNIX-like patterns 
 
-  - Camera is on the spring. After the movement stops it moves slower than the object and when movement stops it reaches slowly the centre (PerformScrollCameraProcessor)
-    - camera_pos, entity_pos, link_length
-    - entity_pos = camera_pos
-    - if no movement
-      - move camera towards entity_pos
-    - if movement
-      - if entity_pos - camera_pos > link_length + movement
-        - move camera towards entity_pos
-      OR
-      - the greater the distance between entity_pos and camera_pos the bigger the vector towards entity_pos 
-
-      F = -k * y ... k ...tuhost, y ... vzdalenost mezi entity a camera pos
-       vypocti vektor mezi camera a entity position
-       vynasob ho nejakou tuhosti
-       posun kameru smerem k entity o tento vektor
-
   - BUG - weapon and ammo as separate entities, when bow is dropped, then ammo has texture on map.
 
   - in `PerformDisarmWeapon` component fire a new component for removing the WeaponInUse component
@@ -32,9 +16,6 @@
     - the reason is that FlagDIsarmWeapon is not created when bow is picked up.
     - the `PerformArmWeaponProcessor` is triggering disarm only for the already armed weapon of type `bow` and no other. In fact this is correct. If I am arming bow and there is already another bow in the bow slot, I need to disarm the bow occupying the slot. And I do not want to disarm the spear as I an not trying to replace any weapon in the spear slot.
     - Also it is clear that RenderParentData component is closely repated to WeaponInUse component and no other. It is not relevant for arming/disarming but for manipulation with WeaponInUse component. When assigning WeaponInUse, I need to make sure that RenderDataFromParent is removed from all other weapon components (as I can only use one weapon at one time)
-
-  - fix arming from the inventory - 
-  - some textures incorrecly being placed when working with inventory RenderDataFromParent
 
   - Implement processor that will set WeaponInUse automatically when weapon is armed.
     - this should work also for the arm command - generates FlagWasArmed and as a reaction WeaponInUse will be created.
@@ -146,11 +127,12 @@
 
   - [ ] - prepare some helping function that receives Position and Collidable component for 2 entities on input and returns if those collide or not. Similar for collisions with the map.
 
-  - [ ] - finish the inventory and arming weapons. After that try to fix Sokoban collision zones. After that collision with the walls must be flawless. After it improve the speed of generation of the map on the screen. After that client/server game.
-
+  - [ ] - improve the speed of generation of the map on the screen. 
+  - [ ] - client/server game
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
   - [ ] - music and sound volume into the configs
+  - [x] - new camera processor `PerformScrollDelayedCameraProcessor` that implements delayed feedback effect of the camera. It is used for example in `tests/11_sensors/test_sensors_01.jsonc` scene and can be configured using `delay` parameter (how fast should camera convert to the real position of the entity with `Camera` component). 
   - [x] - music playback - new script `play_music` that can be triggered by event. Example usage is in `sokoban` game.
   - [x] - walls are entities - this resolves the problem with physicks of moving box into box into box and into the wall. Piloted with `sokoban` game. `ResolveMapCollisionsProcessor` is hence not needed.
   - [x] - cleanup functions are now using regular expressions. It is no longer needed to name every entity alias that you want to remove at the beginning of the scene. You can just use UNIX-like wildcard such as "wall*" to remove every entity with alias beginning with "wall". The same can be used for cleaning maps, handlers, templates and dialogs.

@@ -74,7 +74,7 @@
 						"RIGHT": [["move_vect", {"vector" : [5,0], "dt_comp": false, "absolute": true}]],
 						"UP": [["move_vect", {"vector" : [0,-5], "dt_comp": false, "absolute": true}]],
 						"DOWN": [["move_vect", {"vector" : [0,5], "dt_comp": false, "absolute": true}]],
-						"attack" :  [
+						"ATTACK" :  [
 							[
 								"reset_brain", 
 								{

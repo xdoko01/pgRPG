@@ -4,7 +4,7 @@
 		"RESOLUTION" : [640,480],
 		"BITDEPTH" : "DEFAULT",
 		"FULLSCREEN" : false,
-		"MAX_FPS" : 500,
+		"MAX_FPS" : 1000,
 		"SHOW_FPS" : true,
 		"WIN_TITLE": "Example Game"
 	},

@@ -1,5 +1,5 @@
-''' Module "example_game.core.components.btree" contains
-BTree component implemented as a BTree class.
+''' Module "example_game.core.components.btree_ai" contains
+BTreeAI component implemented as a BTreeAI class.
 
 Use 'python -m core.components.btree_ai -v' to run
 module tests.
