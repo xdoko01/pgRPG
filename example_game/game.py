@@ -1,6 +1,6 @@
 
 """
-python example_game/game.py -f UI/test_button_pressed.jsonc
+python example_game/game.py -f games/sokoban/sokoban.jsonc
 python example_game/game.py -h
 """
 # Bring pyrpg package onto the path
@@ -31,14 +31,14 @@ if __name__ == "__main__":
     #scene_file = "UI/test_button_pressed.jsonc"
 
     # Games
-    #scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
+    ###scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
     #scene_file = "games/sokoban/sokoban_level02.jsonc"
     #scene_file = "games/sokoban/sokoban_level01.jsonc"    
     #scene_file = "games/sokoban/sokoban.jsonc"                
     #scene_file = "games/collect_coins/collect_coins.jsonc"
 
     # 12_ai
-    #scene_file = "tests/12_ai/test_entity_seen.jsonc" # old, does not work, fix it
+    ###scene_file = "tests/12_ai/test_entity_seen.jsonc" # old, does not work, fix it
     #scene_file = "tests/12_ai/move_between_2_points.jsonc"
     #scene_file = "tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_template.jsonc"
     #scene_file = "tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_events.jsonc"
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     # 02_commands
     #scene_file = "tests/02_commands/test_commands_03.jsonc"
     #scene_file = "tests/02_commands/test_commands_02.jsonc"
-    scene_file = "tests/02_commands/test_commands_01.jsonc"
+                #scene_file = "tests/02_commands/test_commands_01.jsonc"
     #scene_file = "tests/02_commands/play_commands_03.jsonc"
     #scene_file = "tests/02_commands/play_commands_02.jsonc"
     #scene_file = "tests/02_commands/play_commands_01.jsonc"

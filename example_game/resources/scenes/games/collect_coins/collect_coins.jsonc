@@ -109,7 +109,7 @@
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 3, "tile_y" : 4, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_100", "fixed_position" : true}}
 			]
@@ -119,7 +119,7 @@
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 4, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_100", "fixed_position" : true}}
 			]
@@ -129,7 +129,7 @@
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 7, "tile_y" : 4, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_100", "fixed_position" : true}}
 			]
@@ -139,7 +139,7 @@
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 9, "tile_y" : 4, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_100", "fixed_position" : true}}
 			]
@@ -149,7 +149,7 @@
 			"templates": ["thing/item/coin/golden_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.golden"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 2, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 11, "tile_y" : 4, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_100", "fixed_position" : true}}
 			]
@@ -159,7 +159,7 @@
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 3, "tile_y" : 6, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_20", "fixed_position" : true}}
 			]
@@ -169,7 +169,7 @@
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 6, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_20", "fixed_position" : true}}
 			]
@@ -179,7 +179,7 @@
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 7, "tile_y" : 6, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_20", "fixed_position" : true}}
 			]
@@ -189,7 +189,7 @@
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 9, "tile_y" : 6, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_20", "fixed_position" : true}}
 			]
@@ -199,7 +199,7 @@
 			"templates": ["thing/item/coin/silver_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.silver"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 4, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 11, "tile_y" : 6, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_20", "fixed_position" : true}}
 			]
@@ -209,7 +209,7 @@
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 2, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 3, "tile_y" : 8, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_5", "fixed_position" : true}}
 			]
@@ -219,7 +219,7 @@
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 4, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 5, "tile_y" : 8, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_5", "fixed_position" : true}}
 			]
@@ -229,7 +229,7 @@
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 6, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 7, "tile_y" : 8, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_5", "fixed_position" : true}}
 			]
@@ -239,7 +239,7 @@
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 8, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 9, "tile_y" : 8, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_5", "fixed_position" : true}}
 			]
@@ -249,7 +249,7 @@
 			"templates": ["thing/item/coin/copper_coin"],
 			"components": [
 				{"type" : "pickable:Pickable", "params" : {"category" : "items.coin.copper"}},
-				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 6, "map" : "test_arena_sand"}},
+				{"type" : "position:Position", "params" : {"tile_x" : 11, "tile_y" : 8, "map" : "test_arena_sand"}},
 				{"type" : "sound_fx_on_collision:SoundFXOnCollision", "params" : {"sound" : "coin_picked.wav"}},
 				{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/score_5", "fixed_position" : true}}
 			]

@@ -1,108 +1,61 @@
-## TODO lists
+# pyRPG
+![pyRPG Screenshot](docs/empty_01.png)
+
+pyRPG is a Python-based 2D RPG game engine built around an Entity–Component–System (ECS) architecture with strong emphasis on data-driven design, behavior trees, and event-driven gameplay. Game logic, AI behavior, scenes, processors, and even UI flows are primarily defined in JSON/YAML, enabling rapid iteration without touching engine code.
+
+The engine is designed for experimentation with RPG mechanics, AI orchestration, and systemic gameplay rather than as a monolithic framework.
+
+![pyRPG Screenshot](docs/test_sensors_01.png)
+
+Currently, the documentation is poor. I would recommend to everyone to go through the number of prepared scenes, experiment, go through the json with scene definitions. **Learn by doing!** There is a lot of comments everywhere to help you out!
+
+All of this is a result of me experimenting in my free time with Python and ECS paradigm. I was trying to find out what is possible to achieve rather than having clear goal in my mind. Many times the program can be written in much more optimized way. However, I prefered clearance and readability rather than performace. Hope that helps you explore the code easily!
+
+![pyRPG Screenshot](docs/sokoban_02.png)
+
+## Key Features
+
+ - Entity–Component–System (ECS) powered by Esper
+ - Behavior Trees (BTrees) and command lists for AI logic
+ - Event-driven architecture with JSON-defined conditions and actions
+ - Data-driven scenes (JSON / YAML, with C-style comments)
+ - Configurable processor pipeline per scene
+ - Pathfinding distributed across game cycles (non-blocking)
+ - Modular combat, damage, score, and destruction systems
+ - Scriptable dialogs, windows, and UI flows
+ - Multiple cameras and split-screen support
+
+## Architecture Overview
+
+### ECS Core
+
+ - *Entities*: Lightweight IDs, optionally referenced by aliases in scene files
+ - *Components*: Pure data containers (all components have JSON schemas)
+ - *Processors*: Systems operating on component sets, executed in configurable order
+
+
+## TODO list (messy)- not necessarily ordered by priority
   
-  - something as default script executed at the beginning the console is started? Does this already exist?
-  - TODO: add volume parameter to all sound effects and to all sound processors to take it into consideration
-  - nice-to-have  take camera view into consideration when sound
-  - console commands to support UNIX-like patterns 
 
-  - BUG - weapon and ammo as separate entities, when bow is dropped, then ammo has texture on map.
 
-  - in `PerformDisarmWeapon` component fire a new component for removing the WeaponInUse component
-   maybe to have processor `RemoveRenderDataFromParent` + flag `FlagRemoveDataFromParent`(entity_ids) that will handle all the removals
-    - 
 
-  - BUG - pickup `spear`(1) and next pickup `bow`(7). After bow pickup the spear texture remains lying on the ground.
+  - IMPORTANT: if you want to display arming of the arrow then ammo pack(generator) and weapon must be 2 separate entities with 2 Renderable Models. If weapon and ammo pack are merged into one entity then only one renderable model (probably weapon) is displayed and the animation of arming an arrow is missing/overridden by weapon.
+
+  - [ ] - optimize the following processors that consume the most time: `'GameEventsExProcessor'`: 1677, `'PerformRenderDebugInfoProcessor'`: 1657, `'PerformRenderMapProcessor'`: 1767
+  - [ ] - in `PerformDisarmWeapon` component fire a new component for removing the WeaponInUse component. Maybe to have processor `RemoveRenderDataFromParent` + flag `FlagRemoveDataFromParent`(entity_ids) that will handle all the removals
+
+  - [ ] - BUG - pickup `spear`(1) and next pickup `bow`(7). After bow pickup the spear texture remains lying on the ground.
     - the reason is that FlagDIsarmWeapon is not created when bow is picked up.
     - the `PerformArmWeaponProcessor` is triggering disarm only for the already armed weapon of type `bow` and no other. In fact this is correct. If I am arming bow and there is already another bow in the bow slot, I need to disarm the bow occupying the slot. And I do not want to disarm the spear as I an not trying to replace any weapon in the spear slot.
     - Also it is clear that RenderParentData component is closely repated to WeaponInUse component and no other. It is not relevant for arming/disarming but for manipulation with WeaponInUse component. When assigning WeaponInUse, I need to make sure that RenderDataFromParent is removed from all other weapon components (as I can only use one weapon at one time)
 
-  - Implement processor that will set WeaponInUse automatically when weapon is armed.
+  - [ ] - Implement processor that will set WeaponInUse automatically when weapon is armed.
     - this should work also for the arm command - generates FlagWasArmed and as a reaction WeaponInUse will be created.
 
-  - 
-{
-  'GenerateCommandFromInputProcessor': 175, 
-  'GenerateCommandFromMouseProcessor': 19, 
-  `'GenerateCommandFromBrainProcessor'`: 616, 
-  'PerformCommandProcessor': 971, 
-  `'PerformMovementProcessor'`: 665, 
-  'PerformMovementAnimationProcessor': 154, 
-  'PerformActionAnimationProcessor': 41, 
-  'PerformActionIdleAnimationProcessor': 69, 
-  `'PerformIdleAnimationProcessor'`: 635, 
-  'PerformExpireAnimationProcessor': 17, 
-  `'PerformFrameUpdateProcessor'`: 796, 
-  'GenerateProjectileFactoryDataProcessor': 31, 
-  'PerformFactoryGenerationProcessor': 31, 
-  'PerformAdjustCollidableProcessor': 8, 
-  'PerformAdjustMovementProcessor': 6, 
-  'GenerateCollisionsOptimizedProcessor': 193, 
-  'ResolveCollisionsOptimizedProcessor': 18, 
-  'GenerateDestroyOnCollisionProcessor': 11, 
-  'GenerateDestroyOnStoppedMovementProcessor': 9, 
-  'PerformDestroyEntitiesProcessor': 12, 
-  'GeneratePickupProcessor': 12, 
-  'PerformPickupProcessor': 18, 
-  'GenerateArmWeaponProcessor': 11, 
-  'PerformArmWeaponProcessor': 8, 
-  'GenerateArmAmmoProcessor': 16, 
-  'PerformArmAmmoProcessor': 11, 
-  'PerformDropProcessor': 5, 
-  'GenerateDisarmWeaponProcessor': 13, 
-  'PerformDisarmWeaponProcessor': 11, 
-  'GenerateDisarmAmmoProcessor': 10, 
-  'PerformDisarmAmmoProcessor': 7, 
-  'PerformSetWeaponIntoUseProcessor': 6, 
-  'GenerateSoundFXOnArmWeaponProcessor': 8, 
-  'GenerateVisualFXOnCollisionProcessor': 12, 
-  'GenerateSoundFXOnCollisionProcessor': 12, 
-  'PerformClearWindowProcessor': 196, 
-  'PerformClearCameraProcessor': 154, 
-  'PerformScrollCameraProcessor': 34, 
-  `'PerformRenderMapProcessor'`: 1767, 
-  'GenerateRenderDataFromParentProcessor': 283, 
-  'PerformRenderModelProcessor': 331, 
-  'PerformRenderArmedWeaponProcessor': 56, 
-  'PerformRenderArmedAmmoProcessor': 16, 
-  `'PerformRenderDebugInfoProcessor'`: 1657, 
-  'PerformRenderInventoryProcessor': 17, 
-  'PerformBlitCameraProcessor': 285, 
-  'PerformRenderMessagesProcessor': 12, 
-  `'GameEventsExProcessor'`: 1677,   *Something must be done about this*
-  'RemoveFlagDoMoveProcessor': 361, 
-  'RemoveFlagAdjustMovementProcessor': 26, 
-  'RemoveFlagHasStoppedMovementProcessor': 7, 
-  'RemoveFlagHasCollidedProcessor': 9, 
-  'RemoveFlagAdjustCollidableProcessor': 9, 
-  'RemoveFlagDoAttackProcessor': 20, 
-  'RemoveFlagIsAnimationActionFrameProcessor': 6, 
-  'RemoveFlagCreateFromFactoryProcessor': 9, 
-  'RemoveFlagGeneratedFromFactoryProcessor': 9, 
-  'RemoveFlagIsAboutToPickEntityProcessor': 8, 
-  'RemoveFlagHasPickedProcessor': 9, 
-  'RemoveFlagWasPickedByProcessor': 9, 
-  'RemoveFlagIsAboutToArmWeaponProcessor': 13, 
-  'RemoveFlagHasArmedWeaponProcessor': 11, 
-  'RemoveFlagWasArmedAsWeaponByProcessor': 8, 
-  'RemoveFlagIsAboutToArmAmmoProcessor': 9, 
-  'RemoveFlagHasArmedAmmoProcessor': 15, 
-  'RemoveFlagWasArmedAsAmmoByProcessor': 4, 
-  'RemoveFlagIsAboutToDropEntityProcessor': 9, 
-  'RemoveFlagHasDroppedProcessor': 6, 
-  'RemoveFlagWasDroppedByProcessor': 14, 
-  'RemoveFlagIsAboutToDisarmWeaponProcessor': 10, 
-  'RemoveFlagHasDisarmedWeaponProcessor': 8, 
-  'RemoveFlagWasDisarmedAsWeaponByProcessor': 13, 
-  'RemoveFlagIsAboutToDisarmAmmoProcessor': 10, 
-  'RemoveFlagHasDisarmedAmmoProcessor': 10, 
-  'RemoveFlagWasDisarmedAsAmmoByProcessor': 9
-}
+  - [ ] - BUG - weapon and ammo as separate entities, when bow is dropped, then ammo has texture on map.
 
-  - IMPORTANT: if you want to display arming of the arrow then ammo pack(generator) and weapon must be 2 separate entities with 2 Renderable Models. If weapon and ammo pack are merged into one entity then only one renderable model (probably weapon) is displayed and the animation of arming an arrow is missing/overridden by weapon.
-
-
-
-
+  - [ ] - console commands to support UNIX-like patterns 
+  - [ ] - add volume parameter to all sound effects and to all sound processors to take it into consideration
   - [ ] - fix json validation so that templates are not only strings but also the other variants
   - [ ] - add inventory to all test cases from 09 projectiles onwards
   - [ ] - in commands, check that some processors exists, otherwise the command will not be executed (disarming commands)
