@@ -54,8 +54,8 @@ def _init_state_modules() -> None:
         logger.info(f"State module '{state_module}' initiated.")
 
 # Start the program
-def init(scene_file: str=None) -> None:
-    """ Start either into the game scene or in the main menu.
+def init(scene_file: str=None, state: str=None) -> None:
+    """ Start either into the game or in the console with default script or into any state.
     """
     _init_engine()
     _init_state_modules()
@@ -64,15 +64,13 @@ def init(scene_file: str=None) -> None:
     if scene_file:
         _init_game(scene_file)
         state_manager.change_state(State.GAME)
-        logger.info(f"Starting into the game.")
+        logger.info(f"Starting into the scene.")
+    elif state:
+        # If you want to enter MAIN_MENU then run with State.MAIN_MENU
+        state_manager.change_state(State[state])
+        logger.info(f"Starting into the '{state}' state.")
     else:
-
-        ## If you want to enter MAIN_MENU instead of running default console script
-        ##state_manager.change_state(State.MAIN_MENU)
-
-        # to allow load driven by the console script
-
-        # Show and Switch to the console
+        # By default start into console with defaut.scr script executed
         state_manager.change_state(State.CONSOLE)
 
         # Start the default script - and show the results

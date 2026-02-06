@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 #def init(config_file: str, console: bool=True, scene_file: str=None, timed: bool=False) -> None:
 #def init(config_file: str, scene_file: str=None, timed: bool=False) -> None:
-def init(config_file: str, scene_file: str=None) -> None:
+def init(config_file: str, scene_file: str=None, state: str=None) -> None:
     """Create instance of main game class and remember it in 
     form of global variable so that console can use it."""
     
@@ -19,7 +19,7 @@ def init(config_file: str, scene_file: str=None) -> None:
 
     # Initiate the core funcionalities / managers
     from pyrpg.core import main
-    main.init(scene_file=scene_file)
+    main.init(scene_file=scene_file, state=state)
     logger.info(f"Main module initiation done.")
 
     # Main program loop

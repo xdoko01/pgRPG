@@ -1,4 +1,4 @@
-# pyRPG
+# pyRPG - ECS pygame Game Engine
 ![pyRPG Screenshot](docs/empty_01.png)
 
 pyRPG is a Python-based 2D RPG game engine built around an Entity–Component–System (ECS) architecture with strong emphasis on data-driven design, behavior trees, and event-driven gameplay. Game logic, AI behavior, scenes, processors, and even UI flows are primarily defined in JSON/YAML, enabling rapid iteration without touching engine code.

@@ -2,6 +2,8 @@
 """
 python example_game/game.py -f games/sokoban/sokoban.jsonc
 python example_game/game.py -h
+python example_game/game.py
+python example_game/game.py -s MAIN_MENU
 """
 # Bring pyrpg package onto the path
 import sys, os
@@ -10,19 +12,20 @@ from pathlib import Path
 pyrpg_path = "../pyrpg"
 sys.path.append(os.path.abspath(Path(pyrpg_path)))
 
-def main(config_file: str, scene_file: str=None) -> None:
+def main(config_file: str, scene_file: str=None, state: str=None) -> None:
     """Run the game using the CLI arguments."""
 
-    print(f"Starting with the following arguments: {scene_file=}, {config_file=}")
+    print(f"Starting with the following arguments: {scene_file=}, {config_file=}, {state=}.")
 
     # Load the framework using all the configs
     import pyrpg
-    pyrpg.init(config_file=config_file, scene_file=scene_file)
+    pyrpg.init(config_file=config_file, scene_file=scene_file, state=state)
 
 if __name__ == "__main__":
 
-    scene_file = None
-    config_file = "example_game/config.jsonc"
+    scene_file = None # Specify the scene file if you want to start into specific scene
+    config_file = "example_game/config.jsonc" # Start with Game config overriding default pyRPG config
+    state = 'MAIN_MENU' # Start to pyRPG main menu. Set to None if you want to start into Console.
 
     # Empty
     #scene_file = "empty.jsonc"
@@ -138,6 +141,8 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-f", "--file", help="Load particular scene file.The path must be relative to QUEST_PATH defined in configuration.",type=str)
     parser.add_argument("-c", "--config", help="Load particular configuration file.", type=str)
+    parser.add_argument("-s", "--state", help="Load into specific STATE.", type=str)
+
     args = parser.parse_args()
 
-    main(config_file=args.config or config_file, scene_file=args.file or scene_file)
+    main(config_file=args.config or config_file, scene_file=args.file or scene_file, state=args.file or state)
