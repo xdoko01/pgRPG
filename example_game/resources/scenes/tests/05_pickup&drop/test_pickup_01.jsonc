@@ -85,6 +85,7 @@
 			"font" : {
 				"path" : "small_font.json",
 				"size" : 24,
+				"spacing": [1, 1],
 				"color" : "#00FFFF",
 				"align" : "LEFT"
 				},
@@ -101,6 +102,7 @@
 					"font" : {
 						"path" : "small_font.json",
 						"size" : 16,
+						"spacing": [1, 1],
 						"color" : "#FFFFFF",
 						"align" : "LEFT"
 						},
@@ -133,7 +135,7 @@
 			"id" : "player01",
 			"templates" : [
 				"model/body/male/human/dark2", // model template
-				"controls/only_movement" // control template
+				"controls/default" // control template
 			],
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},

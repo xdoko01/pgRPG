@@ -5,7 +5,7 @@
 	// Basic data
 	"id" : "test_teleportation_02",
 	"title" : "Teleportation with Key Test",
-	"description" : "Test teleportation processors",
+	"description" : "Test teleportation processors - key is required for teleportation",
 	"objective" : "POC of the teleportation system",
 
 	// What scenes need to be loaded before this one

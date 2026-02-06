@@ -72,6 +72,7 @@
 			"font" : {
 				"path" : "small_font.json",
 				"size" : 24,
+				"spacing": [1, 1],
 				"color" : "#00FFFF",
 				"align" : "LEFT"
 				},
@@ -88,6 +89,7 @@
 					"font" : {
 						"path" : "small_font.json",
 						"size" : 16,
+						"spacing": [1, 1],
 						"color" : "#FFFFFF",
 						"align" : "LEFT"
 						},

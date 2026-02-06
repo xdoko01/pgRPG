@@ -5,7 +5,7 @@
 	// Basic data
 	"id" : "test_collisions_01",
 	"title" : "Collisions Test - generation of collisions",
-	"description" : "Test generation of collisions without actually resolving them",
+	"description" : "Test generation of collisions without actually resolving them. Collisions can be seen in the logs.",
 	"objective" : "POC of the collision system",
 
 	// What scenes need to be loaded before this one

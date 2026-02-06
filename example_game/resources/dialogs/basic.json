@@ -13,6 +13,7 @@
 	"font" : {
 		"path" : "small_font.json",
 		"size" : 16,
+		"spacing": [2, 1],
 		"color" : "#FFFFFF",
 		"align" : "RIGHT"
 		},

@@ -34,8 +34,9 @@ class GenerateCommandFromBrainProcessor(Processor):
         -   before PerformCommandProcessor
     '''
 
-    PREREQ = ['allOf',
-        'command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
+    PREREQ = [
+        #'allOf',
+        #  'command_system.generate_command_from_input_processor:GenerateCommandFromInputProcessor'
     ]
 
     def __init__(self, FNC_ADD_COMMAND, *args, **kwargs):

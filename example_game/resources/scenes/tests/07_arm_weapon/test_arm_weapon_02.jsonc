@@ -4,7 +4,7 @@
 
 	// Basic data
 	"id" : "test_arm_weapon_02",
-	"title" : "Arming weapon using action key on Wepon in inventory window",
+	"title" : "Arming weapon using action key on Wepon in inventory window + dropping + pause + messages as a reaction on event (script) + arming sound",
 	"description" : "Arming weapon using action key on Wepon in inventory window - using inventory_action command",
 	"objective" : "POC of arming through inventory",
 

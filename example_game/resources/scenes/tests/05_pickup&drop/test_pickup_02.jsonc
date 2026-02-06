@@ -5,7 +5,7 @@
 	// Basic data
 	"id" : "test_pickup_02",
 	"title" : "Inventory window test",
-	"description" : "Test inventory window - inventory with picked up items can be displayed by pressing 'i'",
+	"description" : "Test inventory window - inventory with picked up items can be displayed by pressing 'i'. Also pause screen by pressing 'p'.",
 	"objective" : "POC of the pickup system with inventory window displaying",
 
 	// What scenes need to be loaded before this one
@@ -125,7 +125,7 @@
 				{"type" : "has_inventory:HasInventory", "params" :  {}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}},
+				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		},
 		{

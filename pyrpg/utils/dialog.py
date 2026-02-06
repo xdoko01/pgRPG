@@ -373,6 +373,7 @@ def _get_dlg_texts(dlg_data, font_path=None):
         text = text_data.get('text', '')
         font = text_data.get('font', {}).get('path', dlg_data.get('font', {}).get('path'))
         size = text_data.get('font', {}).get('size', dlg_data.get('font', {}).get('size', None))
+        spacing = text_data.get('font', {}).get('spacing', dlg_data.get('font', {}).get('spacing', [0,0]))
         color = text_data.get('font', {}).get('color', dlg_data.get('font', {}).get('color', None))
         color = pygame.Color(color) if color else None
         align = text_data.get('font', {}).get('align', dlg_data.get('font', {}).get('align', None))
@@ -382,7 +383,7 @@ def _get_dlg_texts(dlg_data, font_path=None):
         font = font_path / font if font_path is not None else font
 
         # Prepare font object
-        text_font = BitmapFont(font, size=size, color=color)
+        text_font = BitmapFont(font, size=size, color=color, spacing=spacing)
 
         # Render and store the text surface as DlgSurf
         dlg_texts_obj.append(DlgSurf(surf=text_font.render(text, fgcolor=color, align=align), pos=Pos(position[0], position[1])))
@@ -502,6 +503,7 @@ def _get_dlg_frame_texts(dlg_data, frame, font_path=None):
         text = text_data.get('text', '')
         font = text_data.get('font', {}).get('path', frame_data.get('font', {}).get('path', dlg_data.get('font', {}).get('path')))
         size = text_data.get('font', {}).get('size', frame_data.get('font', {}).get('size', dlg_data.get('font', {}).get('size', None)))
+        spacing = text_data.get('font', {}).get('spacing', dlg_data.get('font', {}).get('spacing', [0,0]))
         color = text_data.get('font', {}).get('color', frame_data.get('font', {}).get('color', dlg_data.get('font', {}).get('color', None)))
         color = pygame.Color(color) if color else None
         align = text_data.get('font', {}).get('align', frame_data.get('font', {}).get('align', dlg_data.get('font', {}).get('align', None)))
@@ -511,7 +513,7 @@ def _get_dlg_frame_texts(dlg_data, frame, font_path=None):
         font = font_path / font if font_path is not None else font
 
         # Prepare font object
-        text_font = BitmapFont(font, size=size, color=color)
+        text_font = BitmapFont(font, size=size, color=color, spacing=spacing)
 
         # Render and store the text surface as DlgSurf
         dlg_frame_texts_obj.append(DlgSurf(surf=text_font.render(text, fgcolor=color, align=align), pos=Pos(position[0], position[1])))

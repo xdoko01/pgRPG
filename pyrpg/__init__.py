@@ -14,7 +14,7 @@ def init(config_file: str, scene_file: str=None, state: str=None) -> None:
     
     # Load config - load the config values from the files to the variables
     from pyrpg.core.config import load
-    load(config_file=config_file, hide_res=False)
+    load(config_file=config_file, hide_res=True)
     logger.info(f"Config successfully loaded.")
 
     # Initiate the core funcionalities / managers

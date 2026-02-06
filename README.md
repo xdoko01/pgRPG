@@ -36,9 +36,9 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 
 ## TODO list (messy)- not necessarily ordered by priority
   
+  - [ ] - change to native 64x64 resolution + use some better sprite map and default test map (should have some animated tiles).
   - [ ] - FOR CONSOLE - console scr scripts to support `//` comments
-  - [ ] - possibility to decide if default.scr script or game menu should be loaded when running `python example_game/game.py` without parameters
-
+  
   - IMPORTANT: if you want to display arming of the arrow then ammo pack(generator) and weapon must be 2 separate entities with 2 Renderable Models. If weapon and ammo pack are merged into one entity then only one renderable model (probably weapon) is displayed and the animation of arming an arrow is missing/overridden by weapon.
 
   - [ ] - optimize the following processors that consume the most time: `'GameEventsExProcessor'`: 1677, `'PerformRenderDebugInfoProcessor'`: 1657, `'PerformRenderMapProcessor'`: 1767
@@ -72,6 +72,7 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
   - [ ] - music and sound volume into the configs
+  - [x] - it is now possible to start into specific scene (`--file` parameter) or into specific `State` (`--state` parameter, for example into main menu), or start into console if no parameter is present. Console will load the `default.scr` script full of commands that you want to use to start the game (resolution, scene file, more ...).
   - [x] - new camera processor `PerformScrollDelayedCameraProcessor` that implements delayed feedback effect of the camera. It is used for example in `tests/11_sensors/test_sensors_01.jsonc` scene and can be configured using `delay` parameter (how fast should camera convert to the real position of the entity with `Camera` component). 
   - [x] - music playback - new script `play_music` that can be triggered by event. Example usage is in `sokoban` game.
   - [x] - walls are entities - this resolves the problem with physicks of moving box into box into box and into the wall. Piloted with `sokoban` game. `ResolveMapCollisionsProcessor` is hence not needed.
@@ -377,6 +378,9 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 
 
 ## Dev Log - some years missing
+
+### 2026-02-06 Possibility to start into selected State
+  - It is now possible to start into specific scene (`--file` parameter) or into specific `State` (`--state` parameter, for example into main menu), or start into console if no parameter is present. Console will load the `default.scr` script full of commands that you want to use to start the game (resolution, scene file, more ...).
 
 ### 2024-06-28 First prototype of behavior tree using events to modify the Brain's blackboard value
   - Now, the behavior of the NPC can be changed upon receiving the event. For that to happen, handler for that event must be defined to change the blackboard value of the NPC's brain. NPC's brain must contain tests that are checking the blackboard value for changes and processor for handling the needed events must be set. Example of such scene is `guard_and_fight_back_if_ambushed_using_events.jsonc`.

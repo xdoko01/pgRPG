@@ -5,7 +5,7 @@
 	// Basic data
 	"id" : "test_pickup_03",
 	"title" : "Dropping items + inventory window",
-	"description" : "Test dropping items via inventory window",
+	"description" : "Test dropping items via inventory window - using mouse",
 	"objective" : "POC of the drop system with inventory window displaying",
 
 	// What scenes need to be loaded before this one

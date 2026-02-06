@@ -77,11 +77,11 @@ if __name__ == "__main__":
     #scene_file = "tests/09_projectiles/test_projectile_score_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_damage.jsonc"
-    #scene_file = "tests/09_projectiles/test_projectile_collision"
+    scene_file = "tests/09_projectiles/test_projectile_collision"
 
-    # 08_arm_ammo
-    #scene_file = "tests/08_arm_ammo/test_arm_ammo_01"
+    # 08_arm_ammo    
     #scene_file = "tests/08_arm_ammo/test_arm_ammo_02"
+    #scene_file = "tests/08_arm_ammo/test_arm_ammo_01"
 
     # 07_arm_weapon
     #scene_file = "tests/07_arm_weapon/test_arm_weapon_02"
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     # 02_commands
     #scene_file = "tests/02_commands/test_commands_03.jsonc"
     #scene_file = "tests/02_commands/test_commands_02.jsonc"
-                #scene_file = "tests/02_commands/test_commands_01.jsonc"
+    #scene_file = "tests/02_commands/test_commands_01.jsonc"
     #scene_file = "tests/02_commands/play_commands_03.jsonc"
     #scene_file = "tests/02_commands/play_commands_02.jsonc"
     #scene_file = "tests/02_commands/play_commands_01.jsonc"
