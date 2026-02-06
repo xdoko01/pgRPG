@@ -66,6 +66,10 @@ def init(scene_file: str=None) -> None:
         state_manager.change_state(State.GAME)
         logger.info(f"Starting into the game.")
     else:
+
+        ## If you want to enter MAIN_MENU instead of running default console script
+        ##state_manager.change_state(State.MAIN_MENU)
+
         # to allow load driven by the console script
 
         # Show and Switch to the console

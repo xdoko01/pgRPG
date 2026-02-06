@@ -36,8 +36,8 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 
 ## TODO list (messy)- not necessarily ordered by priority
   
-
-
+  - [ ] - FOR CONSOLE - console scr scripts to support `//` comments
+  - [ ] - possibility to decide if default.scr script or game menu should be loaded when running `python example_game/game.py` without parameters
 
   - IMPORTANT: if you want to display arming of the arrow then ammo pack(generator) and weapon must be 2 separate entities with 2 Renderable Models. If weapon and ammo pack are merged into one entity then only one renderable model (probably weapon) is displayed and the animation of arming an arrow is missing/overridden by weapon.
 
