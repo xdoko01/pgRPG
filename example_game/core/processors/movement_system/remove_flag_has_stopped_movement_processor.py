@@ -28,8 +28,8 @@ class RemoveFlagHasStoppedMovementProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf',
-        'movement_system.perform_movement_processor:PerformMovementProcessor'
+    PREREQ = [
+        #'allOf', 'movement_system.perform_movement_processor:PerformMovementProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

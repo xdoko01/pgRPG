@@ -244,7 +244,7 @@
 		// Definition can be found in entity json files
 		{
 			"id" : "wooden_arrows_pack",
-			"templates" : ["thing/ammo_pack/shoot/wooden_arrows_pack"],
+			"templates" : ["thing/ammo_pack/shoot/wooden_arrows_pack($arrows_count=None)"],
 			"components" : [
 				{"type" : "visual_fx_on_generation:VisualFXOnGeneration", "params" : {"effect" : "effects/explosion", "fixed_position" : true}}
 			]
@@ -374,7 +374,7 @@
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
-				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02", "stop_before_playback": true}},
+				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02.ogg", "stop_before_playback": true}},
 				{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
 				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "effects/explosion"}}
 
@@ -395,7 +395,7 @@
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
 
-				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02", "stop_before_playback": true}},
+				{"type" : "sound_fx_on_damage:SoundFXOnDamage", "params" : {"sound" : "creature_hurt_02.ogg", "stop_before_playback": true}},
 				{"type" : "sound_fx_on_no_health:SoundFXOnNoHealth", "params" : {"sound" : "hurt/9.mp3"}},
 
 				{"type" : "visual_fx_on_no_health:VisualFXOnNoHealth", "params" : {"effect" : "effects/explosion"}}

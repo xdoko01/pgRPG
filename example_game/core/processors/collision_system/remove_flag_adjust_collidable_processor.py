@@ -29,8 +29,8 @@ class RemoveFlagAdjustCollidableProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf',
-        'collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor'
+    PREREQ = [
+        #'allOf', 'collision_system.perform_adjust_collidable_processor:PerformAdjustCollidableProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

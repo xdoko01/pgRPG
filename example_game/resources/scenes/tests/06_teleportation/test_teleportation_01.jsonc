@@ -68,7 +68,7 @@
 	],
 
 	// What maps to load
-	"maps" : ["test_arena_sand"],
+	"maps" : ["test_arena_sand"], 
 
 	// What dialogs to load
 	"dialogs" : [

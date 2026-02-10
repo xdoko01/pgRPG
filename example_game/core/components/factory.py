@@ -66,7 +66,7 @@ class Factory(Component):
 
         try:
             assert isinstance(self.prescription, dict), f'Parameter "prescription" must be in a form of a dictionary'
-            assert isinstance(self.max_units, int) or self.max_units is None, f'Parameter "max_units" must be integer or None(unlimited)'
+            assert isinstance(self.max_units, int) or self.max_units is None, f'Parameter "max_units" must be integer or None(unlimited). Currently {self.max_units=}.'
         except AssertionError:
             raise ValueError
 

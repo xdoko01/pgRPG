@@ -29,8 +29,8 @@ class RemoveFlagHasCollidedProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf',
-        'collision_system:GenerateCollisionsProcessor'
+    PREREQ = [
+        #'allOf','collision_system:GenerateCollisionsProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

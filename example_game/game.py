@@ -41,7 +41,7 @@ if __name__ == "__main__":
     #scene_file = "games/collect_coins/collect_coins.jsonc"
 
     # 12_ai
-    ###scene_file = "tests/12_ai/test_entity_seen.jsonc" # old, does not work, fix it
+    ###scene_file = "tests/12_ai/test_entity_seen.jsonc"            # old, does not work, fix it
     #scene_file = "tests/12_ai/move_between_2_points.jsonc"
     #scene_file = "tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_template.jsonc"
     #scene_file = "tests/12_ai/guard_fight_back_if_ambushed_and_attack_on_sight_or_hear_using_events.jsonc"
@@ -50,9 +50,9 @@ if __name__ == "__main__":
     #scene_file = "tests/12_ai/guard_and_fight_back_if_ambushed.jsonc"
     #scene_file = "tests/12_ai/guard_and_attack_on_sight.jsonc"
 
-    #scene_file = "tests/12_ai/simple/test_damaged.jsonc"
-    #scene_file = "tests/12_ai/simple/test_bb_value.jsonc"
-    #scene_file = "tests/12_ai/simple/do_parallel.jsonc"
+    #scene_file = "tests/12_ai/simple/test_damaged.jsonc"        # SOME PROBLEM
+    #scene_file = "tests/12_ai/simple/test_bb_value.jsonc"      # SOME PROBLEM
+    #scene_file = "tests/12_ai/simple/do_parallel.jsonc"        # SOME PROBLEM
     #scene_file = "tests/12_ai/simple/move_between_checkpoints.jsonc"
     #scene_file = "tests/12_ai/simple/move_to_vect.jsonc"
     #scene_file = "tests/12_ai/simple/move_to_target.jsonc"
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     #scene_file = "tests/09_projectiles/test_projectile_score_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_generation.jsonc"
     #scene_file = "tests/09_projectiles/test_projectile_damage.jsonc"
-    scene_file = "tests/09_projectiles/test_projectile_collision"
+    #scene_file = "tests/09_projectiles/test_projectile_collision"
 
     # 08_arm_ammo    
     #scene_file = "tests/08_arm_ammo/test_arm_ammo_02"

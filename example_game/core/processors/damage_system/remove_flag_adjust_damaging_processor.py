@@ -27,8 +27,8 @@ class RemoveFlagAdjustDamagingProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf',
-        'damage_system:PerformAdjustDamagingProcessor'
+    PREREQ = [
+        #'allOf','damage_system:PerformAdjustDamagingProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

@@ -28,8 +28,8 @@ class RemoveFlagDoAttackProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf',
-        'command_system.perform_command_processor:PerformCommandProcessor'
+    PREREQ = [
+        #'allOf', 'command_system.perform_command_processor:PerformCommandProcessor'
     ]
 
     def __init__(self, *args, **kwargs):

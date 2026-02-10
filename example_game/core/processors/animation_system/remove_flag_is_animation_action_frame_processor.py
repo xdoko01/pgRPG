@@ -28,8 +28,8 @@ class RemoveFlagIsAnimationActionFrameProcessor(Processor):
     '''
 
     # Processors that need to be planned before this processor in order for it to work.
-    PREREQ = ['allOf',
-                'animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor'
+    PREREQ = [
+        #'allOf', 'animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor'
     ]
 
     def __init__(self, *args, **kwargs):
