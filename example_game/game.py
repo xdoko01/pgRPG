@@ -5,12 +5,12 @@ python example_game/game.py -h
 python example_game/game.py
 python example_game/game.py -s MAIN_MENU
 """
-# Bring pyrpg package onto the path
+# Bring pgrpg package onto the path
 import sys, os
 from pathlib import Path
 
-pyrpg_path = "../pyrpg"
-sys.path.append(os.path.abspath(Path(pyrpg_path)))
+pgrpg_path = "../pgrpg"
+sys.path.append(os.path.abspath(Path(pgrpg_path)))
 
 def main(config_file: str, scene_file: str=None, state: str=None) -> None:
     """Run the game using the CLI arguments."""
@@ -18,14 +18,14 @@ def main(config_file: str, scene_file: str=None, state: str=None) -> None:
     print(f"Starting with the following arguments: {scene_file=}, {config_file=}, {state=}.")
 
     # Load the framework using all the configs
-    import pyrpg
-    pyrpg.init(config_file=config_file, scene_file=scene_file, state=state)
+    import pgrpg
+    pgrpg.init(config_file=config_file, scene_file=scene_file, state=state)
 
 if __name__ == "__main__":
 
     scene_file = None # Specify the scene file if you want to start into specific scene
-    config_file = "example_game/config.jsonc" # Start with Game config overriding default pyRPG config
-    state = 'MAIN_MENU' # Start to pyRPG main menu. Set to None if you want to start into Console.
+    config_file = "example_game/config.jsonc" # Start with Game config overriding default pgrpg config
+    state = 'MAIN_MENU' # Start to pgrpg main menu. Set to None if you want to start into Console.
 
     # Empty
     #scene_file = "empty.jsonc"
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     ###scene_file = "games/kill_all/kill_all_level01.jsonc" # MUST BE REDONE BTREES
     #scene_file = "games/sokoban/sokoban_level02.jsonc"
     #scene_file = "games/sokoban/sokoban_level01.jsonc"    
-    #scene_file = "games/sokoban/sokoban.jsonc"                
+    scene_file = "games/sokoban/sokoban.jsonc"                
     #scene_file = "games/collect_coins/collect_coins.jsonc"
 
     # 12_ai

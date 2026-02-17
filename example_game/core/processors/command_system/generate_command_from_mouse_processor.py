@@ -4,7 +4,7 @@ import logging
 import pygame   # for pygame.time, pygame.font and pygame.Color
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_show_inventory import FlagShowInventory
@@ -12,7 +12,7 @@ from core.components.has_inventory import HasInventory
 from core.components.renderable_model import RenderableModel
 
 
-from pyrpg.core.config import FONTS, FRAMES # for GAME_DEBUG_FONT 
+from pgrpg.core.config import FONTS, FRAMES # for GAME_DEBUG_FONT 
 
 # Logger init
 logger = logging.getLogger(__name__)
@@ -122,7 +122,7 @@ class GenerateCommandFromMouseProcessor(Processor):
 
                     # If mouse button released out of inventory slots areas - drop the item out of the inventory
                     else:
-                        from pyrpg.core.commands import Command
+                        from pgrpg.core.commands import Command
 
                         # add DROP_ITEM command to the command queue
                         self.add_command_fnc(cmd=Command('drop_item', {'item_entity_id': flag_show_inventory.drag_item_id}, ent), orig_entity_id=ent)

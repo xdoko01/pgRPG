@@ -3,7 +3,7 @@ __all__ = ['PerformTeleportationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position
@@ -13,7 +13,7 @@ from core.components.flag_has_teleported import FlagHasTeleported
 from core.components.flag_is_about_to_be_teleported_by import FlagIsAboutToBeTeleportedBy
 
 # For creation of events
-from pyrpg.core.events.event import Event 
+from pgrpg.core.events.event import Event 
 
 # Logger init
 logger = logging.getLogger(__name__)

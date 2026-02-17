@@ -3,7 +3,7 @@ __all__ = ['ListComponentsProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Logger init
 logger = logging.getLogger(__name__)

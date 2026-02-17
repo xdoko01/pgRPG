@@ -4,8 +4,8 @@ import logging
 import json
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
-from pyrpg.core.commands import Command
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.commands import Command
 
 # Logger init
 logger = logging.getLogger(__name__)

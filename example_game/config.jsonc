@@ -11,7 +11,7 @@
 
 	"FILEPATHS": {
 		"GAME_PATH": "example_game", // mandatory to fill
-		"PYRPG_PATH": "pyrpg", // mandatory to fill
+		"pgrpg_PATH": "pgrpg", // mandatory to fill
 	
 		"FONT_PATH" : "resources/fonts/",
 		"FRAME_PATH" : "resources/frames/",
@@ -152,7 +152,7 @@
 			"in_game_console": {
 				"class": "logging.StreamHandler",
 				"formatter": "console_short",
-				"stream": "ext://pyrpg.core.config.console"
+				"stream": "ext://pgrpg.core.config.console"
 			},
 			"file_handler_comp": {
 				"class": "logging.FileHandler",
@@ -248,7 +248,7 @@
 			},
 
 			// Save all the logs from engine
-			"pyrpg.core.config" : {
+			"pgrpg.core.config" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				"handlers" : ["file_handler_config"], // uncomment to log to the file
 				//"handlers" : ["null"], // do not log to file for speed
@@ -258,7 +258,7 @@
 			},
 			
 			// Save all the logs from engine
-			"pyrpg.core.engine" : {
+			"pgrpg.core.engine" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				//"handlers" : ["file_handler_engine"], // uncomment to log to the file
 				"handlers" : ["null"], // do not log to file for speed
@@ -267,7 +267,7 @@
 			},
 
 			// Save all the logs from behavior tree classes to the file
-			"pyrpg.core.commands.generators.btree" : {
+			"pgrpg.core.commands.generators.btree" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				//"handlers" : ["file_handler_btrees"], // uncomment to log to the file
 				"handlers" : ["null"], // do not log to file for speed
@@ -276,7 +276,7 @@
 			},
 	
 			// Save all the logs from behavior list classes to the file
-			"pyrpg.core.commands.generators.blist" : {
+			"pgrpg.core.commands.generators.blist" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				//"handlers" : ["file_handler_blists"], # uncomment to log to the file
 				"handlers" : ["null"], // do not log to file for speed
@@ -285,7 +285,7 @@
 			},
 	
 			// Save all the logs from manager classes to the file
-			"pyrpg.core.managers" : {
+			"pgrpg.core.managers" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				"handlers" : ["file_handler_mng"], // uncomment to log all the managers
 				//"handlers" : ["null"], // do not log to file for speed
@@ -294,7 +294,7 @@
 			},
 
 			// Save all the logs from ECS classes to the file
-			"pyrpg.core.ecs" : {
+			"pgrpg.core.ecs" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				"handlers" : ["file_handler_ecs"], // uncomment to log all the managers
 				//"handlers" : ["null"], // do not log to file for speed
@@ -303,7 +303,7 @@
 			},
 
 			// Save all the logs from menu classes to the file
-			"pyrpg.core.menus" : {
+			"pgrpg.core.menus" : {
 				"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				"handlers" : ["file_handler_menu"], // uncomment to log all the managers
 				//"handlers" : ["null"], // do not log to file for speed
@@ -321,7 +321,7 @@
 			},
 	
 			// Save all the logs other from processor classes to console
-			"pyrpg" : {
+			"pgrpg" : {
 				"level" : "INFO", // Passes INFO and upper logs only, i.e. INFO, WARNING, ERROR, CRITICAL
 				//"level" : "DEBUG", // Passes DEBUG and upper logs only, i.e. DEBUG, INFO, WARNING, ERROR, CRITICAL
 				"handlers" : ["in_game_console", "console"],
@@ -339,7 +339,7 @@
 
 	"CONSOLE" : {
 		"global" : {
-	//		"cli_module" : "pyrpg.core.engine",
+	//		"cli_module" : "pgrpg.core.engine",
 			"animation": ["TOP", 2000],
 			"layout" : "INPUT_BOTTOM",
 			"padding" : [0,0,0,0],
@@ -347,12 +347,12 @@
 			"bck_image" : "quake.png",
 			"bck_image_resize" : true,
 			"bck_alpha" : 150,
-			"welcome_msg" : "Welcome to pyRPG Console\n***********************\nType 'list' for available commands and scripts.\nType 'command -h' for help.\nType '!python_command' for execution of python command\nType 'script script_name' for execution of console script",
+			"welcome_msg" : "Welcome to pgrpg Console\n***********************\nType 'list' for available commands and scripts.\nType 'command -h' for help.\nType '!python_command' for execution of python command\nType 'script script_name' for execution of console script",
 			"welcome_msg_color" : [0,255,0]
 			},
 		"header" : {
-			"text" : "pyRPG Console v0.1 | {} | ",
-			"text_params" : [["pyrpg.core.config.console", "cons_get_info_header"]],
+			"text" : "pgrpg Console v0.1 | {} | ",
+			"text_params" : [["pgrpg.core.config.console", "cons_get_info_header"]],
 			"layout" : ["SCROLL_LEFT_CONTINUOUS", 0, 0.5],
 			"padding" :[10,10,10,10],
 			"font_file" : "IBMPlexMono-Regular.ttf",
@@ -391,7 +391,7 @@
 			},
 		"footer" : {
 			"text" : "{}",
-			"text_params" : [["pyrpg.core.config.console", "cons_get_info_footer"]],
+			"text_params" : [["pgrpg.core.config.console", "cons_get_info_footer"]],
 			"layout" : ["TEXT_RIGHT"],
 			"padding" : [10,10,10,10],
 			"font_file" : "IBMPlexMono-Regular.ttf",

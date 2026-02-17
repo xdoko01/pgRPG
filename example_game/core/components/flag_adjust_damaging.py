@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_adjust_damaging -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagAdjustDamaging(Component):
     ''' Entity should adjust its damaging component by given inputs

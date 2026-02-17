@@ -6,7 +6,7 @@ __all__ = [
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position
@@ -17,7 +17,7 @@ from core.components.flag_do_move import FlagDoMove
 from ..functions import filter_only_within_distance_from_ent
 from ..functions import filter_only_visible_on_camera
 
-from pyrpg.core.events.event import Event
+from pgrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)

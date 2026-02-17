@@ -4,8 +4,8 @@ GUIButton component implemented as a GUIButton class.
 Use 'python -m example_game.core.components.gui_button -v' to run
 module tests.
 '''
-from pyrpg.core.ecs import Component
-from pyrpg.core.commands import cmd_factory
+from pgrpg.core.ecs import Component
+from pgrpg.core.commands import cmd_factory
 
 class Pressable(Component):
     ''' Game plays sound effect upon collision with other entity.

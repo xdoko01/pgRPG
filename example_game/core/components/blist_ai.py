@@ -9,10 +9,10 @@ import logging
 # Create logger
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
-from pyrpg.core.commands import cmd_factory
-from pyrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError
+from pgrpg.core.commands import cmd_factory
+from pgrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError
 
 
 class BListAI(Component):

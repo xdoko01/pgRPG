@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.is_destroyed -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 from pygame.time import get_ticks
 
 class IsDestroyed(Component):

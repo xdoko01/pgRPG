@@ -5,9 +5,9 @@ Use 'python -m core.components.has_target_position -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
-from pyrpg.core.config import GAME # for TILE_RES # in order to specify the position in pixel coords
+from pgrpg.core.config import GAME # for TILE_RES # in order to specify the position in pixel coords
 
 from collections import namedtuple
 

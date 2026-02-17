@@ -9,9 +9,9 @@ import logging
 # Create logger
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.config import KEYS # for K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
-from pyrpg.core.ecs import Component
-from pyrpg.core.commands import cmd_factory
+from pgrpg.core.config import KEYS # for K_PROFILE # Dictionary holding all keybord schemas for manipulation of characters
+from pgrpg.core.ecs import Component
+from pgrpg.core.commands import cmd_factory
 
 class Controllable(Component):
     ''' Entity can be controlled by the keyboard commands.

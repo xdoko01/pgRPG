@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_has_picked -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagHasPicked(Component):
     ''' Entity (picker) has picked some other entity.

@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_adjust_movement -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagAdjustMovement(Component):
     ''' Entity should adjust its movement component by given inputs

@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in EXIT_GAME_DIALOG state 
 
-For tests call `python -m pyrpg.core.states.exit_date_dialog -v`
+For tests call `python -m pgrpg.core.states.exit_date_dialog -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -20,8 +20,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -72,8 +72,8 @@ from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
 from pygame_gui.windows import UIConfirmationDialog
 from pygame import Rect
 
-import pyrpg.core.config.gui as gui_manager
-from pyrpg.core.config import GUI
+import pgrpg.core.config.gui as gui_manager
+from pgrpg.core.config import GUI
 
 _exit_dialog: UIConfirmationDialog = None
 

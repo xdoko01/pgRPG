@@ -4,9 +4,9 @@ Can be run from the console by putting following command
 XXXX
 '''
 
-from pyrpg import main
+from pgrpg import main
 from core.components.brain_ai import BrainAI
-from pyrpg.functions.str_utils import translate_str
+from pgrpg.functions.str_utils import translate_str
 
 
 def initialize(register, module_name):

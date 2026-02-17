@@ -6,12 +6,12 @@ module tests.
 '''
 
 import pygame
-import pyrpg.core.models as model # For cached animated model in RenderableModel entity
+import pgrpg.core.models as model # For cached animated model in RenderableModel entity
 
-from pyrpg.core.config import GAME # For TILE_RES
-from pyrpg.core.config import FILEPATHS # MODEL_PATH # For MODEL_PATH
+from pgrpg.core.config import GAME # For TILE_RES
+from pgrpg.core.config import FILEPATHS # MODEL_PATH # For MODEL_PATH
 from pathlib import Path
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class RenderableModel(Component):
     ''' Entity is displayable as animated model on the game screen.

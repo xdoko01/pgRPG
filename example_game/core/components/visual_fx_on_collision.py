@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.visual_fx_on_collision -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class VisualFXOnCollision(Component):
     ''' Entity displayes selected effect upon collision with other entity.

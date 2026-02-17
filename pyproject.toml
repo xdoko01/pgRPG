@@ -1,0 +1,31 @@
+[project]
+name = "pgrpg"
+version = "0.1.0"
+description = "Pygame-based ECS game engine."
+authors = [
+    { name = "xdoko01" }
+]
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+dependencies = [
+    "pygame-ce",
+    "pygame-gui>=0.6.4",
+    "pytmx",
+    "pgbitmapfont>=0.1.5",
+    "pgconsole>=0.1.1",
+    "psutil",
+    "pyyaml"
+]
+
+[tool.setuptools.packages.find]
+include = ["pgrpg*"]
+exclude = ["experiments*", "example_game*"]
+
+[project.urls]
+Homepage = "https://github.com/xdoko01/pgrpg"
+Issues = "https://github.com/xdoko01/pgrpg/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

@@ -12,3 +12,7 @@ experiments/
 
 # Ignore virtual environment
 venv/
+
+# Ignore distro
+**/dist
+**/pgrpg.egg-info

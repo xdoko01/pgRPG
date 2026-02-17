@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_is_about_to_be_damaged_by -v' t
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagIsAboutToBeDamagedBy(Component):
     ''' Entity (potential damagee) is about to be damaged by damaging item, 

@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in START_PROGRAM state 
 
-For tests call `python -m pyrpg.core.states.start_program -v`
+For tests call `python -m pgrpg.core.states.start_program -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,8 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False

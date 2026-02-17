@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagWasDamagedByProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_was_damaged_by import FlagWasDamagedBy

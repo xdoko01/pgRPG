@@ -8,8 +8,8 @@ module tests.
 import logging
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.ecs import Component
-from pyrpg.functions.dict_utils import add_dict_value, del_dict_value, get_all_dict_values
+from pgrpg.core.ecs import Component
+from pgrpg.functions.dict_utils import add_dict_value, del_dict_value, get_all_dict_values
 
 class HasInventory(Component):
     ''' Entity has inventory - can pick items and add it to the inventory.

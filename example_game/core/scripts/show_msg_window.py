@@ -5,13 +5,13 @@ py game.main.game.script_manager._scripts['show_msg_window'](None, html_text='He
 
 '''
 import pygame
-import pyrpg.core.main as main
+import pgrpg.core.main as main
 from pygame_gui.windows import UIMessageWindow
 from pygame_gui import UI_WINDOW_CLOSE
 from pygame import Rect
-from pyrpg.core.config import DISPLAY # for MAX_FPS
-from pyrpg.core.config import GUI
-from pyrpg.functions.str_utils import translate_str
+from pgrpg.core.config import DISPLAY # for MAX_FPS
+from pgrpg.core.config import GUI
+from pgrpg.functions.str_utils import translate_str
 
 
 def initialize(register, module_name):

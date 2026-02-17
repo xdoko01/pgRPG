@@ -3,9 +3,9 @@ __all__ = ['PerformRenderMessagesProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
-from pyrpg.core.config import FONTS # for GAME_MSG_FONT 
+from pgrpg.core.config import FONTS # for GAME_MSG_FONT 
 
 # Logger init
 logger = logging.getLogger(__name__)

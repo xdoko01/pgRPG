@@ -1,5 +1,5 @@
 
-from pyrpg.core.ecs import World, Component, Processor, SkipProcessorExecution
+from pgrpg.core.ecs import World, Component, Processor, SkipProcessorExecution
 
 # Dummy components
 class Position(Component):

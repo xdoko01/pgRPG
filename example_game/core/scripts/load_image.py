@@ -4,8 +4,8 @@ Can be run from the console by putting following command
 XXXX
 '''
 import pygame
-import pyrpg.core.main as main
-from pyrpg.core.config import FILEPATHS  # for IMAGE_PATH
+import pgrpg.core.main as main
+from pgrpg.core.config import FILEPATHS  # for IMAGE_PATH
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''

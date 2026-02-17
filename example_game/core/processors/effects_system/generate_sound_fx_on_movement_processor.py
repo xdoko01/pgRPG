@@ -3,7 +3,7 @@ __all__ = ['GenerateSoundFXOnMovementProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.sound_fx_on_movement import SoundFXOnMovement

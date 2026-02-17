@@ -5,16 +5,16 @@ __all__ = [
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position
 from core.components.collidable import Collidable
 from core.components.movable import Movable
 from core.components.flag_has_collided import FlagHasCollided
-from pyrpg.functions import sign
+from pgrpg.functions import sign
 
-from pyrpg.core.config import GAME # for TILE_RES_PX
+from pgrpg.core.config import GAME # for TILE_RES_PX
 
 # Logger init
 logger = logging.getLogger(__name__)

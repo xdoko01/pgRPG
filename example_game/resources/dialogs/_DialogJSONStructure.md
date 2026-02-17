@@ -98,7 +98,7 @@
 
 ## Key `/id`
 
-Key `id` describes the internal identificator of the dialog. It should be the same as the filename of the JSON (if the `id` of the dialog is example, it should be stored in `example.json` document). When loaded, dialog will be stored and referenced by the `id` in the pyRPG engine.
+Key `id` describes the internal identificator of the dialog. It should be the same as the filename of the JSON (if the `id` of the dialog is example, it should be stored in `example.json` document). When loaded, dialog will be stored and referenced by the `id` in the pgrpg engine.
 
 ### Examples
 

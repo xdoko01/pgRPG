@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in LOAD_SCENE_MENU state 
 
-For tests call `python -m pyrpg.core.states.load_scene_menu -v`
+For tests call `python -m pgrpg.core.states.load_scene_menu -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,8 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -65,10 +65,10 @@ def clear() -> None:
     logger.info(f'State module {sys.modules[__name__]} cleared.')
 
 ### PUT ALL YOUR OPTIONAL IMPORTS HERE
-from pyrpg.core.config import FILEPATHS #SCENE_PATH # for SCENE_PATH
-from pyrpg.core.config import GUI # for the dimensions of the window
-from pyrpg.core.config import gui as gui_manager
-from pyrpg.core import engine
+from pgrpg.core.config import FILEPATHS #SCENE_PATH # for SCENE_PATH
+from pgrpg.core.config import GUI # for the dimensions of the window
+from pgrpg.core.config import gui as gui_manager
+from pgrpg.core import engine
 
 from pygame import Rect
 from pygame_gui import UI_FILE_DIALOG_PATH_PICKED, UI_WINDOW_CLOSE

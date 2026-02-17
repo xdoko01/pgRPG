@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_was_disarmed_as_weapon_by -v' t
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagWasDisarmedAsAmmoBy(Component):
     ''' Weapon entity was disarmed as ammo by some other entity.

@@ -3,7 +3,7 @@ __all__ = ['PerformFactoryGenerationProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_create_from_factory import FlagCreateFromFactory

@@ -3,7 +3,7 @@ __all__ = ['PerformSetWeaponIntoUseProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.weapon_in_use import WeaponInUse
@@ -14,7 +14,7 @@ from core.components.flag_has_disarmed_weapon import FlagHasDisarmedWeapon
 from core.components.flag_has_disarmed_ammo import FlagHasDisarmedAmmo
 
 # For creation of events
-from pyrpg.core.events.event import Event
+from pgrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)

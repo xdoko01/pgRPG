@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.visual_fx_on_creation -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class VisualFXOnCreation(Component):
     ''' Entity displays selected effect upon creatiom from factory.

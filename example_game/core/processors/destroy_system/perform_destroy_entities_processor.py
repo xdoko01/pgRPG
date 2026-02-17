@@ -4,13 +4,13 @@ import logging
 from pygame.time import get_ticks
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.is_destroyed import IsDestroyed
 
 # For creation of events
-from pyrpg.core.events.event import Event 
+from pgrpg.core.events.event import Event 
 
 # Logger init
 logger = logging.getLogger(__name__)

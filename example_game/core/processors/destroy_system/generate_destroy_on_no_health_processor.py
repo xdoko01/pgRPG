@@ -3,7 +3,7 @@ __all__ = ['GenerateDestroyOnNoHealthProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_has_no_health import FlagHasNoHealth
@@ -18,7 +18,7 @@ from core.components.controllable import Controllable
 
 
 # For creation of events
-from pyrpg.core.events.event import Event 
+from pgrpg.core.events.event import Event 
 
 # Logger init
 logger = logging.getLogger(__name__)

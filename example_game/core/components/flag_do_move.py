@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_do_move -v' to run
 module tests.
 '''
 from dataclasses import dataclass
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagDoMove(Component):
     ''' Entity can move.

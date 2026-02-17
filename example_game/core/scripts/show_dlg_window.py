@@ -4,13 +4,13 @@ Can be run from the console by putting following command
 py game.main.game.script_manager._scripts['show_dlg_window'](None, dialog_id='dlg_scene_start', position=[0, 0])
 
 '''
-from pyrpg.functions.wait import wait # import wait function
-import pyrpg.utils.dialog as dialog # import display_dialog function
+from pgrpg.functions.wait import wait # import wait function
+import pgrpg.utils.dialog as dialog # import display_dialog function
 
 import pygame
-from pyrpg.core.config import KEYS # for K_SUBMIT
+from pgrpg.core.config import KEYS # for K_SUBMIT
 
-from pyrpg.core import main
+from pgrpg.core import main
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''

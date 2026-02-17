@@ -4,10 +4,10 @@ SoundFXOnMovement component implemented as a SoundFXOnMovement class.
 Use 'python -m example_game.core.components.sound_fx_on_movement -v' to run
 module tests.
 '''
-import pyrpg.core.sounds.sound as sound # For cached sounds
+import pgrpg.core.sounds.sound as sound # For cached sounds
 
-from pyrpg.core.ecs import Component
-from pyrpg.core.config import FILEPATHS, Path # SOUND_PATH, Path # for SOUND_PATH, Path
+from pgrpg.core.ecs import Component
+from pgrpg.core.config import FILEPATHS, Path # SOUND_PATH, Path # for SOUND_PATH, Path
 
 class SoundFXOnMovement(Component):
     ''' Game plays sound effect upon movement of the entity.

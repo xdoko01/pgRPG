@@ -42,7 +42,7 @@ def cons_cmd_list(game_ctx, params):
     else:
         
         import os
-        from pyrpg.core.config import MODULEPATHS, FILEPATHS
+        from pgrpg.core.config import MODULEPATHS, FILEPATHS
 
         print("Available Console Commands:")
         commands = [cmd[:-3] for cmd in os.listdir(f"{FILEPATHS['GAME_PATH']}/{MODULEPATHS['CONSOLE_COMMAND_MODULE_PATH'].replace('.', '/')}") if cmd[0:2] != '__' and cmd[-3:].lower() == '.py']

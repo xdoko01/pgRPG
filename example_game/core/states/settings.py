@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in SETTINGS state 
 
-For tests call `python -m pyrpg.core.states.settings -v`
+For tests call `python -m pgrpg.core.states.settings -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,8 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -39,7 +39,7 @@ def initialize(state: State, register_fnc) -> None:
     global _initialized
     _initialized = True # mark as initialized
 
-import pyrpg.core.main as main # for re-init after change of display configuration
+import pgrpg.core.main as main # for re-init after change of display configuration
 
 '''
 from pygame_gui.elements import UIWindow
@@ -55,7 +55,7 @@ _res_dropdown_label: UILabel = None
 from pygame_gui.elements import UICheckBox
 _check_box: UICheckBox = None
 
-from pyrpg.core.config import DISPLAY
+from pgrpg.core.config import DISPLAY
 
 ### DO NOT REMOVE - Mandatory init function
 def init(*args, **kwargs) -> None:
@@ -130,7 +130,7 @@ def clear() -> None:
 
 import pygame
 from pygame_gui import UI_DROP_DOWN_MENU_CHANGED, UI_CHECK_BOX_CHECKED, UI_CHECK_BOX_UNCHECKED
-from pyrpg.core.config import gui as gui_manager
+from pgrpg.core.config import gui as gui_manager
 
 def _show() -> None:
     '''Show the buttons when first time in MAIN_MENU state.

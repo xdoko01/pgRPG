@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in GAME state 
 
-For tests call `python -m pyrpg.core.states.game -v`
+For tests call `python -m pgrpg.core.states.game -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,7 +18,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-from pyrpg.core.config.states import State
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -65,8 +65,8 @@ def clear() -> None:
 
 ### PUT ALL YOUR OPTIONAL IMPORTS HERE
 import pygame
-from pyrpg.core import engine
-from pyrpg.core.config import KEYS # for K_CONSOLE_TOGGLE, K_SAVE_GAME, K_LOAD_GAME
+from pgrpg.core import engine
+from pgrpg.core.config import KEYS # for K_CONSOLE_TOGGLE, K_SAVE_GAME, K_LOAD_GAME
 
 # Global switch for the processors groups
 proc_group_id: str = 'default'

@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.gui_flag_was_pressed -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class GUIFlagWasPressed(Component):
     ''' Flag that the entity animation frame is marked as action frame

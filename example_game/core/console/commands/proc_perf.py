@@ -17,7 +17,7 @@
 '''
 
 instructions = """
-In the config, section "PYRPG",  "TIMED" must be set to true in order for this stats to work.
+In the config, section "pgrpg",  "TIMED" must be set to true in order for this stats to work.
 
 Examples of usage:
     "proc_perf"            ... show cumulative time spent in processors

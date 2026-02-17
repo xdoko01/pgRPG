@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in END_PROGRAM state 
 
-For tests call `python -m pyrpg.core.states.end_program -v`
+For tests call `python -m pgrpg.core.states.end_program -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,8 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -65,8 +65,8 @@ def clear() -> None:
     logger.info(f'State module {sys.modules[__name__]} cleared.')
 
 import pygame
-from pyrpg.core import engine
-from pyrpg.core.config import gui as gui_manager
+from pgrpg.core import engine
+from pgrpg.core.config import gui as gui_manager
 
 ### DO NOT REMOVE - Mandatory execution function called every cycle when engine in the State
 def run(key_events, key_pressed, dt) -> State:

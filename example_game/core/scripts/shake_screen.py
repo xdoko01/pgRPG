@@ -9,7 +9,7 @@ import core.processors as processors
 
 import pygame
 import random
-import pyrpg.core.main as main
+import pgrpg.core.main as main
 
 
 def initialize(register, module_name):

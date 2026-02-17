@@ -37,7 +37,7 @@ def initialize(register, module_name):
 
 ### DO NOT REMOVE - Mandatory imports
 from types import ModuleType # for type hint on importing the ecs_manager module
-from pyrpg.core.commands import CommandContext, CommandStatus
+from pgrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
 from core.components.brain_ai import BrainAI # To work with components in commands (remove search add ...)
@@ -62,8 +62,8 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
-        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pgrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pgrpg.core.commands import CommandContextMock
         >>> ctx_mock = CommandContextMock()
 
         Run tests:
@@ -105,8 +105,8 @@ def process(
 
         Prepare mocs:
         -------------
-        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
-        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pgrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pgrpg.core.commands import CommandContextMock
         >>> from core.components.brain_ai import BrainAIMock
 
         >>> ctx_mock = CommandContextMock()

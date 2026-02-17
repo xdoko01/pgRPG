@@ -3,7 +3,7 @@ __all__ = ['PerformArmWeaponProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.has_weapon import HasWeapon
@@ -15,7 +15,7 @@ from core.components.flag_is_about_to_disarm_weapon import FlagIsAboutToDisarmWe
 from core.components.flag_set_weapon_into_use import FlagSetWeaponIntoUse
 
 # For creation of events
-from pyrpg.core.events.event import Event
+from pgrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)

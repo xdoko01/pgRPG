@@ -4,7 +4,7 @@ import logging
 import pygame   # for pygame.time, pygame.font and pygame.Color
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position
@@ -26,9 +26,9 @@ from ..functions import filter_only_visible_on_camera # for filtering only entit
 from ..functions import get_arrow_points # for drawing of arrows
 from ..functions import get_view_points # for drawing of arrows
 
-from pyrpg.core.config import FONTS # for GAME_DEBUG_FONT 
-from pyrpg.core.config import FRAMES # for the debug frame
-from pyrpg.core.config import GAME # for TILE_RES_PX
+from pgrpg.core.config import FONTS # for GAME_DEBUG_FONT 
+from pgrpg.core.config import FRAMES # for the debug frame
+from pgrpg.core.config import GAME # for TILE_RES_PX
 
 from pprint import pformat # Nice formating of dictionaries for debug output
 

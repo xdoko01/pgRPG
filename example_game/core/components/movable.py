@@ -6,7 +6,7 @@ module tests.
 '''
 
 import pygame
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class Movable(Component):
     ''' Entity can move.

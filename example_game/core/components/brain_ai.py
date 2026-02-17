@@ -11,13 +11,13 @@ import logging
 # Create logger
 logger = logging.getLogger(__name__)
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
-from pyrpg.core.commands import cmd_factory, CommandGeneratorMock
-from pyrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
-from pyrpg.core.config import FILEPATHS # BTREE_PATH
+from pgrpg.core.commands import cmd_factory, CommandGeneratorMock
+from pgrpg.core.commands.generators.btree.btree import BTree, InvalidBehaviorTreeError
+from pgrpg.core.config import FILEPATHS # BTREE_PATH
 
-from pyrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError
+from pgrpg.core.commands.generators.blist.blist import BList, InvalidBehaviorListError
 
 
 class BrainAI(Component):

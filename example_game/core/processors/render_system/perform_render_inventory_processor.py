@@ -4,7 +4,7 @@ import logging
 import pygame   # for pygame.time, pygame.font and pygame.Color
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.camera import Camera
@@ -14,7 +14,7 @@ from core.components.flag_show_inventory import FlagShowInventory
 from core.components.weapon import Weapon
 from core.components.ammo_pack import AmmoPack
 
-from pyrpg.core.config import FONTS, FRAMES # for GAME_DEBUG_FONT 
+from pgrpg.core.config import FONTS, FRAMES # for GAME_DEBUG_FONT 
 
 # Logger init
 logger = logging.getLogger(__name__)

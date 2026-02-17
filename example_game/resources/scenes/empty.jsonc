@@ -7,7 +7,7 @@
 	"title" : "Empty Scene",
 	"description" : "Empty Scene",
 	"objective" : "Empty Scene",
-	"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pyRPG.png", "bar": true}], // example how progress bar could be configured
+	"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pgrpg.png", "bar": true}], // example how progress bar could be configured
 
 	// What scenes need to be loaded before this one
 	"prereqs" : [],
@@ -25,7 +25,7 @@
 	// What processors to load
 	"processors" : [
 		// Default Processor Group
-		["render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "splash_pyRPG.png", "resize": true}],
+		["render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "splash_pgrpg.png", "resize": true}],
 		
 		// Inventory Processor Group 
 		["inventory", "render_system.perform_blit_picture_processor:PerformBlitPictureProcessor", {"filepath": "red_gradient_capital_font.png", "resize": true}]

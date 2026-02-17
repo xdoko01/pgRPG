@@ -3,14 +3,14 @@ __all__ = ['CalculateScoreProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_has_scored import FlagHasScored
 from core.components.has_score import HasScore
 
 # For creation of events
-from pyrpg.core.events.event import Event
+from pgrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)

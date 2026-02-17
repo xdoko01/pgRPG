@@ -44,7 +44,7 @@ The `CanSee` component when assigned on an entity tells the game that entity is 
 
 #### Notes
 The sight area is also part of the `Debug` component - see below.
-![CanSee](pyRPG%20-%20SensorSystem%20-%20CanSee%20comp.png "CanSee component parameters displayed in debug mode.").
+![CanSee](pgrpg%20-%20SensorSystem%20-%20CanSee%20comp.png "CanSee component parameters displayed in debug mode.").
 
 ### The `CanHear` Component
 The `CanHear` component when assigned on an entity tells the game that entity is capable of hearing other entities with `Position` and `Movable` components within the `CanHear` component parameters.

@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_is_about_to_arm_weapon -v' to r
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagIsAboutToArmWeapon(Component):
     ''' Entity (fighter) is about to arm some other picked entity (weapon), if capable

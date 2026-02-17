@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.weapon_in_use -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 from .weapon import Weapon
 
 class WeaponInUse(Component):

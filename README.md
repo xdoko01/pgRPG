@@ -1,17 +1,17 @@
-# pyRPG - ECS pygame Game Engine
-![pyRPG Screenshot](docs/empty_01.png)
+# pgrpg - ECS pygame Game Engine
+![pgrpg Screenshot](docs/empty_01.png)
 
-pyRPG is a Python-based 2D RPG game engine built around an Entity–Component–System (ECS) architecture with strong emphasis on data-driven design, behavior trees, and event-driven gameplay. Game logic, AI behavior, scenes, processors, and even UI flows are primarily defined in JSON/YAML, enabling rapid iteration without touching engine code.
+pgrpg is a Pygame-based 2D RPG game engine built around an Entity–Component–System (ECS) architecture with strong emphasis on data-driven design, behavior trees, and event-driven gameplay. Game logic, AI behavior, scenes, processors, and even UI flows are primarily defined in JSON/YAML, enabling rapid iteration without touching engine code.
 
 The engine is designed for experimentation with RPG mechanics, AI orchestration, and systemic gameplay rather than as a monolithic framework.
 
-![pyRPG Screenshot](docs/test_sensors_01.png)
+![pgrpg Screenshot](docs/test_sensors_01.png)
 
 Currently, the documentation is poor. I would recommend to everyone to go through the number of prepared scenes, experiment, go through the json with scene definitions. **Learn by doing!** There is a lot of comments everywhere to help you out!
 
 All of this is a result of me experimenting in my free time with Python and ECS paradigm. I was trying to find out what is possible to achieve rather than having clear goal in my mind. Many times the program can be written in much more optimized way. However, I prefered clearance and readability rather than performace. Hope that helps you explore the code easily!
 
-![pyRPG Screenshot](docs/sokoban_02.png)
+![pgrpg Screenshot](docs/sokoban_02.png)
 
 ## Key Features
 
@@ -222,7 +222,7 @@ All of this is a result of me experimenting in my free time with Python and ECS 
         - [x] Show picture of item while dragging centered on the cursor
 
   - [ ] many custom ProgressBars available and can be sellected in the scene file by configuration - for example
-  	`"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pyRPG.png", "bar": true}], // example how progress bar could be configured`
+  	`"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pgrpg.png", "bar": true}], // example how progress bar could be configured`
 
   - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
@@ -240,7 +240,7 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   - [ ] Behavior Tree and Behavior list - implementation of restart function - tree/list starts again from scratch. Useful for restart of the whole tree if some event comes.
   - [ ] Make scripts runnable from the console
   - [x] Rename quests to scenes. Scene is more common name for what the engine is defining in the json files.
-  - [ ] Every game/test using scenes should be defined outside of pyRPG folders and only import pyRPG and use its parts. No direct changes in pyRPG folders and files.
+  - [ ] Every game/test using scenes should be defined outside of pgrpg folders and only import pgrpg and use its parts. No direct changes in pgrpg folders and files.
   - [ ] Make scripts more nice - now they are using mainissing logging, missing description. Missing concept when to use commands and when to use scripts, make them work from console...
   - [ ] finish tests and json definitions for new commands
 
@@ -323,7 +323,7 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   - [ ] pygame.Vector2 to be used everywhere where possible
   - [ ] Try to implement `move_to` command as a `btree` rather then encapsulate all logic and path points into the command itself. Then compare those 2 approaches. 
   - [ ] Write more mocs to components and managers
-  - [ ] Consolidate the packages so instead of the `from pyrpg.core.ecs.components.new.position import Position, PositionMock` we can import as `from pyrpg.core.ecs.components import Position, PositionMock`
+  - [ ] Consolidate the packages so instead of the `from pgrpg.core.ecs.components.new.position import Position, PositionMock` we can import as `from pgrpg.core.ecs.components import Position, PositionMock`
   - [ ] In case of error, load some mock - test map instead of real map, test sound instead of real sound, test model instead of real model, test AI instead of real AI
   - [ ] Change of map rendering - do not always generate all the tiles from scretch but - re-use the pane and only draw the tiles that are new + re-draw the animated tiles if needed.
   - [ ] How to solve the problem when AI follows some path and is attacked? The easier way is probably to reset the BT as a part of event handler, not sure.
@@ -379,6 +379,9 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 
 ## Dev Log - some years missing
 
+### 2026-02-17 PyRPG renamed to PgRPG to be able to upload on PIP 
+  - PyRPG name was already taken, hence all references to pyRPG were substituted to PgRPG
+
 ### 2026-02-06 Possibility to start into selected State
   - It is now possible to start into specific scene (`--file` parameter) or into specific `State` (`--state` parameter, for example into main menu), or start into console if no parameter is present. Console will load the `default.scr` script full of commands that you want to use to start the game (resolution, scene file, more ...).
 
@@ -390,7 +393,7 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   - To make the definition of handlers more readable, it is now possible to include handlers deinition also into the component `params` dictionary. It is good to have event handlers defined on the same place as `BrainAI` definition so that the behavior tree and event handlers that are modifying the blackboard are in the same place in scene specification.
 
 ### 2024-06-25 New get_coll_value function to search values in the collection
-  - The function is located in `pyrpg.functions.dict_utils` package and is capable of returning values from collections as an generator.
+  - The function is located in `pgrpg.functions.dict_utils` package and is capable of returning values from collections as an generator.
   - It was developed to facilitate getting and loading handlers from different places in the scene definition (used in `engine` module).
 
 ### 2024-06-21 New test_damaged and test_can_see commands inplemented
@@ -429,8 +432,8 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 ### 2023-01-12 Initial implementation for usage of behavioral trees for AI logic
   - New component `BTree` created - analogous to `Brain` component
   - New processor `generate_command_from_btree_processor` created - analogous to `generate_command_from_brain_processor`
-  - New core package `pyrpg.core.btrees` created. Contains classes for individual btree nodes and functions
-  - Behavior tree in pyRPG implementation contains in the leaf behavior nodes actions and conditions represented by command name and command parameters as a strings/dict. The logic which behavior leaf node is selected is guided by the other parent nodes in the btree. The command is then passed to the command manager which changes it to function call and returns the result back to the behavior tree.
+  - New core package `pgrpg.core.btrees` created. Contains classes for individual btree nodes and functions
+  - Behavior tree in pgrpg implementation contains in the leaf behavior nodes actions and conditions represented by command name and command parameters as a strings/dict. The logic which behavior leaf node is selected is guided by the other parent nodes in the btree. The command is then passed to the command manager which changes it to function call and returns the result back to the behavior tree.
 
 ### 2022-11-20 Possibility to copy components from one entity to other entity within the definition in the scene file - EXPERIMENTAL
   - Similarly to creating the entity from template it is now possible to create new entity from existing entity by copying its component from existing entity.
@@ -512,17 +515,17 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   Probably there was a bug in `PerformDestroyEntitiesProcessor` - particularly in the way the elapsed time was calculated. After fixing of the condition it seems that the deletion from the ECS game world is done in the cycle when IsDestroyed flag is assigned.
 
 ### 2022-03-04 Adding support for YAML scene files definition
-  Newly, pyRPG supports loading scene in YAML file format. It can be more readable for some people than json.
+  Newly, pgrpg supports loading scene in YAML file format. It can be more readable for some people than json.
 
 ### LOGGING implemented
-   - Configuration of the logging is happening in pyrpg. The configuration itself is part of the `config.py`. 
+   - Configuration of the logging is happening in pgrpg. The configuration itself is part of the `config.py`. 
    - There are 3 handlers for logging 
      - `console` - for logging to the standard output / text console
-     - `in_game_console` - for logging to the graphical console that is available directly from the game. In order to enable this logic, there needs to be write function implemented in some module. For now the module is `pyrpg.core.config.console` but might be different one in the future as this is not elegant enough.
+     - `in_game_console` - for logging to the graphical console that is available directly from the game. In order to enable this logic, there needs to be write function implemented in some module. For now the module is `pgrpg.core.config.console` but might be different one in the future as this is not elegant enough.
      - `file_handler_proc` - for logging of processor logs into the file. This file can be filtered by `grep` tool if looking for particular cycle/entity
    - The `root` logger is mapped to text console, but just few logs should be there as other logs are filtered out and sent to other handlers
-   - The `pyrpg` logger catches all logs that are not processed by the child loggers (child entities) and prints them to the game console
-   - The `pyrpg.core.ecs.processors` logger prints logs from processors to the file where those can be easily filtered
+   - The `pgrpg` logger catches all logs that are not processed by the child loggers (child entities) and prints them to the game console
+   - The `pgrpg.core.ecs.processors` logger prints logs from processors to the file where those can be easily filtered
 
 ### JSONs that are describing the game are now supporting C-style comments
   - Previously, JSON file was not supporting any comments. As defined by JSON standard, everything in JSON is data.
@@ -627,24 +630,24 @@ All of this is a result of me experimenting in my free time with Python and ECS 
     - the other processor that handles destroyed entities handles it `HandleDestroyedEntitiesProcessors`
 
 ### Component classes are using engine for translation of alias to id - get rid of those back referencing
-  - at the moment, during initiation `import pyrpg.core.engine` is importing also `pyrpg.components` which is importing all components, even those that are again importing `pyrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
-  - WHY? to translate entity alias to entity id. Entity alias is stored in `engine.alias_to_entity` dictionary. This can be omitted by implementing translation from entity alias to entity id in `create_component` method that is part of `pyrpg.core.ecs.components` package init code.
+  - at the moment, during initiation `import pgrpg.core.engine` is importing also `pgrpg.components` which is importing all components, even those that are again importing `pgrpg.core.engine`. This is probably why this is cyclic import and I would like to get rid of this in order to keep the loose coupling.
+  - WHY? to translate entity alias to entity id. Entity alias is stored in `engine.alias_to_entity` dictionary. This can be omitted by implementing translation from entity alias to entity id in `create_component` method that is part of `pgrpg.core.ecs.components` package init code.
   - Component function `has_weapon.create_projectile` was using `engine` reference for creation of new entities that were representing projectiles. This functionality was moved to `generate_projectile_processor` and reference to `engine` removed from the component. As a side effect, the list of entities generated by the factory was moved from `HasWeapon` component to more generic `Factory` component.
 
 ### New functionality for displaying in-game windows
  - even pause window implemented as a dialog!
 
 ### Init scene created that is always loaded before any other scene
-  - This scene is **always** loaded on the pyRPG start and contains game definitions that are common for the whole game - first example is definition of PAUSE dialog.
+  - This scene is **always** loaded on the pgrpg start and contains game definitions that are common for the whole game - first example is definition of PAUSE dialog.
   - There is still possibility that scenes (game definitions) that are loaded later can overrule the *init* scene definitions by specifying its objects in *cleanup* section of the scene definition.
 
 ### Console configured to be available anytime, not only in game, and to display system messages
-  - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pyrpg.init` function called `cons_enabled`. Value of this parameter is stored as `pyrpg.show_cons_on_sys_msg` variable for further use.
+  - Console is always loaded and part of the game. Whether system messages are showed and console poped is determined by the parameter in `pgrpg.init` function called `cons_enabled`. Value of this parameter is stored as `pgrpg.show_cons_on_sys_msg` variable for further use.
   - Console can be toggled from every game state by pressing `K_CONSOLE_TOGGLE` button.
   - Functions that are serving the console are executed in every game cycle for every game state. By doing so, we can achieve rolling-out effect even if the game state has no longer value `CONSOLE`.
-  - In order to always keep the console transparent, a copy of a screen is taken once console is enabled, and blitted before the console. For capturing the game screen, new function has been introduced in `pyrpg.core.engine` module called `save_screen_copy()`. The function stores the copy of the screen in `pygame.core.engine.screen_copy` variable.
+  - In order to always keep the console transparent, a copy of a screen is taken once console is enabled, and blitted before the console. For capturing the game screen, new function has been introduced in `pgrpg.core.engine` module called `save_screen_copy()`. The function stores the copy of the screen in `pygame.core.engine.screen_copy` variable.
   - In order to disable any functional keys for controlling the game/menus when the console is enabled, new game state `CONSOLE` has been introduced. While being in this game state, only console is consuming all the inputs.
-  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pyrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pyrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pyrpg.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
+  - There is new function `pygame.main.update_console(text)`. The aim of this function is to be available for every part of the game to push system notifications to the console. In order to achieve that, reference to this function is stored in engine module as `pgrpg.core.engine.cons_update_fnc`. Every part of the game can then push text on console by calling `pgrpg.core.engine.cons_update_fnc(text)`. If this function is called and `pgrpg.show_cons_on_sys_msg` is set to `True`, console is forcefully displayed. If set to `False`, the message is written to the console but the console remains hidden. 
 
 ### Showing the messages during the game (not stopping the game)- things like 'item picked', 'NPC died', 'new phase changed'
   - New global variable `engine.message_queue` stores message objects to be displayed (or any other action)

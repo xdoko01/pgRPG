@@ -4,9 +4,9 @@ Can be run from the console by putting following command
 XXXX
 '''
 
-from pyrpg.core.managers.ecs_manager import ECSManager
-from pyrpg.core.ecs.components import BrainAI
-from pyrpg.functions.str_utils import translate_str
+from pgrpg.core.managers.ecs_manager import ECSManager
+from pgrpg.core.ecs.components import BrainAI
+from pgrpg.functions.str_utils import translate_str
 
 
 def initialize(register, module_name):

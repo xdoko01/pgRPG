@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagIsAboutToDropEntityProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_is_about_to_drop_entity import FlagIsAboutToDropEntity

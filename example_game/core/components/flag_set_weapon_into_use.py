@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_set_weapon_into_use -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 from core.components.weapon import Weapon
 

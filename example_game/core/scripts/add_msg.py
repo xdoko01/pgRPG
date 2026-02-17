@@ -4,11 +4,11 @@ Can be run from the console by putting following command
 XXXX
 '''
 
-import pyrpg.core.messages.messages as msg
-import pyrpg.core.main as main
+import pgrpg.core.messages.messages as msg
+import pgrpg.core.main as main
 
-from pyrpg.functions.str_utils import translate_str
-from pyrpg.functions import translate
+from pgrpg.functions.str_utils import translate_str
+from pgrpg.functions import translate
 
 
 def initialize(register, module_name):

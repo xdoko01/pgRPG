@@ -4,7 +4,7 @@ import logging
 import random
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position
@@ -15,10 +15,10 @@ from core.components.flag_was_dropped_by import FlagWasDroppedBy
 from core.components.flag_has_dropped import FlagHasDropped
 from core.components.flag_is_about_to_drop_entity import FlagIsAboutToDropEntity
 
-from pyrpg.functions.dict_utils import add_dict_value, get_dict_value
+from pgrpg.functions.dict_utils import add_dict_value, get_dict_value
 
 # For creation of events
-from pyrpg.core.events.event import Event
+from pgrpg.core.events.event import Event
 
 # Logger init
 logger = logging.getLogger(__name__)

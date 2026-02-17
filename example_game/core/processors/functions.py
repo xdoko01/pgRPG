@@ -2,7 +2,7 @@ from math import sin, cos, sqrt
 
 from core.components.position import Position
 from core.components.camera import Camera
-from pyrpg.core.maps.map import Map
+from pgrpg.core.maps.map import Map
 
 def filter_only_not_behind_wall(ent_pos_comp: Position, map: Map, comp_tuple: tuple) -> bool:
     ''' Filter that is used for filtering of entities that are not hidden

@@ -8,10 +8,10 @@ import pygame
 from pygame_gui.windows import UIConfirmationDialog
 from pygame_gui import UI_WINDOW_CLOSE, UI_CONFIRMATION_DIALOG_CONFIRMED
 from pygame import Rect
-from pyrpg.core import main
-from pyrpg.core.config import DISPLAY # for MAX_FPS
-from pyrpg.core.config import GUI
-from pyrpg.functions.str_utils import translate_str
+from pgrpg.core import main
+from pgrpg.core.config import DISPLAY # for MAX_FPS
+from pgrpg.core.config import GUI
+from pgrpg.functions.str_utils import translate_str
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''

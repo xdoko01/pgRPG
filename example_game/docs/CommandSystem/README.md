@@ -14,10 +14,10 @@ Commands can originate from different components. The most common are the follow
  - The `Controllable` component is using commands to define what should happen at the moment when the key is pressed. For example, when left arrow button is pressed, system generates and processes the command for moving the entity (owner of `Controllable` component) left.
  - The `BrainAI` component represents the brain of the component and generates the commands based on predefined AI structures. At the moment, 2 structures can be used: behavior trees (`btree`) and simpler behavior lists (`blist`).
 
-Every command is implemented as a separate python file (module) that can be found in `pyrpg.core.commands.commands` package.
+Every command is implemented as a separate python file (module) that can be found in `pgrpg.core.commands.commands` package.
 
 ## What is the Lifecycle of the Command
-![Command Lifecycle](pyRPG%20-%20CommandSystem%20-%20Command%20Lifecycle.jpg "Command Lifecycle")
+![Command Lifecycle](pgrpg%20-%20CommandSystem%20-%20Command%20Lifecycle.jpg "Command Lifecycle")
 
 ## Interaction with Other Systems
 The *Command System* can be indirectly related to any system and at the same time there is no direct connection with any specific system. The most common way how *Command System* interacts with other systems is by creation of new components on entities by execution of the command. For example interaction with *Movement System* can look as follows: command `move` generates `FlagDoMove` component on the entity resulting in moving of the entity.

@@ -1,6 +1,6 @@
-import pyrpg.core.main as main
+import pgrpg.core.main as main
 
-from pyrpg.core.config import FILEPATHS
+from pgrpg.core.config import FILEPATHS
 
 def initialize(register, module_name):
     '''Script registers itself at ScriptManager'''

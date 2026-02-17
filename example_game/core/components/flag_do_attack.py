@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_do_attack -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagDoAttack(Component):
     ''' Flag that the entity has performed an attack.

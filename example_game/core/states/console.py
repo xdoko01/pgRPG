@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in CONSOLE state 
 
-For tests call `python -m pyrpg.core.states.console -v`
+For tests call `python -m pgrpg.core.states.console -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,8 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -65,9 +65,9 @@ def clear() -> None:
     logger.info(f'State module {sys.modules[__name__]} cleared.')
 
 import pygame
-from pyrpg.core.config import gui as gui_manager # for manipulation with game screen
-from pyrpg.core.config import cons # handler for manipulation with the game console
-from pyrpg.core.config import KEYS # for K_CONSOLE_TOGGLE
+from pgrpg.core.config import gui as gui_manager # for manipulation with game screen
+from pgrpg.core.config import cons # handler for manipulation with the game console
+from pgrpg.core.config import KEYS # for K_CONSOLE_TOGGLE
 
 def _show() -> None:
     '''Show console when entering the CONSOLE state.

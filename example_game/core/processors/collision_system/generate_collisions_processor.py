@@ -8,7 +8,7 @@ __all__ = [
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.camera import Camera
@@ -17,12 +17,12 @@ from core.components.collidable import Collidable
 from core.components.flag_has_collided import FlagHasCollided
 
 # For creation of events
-from pyrpg.core.events.event import Event
+from pgrpg.core.events.event import Event
 
 from collections import namedtuple # for representation of vectors
 from ..functions import filter_only_visible_on_camera # for filtering only entities with position on the cameras
-from pyrpg.functions import sign
-from pyrpg.functions import allow_deny_list_filter, allow_deny_item_filter
+from pgrpg.functions import sign
+from pgrpg.functions import allow_deny_list_filter, allow_deny_item_filter
 
 # Logger init
 logger = logging.getLogger(__name__)

@@ -37,7 +37,7 @@ The aim of the *Collision System* is to identify collisions among `Collidable` e
 ## Interaction with Other Systems
 The *Collision System* is vital for other systems to work. Without the knowledge if the collision occured and with what entity many game mechanism cannot exist - picking up items, damaging enemies, ...
 
-![Collision System Interactions](pyRPG%20-%20CollisionSystem%20-%20Interaction%20with%20other%20systems.jpg "Collision System Interactions")
+![Collision System Interactions](pgrpg%20-%20CollisionSystem%20-%20Interaction%20with%20other%20systems.jpg "Collision System Interactions")
 
 ```mermaid
 flowchart TB
@@ -334,7 +334,7 @@ Fixing the collision with the map tiles is handled by individual separate proces
 ### Entity Collision Detection and Resolution Flow
 In order to be noticed by the *Collision System* the entity must have `Collidable` component. This component specifies that the entity can collide and can further specifies with what entities it can/cannot collide and how the entity should behave upon the collision (if and how it should correct its position or not).
 
-![Entity Collision Detection and Resolution Flow](pyRPG%20-%20CollisionSystem%20-%20Main%20Flow.jpg "Entity Collision Detection and Resolution Flow")
+![Entity Collision Detection and Resolution Flow](pgrpg%20-%20CollisionSystem%20-%20Main%20Flow.jpg "Entity Collision Detection and Resolution Flow")
 
 The fact that the entity has collided with some other entity is marked by the temporary component `FlagHasCollided`. Other systems that need to know whether entity has touched something or not are looking for this component on entity.
 
@@ -342,19 +342,19 @@ At the end of the game cycle, `FlagHasCollided` is removed so that in the next g
 
 #### The `GenerateCollisionsProcessor` Processor
 
-![GenerateCollisionsProcessor](pyRPG%20-%20CollisionSystem%20-%20GenerateCollisionsProcessor.jpg "GenerateCollisionsProcessor")
+![GenerateCollisionsProcessor](pgrpg%20-%20CollisionSystem%20-%20GenerateCollisionsProcessor.jpg "GenerateCollisionsProcessor")
 
 This processors looks for entities that can collide - i.e. entities having `Position` and `Collidable` component. Then it tests whether collision occured and if yes, assigns the `FlagHasCollided` to the entity. This component bears all the details about the collisions (list of `Collision` objects) such as entity that is subject of collision and correction vector - vector that, if applied on the entity, fixes entity's position so that collision is omitted. This correction vector is used in `ResolveCollisionsProcessor` to fix the `Position` if required.
 
 The correction vector calculation is demonstrated on the following schema.
 
-![Correction Vector](pyRPG%20-%20Calculation%20of%20correction%20vector%20for%20entity%20ent_moved%20-%20full%20correction%20on%20both%20axis.jpg "Correction Vector")
+![Correction Vector](pgrpg%20-%20Calculation%20of%20correction%20vector%20for%20entity%20ent_moved%20-%20full%20correction%20on%20both%20axis.jpg "Correction Vector")
 
 > **_NOTE:_** This processor has several versions - one that tests collisions only for entities displayed on the screen, other that tests for collision also not displayed components.
 
 #### The `ResolveCollisionsProcessor` Processor
 
-![ResolveCollisionsProcessor](pyRPG%20-%20CollisionSystem%20-%20ResolveCollisionsProcessor.jpg "ResolveCollisionsProcessor")
+![ResolveCollisionsProcessor](pgrpg%20-%20CollisionSystem%20-%20ResolveCollisionsProcessor.jpg "ResolveCollisionsProcessor")
 
 The aim of this processor is to fix the overlaps that occured on collided entities. Overlaps and correction vectors have been previously calculated and recorded by `GenerateCollisionsProcessor` into `FlagHasCollided` component.
 
@@ -370,7 +370,7 @@ The `ResolveCollisionsProcessor` also takes into account specific attributes of 
 
 #### The `RemoveFlagHasCollidedProcessor` Processor
 
-![RemoveFlagHasCollidedProcessor](pyRPG%20-%20CollisionSystem%20-%20RemoveFlagHasCollidedProcessor.jpg "RemoveFlagHasCollidedProcessor")
+![RemoveFlagHasCollidedProcessor](pgrpg%20-%20CollisionSystem%20-%20RemoveFlagHasCollidedProcessor.jpg "RemoveFlagHasCollidedProcessor")
 
 The aim of the `RemoveFlagHasCollidedProcessor` is simply to remove the sigh that the entity has collided from the entity. So that in the next game cycle entity is being handled as free-of-collisions and the `GenerateCollisionsProcessor` can again perform new check on collision again.
 
@@ -380,7 +380,7 @@ This flow is dependent on the *Factory System* that generates the trigger flag `
 * Arrow entity collidable zone needs to be adjusted based on the player experience points.
 * Arrow entity must ignore player entity for collisions. Otherwise, player might be damaged by its own arrow (when arrow is generated, collision zone of the arrow and the player probably overlap and there will be collision detected unless arrow ignores the player).
 
-![Collidable Component Modification Flow](pyRPG%20-%20CollisionSystem%20-%20Collidable%20Adjustment%20Flow.jpg "Collidable Component Modification Flow")
+![Collidable Component Modification Flow](pgrpg%20-%20CollisionSystem%20-%20Collidable%20Adjustment%20Flow.jpg "Collidable Component Modification Flow")
 
 The flow simply modifies the `Collidable` component based on data contained in `FlagAdjustCollidable` and eventually discards the flag component at the end of the game cycle.
 
@@ -388,17 +388,17 @@ The flow simply modifies the `Collidable` component based on data contained in `
 
 The *Factory System* generates the `FlagAdjustCollidable` as shown on the picture below in order to modify the features of the newly generated entity.
 
-![PerformFactoryGenerationProcessor](pyRPG%20-%20FactorySystem%20-%20PerformFactoryGenerationProcessor.jpg "PerformFactoryGenerationProcessor")
+![PerformFactoryGenerationProcessor](pgrpg%20-%20FactorySystem%20-%20PerformFactoryGenerationProcessor.jpg "PerformFactoryGenerationProcessor")
 
 The `PerformAdjustCollidableProcessor` simply takes the modification requests contained in the `FlagAdjustCollidableComponent` and performs the changes.
 
-![PerformAdjustCollidableProcessor](pyRPG%20-%20CollisionSystem%20-%20PerformAdjustCollidableProcessor.jpg "PerformAdjustCollidableProcessor")
+![PerformAdjustCollidableProcessor](pgrpg%20-%20CollisionSystem%20-%20PerformAdjustCollidableProcessor.jpg "PerformAdjustCollidableProcessor")
 
 As the result `Collidable` component is modified. Usually by adding some more entities to be ignored or changing its collision areas.
 
 #### The `RemoveFlagAdjustCollidableProcessor` Processor
 
-![RemoveFlagAdjustCollidableProcessor](pyRPG%20-%20CollisionSystem%20-%20RemoveFlagAdjustCollidableProcessor.jpg "RemoveFlagAdjustCollidableProcessor")
+![RemoveFlagAdjustCollidableProcessor](pgrpg%20-%20CollisionSystem%20-%20RemoveFlagAdjustCollidableProcessor.jpg "RemoveFlagAdjustCollidableProcessor")
 
 At the end of the game cycle, temporary flag `FlagAdjustCollidable` must be removed from the entity. Otherwise, the `Collidable` component will be modified again in the next game cycle which would lead to unwanted behavior of the collidable entity.
 

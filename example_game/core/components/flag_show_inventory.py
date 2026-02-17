@@ -6,8 +6,8 @@ module tests.
 '''
 
 from pygame import Rect
-from pyrpg.core.ecs import Component
-from pyrpg.core.config import DISPLAY, GAME
+from pgrpg.core.ecs import Component
+from pgrpg.core.config import DISPLAY, GAME
 
 class FlagShowInventory(Component):
     ''' Entity has displayed inventory and can manipulate the inventory items.

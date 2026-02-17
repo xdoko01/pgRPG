@@ -1,6 +1,6 @@
 ''' Module implementing the behavior wher program is in MAIN_MENU state 
 
-For tests call `python -m pyrpg.core.states.main_menu -v`
+For tests call `python -m pgrpg.core.states.main_menu -v`
 
 State module represents one state only. The name of the module must be the same as the name of the
 state in lower case.
@@ -18,8 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 import sys
-import pyrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
-from pyrpg.core.config.states import State
+import pgrpg.core.config.states as state_manager # for switching between game states - game <> console <> menu etc.
+from pgrpg.core.config.states import State
 
 # Globals
 _initialized: bool = False
@@ -87,7 +87,7 @@ def clear() -> None:
 
 import pygame
 from pygame_gui import UI_BUTTON_PRESSED
-from pyrpg.core.config import gui as gui_manager
+from pgrpg.core.config import gui as gui_manager
 
 def _show() -> None:
     '''Show the buttons when first time in MAIN_MENU state.

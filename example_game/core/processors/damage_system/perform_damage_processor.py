@@ -3,7 +3,7 @@ __all__ = ['PerformDamageSingleProcessor', 'PerformDamageFullProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.damageable import Damageable
@@ -13,7 +13,7 @@ from core.components.flag_has_damaged import FlagHasDamaged
 from core.components.flag_is_about_to_be_damaged_by import FlagIsAboutToBeDamagedBy
 
 # For creation of events
-from pyrpg.core.events.event import Event 
+from pgrpg.core.events.event import Event 
 
 
 # Logger init

@@ -5,8 +5,8 @@ Use 'python -m example_game.core.components.gui_button -v' to run
 module tests.
 '''
 import pygame
-from pyrpg.core.ecs import Component
-from pyrpg.core.engine import gui_manager
+from pgrpg.core.ecs import Component
+from pgrpg.core.engine import gui_manager
 
 class GUIButton(Component):
     ''' Game plays sound effect upon collision with other entity.

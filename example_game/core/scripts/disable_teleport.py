@@ -4,8 +4,8 @@ Can be run from the console by putting following command
 XXXX
 '''
 
-import pyrpg.core.ecs.components as components
-import pyrpg.core.main as main
+import pgrpg.core.ecs.components as components
+import pgrpg.core.main as main
 
 
 def initialize(register, module_name):

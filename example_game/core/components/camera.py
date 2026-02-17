@@ -6,8 +6,8 @@ module tests.
 '''
 
 from pygame import Surface
-from pyrpg.core.ecs import Component
-from pyrpg.core.config import DISPLAY
+from pgrpg.core.ecs import Component
+from pgrpg.core.config import DISPLAY
 
 class Camera(Component):
     ''' Entity is in focus of a camera that is displayed in form of a screen

@@ -37,10 +37,10 @@ def initialize(register, module_name):
 
 ### DO NOT REMOVE - Mandatory imports
 from types import ModuleType # for type hint on importing the ecs_manager module
-from pyrpg.core.commands import CommandContext, CommandStatus
+from pgrpg.core.commands import CommandContext, CommandStatus
 
 ### Optional imports
-from pyrpg.functions.dict_utils import get_dict_keys_having_value
+from pgrpg.functions.dict_utils import get_dict_keys_having_value
 
 from core.components.flag_is_about_to_drop_entity import FlagIsAboutToDropEntity
 from core.components.has_inventory import HasInventory
@@ -71,8 +71,8 @@ def init(
 
         Prepare mocs:
         -------------
-        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
-        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pgrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pgrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------
@@ -107,8 +107,8 @@ def process(
 
         Prepare mocs:
         -------------
-        >>> from pyrpg.core.managers.ecs_manager import ECSManagerMock
-        >>> from pyrpg.core.commands import CommandContextMock
+        >>> from pgrpg.core.managers.ecs_manager import ECSManagerMock
+        >>> from pgrpg.core.commands import CommandContextMock
 
         Run tests:
         ----------

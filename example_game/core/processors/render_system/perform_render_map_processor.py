@@ -3,13 +3,13 @@ __all__ = ['PerformRenderMapProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.position import Position
 from core.components.camera import Camera
 
-from pyrpg.core.config import GAME # for TILE_RES_PX
+from pgrpg.core.config import GAME # for TILE_RES_PX
 
 # Logger init
 logger = logging.getLogger(__name__)

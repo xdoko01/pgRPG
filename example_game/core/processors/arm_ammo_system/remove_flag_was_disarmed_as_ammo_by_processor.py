@@ -3,7 +3,7 @@ __all__ = ['RemoveFlagWasDisarmedAsAmmoByProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.flag_was_disarmed_as_ammo_by import FlagWasDisarmedAsAmmoBy

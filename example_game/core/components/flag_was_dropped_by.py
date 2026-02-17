@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_was_dropped_by -v' to run
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagWasDroppedBy(Component):
     ''' Entity was dropped by some other entity.

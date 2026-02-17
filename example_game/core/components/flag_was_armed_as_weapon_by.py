@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_was_armed_as_weapon_by -v' to r
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagWasArmedAsWeaponBy(Component):
     ''' Weapon entity was armed as weapon by some other entity.

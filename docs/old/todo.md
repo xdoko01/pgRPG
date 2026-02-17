@@ -281,7 +281,7 @@
         - [x] Show picture of item while dragging centered on the cursor
 
   - [ ] many custom ProgressBars available and can be sellected in the scene file by configuration - for example
-  	`"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pyRPG.png", "bar": true}], // example how progress bar could be configured`
+  	`"progress_bar": ["gui:SimpleProgressBar", {"background": "splash_pgrpg.png", "bar": true}], // example how progress bar could be configured`
 
   - [x] BUG - DISPLAY["SHOW_FPS"] is not taking configuration from config.jsonc
   - [ ] new `ALL` option for cleanup actions - some new wrapper functions will be needed
@@ -299,7 +299,7 @@
   - [ ] Behavior Tree and Behavior list - implementation of restart function - tree/list starts again from scratch. Useful for restart of the whole tree if some event comes.
   - [ ] Make scripts runnable from the console
   - [x] Rename quests to scenes. Scene is more common name for what the engine is defining in the json files.
-  - [ ] Every game/test using scenes should be defined outside of pyRPG folders and only import pyRPG and use its parts. No direct changes in pyRPG folders and files.
+  - [ ] Every game/test using scenes should be defined outside of pgrpg folders and only import pgrpg and use its parts. No direct changes in pgrpg folders and files.
   - [ ] Make scripts more nice - now they are using mainissing logging, missing description. Missing concept when to use commands and when to use scripts, make them work from console...
   - [ ] finish tests and json definitions for new commands
 
@@ -382,7 +382,7 @@
   - [ ] pygame.Vector2 to be used everywhere where possible
   - [ ] Try to implement `move_to` command as a `btree` rather then encapsulate all logic and path points into the command itself. Then compare those 2 approaches. 
   - [ ] Write more mocs to components and managers
-  - [ ] Consolidate the packages so instead of the `from pyrpg.core.ecs.components.new.position import Position, PositionMock` we can import as `from pyrpg.core.ecs.components import Position, PositionMock`
+  - [ ] Consolidate the packages so instead of the `from pgrpg.core.ecs.components.new.position import Position, PositionMock` we can import as `from pgrpg.core.ecs.components import Position, PositionMock`
   - [ ] In case of error, load some mock - test map instead of real map, test sound instead of real sound, test model instead of real model, test AI instead of real AI
   - [ ] Change of map rendering - do not always generate all the tiles from scretch but - re-use the pane and only draw the tiles that are new + re-draw the animated tiles if needed.
   - [ ] How to solve the problem when AI follows some path and is attacked? The easier way is probably to reset the BT as a part of event handler, not sure.

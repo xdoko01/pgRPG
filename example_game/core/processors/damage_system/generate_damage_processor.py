@@ -3,7 +3,7 @@ __all__ = ['GenerateDamageSingleProcessor', 'GenerateDamageFullProcessor']
 import logging
 
 # Parent super-class
-from pyrpg.core.ecs import Processor, SkipProcessorExecution
+from pgrpg.core.ecs import Processor, SkipProcessorExecution
 
 # Used components
 from core.components.damaging import Damaging

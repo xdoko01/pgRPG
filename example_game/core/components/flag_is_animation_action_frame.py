@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_is_animation_action_frame -v' t
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagIsAnimationActionFrame(Component):
     ''' Flag that the entity animation frame is marked as action frame

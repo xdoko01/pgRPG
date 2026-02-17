@@ -5,7 +5,7 @@ Use 'python -m example_game.core.components.flag_is_about_to_disarm_ammo -v' to 
 module tests.
 '''
 
-from pyrpg.core.ecs import Component
+from pgrpg.core.ecs import Component
 
 class FlagIsAboutToDisarmAmmo(Component):
     ''' Entity (fighter) is about to disarm some other picked entity (ammo), if capable
