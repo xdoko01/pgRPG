@@ -1,0 +1,40 @@
+{
+	"$id": "disarm_weapon.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "disarm_weapon command",
+	"description": "Disarm a specific weapon from the entity.",
+	"markdownDescription": "Disarm a specific *weapon* from the entity.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "disarm_weapon command",
+			"description": "Disarm a specific weapon from the entity.",
+			"markdownDescription": "Disarm a specific *weapon* from the entity.",
+			"enum": ["disarm_weapon"]
+		},
+		{
+			"title": "disarm_weapon command parameters",
+			"description": "weapon_entity_id (required), weapon_type (required)",
+			"markdownDescription": "`weapon_entity_id` (required), `weapon_type` (required)",
+			"type": "object",
+			"required": ["weapon_entity_id", "weapon_type"],
+
+			"properties": {
+				"weapon_entity_id": {
+					"title": "Weapon Entity",
+					"description": "ID or alias of the weapon entity to disarm.",
+					"examples": ["bow_01", "sword_01", 15],
+					"$ref": "../definitions.schema.json#/definitions/entity_id"
+				},
+				"weapon_type": {
+					"title": "Weapon Type",
+					"description": "Type of the weapon to disarm.",
+					"$ref": "../definitions.schema.json#/definitions/entity_weapon_type"
+				}
+			}
+		}
+	],
+	"items": false
+}

@@ -1,0 +1,48 @@
+{
+	"$id": "gui_pressable.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Pressable Component",
+	"description": "Schema validating the Pressable component.",
+
+	"examples" : [
+		{"type" : "gui_pressable:Pressable", "params" : {}},
+		{"type" : "gui_pressable:Pressable", "params" : {"cmds" : [
+			["load_scene", {"scene": "main_menu"}]
+		]}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "gui_pressable:Pressable" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Pressable component class - 'cmds' (optional).",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"cmds" : {
+					"title": "Commands",
+					"description": "List of commands to add to the command queue when this entity is pressed.",
+					"markdownDescription": "List of commands to add to the command queue when this entity is pressed.",
+					"default": [],
+					"type": "array",
+					"items": {
+						"$ref": "../../schemas/command.schema.json"
+					}
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+
+}

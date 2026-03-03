@@ -1,0 +1,48 @@
+{
+	"$id": "inventory_move_dir.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "inventory_move_dir command",
+	"description": "Move the inventory cursor in a given direction.",
+	"markdownDescription": "Move the *inventory cursor* in a given direction.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "inventory_move_dir command",
+			"description": "Move the inventory cursor in a given direction.",
+			"markdownDescription": "Move the *inventory cursor* in a given direction.",
+			"enum": ["inventory_move_dir"]
+		},
+		{
+			"title": "inventory_move_dir command parameters",
+			"description": "move (required), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`move` (required), `dt_comp` (optional), `absolute` (optional)",
+			"type": "object",
+			"required": ["move"],
+
+			"properties": {
+				"move": {
+					"title": "Direction",
+					"description": "Direction to move the inventory cursor.",
+					"$ref": "../definitions.schema.json#/definitions/entity_direction"
+				},
+				"dt_comp": {
+					"title": "Delta-time Compensation",
+					"description": "Compensate for current framerate. Default is true.",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				},
+				"absolute": {
+					"title": "Ignore velocity",
+					"description": "Move without applying velocity. Default is false.",
+					"default": false,
+					"examples": [true, false],
+					"type": "boolean"
+				}
+			}
+		}
+	],
+	"items": false
+}

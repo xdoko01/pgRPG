@@ -1,0 +1,41 @@
+{
+	"$id": "log.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "log command",
+	"description": "Log a text message to the game logger.",
+	"markdownDescription": "Log a text message to the game logger.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "log command",
+			"description": "Log a text message to the game logger.",
+			"enum": ["log"]
+		},
+		{
+			"title": "log command parameters",
+			"description": "text (required), prompt (optional)",
+			"markdownDescription": "`text` (required), `prompt` (optional)",
+			"type": "object",
+			"required": ["text"],
+
+			"properties": {
+				"text": {
+					"title": "Log Text",
+					"description": "Message to log.",
+					"examples": ["Entity reached target.", "Attack triggered."],
+					"type": "string"
+				},
+				"prompt": {
+					"title": "Log Prompt / Prefix",
+					"description": "Prefix string prepended to the log message. Default is 'LOG CMD//'.",
+					"examples": ["LOG CMD//", "DEBUG//", "INFO//"],
+					"default": "LOG CMD//",
+					"type": "string"
+				}
+			}
+		}
+	],
+	"items": false
+}

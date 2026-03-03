@@ -55,7 +55,12 @@
 
 		{"$ref": "components/can_see.schema.json"},
 		{"$ref": "components/can_hear.schema.json"},
-		{"$ref": "components/has_target_position.schema.json"}
+		{"$ref": "components/has_target_position.schema.json"},
+
+		{"$ref": "components/brain.schema.json"},
+		{"$ref": "components/scorable_on_pickup.schema.json"},
+		{"$ref": "components/gui_button.schema.json"},
+		{"$ref": "components/gui_pressable.schema.json"}
 
 	]
 }

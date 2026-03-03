@@ -1,0 +1,73 @@
+{
+	"$id": "gui_button.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "GUIButton Component",
+	"description": "Schema validating the GUIButton component.",
+
+	"examples" : [
+		{"type" : "gui_button:GUIButton", "params" : {"name": "btn_start", "text": "Start Game", "x": 100, "y": 200, "width": 200, "height": 50}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "gui_button:GUIButton" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the GUIButton component class - 'name' (required), 'text', 'x', 'y', 'width', 'height' (optional).",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"required": ["name"],
+			"properties": {
+				"name": {
+					"title": "Button Name",
+					"description": "Unique identifier for this button, used to match UI events.",
+					"markdownDescription": "Unique identifier for this button, used to match UI events.",
+					"examples": ["btn_start", "btn_quit", "btn_resume"],
+					"type": "string"
+				},
+				"text": {
+					"title": "Button Label",
+					"description": "Text displayed on the button. Defaults to the component object repr if omitted.",
+					"examples": ["Start Game", "Quit", "Resume"],
+					"type": "string"
+				},
+				"x": {
+					"title": "X Position",
+					"description": "X position of the button in pixels. Default is 0.",
+					"default": 0,
+					"$ref": "../definitions.schema.json#/definitions/pixel_dim"
+				},
+				"y": {
+					"title": "Y Position",
+					"description": "Y position of the button in pixels. Default is 0.",
+					"default": 0,
+					"$ref": "../definitions.schema.json#/definitions/pixel_dim"
+				},
+				"width": {
+					"title": "Width",
+					"description": "Width of the button in pixels. Default is 100.",
+					"default": 100,
+					"$ref": "../definitions.schema.json#/definitions/pixel_dim"
+				},
+				"height": {
+					"title": "Height",
+					"description": "Height of the button in pixels. Default is 100.",
+					"default": 100,
+					"$ref": "../definitions.schema.json#/definitions/pixel_dim"
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+
+}

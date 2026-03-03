@@ -1,0 +1,39 @@
+{
+	"$id": "set_bb_value.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "set_bb_value command",
+	"description": "Set a key-value pair on the command generator blackboard (globals).",
+	"markdownDescription": "Set a key-value pair on the command generator *blackboard* (globals).",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "set_bb_value command",
+			"description": "Set a key-value pair on the command generator blackboard.",
+			"enum": ["set_bb_value"]
+		},
+		{
+			"title": "set_bb_value command parameters",
+			"description": "key (required), value (required)",
+			"markdownDescription": "`key` (required), `value` (required)",
+			"type": "object",
+			"required": ["key", "value"],
+
+			"properties": {
+				"key": {
+					"title": "Blackboard Key",
+					"description": "Key name to write on the blackboard.",
+					"examples": ["target", "patrol_idx", "has_ammo"],
+					"type": "string"
+				},
+				"value": {
+					"title": "Blackboard Value",
+					"description": "Value to store. Can be any JSON-serialisable type.",
+					"examples": ["player", 1, true, null, [1, 2]]
+				}
+			}
+		}
+	],
+	"items": false
+}

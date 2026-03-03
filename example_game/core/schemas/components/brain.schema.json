@@ -1,0 +1,71 @@
+{
+	"$id": "brain.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "Brain Component",
+	"description": "Schema validating the Brain component.",
+
+	"examples" : [
+		{"type" : "brain:Brain", "params" : {}},
+		{"type" : "brain:Brain", "params" : {"commands" : [
+			[null, "wait", {"duration_ms": 1000}],
+			[0, "move_dir", {"moves": [["right", 64]]}]
+		]}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "brain:Brain" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the Brain component class - 'commands' (optional).",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"commands" : {
+					"title": "Command List",
+					"description": "List of commands to execute. Each entry is a [goto_on_exception, cmd_name, cmd_params] tuple. Brain is disabled if empty.",
+					"markdownDescription": "List of commands to execute. Each entry is a `[goto_on_exception, cmd_name, cmd_params]` tuple. Brain is disabled if empty.",
+					"examples": [
+						[],
+						[[null, "wait", {"duration_ms": 500}], [0, "move_dir", {"moves": [["right", 64]]}]]
+					],
+					"default": [],
+					"type": "array",
+					"items": {
+						"type": "array",
+						"description": "[goto_on_exception_idx | null, command_name, command_params]",
+						"prefixItems": [
+							{
+								"title": "Goto on Exception",
+								"description": "Brain index to jump to if this command returns an exception. null means advance to next command.",
+								"oneOf": [{"type": "integer", "minimum": 0}, {"type": "null"}]
+							},
+							{
+								"title": "Command Name",
+								"description": "Name of the command to execute.",
+								"type": "string"
+							},
+							{
+								"title": "Command Parameters",
+								"description": "Parameters passed to the command.",
+								"type": "object"
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+
+}

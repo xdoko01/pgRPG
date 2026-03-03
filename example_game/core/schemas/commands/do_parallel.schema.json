@@ -1,0 +1,73 @@
+{
+	"$id": "do_parallel.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "do_parallel command",
+	"description": "Execute multiple commands in parallel each tick and aggregate their results.",
+	"markdownDescription": "Execute multiple commands *in parallel* each tick and aggregate their results.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "do_parallel command",
+			"description": "Execute multiple commands in parallel each tick and aggregate their results.",
+			"enum": ["do_parallel"]
+		},
+		{
+			"title": "do_parallel command parameters",
+			"description": "commands (required), returns (required), ticks (optional), defaults (optional)",
+			"markdownDescription": "`commands` (required), `returns` (required), `ticks` (optional), `defaults` (optional)",
+			"type": "object",
+			"required": ["commands", "returns"],
+
+			"properties": {
+				"commands": {
+					"title": "Parallel Commands",
+					"description": "List of [command_name, command_params] pairs to execute every tick.",
+					"markdownDescription": "List of `[command_name, command_params]` pairs to execute every tick.",
+					"examples": [
+						[["move_dir", {"moves": [["right", 2]]}], ["face_target", {"target": "player"}]]
+					],
+					"type": "array",
+					"items": {
+						"type": "array",
+						"prefixItems": [
+							{"title": "Command Name", "type": "string"},
+							{"title": "Command Parameters", "type": "object"}
+						],
+						"items": false
+					}
+				},
+				"returns": {
+					"title": "Result Mapping",
+					"description": "Maps the concatenated first-letter results of each command (e.g. 'SS', 'SF') to SUCCESS, FAILURE, or RUNNING.",
+					"markdownDescription": "Maps the concatenated first-letter results of each command (e.g. `'SS'`, `'SF'`) to `SUCCESS`, `FAILURE`, or `RUNNING`.",
+					"examples": [{"SS": "SUCCESS", "SF": "FAILURE", "FS": "RUNNING"}],
+					"type": "object",
+					"additionalProperties": {
+						"enum": ["SUCCESS", "FAILURE", "RUNNING"]
+					}
+				},
+				"ticks": {
+					"title": "Tick Intervals",
+					"description": "List of tick intervals per command — run command N every ticks[N] ticks. null means every tick.",
+					"markdownDescription": "List of tick intervals per command. `null` means every tick.",
+					"examples": [[1, 2, null]],
+					"default": null,
+					"type": "array",
+					"items": {"oneOf": [{"type": "integer", "minimum": 1}, {"type": "null"}]}
+				},
+				"defaults": {
+					"title": "Default Results",
+					"description": "Default CommandStatus string for each command when it is not called on a given tick.",
+					"markdownDescription": "Default `CommandStatus` string for each command when it is not called on a given tick.",
+					"examples": [["SUCCESS", "RUNNING", "FAILURE"]],
+					"default": null,
+					"type": "array",
+					"items": {"enum": ["SUCCESS", "FAILURE", "RUNNING"]}
+				}
+			}
+		}
+	],
+	"items": false
+}

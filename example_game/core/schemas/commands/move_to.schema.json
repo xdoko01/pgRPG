@@ -1,0 +1,41 @@
+{
+	"$id": "move_to.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_to command",
+	"description": "Move to a tile position on the current map using pathfinding.",
+	"markdownDescription": "*Move* to a tile position on the current map using pathfinding.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_to command",
+			"description": "Move to a tile position on the current map using pathfinding.",
+			"markdownDescription": "*Move* to a tile position on the current map using pathfinding.",
+			"enum": ["move_to"]
+		},
+		{
+			"title": "move_to command parameters",
+			"description": "pos (required)",
+			"markdownDescription": "`pos` (required)",
+			"type": "object",
+			"required": ["pos"],
+
+			"properties": {
+				"pos": {
+					"title": "Target Tile Position",
+					"description": "Target position in tiles [tile_x, tile_y].",
+					"markdownDescription": "Target position in tiles `[tile_x, tile_y]`.",
+					"examples": [[0, 0], [5, 10], [12, 3]],
+					"type": "array",
+					"prefixItems": [
+						{"title": "Tile X", "$ref": "../definitions.schema.json#/definitions/tile_pos"},
+						{"title": "Tile Y", "$ref": "../definitions.schema.json#/definitions/tile_pos"}
+					],
+					"items": false
+				}
+			}
+		}
+	],
+	"items": false
+}

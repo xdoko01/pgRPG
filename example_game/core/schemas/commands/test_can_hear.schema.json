@@ -1,0 +1,41 @@
+{
+	"$id": "test_can_hear.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "test_can_hear command",
+	"description": "Test if any of the given entities are within earshot. Returns SUCCESS if at least one is heard.",
+	"markdownDescription": "Test if any of the given entities are within *earshot*. Returns `SUCCESS` if at least one is heard.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "test_can_hear command",
+			"description": "Test if any of the given entities are within earshot.",
+			"enum": ["test_can_hear"]
+		},
+		{
+			"title": "test_can_hear command parameters",
+			"description": "entities (required), out_bb_key (optional)",
+			"markdownDescription": "`entities` (required), `out_bb_key` (optional)",
+			"type": "object",
+			"required": ["entities"],
+
+			"properties": {
+				"entities": {
+					"title": "Entities to Test",
+					"description": "List of entity IDs or aliases to test for hearing.",
+					"$ref": "../definitions.schema.json#/definitions/list_of_entities"
+				},
+				"out_bb_key": {
+					"title": "Output Blackboard Key",
+					"description": "If set, the first heard entity is written to this blackboard key.",
+					"markdownDescription": "If set, the first heard entity is written to this *blackboard key*.",
+					"examples": ["heard_entity", "target"],
+					"default": null,
+					"type": "string"
+				}
+			}
+		}
+	],
+	"items": false
+}

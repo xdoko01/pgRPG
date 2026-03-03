@@ -1,0 +1,23 @@
+{
+	"$id": "inventory_action.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "inventory_action command",
+	"description": "Perform the currently selected inventory action (use/activate highlighted item).",
+	"markdownDescription": "Perform the currently selected *inventory action* (use/activate highlighted item).",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "inventory_action command",
+			"description": "Perform the currently selected inventory action.",
+			"enum": ["inventory_action"]
+		},
+		{
+			"title": "inventory_action command parameters",
+			"description": "No parameters.",
+			"type": "object"
+		}
+	],
+	"items": false
+}

@@ -1,0 +1,35 @@
+{
+	"$id": "drop_item.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "drop_item command",
+	"description": "Drop an item from the entity's inventory.",
+	"markdownDescription": "Drop an item from the entity's *inventory*.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "drop_item command",
+			"description": "Drop an item from the entity's inventory.",
+			"markdownDescription": "Drop an item from the entity's *inventory*.",
+			"enum": ["drop_item"]
+		},
+		{
+			"title": "drop_item command parameters",
+			"description": "item_entity_id (required)",
+			"markdownDescription": "`item_entity_id` (required)",
+			"type": "object",
+			"required": ["item_entity_id"],
+
+			"properties": {
+				"item_entity_id": {
+					"title": "Item Entity",
+					"description": "ID or alias of the item entity to drop.",
+					"examples": ["key", "golden_key", 7],
+					"$ref": "../definitions.schema.json#/definitions/entity_id"
+				}
+			}
+		}
+	],
+	"items": false
+}

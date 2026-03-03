@@ -1,0 +1,39 @@
+{
+	"$id": "face_target.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "face_target command",
+	"description": "Rotate the entity to face towards a target entity.",
+	"markdownDescription": "Rotate the entity to face towards a *target* entity.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "face_target command",
+			"description": "Rotate the entity to face towards a target entity.",
+			"markdownDescription": "Rotate the entity to face towards a *target* entity.",
+			"enum": ["face_target"]
+		},
+		{
+			"title": "face_target command parameters",
+			"description": "target (required)",
+			"markdownDescription": "`target` (required)",
+			"type": "object",
+			"required": ["target"],
+
+			"properties": {
+				"target": {
+					"title": "Target Entity",
+					"description": "Entity ID, alias, or blackboard pointer to face towards.",
+					"markdownDescription": "*Entity ID*, alias, or *blackboard pointer* to face towards.",
+					"examples": [1, "player", "^target"],
+					"oneOf": [
+						{"$ref": "../definitions.schema.json#/definitions/entity_id"},
+						{"$ref": "../definitions.schema.json#/definitions/blackboard_pointer"}
+					]
+				}
+			}
+		}
+	],
+	"items": false
+}

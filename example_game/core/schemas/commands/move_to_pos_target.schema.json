@@ -1,0 +1,80 @@
+{
+	"$id": "move_to_pos_target.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_to_pos_target command",
+	"description": "Move to the current pixel position of a target entity (no pathfinding — straight movement).",
+	"markdownDescription": "*Move* to the current pixel position of a *target* entity (straight movement, no pathfinding).",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_to_pos_target command",
+			"description": "Move to the current pixel position of a target entity.",
+			"markdownDescription": "*Move* to the current pixel position of a *target* entity.",
+			"enum": ["move_to_pos_target"]
+		},
+		{
+			"title": "move_to_pos_target command parameters",
+			"description": "target (required), proximity_px (optional), max_time_s (optional), change_dir_ms (optional), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`target` (required), `proximity_px` (optional), `max_time_s` (optional), `change_dir_ms` (optional), `dt_comp` (optional), `absolute` (optional)",
+			"type": "object",
+			"required": ["target"],
+
+			"properties": {
+				"target": {
+					"title": "Target Entity",
+					"description": "Entity ID, alias, or blackboard pointer whose position to move towards.",
+					"markdownDescription": "*Entity ID*, alias, or *blackboard pointer* whose position to move towards.",
+					"examples": [1, "player", "^target"],
+					"oneOf": [
+						{"$ref": "../definitions.schema.json#/definitions/entity_id"},
+						{"$ref": "../definitions.schema.json#/definitions/blackboard_pointer"}
+					]
+				},
+				"proximity_px": {
+					"title": "Proximity in px",
+					"description": "How close to come to the target position in pixels. Default is 10.",
+					"markdownDescription": "How close to come to the target position in pixels. Default is `10`.",
+					"examples": [0, 10, 20, 50, 100],
+					"default": 10,
+					"type": "integer",
+					"minimum": 0
+				},
+				"max_time_s": {
+					"title": "Maximum time (in sec) to reach the position",
+					"description": "Maximum time in seconds to reach the position. After this time the movement stops.",
+					"examples": [null, 10, 20, 50],
+					"default": null,
+					"type": "integer",
+					"minimum": 0
+				},
+				"change_dir_ms": {
+					"title": "Change Direction after ms",
+					"description": "Keep the movement direction unchanged for this many ms before recalculating. Default is 1000.",
+					"examples": [100, 200, 500, 1000, 2000],
+					"default": 1000,
+					"type": "integer",
+					"minimum": 0
+				},
+				"dt_comp": {
+					"title": "Delta-time Compensation",
+					"description": "Compensate movement for current framerate. Default is true.",
+					"markdownDescription": "Compensate movement for current framerate. Default is `true`.",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				},
+				"absolute": {
+					"title": "Ignore velocity",
+					"description": "Move without applying entity velocity. Default is false.",
+					"markdownDescription": "Move without applying entity velocity. Default is `false`.",
+					"default": false,
+					"examples": [true, false],
+					"type": "boolean"
+				}
+			}
+		}
+	],
+	"items": false
+}

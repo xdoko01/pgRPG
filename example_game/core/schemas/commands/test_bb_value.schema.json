@@ -1,0 +1,37 @@
+{
+	"$id": "test_bb_value.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "test_bb_value command",
+	"description": "Evaluate a json_logic expression against the blackboard globals. Returns SUCCESS if true, FAILURE if false.",
+	"markdownDescription": "Evaluate a `json_logic` expression against the blackboard globals. Returns `SUCCESS` if true, `FAILURE` if false.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "test_bb_value command",
+			"description": "Evaluate a json_logic expression against the blackboard globals.",
+			"enum": ["test_bb_value"]
+		},
+		{
+			"title": "test_bb_value command parameters",
+			"description": "json_expr (required)",
+			"markdownDescription": "`json_expr` (required)",
+			"type": "object",
+			"required": ["json_expr"],
+
+			"properties": {
+				"json_expr": {
+					"title": "JSON Logic Expression",
+					"description": "A json_logic expression evaluated against blackboard globals. Returns SUCCESS if truthy.",
+					"markdownDescription": "A `json_logic` expression evaluated against blackboard globals. Returns `SUCCESS` if truthy.",
+					"examples": [
+						["==", [["VAR", "target"], "player"]],
+						[">", [["VAR", "health"], 50]]
+					]
+				}
+			}
+		}
+	],
+	"items": false
+}

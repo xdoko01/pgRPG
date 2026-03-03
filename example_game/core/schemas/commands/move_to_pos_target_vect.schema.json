@@ -1,0 +1,63 @@
+{
+	"$id": "move_to_pos_target_vect.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_to_pos_target_vect command",
+	"description": "Move towards a target entity position using a direction vector (no pathfinding).",
+	"markdownDescription": "*Move* towards a *target* entity position using a direction vector (no pathfinding).",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_to_pos_target_vect command",
+			"description": "Move towards a target entity position using a direction vector.",
+			"markdownDescription": "*Move* towards a *target* entity position using a direction vector.",
+			"enum": ["move_to_pos_target_vect"]
+		},
+		{
+			"title": "move_to_pos_target_vect command parameters",
+			"description": "target (required), max_time_s (optional), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`target` (required), `max_time_s` (optional), `dt_comp` (optional), `absolute` (optional)",
+			"type": "object",
+			"required": ["target"],
+
+			"properties": {
+				"target": {
+					"title": "Target Entity",
+					"description": "Entity ID, alias, or blackboard pointer whose position to move towards.",
+					"markdownDescription": "*Entity ID*, alias, or *blackboard pointer* whose position to move towards.",
+					"examples": [1, "player", "^target"],
+					"oneOf": [
+						{"$ref": "../definitions.schema.json#/definitions/entity_id"},
+						{"$ref": "../definitions.schema.json#/definitions/blackboard_pointer"}
+					]
+				},
+				"max_time_s": {
+					"title": "Maximum time (in sec) to reach the position",
+					"description": "Maximum time in seconds to reach the position. After this time the movement stops.",
+					"examples": [null, 10, 20, 50],
+					"default": null,
+					"type": "integer",
+					"minimum": 0
+				},
+				"dt_comp": {
+					"title": "Delta-time Compensation",
+					"description": "Compensate movement for current framerate. Default is true.",
+					"markdownDescription": "Compensate movement for current framerate. Default is `true`.",
+					"default": true,
+					"examples": [true, false],
+					"type": "boolean"
+				},
+				"absolute": {
+					"title": "Ignore velocity",
+					"description": "Move without applying entity velocity. Default is false.",
+					"markdownDescription": "Move without applying entity velocity. Default is `false`.",
+					"default": false,
+					"examples": [true, false],
+					"type": "boolean"
+				}
+			}
+		}
+	],
+	"items": false
+}

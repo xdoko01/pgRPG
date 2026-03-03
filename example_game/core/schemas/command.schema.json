@@ -16,6 +16,34 @@
 
 		{"$ref": "commands/attack.schema.json"},
 		{"$ref": "commands/reset_brain.schema.json"},
-		{"$ref": "commands/wait.schema.json"}
+		{"$ref": "commands/wait.schema.json"},
+
+		{"$ref": "commands/arm_ammo.schema.json"},
+		{"$ref": "commands/arm_weapon.schema.json"},
+		{"$ref": "commands/disarm_ammo.schema.json"},
+		{"$ref": "commands/disarm_weapon.schema.json"},
+		{"$ref": "commands/drop_item.schema.json"},
+		{"$ref": "commands/pick_item.schema.json"},
+		{"$ref": "commands/use_weapon.schema.json"},
+
+		{"$ref": "commands/face_target.schema.json"},
+		{"$ref": "commands/move_to.schema.json"},
+		{"$ref": "commands/move_to_checkpoints.schema.json"},
+		{"$ref": "commands/move_to_pos_target.schema.json"},
+		{"$ref": "commands/move_to_pos_target_vect.schema.json"},
+		{"$ref": "commands/move_to_vect.schema.json"},
+
+		{"$ref": "commands/do_parallel.schema.json"},
+		{"$ref": "commands/inventory_action.schema.json"},
+		{"$ref": "commands/inventory_move_dir.schema.json"},
+		{"$ref": "commands/load_from_template.schema.json"},
+		{"$ref": "commands/log.schema.json"},
+		{"$ref": "commands/set_bb_value.schema.json"},
+		{"$ref": "commands/test_bb_value.schema.json"},
+		{"$ref": "commands/test_can_hear.schema.json"},
+		{"$ref": "commands/test_can_see.schema.json"},
+		{"$ref": "commands/test_damaged.schema.json"},
+		{"$ref": "commands/toggle_controls.schema.json"},
+		{"$ref": "commands/toggle_inventory.schema.json"}
 	]
 }

@@ -1,0 +1,36 @@
+{
+	"$id": "arm_weapon.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "arm_weapon command",
+	"description": "Arm the entity with a specific weapon entity.",
+	"markdownDescription": "Arm the entity with a specific *weapon* entity.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "arm_weapon command",
+			"description": "Arm the entity with a specific weapon entity.",
+			"markdownDescription": "Arm the entity with a specific *weapon* entity.",
+			"enum": ["arm_weapon"]
+		},
+		{
+			"title": "arm_weapon command parameters",
+			"description": "weapon_entity_id (required)",
+			"markdownDescription": "`weapon_entity_id` (required)",
+			"type": "object",
+			"required": ["weapon_entity_id"],
+
+			"properties": {
+				"weapon_entity_id": {
+					"title": "Weapon Entity",
+					"description": "ID or alias of the weapon entity to arm.",
+					"markdownDescription": "ID or alias of the *weapon* entity to arm.",
+					"examples": ["bow_01", "sword_01", 15],
+					"$ref": "../definitions.schema.json#/definitions/entity_id"
+				}
+			}
+		}
+	],
+	"items": false
+}

@@ -1,0 +1,56 @@
+{
+	"$id": "move_to_checkpoints.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_to_checkpoints command",
+	"description": "Move through a sequence of checkpoint positions using pathfinding.",
+	"markdownDescription": "*Move* through a sequence of *checkpoint* positions using pathfinding.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_to_checkpoints command",
+			"description": "Move through a sequence of checkpoint positions using pathfinding.",
+			"markdownDescription": "*Move* through a sequence of *checkpoint* positions using pathfinding.",
+			"enum": ["move_to_checkpoints"]
+		},
+		{
+			"title": "move_to_checkpoints command parameters",
+			"description": "checkpoints (required), repeat (optional), max_time_s (optional)",
+			"markdownDescription": "`checkpoints` (required), `repeat` (optional), `max_time_s` (optional)",
+			"type": "object",
+			"required": ["checkpoints"],
+
+			"properties": {
+				"checkpoints": {
+					"title": "Checkpoints",
+					"description": "Ordered list of position targets to move through. Each entry is [map_name, tile_x, tile_y, proximity_px].",
+					"markdownDescription": "Ordered list of position targets to move through. Each entry is `[map_name, tile_x, tile_y, proximity_px]`.",
+					"examples": [
+						[["test_map", 4, 5, 10], ["test_map", 10, 10, 10]],
+						[["level01", 0, 0, 5]]
+					],
+					"$ref": "../definitions.schema.json#/definitions/list_of_position_targets"
+				},
+				"repeat": {
+					"title": "Repeat",
+					"description": "Restart from the first checkpoint after reaching the last one. Default is false.",
+					"markdownDescription": "Restart from the first checkpoint after reaching the last one. Default is `false`.",
+					"examples": [true, false],
+					"default": false,
+					"type": "boolean"
+				},
+				"max_time_s": {
+					"title": "Maximum time (in sec) to complete the route",
+					"description": "Maximum time in seconds to complete the full route. After this time the movement stops.",
+					"markdownDescription": "Maximum time in seconds to complete the full route. After this time the movement stops.",
+					"examples": [null, 10, 30, 60],
+					"default": null,
+					"type": "integer",
+					"minimum": 0
+				}
+			}
+		}
+	],
+	"items": false
+}

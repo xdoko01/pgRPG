@@ -1,0 +1,36 @@
+{
+	"$id": "load_from_template.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "load_from_template command",
+	"description": "Instantiate a new entity from a template definition.",
+	"markdownDescription": "Instantiate a new entity from a *template* definition.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "load_from_template command",
+			"description": "Instantiate a new entity from a template definition.",
+			"markdownDescription": "Instantiate a new entity from a *template* definition.",
+			"enum": ["load_from_template"]
+		},
+		{
+			"title": "load_from_template command parameters",
+			"description": "template_id (required)",
+			"markdownDescription": "`template_id` (required)",
+			"type": "object",
+			"required": ["template_id"],
+
+			"properties": {
+				"template_id": {
+					"title": "Template ID",
+					"description": "Name/path of the template to instantiate (as registered in the scene's templates section).",
+					"markdownDescription": "Name/path of the template to instantiate (as registered in the scene's `templates` section).",
+					"examples": ["_special/arrow", "model/body/special/minotaur"],
+					"type": "string"
+				}
+			}
+		}
+	],
+	"items": false
+}

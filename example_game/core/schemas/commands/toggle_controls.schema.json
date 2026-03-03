@@ -1,0 +1,42 @@
+{
+	"$id": "toggle_controls.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "toggle_controls command",
+	"description": "Swap the entity's active control mapping (keys and feedback) to a new set.",
+	"markdownDescription": "Swap the entity's active *control mapping* (keys and feedback) to a new set.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "toggle_controls command",
+			"description": "Swap the entity's active control mapping to a new set.",
+			"enum": ["toggle_controls"]
+		},
+		{
+			"title": "toggle_controls command parameters",
+			"description": "control_cmds (required), key_feedback (required)",
+			"markdownDescription": "`control_cmds` (required), `key_feedback` (required)",
+			"type": "object",
+			"required": ["control_cmds", "key_feedback"],
+
+			"properties": {
+				"control_cmds": {
+					"title": "Control Commands",
+					"description": "Dict mapping action names to lists of commands, replacing the entity's current control_cmds.",
+					"markdownDescription": "Dict mapping action names to lists of commands, replacing the entity's current `control_cmds`.",
+					"examples": [{"left": [["move_dir", {"moves": [["left", 64]]}]], "attack": [["attack", {}]]}],
+					"type": "object"
+				},
+				"key_feedback": {
+					"title": "Key Feedback",
+					"description": "Dict mapping action names to feedback data, replacing the entity's current key_feedback.",
+					"markdownDescription": "Dict mapping action names to feedback data, replacing the entity's current `key_feedback`.",
+					"examples": [{"left": "move_left", "attack": "attack"}],
+					"type": "object"
+				}
+			}
+		}
+	],
+	"items": false
+}

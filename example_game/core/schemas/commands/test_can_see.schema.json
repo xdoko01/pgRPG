@@ -1,0 +1,41 @@
+{
+	"$id": "test_can_see.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "test_can_see command",
+	"description": "Test if any of the given entities are in the sight cone. Returns SUCCESS if at least one is seen.",
+	"markdownDescription": "Test if any of the given entities are in the *sight cone*. Returns `SUCCESS` if at least one is seen.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "test_can_see command",
+			"description": "Test if any of the given entities are in the sight cone.",
+			"enum": ["test_can_see"]
+		},
+		{
+			"title": "test_can_see command parameters",
+			"description": "entities (required), out_bb_key (optional)",
+			"markdownDescription": "`entities` (required), `out_bb_key` (optional)",
+			"type": "object",
+			"required": ["entities"],
+
+			"properties": {
+				"entities": {
+					"title": "Entities to Test",
+					"description": "List of entity IDs or aliases to test for sight.",
+					"$ref": "../definitions.schema.json#/definitions/list_of_entities"
+				},
+				"out_bb_key": {
+					"title": "Output Blackboard Key",
+					"description": "If set, the first seen entity is written to this blackboard key.",
+					"markdownDescription": "If set, the first seen entity is written to this *blackboard key*.",
+					"examples": ["seen_entity", "target"],
+					"default": null,
+					"type": "string"
+				}
+			}
+		}
+	],
+	"items": false
+}

@@ -1,0 +1,41 @@
+{
+	"$id": "disarm_ammo.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "disarm_ammo command",
+	"description": "Disarm a specific ammo pack from the entity.",
+	"markdownDescription": "Disarm a specific *ammo pack* from the entity.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "disarm_ammo command",
+			"description": "Disarm a specific ammo pack from the entity.",
+			"markdownDescription": "Disarm a specific *ammo pack* from the entity.",
+			"enum": ["disarm_ammo"]
+		},
+		{
+			"title": "disarm_ammo command parameters",
+			"description": "ammo_entity_id (required), ammo_type (required)",
+			"markdownDescription": "`ammo_entity_id` (required), `ammo_type` (required)",
+			"type": "object",
+			"required": ["ammo_entity_id", "ammo_type"],
+
+			"properties": {
+				"ammo_entity_id": {
+					"title": "Ammo Entity",
+					"description": "ID or alias of the ammo pack entity to disarm.",
+					"examples": ["wooden_arrows_pack", 42],
+					"$ref": "../definitions.schema.json#/definitions/entity_id"
+				},
+				"ammo_type": {
+					"title": "Ammo Type",
+					"description": "Type identifier of the ammo pack (matches the AmmoPack component 'type' field).",
+					"examples": ["wooden_arrows", "iron_arrows"],
+					"type": "string"
+				}
+			}
+		}
+	],
+	"items": false
+}

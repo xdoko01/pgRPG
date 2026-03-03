@@ -1,0 +1,40 @@
+{
+	"$id": "test_damaged.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "test_damaged command",
+	"description": "Test if this entity has been damaged (optionally by specific entities). Returns SUCCESS if damaged.",
+	"markdownDescription": "Test if this entity has been *damaged* (optionally by specific entities). Returns `SUCCESS` if damaged.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "test_damaged command",
+			"description": "Test if this entity has been damaged.",
+			"enum": ["test_damaged"]
+		},
+		{
+			"title": "test_damaged command parameters",
+			"description": "entities (optional), out_bb_key (optional)",
+			"markdownDescription": "`entities` (optional), `out_bb_key` (optional)",
+			"type": "object",
+
+			"properties": {
+				"entities": {
+					"title": "Entities to Filter By",
+					"description": "If provided, only consider damage from these entities. Empty list means any damager.",
+					"default": [],
+					"$ref": "../definitions.schema.json#/definitions/list_of_entities"
+				},
+				"out_bb_key": {
+					"title": "Output Blackboard Key",
+					"description": "If set, the damaging entity is written to this blackboard key.",
+					"examples": ["attacker", "last_damager"],
+					"default": null,
+					"type": "string"
+				}
+			}
+		}
+	],
+	"items": false
+}

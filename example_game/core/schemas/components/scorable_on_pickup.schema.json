@@ -1,0 +1,41 @@
+{
+	"$id": "scorable_on_pickup.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "ScorableOnPickup Component",
+	"description": "Schema validating the ScorableOnPickup component.",
+
+	"examples" : [
+		{"type" : "scorable_on_pickup:ScorableOnPickup", "params" : {}},
+		{"type" : "scorable_on_pickup:ScorableOnPickup", "params" : {"score" : 5}}
+	],
+
+	"required": [ "type", "params"],
+	"properties": {
+		"type": {
+			"description" : "Path to the component class.",
+			"enum": [ "scorable_on_pickup:ScorableOnPickup" ]
+		},
+		"params": {
+			"title": "Component parameters",
+			"description" : "Parameters of the ScorableOnPickup component class - 'score' (optional).",
+			"type": "object",
+			"$ref": "#/$defs/cond_params",
+			"properties": {
+				"score" : {
+					"$ref": "../definitions.schema.json#/definitions/entity_score",
+					"description": "Score points awarded when this entity is picked up. Default is 1.",
+					"default": 1
+				}
+			}
+		}
+	},
+
+	"$defs" : {
+		"cond_params": {
+			"description" : "Conditions for 'param' properties.",
+			"anyOf": [true]
+		}
+	}
+
+}

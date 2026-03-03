@@ -1,0 +1,41 @@
+{
+	"$id": "move_to_vect.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "move_to_vect command",
+	"description": "Move to a pixel position on the current map using a direction vector.",
+	"markdownDescription": "*Move* to a pixel position on the current map using a direction vector.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "move_to_vect command",
+			"description": "Move to a pixel position on the current map using a direction vector.",
+			"markdownDescription": "*Move* to a pixel position on the current map using a direction vector.",
+			"enum": ["move_to_vect"]
+		},
+		{
+			"title": "move_to_vect command parameters",
+			"description": "pos (required)",
+			"markdownDescription": "`pos` (required)",
+			"type": "object",
+			"required": ["pos"],
+
+			"properties": {
+				"pos": {
+					"title": "Target Pixel Position",
+					"description": "Target position in pixels [x, y].",
+					"markdownDescription": "Target position in pixels `[x, y]`.",
+					"examples": [[0, 0], [64, 128], [320, 240]],
+					"type": "array",
+					"prefixItems": [
+						{"title": "X in px", "$ref": "../definitions.schema.json#/definitions/pixel_pos"},
+						{"title": "Y in px", "$ref": "../definitions.schema.json#/definitions/pixel_pos"}
+					],
+					"items": false
+				}
+			}
+		}
+	],
+	"items": false
+}

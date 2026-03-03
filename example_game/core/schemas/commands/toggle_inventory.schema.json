@@ -1,0 +1,36 @@
+{
+	"$id": "toggle_inventory.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "toggle_inventory command",
+	"description": "Toggle the inventory display on or off.",
+	"markdownDescription": "Toggle the *inventory* display on or off.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "toggle_inventory command",
+			"description": "Toggle the inventory display on or off.",
+			"enum": ["toggle_inventory"]
+		},
+		{
+			"title": "toggle_inventory command parameters",
+			"description": "slots_per_row (optional)",
+			"markdownDescription": "`slots_per_row` (optional)",
+			"type": "object",
+
+			"properties": {
+				"slots_per_row": {
+					"title": "Slots per Row",
+					"description": "Number of inventory slots to display per row. Default is 5.",
+					"markdownDescription": "Number of inventory slots to display per row. Default is `5`.",
+					"examples": [3, 5, 8, 10],
+					"default": 5,
+					"type": "integer",
+					"minimum": 1
+				}
+			}
+		}
+	],
+	"items": false
+}

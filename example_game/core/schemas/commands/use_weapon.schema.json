@@ -1,0 +1,34 @@
+{
+	"$id": "use_weapon.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+
+	"title": "use_weapon command",
+	"description": "Activate (use) the armed weapon of a given type.",
+	"markdownDescription": "Activate (use) the armed *weapon* of a given type.",
+
+	"type": "array",
+	"prefixItems": [
+		{
+			"title": "use_weapon command",
+			"description": "Activate (use) the armed weapon of a given type.",
+			"markdownDescription": "Activate (use) the armed *weapon* of a given type.",
+			"enum": ["use_weapon"]
+		},
+		{
+			"title": "use_weapon command parameters",
+			"description": "weapon_type (required)",
+			"markdownDescription": "`weapon_type` (required)",
+			"type": "object",
+			"required": ["weapon_type"],
+
+			"properties": {
+				"weapon_type": {
+					"title": "Weapon Type",
+					"description": "Type of weapon to activate.",
+					"$ref": "../definitions.schema.json#/definitions/entity_weapon_type"
+				}
+			}
+		}
+	],
+	"items": false
+}
