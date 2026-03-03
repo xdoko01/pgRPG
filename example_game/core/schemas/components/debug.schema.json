@@ -29,7 +29,7 @@
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the Debug component class - 'collision', 'movement'.",
+			"description" : "Parameters of the Debug component class - 'collision', 'movement', 'sight', 'hearing'.",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
 			"properties": {
@@ -62,6 +62,40 @@
 						},
 						"width": {
 							"description": "With of the movement arrow.",
+							"$ref": "../definitions.schema.json#/definitions/pixel_dim",
+							"default": 1
+						}
+					}
+				},
+				"sight" : {
+					"title": "Sight Display Params",
+					"description": "Display params for CanSee sight cone debug overlay.",
+					"type": "object",
+					"properties": {
+						"color": {
+							"description": "RGB color of the sight cone.",
+							"$ref": "../definitions.schema.json#/definitions/color_rgb",
+							"default": [0, 255, 0]
+						},
+						"width": {
+							"description": "Width of the sight cone lines.",
+							"$ref": "../definitions.schema.json#/definitions/pixel_dim",
+							"default": 1
+						}
+					}
+				},
+				"hearing" : {
+					"title": "Hearing Display Params",
+					"description": "Display params for CanHear earshot radius debug overlay.",
+					"type": "object",
+					"properties": {
+						"color": {
+							"description": "RGB color of the hearing radius.",
+							"$ref": "../definitions.schema.json#/definitions/color_rgb",
+							"default": [255, 255, 0]
+						},
+						"width": {
+							"description": "Width of the hearing radius line.",
 							"$ref": "../definitions.schema.json#/definitions/pixel_dim",
 							"default": 1
 						}

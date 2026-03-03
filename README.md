@@ -379,8 +379,9 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 
 ## Dev Log - some years missing
 
-### 2026-02-17 PyRPG renamed to PgRPG to be able to upload on PIP 
+### 2026-02-17 PyRPG renamed to PgRPG to be able to upload on PIP + upload to PIP
   - PyRPG name was already taken, hence all references to pyRPG were substituted to PgRPG
+  - PgRPG is now available for installation via PIP `pip install pgrpg`
 
 ### 2026-02-06 Possibility to start into selected State
   - It is now possible to start into specific scene (`--file` parameter) or into specific `State` (`--state` parameter, for example into main menu), or start into console if no parameter is present. Console will load the `default.scr` script full of commands that you want to use to start the game (resolution, scene file, more ...).

@@ -1,5 +1,5 @@
 {
-	"$id": "weapon_in_use.schema.json",
+	"$id": "weapon.schema.json",
 	"$schema": "https://json-schema.org/draft-07/schema",
 
 	"title": "Weapon Component",
@@ -17,13 +17,22 @@
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the Weapon component class - 'type'.",
+			"description" : "Parameters of the Weapon component class - 'type' (required), 'max_projectiles' (optional).",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
 			"required": ["type"],
 			"properties": {
 				"type" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_weapon_type"
+				},
+				"max_projectiles": {
+					"title": "Max Projectiles",
+					"description": "Maximum number of simultaneous projectiles this weapon can have in flight. Default is 1.",
+					"markdownDescription": "Maximum number of simultaneous projectiles this weapon can have in flight. Default is `1`.",
+					"examples": [1, 3, 5, 10],
+					"default": 1,
+					"type": "integer",
+					"minimum": 1
 				}
 			}
 		}

@@ -9,6 +9,9 @@
 		{"$ref": "commands/move_auto.schema.json"},
 		{"$ref": "commands/move_vect.schema.json"},
 		{"$ref": "commands/move_to_pos_px.schema.json"},
+		{"$ref": "commands/move_to_pos_px_vect.schema.json"},
+		{"$ref": "commands/move_to_pos_tile.schema.json"},
+		{"$ref": "commands/move_to_pos_tile_vect.schema.json"},
 		{"$ref": "commands/move_to_target.schema.json"},
 
 		{"$ref": "commands/attack.schema.json"},

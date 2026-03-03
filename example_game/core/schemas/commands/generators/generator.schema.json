@@ -12,7 +12,7 @@
 		"title": "Command Generator",
 		"description": "Command Generator representing AI logic",
 		"type": "object",
-		"OneOf": [
+		"oneOf": [
 			{"$ref": "blist.schema.json#/blist"},
 			{"$ref": "btree.schema.json#/btree"}
 		]

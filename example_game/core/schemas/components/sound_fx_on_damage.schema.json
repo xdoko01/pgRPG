@@ -17,13 +17,21 @@
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the SoundFXOnDamage component class - 'sound'.",
+			"description" : "Parameters of the SoundFXOnDamage component class - 'sound' (required), 'stop_before_playback' (optional).",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
 			"required": ["sound"],
 			"properties": {
 				"sound" : {
 					"$ref": "../definitions.schema.json#/definitions/sound_file"
+				},
+				"stop_before_playback": {
+					"title": "Stop Before Playback",
+					"description": "Stop the sound before replaying it, so multiple hits do not stack. Default is false.",
+					"markdownDescription": "Stop the sound before replaying it, so multiple hits do not stack. Default is `false`.",
+					"examples": [true, false],
+					"default": false,
+					"type": "boolean"
 				}
 			}
 		}

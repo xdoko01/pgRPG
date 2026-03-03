@@ -54,7 +54,8 @@
 		{"$ref": "components/has_score.schema.json"},
 
 		{"$ref": "components/can_see.schema.json"},
-		{"$ref": "components/can_hear.schema.json"}
+		{"$ref": "components/can_hear.schema.json"},
+		{"$ref": "components/has_target_position.schema.json"}
 
 	]
 }

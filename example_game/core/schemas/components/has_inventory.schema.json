@@ -18,7 +18,7 @@
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the HasInventory component class - 'inventory', 'categories'.",
+			"description" : "Parameters of the HasInventory component class - 'inventory', 'categories', 'max_items'.",
 			"type": "object",
 			"$ref": "#/$defs/cond_params",
 			"properties": {
@@ -33,6 +33,15 @@
 					"description": "Dict of categories that are in the inventory.",
 					"type": "object",
 					"default": {}
+				},
+				"max_items": {
+					"title": "Max Items",
+					"description": "Maximum number of items the inventory can hold. Default is 10.",
+					"markdownDescription": "Maximum number of items the inventory can hold. Default is `10`.",
+					"examples": [5, 10, 20, 50],
+					"default": 10,
+					"type": "integer",
+					"minimum": 1
 				}
 			}
 		}

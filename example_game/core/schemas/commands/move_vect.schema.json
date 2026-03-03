@@ -16,10 +16,9 @@
 		},
 		{
 			"title": "move_vect command parameters",
-			"description": "vector (required), dt_comp (optional), absolute (optional)",
-			"markdownDescription": "`vector` (required), `dt_comp` (optional), `absolute` (optional)",
+			"description": "vector (optional, default [0,0]), dt_comp (optional), absolute (optional)",
+			"markdownDescription": "`vector` (optional, default `[0,0]`), `dt_comp` (optional), `absolute` (optional)",
 			"type": "object",
-			"required": ["vector"],
 	
 			"properties": {
 				"vector": {

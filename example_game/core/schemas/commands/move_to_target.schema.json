@@ -14,13 +14,13 @@
 			"markdownDescription": "*Move* to the position of certain entity on the current map.",		
 			"enum": ["move_to_target"]
 		},
-		{	
+		{
 			"title": "move_to_target command parameters",
-			"description": "target (required), proximity_px (optional), max_time_s (optional), change_dir_ms (optional), dt_comp (optional), absolute (optional)",
-			"markdownDescription": "`target` (required), `proximity_px` (optional), `max_time_s` (optional), `change_dir_ms` (optional), `dt_comp` (optional), `absolute` (optional)",
+			"description": "target (required), upd_path_ms (optional), max_time_s (optional), proximity_tl (optional)",
+			"markdownDescription": "`target` (required), `upd_path_ms` (optional), `max_time_s` (optional), `proximity_tl` (optional)",
 			"type": "object",
 			"required": ["target"],
-			
+
 			"properties": {
 				"target": {
 					"title": "Target Entity",
@@ -32,48 +32,32 @@
 						{"$ref": "../definitions.schema.json#/definitions/blackboard_pointer"}
 					]
 				},
-				"proximity_px": {
-					"title": "Proximity in px",
-					"description": "How close to come to the target position in px",
-					"markdownDescription": "How close to come to the target position in px",
-					"examples": [0,10,20,50,100],
-					"default": 10,
+				"upd_path_ms": {
+					"title": "Path Update Interval in ms",
+					"description": "How often (in ms) the pathfinding route to the target is recalculated. Default is 5000.",
+					"markdownDescription": "How often (in ms) the pathfinding route to the target is recalculated. Default is `5000`.",
+					"examples": [500, 1000, 2000, 5000],
+					"default": 5000,
 					"type": "integer",
 					"minimum": 0
 				},
 				"max_time_s": {
-					"title": "Maximum time (in sec) to reach the position",
-					"description": "Maximum time (in sec) to reach the position. After this time the movement stops.",
-					"markdownDescription": "Maximum time (in sec) to reach the position. After this time the movement stops.",
+					"title": "Maximum time (in sec) to reach the target",
+					"description": "Maximum time (in sec) to reach the target. After this time the movement stops.",
+					"markdownDescription": "Maximum time (in sec) to reach the target. After this time the movement stops.",
 					"examples": [null,10,20,50,100],
 					"default": null,
 					"type": "integer",
 					"minimum": 0
 				},
-				"change_dir_ms": {
-					"title": "Change Direction after ms",
-					"description": "Keep the movement direction unchanged for given time (in mx)",
-					"markdownDescription": "Keep the movement direction unchanged for given time (in mx)",
-					"examples": [100,200,500,1000,2000],
-					"default": 1000,
+				"proximity_tl": {
+					"title": "Proximity in tiles",
+					"description": "How close to come to the target position in tiles. Default is 0.",
+					"markdownDescription": "How close to come to the target position in tiles. Default is `0`.",
+					"examples": [0,1,2,3,5],
+					"default": 0,
 					"type": "integer",
 					"minimum": 0
-				},
-				"dt_comp": {
-					"title": "Delta-time Compensation",
-					"description": "Specifies if the movement is compensated by current framerate. Default is True",
-					"markdownDescription": "Specifies if the movement is compensated by current framerate. Default is `true`",
-					"default": true,
-					"examples": [true, false],
-					"type": "boolean"
-				},
-				"absolute": {
-					"title": "Do not apply velocity on the movement",
-					"description": "Specifies if the movement is adjusted using velocity. Default is True",
-					"markdownDescription": "Specifies if the movement is adjusted using velocity. Default is `true`",
-					"default": true,
-					"examples": [true, false],
-					"type": "boolean"
 				}
 			}
 		}

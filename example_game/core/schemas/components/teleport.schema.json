@@ -50,6 +50,13 @@
 					"title": "Map name",
 					"description": "Name of the map where entity is present.",
 					"type": "string"
+				},
+				"key": {
+					"title": "Key Entity",
+					"description": "Entity (or alias) that must be present in the teleporting entity's inventory to allow teleportation. Optional.",
+					"markdownDescription": "Entity (or alias) that must be present in the teleporting entity's inventory to allow teleportation. Optional.",
+					"examples": ["golden_key", 42],
+					"$ref": "../definitions.schema.json#/definitions/entity_id"
 				}
 			}
 		}
@@ -91,10 +98,10 @@
 				},
 				{
 					"not" : { "required" : ["tile_dest_y"] },
-					"required" : ["tile_y"]
+					"required" : ["dest_y"]
 				},
 				{
-					"not" : { "required" : ["tile_y"] },
+					"not" : { "required" : ["dest_y"] },
 					"required" : ["tile_dest_y"]
 				}
 			]
