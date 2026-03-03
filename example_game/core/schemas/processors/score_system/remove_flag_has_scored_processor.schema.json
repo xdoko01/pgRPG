@@ -1,0 +1,44 @@
+{
+	"$id": "score_system/remove_flag_has_scored_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagHasScoredProcessor processor",
+	"description": "Processor: RemoveFlagHasScoredProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"score_system.remove_flag_has_scored_processor:RemoveFlagHasScoredProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

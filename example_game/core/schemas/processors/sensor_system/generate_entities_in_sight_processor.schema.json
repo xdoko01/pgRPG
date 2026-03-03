@@ -1,0 +1,46 @@
+{
+	"$id": "sensor_system/generate_entities_in_sight_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "GenerateEntitiesInSightProcessor / GenerateEntitiesInSightFullProcessor processor",
+	"description": "Processor: GenerateEntitiesInSightProcessor / GenerateEntitiesInSightFullProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor",
+						"sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightFullProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightProcessor",
+						"sensor_system.generate_entities_in_sight_processor:GenerateEntitiesInSightFullProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

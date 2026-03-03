@@ -1,0 +1,44 @@
+{
+	"$id": "movement_system/perform_adjust_movement_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "PerformAdjustMovementProcessor processor",
+	"description": "Processor: PerformAdjustMovementProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"movement_system.perform_adjust_movement_processor:PerformAdjustMovementProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

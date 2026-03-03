@@ -1,0 +1,44 @@
+{
+	"$id": "drop_system/remove_flag_was_dropped_by_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagWasDroppedByProcessor processor",
+	"description": "Processor: RemoveFlagWasDroppedByProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"drop_system.remove_flag_was_dropped_by_processor:RemoveFlagWasDroppedByProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"drop_system.remove_flag_was_dropped_by_processor:RemoveFlagWasDroppedByProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

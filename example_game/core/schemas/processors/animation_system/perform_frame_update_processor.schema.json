@@ -1,0 +1,44 @@
+{
+	"$id": "animation_system/perform_frame_update_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "PerformFrameUpdateProcessor processor",
+	"description": "Processor: PerformFrameUpdateProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"animation_system.perform_frame_update_processor:PerformFrameUpdateProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

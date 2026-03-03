@@ -1,0 +1,44 @@
+{
+	"$id": "teleport_system/remove_flag_was_teleported_by_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagWasTeleportedByProcessor processor",
+	"description": "Processor: RemoveFlagWasTeleportedByProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"teleport_system.remove_flag_was_teleported_by_processor:RemoveFlagWasTeleportedByProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

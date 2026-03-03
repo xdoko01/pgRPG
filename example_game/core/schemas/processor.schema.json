@@ -1,0 +1,335 @@
+{
+	"$id": "processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "Processor",
+	"description": "Schema validating processors in scene files. A processor entry is an array with an optional group name, a module:ClassName reference string, and a params object.",
+	"oneOf": [
+		{
+			"$ref": "processors/animation_system/perform_action_animation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/animation_system/perform_action_idle_animation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/animation_system/perform_expire_animation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/animation_system/perform_frame_update_processor.schema.json"
+		},
+		{
+			"$ref": "processors/animation_system/perform_idle_animation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/animation_system/perform_movement_animation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/animation_system/remove_flag_is_animation_action_frame_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/generate_arm_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/perform_arm_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/remove_flag_has_armed_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/remove_flag_is_about_to_arm_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/remove_flag_was_armed_as_ammo_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/generate_disarm_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/perform_disarm_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/remove_flag_has_disarmed_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/remove_flag_is_about_to_disarm_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_ammo_system/remove_flag_was_disarmed_as_ammo_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/generate_arm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/perform_arm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/perform_set_weapon_into_use_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/remove_flag_has_armed_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/remove_flag_is_about_to_arm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/remove_flag_was_armed_as_weapon_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/generate_disarm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/perform_disarm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/remove_flag_has_disarmed_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/remove_flag_is_about_to_disarm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/arm_weapon_system/remove_flag_was_disarmed_as_weapon_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/attack_system/generate_projectile_factory_data_processor.schema.json"
+		},
+		{
+			"$ref": "processors/attack_system/remove_flag_do_attack_processor.schema.json"
+		},
+		{
+			"$ref": "processors/collision_system/generate_collisions_processor.schema.json"
+		},
+		{
+			"$ref": "processors/collision_system/resolve_collisions_processor.schema.json"
+		},
+		{
+			"$ref": "processors/collision_system/remove_flag_has_collided_processor.schema.json"
+		},
+		{
+			"$ref": "processors/collision_system/perform_adjust_collidable_processor.schema.json"
+		},
+		{
+			"$ref": "processors/collision_system/remove_flag_adjust_collidable_processor.schema.json"
+		},
+		{
+			"$ref": "processors/collision_system/resolve_map_collisions_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/generate_damage_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/perform_damage_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/remove_flag_was_damaged_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/remove_flag_has_damaged_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/remove_flag_is_about_to_be_damaged_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/remove_flag_has_no_health_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/perform_adjust_damaging_processor.schema.json"
+		},
+		{
+			"$ref": "processors/damage_system/remove_flag_adjust_damaging_processor.schema.json"
+		},
+		{
+			"$ref": "processors/debug_system/debug_processor_performance_processor.schema.json"
+		},
+		{
+			"$ref": "processors/debug_system/list_components_processor.schema.json"
+		},
+		{
+			"$ref": "processors/destroy_system/generate_destroy_on_collision_processor.schema.json"
+		},
+		{
+			"$ref": "processors/destroy_system/generate_destroy_on_stopped_movement_processor.schema.json"
+		},
+		{
+			"$ref": "processors/destroy_system/generate_destroy_on_no_health_processor.schema.json"
+		},
+		{
+			"$ref": "processors/destroy_system/perform_destroy_entities_processor.schema.json"
+		},
+		{
+			"$ref": "processors/drop_system/perform_drop_processor.schema.json"
+		},
+		{
+			"$ref": "processors/drop_system/remove_flag_has_dropped_processor.schema.json"
+		},
+		{
+			"$ref": "processors/drop_system/remove_flag_is_about_to_drop_entity_processor.schema.json"
+		},
+		{
+			"$ref": "processors/drop_system/remove_flag_was_dropped_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_arm_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_collision_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_creation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_damage_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_generation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_movement_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_sound_fx_on_no_health_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_visual_fx_on_collision_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_visual_fx_on_creation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_visual_fx_on_damage_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_visual_fx_on_generation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/effects_system/generate_visual_fx_on_no_health_processor.schema.json"
+		},
+		{
+			"$ref": "processors/event_system/game_events_processor.schema.json"
+		},
+		{
+			"$ref": "processors/factory_system/perform_factory_generation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/factory_system/remove_flag_create_from_factory_processor.schema.json"
+		},
+		{
+			"$ref": "processors/factory_system/remove_flag_generated_from_factory_processor.schema.json"
+		},
+		{
+			"$ref": "processors/gui_system/perform_gui_press.schema.json"
+		},
+		{
+			"$ref": "processors/gui_system/remove_flag_gui_flag_was_pressed_processor.schema.json"
+		},
+		{
+			"$ref": "processors/movement_system/perform_adjust_movement_processor.schema.json"
+		},
+		{
+			"$ref": "processors/movement_system/perform_movement_processor.schema.json"
+		},
+		{
+			"$ref": "processors/movement_system/remove_flag_adjust_movement_processor.schema.json"
+		},
+		{
+			"$ref": "processors/movement_system/remove_flag_do_move_processor.schema.json"
+		},
+		{
+			"$ref": "processors/movement_system/remove_flag_has_stopped_movement_processor.schema.json"
+		},
+		{
+			"$ref": "processors/pickup_system/generate_pickup_processor.schema.json"
+		},
+		{
+			"$ref": "processors/pickup_system/perform_pickup_processor.schema.json"
+		},
+		{
+			"$ref": "processors/pickup_system/remove_flag_has_picked_processor.schema.json"
+		},
+		{
+			"$ref": "processors/pickup_system/remove_flag_is_about_to_pick_entity_processor.schema.json"
+		},
+		{
+			"$ref": "processors/pickup_system/remove_flag_was_picked_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/position_system/perform_check_on_target_position_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/generate_render_data_from_parent_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_blit_camera_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_blit_picture_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_clear_camera_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_clear_window_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_armed_ammo_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_armed_weapon_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_debug_info_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_map_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_messages_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_model_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_render_inventory_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_scroll_camera_processor.schema.json"
+		},
+		{
+			"$ref": "processors/render_system/perform_scroll_delayed_camera_processor.schema.json"
+		},
+		{
+			"$ref": "processors/score_system/generate_score_on_damage_processor.schema.json"
+		},
+		{
+			"$ref": "processors/score_system/generate_score_on_no_health_processor.schema.json"
+		},
+		{
+			"$ref": "processors/score_system/generate_score_on_pickup_processor.schema.json"
+		},
+		{
+			"$ref": "processors/score_system/calculate_score_processor.schema.json"
+		},
+		{
+			"$ref": "processors/score_system/remove_flag_has_scored_processor.schema.json"
+		},
+		{
+			"$ref": "processors/sensor_system/generate_entities_in_sight_processor.schema.json"
+		},
+		{
+			"$ref": "processors/sensor_system/generate_entities_within_earshot_processor.schema.json"
+		},
+		{
+			"$ref": "processors/teleport_system/generate_teleportation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/teleport_system/perform_teleportation_processor.schema.json"
+		},
+		{
+			"$ref": "processors/teleport_system/remove_flag_has_teleported_processor.schema.json"
+		},
+		{
+			"$ref": "processors/teleport_system/remove_flag_is_about_to_be_teleported_by_processor.schema.json"
+		},
+		{
+			"$ref": "processors/teleport_system/remove_flag_was_teleported_by_processor.schema.json"
+		}
+	]
+}

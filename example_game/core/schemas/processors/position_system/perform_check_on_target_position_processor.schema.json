@@ -1,0 +1,44 @@
+{
+	"$id": "position_system/perform_check_on_target_position_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "PerformCheckOnTargetPositionProcessor processor",
+	"description": "Processor: PerformCheckOnTargetPositionProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"position_system.perform_check_on_target_position_processor:PerformCheckOnTargetPositionProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

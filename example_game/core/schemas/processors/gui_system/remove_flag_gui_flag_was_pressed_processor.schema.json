@@ -1,0 +1,44 @@
+{
+	"$id": "gui_system/remove_flag_gui_flag_was_pressed_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagGUIFLagWasPressedProcessor processor",
+	"description": "Processor: RemoveFlagGUIFLagWasPressedProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"gui_system.remove_flag_gui_flag_was_pressed_processor:RemoveFlagGUIFLagWasPressedProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"gui_system.remove_flag_gui_flag_was_pressed_processor:RemoveFlagGUIFLagWasPressedProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

@@ -1,0 +1,44 @@
+{
+	"$id": "animation_system/perform_movement_animation_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "PerformMovementAnimationProcessor processor",
+	"description": "Processor: PerformMovementAnimationProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"animation_system.perform_movement_animation_processor:PerformMovementAnimationProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

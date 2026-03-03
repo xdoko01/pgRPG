@@ -1,0 +1,44 @@
+{
+	"$id": "score_system/generate_score_on_no_health_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "GenerateScoreOnNoHealthProcessor processor",
+	"description": "Processor: GenerateScoreOnNoHealthProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"score_system.generate_score_on_no_health_processor:GenerateScoreOnNoHealthProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"score_system.generate_score_on_no_health_processor:GenerateScoreOnNoHealthProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

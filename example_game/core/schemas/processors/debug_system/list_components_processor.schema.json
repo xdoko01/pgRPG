@@ -1,0 +1,44 @@
+{
+	"$id": "debug_system/list_components_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "ListComponentsProcessor processor",
+	"description": "Processor: ListComponentsProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"debug_system.list_components_processor:ListComponentsProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"debug_system.list_components_processor:ListComponentsProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

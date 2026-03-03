@@ -1,0 +1,44 @@
+{
+	"$id": "arm_weapon_system/remove_flag_was_disarmed_as_weapon_by_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagWasDisarmedAsWeaponByProcessor processor",
+	"description": "Processor: RemoveFlagWasDisarmedAsWeaponByProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"arm_weapon_system.remove_flag_was_disarmed_as_weapon_by_processor:RemoveFlagWasDisarmedAsWeaponByProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"arm_weapon_system.remove_flag_was_disarmed_as_weapon_by_processor:RemoveFlagWasDisarmedAsWeaponByProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

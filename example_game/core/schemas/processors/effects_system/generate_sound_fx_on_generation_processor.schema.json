@@ -1,0 +1,44 @@
+{
+	"$id": "effects_system/generate_sound_fx_on_generation_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "GenerateSoundFXOnGenerationProcessor processor",
+	"description": "Processor: GenerateSoundFXOnGenerationProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"effects_system.generate_sound_fx_on_generation_processor:GenerateSoundFXOnGenerationProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"effects_system.generate_sound_fx_on_generation_processor:GenerateSoundFXOnGenerationProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

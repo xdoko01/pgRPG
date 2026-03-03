@@ -1,0 +1,44 @@
+{
+	"$id": "attack_system/remove_flag_do_attack_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagDoAttackProcessor processor",
+	"description": "Processor: RemoveFlagDoAttackProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"attack_system.remove_flag_do_attack_processor:RemoveFlagDoAttackProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

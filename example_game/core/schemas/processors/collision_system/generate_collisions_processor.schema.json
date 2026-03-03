@@ -1,0 +1,44 @@
+{
+	"$id": "collision_system/generate_collisions_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "GenerateCollisionsProcessor processor",
+	"description": "Processor: GenerateCollisionsProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"collision_system.generate_collisions_processor:GenerateCollisionsProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"collision_system.generate_collisions_processor:GenerateCollisionsProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

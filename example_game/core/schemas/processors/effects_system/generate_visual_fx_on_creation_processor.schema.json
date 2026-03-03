@@ -1,0 +1,44 @@
+{
+	"$id": "effects_system/generate_visual_fx_on_creation_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "GenerateVisualFXOnCreationProcessor processor",
+	"description": "Processor: GenerateVisualFXOnCreationProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"effects_system.generate_visual_fx_on_creation_processor:GenerateVisualFXOnCreationProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"effects_system.generate_visual_fx_on_creation_processor:GenerateVisualFXOnCreationProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}

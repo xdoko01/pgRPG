@@ -1,0 +1,44 @@
+{
+	"$id": "pickup_system/remove_flag_has_picked_processor.schema.json",
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"title": "RemoveFlagHasPickedProcessor processor",
+	"description": "Processor: RemoveFlagHasPickedProcessor.",
+	"oneOf": [
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"enum": [
+						"pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 2,
+			"maxItems": 2,
+			"items": false
+		},
+		{
+			"type": "array",
+			"prefixItems": [
+				{
+					"type": "string",
+					"description": "Processor group name"
+				},
+				{
+					"enum": [
+						"pickup_system.remove_flag_has_picked_processor:RemoveFlagHasPickedProcessor"
+					]
+				},
+				{
+					"type": "object"
+				}
+			],
+			"minItems": 3,
+			"maxItems": 3,
+			"items": false
+		}
+	]
+}
