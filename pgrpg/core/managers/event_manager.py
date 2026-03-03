@@ -2,15 +2,22 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from collections import deque  # O(1) popleft vs O(n) list.pop(0)
 from fnmatch import fnmatchcase # UNIX-like wildcards in load/clean functions
 
 from pgrpg.core.events.event import Event
 
 ###
 
-_event_queue: list = []
+# deque instead of list: list.pop(0) shifts every remaining element — O(n) per pop,
+# meaning draining k events costs O(k²). deque.popleft() is O(1) (pointer move only),
+# so draining k events costs O(k). This matters every frame since collision, damage,
+# and other processors enqueue events continuously.
+_event_queue: deque = deque()
 _exec_event_actions_fnc: callable = lambda x: None
 _event_handlers: dict = {}  # Stores all event handlers from scenes and phases. Event is a dict key and value is list of handlers
+
+_EMPTY: dict = {} # module-level sentinel for optimization
 
 logger.info(f"EventManager started.")
 
@@ -92,7 +99,7 @@ def add_event(event: Event) -> None:
 def clear_events() -> None:
     """Deletes all events from the event queue."""
 
-    del _event_queue[:]
+    _event_queue.clear()  # deque does not support slice deletion (del deque[:])
     logger.info(f"All events cleared.")
 
 def _process_event(event: Event) -> None:
@@ -103,7 +110,7 @@ def _process_event(event: Event) -> None:
     logger.debug(f'Looking for handler for event "{event.event_type}".')
 
     # Get all event handlers related to the event
-    event_handlers = _event_handlers.get(event.event_type, {}).values()
+    event_handlers = _event_handlers.get(event.event_type, _EMPTY).values()
 
     # Prepare empty list of actions to be filled in the below cycle and for execution later.
     # This is done in order to avoid modification of _event_handlers dictionary when komplex
@@ -141,24 +148,34 @@ def process_events(process: list=None, ignore: list=None) -> None:
     ''' Process particular game/scene event types that are specified on the input.
     '''
 
-    # This will be filled by the events that are outstanding for processing
-    new_event_queue = []
+    # Convert filter arguments to sets once, before the loop.
+    # The `in` operator on a list/tuple is O(k) — it scans every element until a
+    # match is found. A set uses a hash table, so `in` is O(1) regardless of size.
+    # Without this, every event in the queue pays the linear scan cost on each check.
+    # Converting here (once per process_events call) is O(k) upfront; after that
+    # every per-event membership test drops from O(k) to O(1).
+    _ignore  = set(ignore)  if ignore  is not None else None
+    _process = set(process) if process is not None else None
+
+    # This will be filled by the events that are outstanding for processing - obsolete
+    #new_event_queue = []
 
     while _event_queue:
 
-        # Pop out event from the beginning of the queue
-        event = _event_queue.pop(0)
+        # popleft() is O(1): deque stores head/tail pointers so removing from
+        # the front is a single pointer update, with no element shifting.
+        event = _event_queue.popleft()
 
         # If event is to be ignored move it to the new queue
-        if ignore is not None and event.event_type in ignore:
+        if _ignore is not None and event.event_type in _ignore:
 
             # Keep it in the event queue for later processing - but why? we should remove it I hope
             #new_event_queue.append(event)
             pass
 
         # If event is not in process list
-        elif process is not None and event.event_type not in process:
-            
+        elif _process is not None and event.event_type not in _process:
+
             # Keep it in the event queue for later processing - but why? we should remove it I hope
             #new_event_queue.append(event)
             pass
@@ -169,8 +186,8 @@ def process_events(process: list=None, ignore: list=None) -> None:
 
     # Renew the value of the event queue - it must be done via extend. I cannot reassigned like
     # event_queue = new_event_queue because other processors have stored link directly to original
-    # global event_queue
-    _event_queue.extend(new_event_queue)
+    # global event_queue - obsolete
+    ##_event_queue.extend(new_event_queue)
 
 
 ###
