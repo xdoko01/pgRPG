@@ -28,39 +28,53 @@
 				"x" : {
 					"title": "X-axis position",
 					"description": "X-axis position in pixels on the map.",
-					"type": "number",
-					"minimum": 0
+					"anyOf": [
+						{"type": "number", "minimum": 0},
+						{"$ref": "../definitions.schema.json#/definitions/template_var"}
+					]
 				},
 				"tile_x" : {
 					"title": "X-axis position in tiles",
 					"description": "X-axis position in tiles on the map.",
 					"default" : 0,
-					"type": "number",
-					"minimum": 0
+					"anyOf": [
+						{"type": "number", "minimum": 0},
+						{"$ref": "../definitions.schema.json#/definitions/template_var"}
+					]
 				},
 				"y": {
 					"title": "Y-axis position",
 					"description": "Y-axis position in pixels on the map.",
-					"type": "number",
-					"minimum": 0
+					"anyOf": [
+						{"type": "number", "minimum": 0},
+						{"$ref": "../definitions.schema.json#/definitions/template_var"}
+					]
 				},
 				"tile_y": {
 					"title": "Y-axis position in tiles",
 					"description": "Y-axis position in tiles on the map.",
 					"default" : 0,
-					"type": "number",
-					"minimum": 0
+					"anyOf": [
+						{"type": "number", "minimum": 0},
+						{"$ref": "../definitions.schema.json#/definitions/template_var"}
+					]
 				},
 				"map": {
 					"title": "Map name",
 					"description": "Name of the map where entity is present.",
-					"type": "string"
+					"anyOf": [
+						{"type": "string"},
+						{"$ref": "../definitions.schema.json#/definitions/template_var"}
+					]
 				},
 				"dir_name": {
 					"title": "Direction name",
 					"description": "Name of the direction where entity is heading.",
 					"default" : "down",
-					"enum" : ["up", "down", "left", "right"]
+					"anyOf": [
+						{"enum": ["up", "down", "left", "right"]},
+						{"$ref": "../definitions.schema.json#/definitions/template_var"}
+					]
 				}
 			}
 		}
