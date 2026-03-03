@@ -1,4 +1,7 @@
 {
+	"pgrpg": {
+		"TIMED": true  // Measure time of duration of individual processors
+	},
 
 	"DISPLAY" : {
 		"RESOLUTION" : [640,480],

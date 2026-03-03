@@ -41,7 +41,9 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   
   - IMPORTANT: if you want to display arming of the arrow then ammo pack(generator) and weapon must be 2 separate entities with 2 Renderable Models. If weapon and ammo pack are merged into one entity then only one renderable model (probably weapon) is displayed and the animation of arming an arrow is missing/overridden by weapon.
 
-  - [ ] - optimize the following processors that consume the most time: `'GameEventsExProcessor'`: 1677, `'PerformRenderDebugInfoProcessor'`: 1657, `'PerformRenderMapProcessor'`: 1767
+  - [ ] - optimize the following processors that consume the most time: `'PerformRenderDebugInfoProcessor'`: 1657, `'PerformRenderMapProcessor'`: 1767
+
+
   - [ ] - in `PerformDisarmWeapon` component fire a new component for removing the WeaponInUse component. Maybe to have processor `RemoveRenderDataFromParent` + flag `FlagRemoveDataFromParent`(entity_ids) that will handle all the removals
 
   - [ ] - BUG - pickup `spear`(1) and next pickup `bow`(7). After bow pickup the spear texture remains lying on the ground.
@@ -72,6 +74,7 @@ All of this is a result of me experimenting in my free time with Python and ECS 
   - [ ] - is it really necessary to have ecs_mng being passed to every command? Importing ecs_manager and checking if it is initiated should work just as well...
 
   - [ ] - music and sound volume into the configs
+  - [x] - the `GameEventsExProcessor` was optimized for performace by usinf `collections.dequeue` instead of a list (ClaudeCode suggestion)
   - [x] - it is now possible to start into specific scene (`--file` parameter) or into specific `State` (`--state` parameter, for example into main menu), or start into console if no parameter is present. Console will load the `default.scr` script full of commands that you want to use to start the game (resolution, scene file, more ...).
   - [x] - new camera processor `PerformScrollDelayedCameraProcessor` that implements delayed feedback effect of the camera. It is used for example in `tests/11_sensors/test_sensors_01.jsonc` scene and can be configured using `delay` parameter (how fast should camera convert to the real position of the entity with `Camera` component). 
   - [x] - music playback - new script `play_music` that can be triggered by event. Example usage is in `sokoban` game.
@@ -378,6 +381,10 @@ All of this is a result of me experimenting in my free time with Python and ECS 
 
 
 ## Dev Log - some years missing
+
+### 2026-03-03 ClaudeCode used for fixing and adding the missing JSON schemas for the example_game + optimizing event_manager
+  - ClaudeCode Pro used for generation of missing JSON schemas (tedious manual work)
+  - ClaudeCode Pro used for improving of the performance of the `event_manager`. Suggested using of collections `dequeue` structure instead of simple `list`. The original time complexity was O(n) with the list. Was reduced to O(1) with the `dequeue`.
 
 ### 2026-02-17 PyRPG renamed to PgRPG to be able to upload on PIP + upload to PIP
   - PyRPG name was already taken, hence all references to pyRPG were substituted to PgRPG

@@ -157,9 +157,6 @@ def process_events(process: list=None, ignore: list=None) -> None:
     _ignore  = set(ignore)  if ignore  is not None else None
     _process = set(process) if process is not None else None
 
-    # This will be filled by the events that are outstanding for processing - obsolete
-    #new_event_queue = []
-
     while _event_queue:
 
         # popleft() is O(1): deque stores head/tail pointers so removing from
@@ -168,26 +165,15 @@ def process_events(process: list=None, ignore: list=None) -> None:
 
         # If event is to be ignored move it to the new queue
         if _ignore is not None and event.event_type in _ignore:
-
-            # Keep it in the event queue for later processing - but why? we should remove it I hope
-            #new_event_queue.append(event)
             pass
 
         # If event is not in process list
         elif _process is not None and event.event_type not in _process:
-
-            # Keep it in the event queue for later processing - but why? we should remove it I hope
-            #new_event_queue.append(event)
             pass
 
         # Process the rest of the events
         else:
             _process_event(event)
-
-    # Renew the value of the event queue - it must be done via extend. I cannot reassigned like
-    # event_queue = new_event_queue because other processors have stored link directly to original
-    # global event_queue - obsolete
-    ##_event_queue.extend(new_event_queue)
 
 
 ###
