@@ -55,27 +55,46 @@ class PerformRenderMapProcessor(Processor):
 
 
     def process(self, *args, **kwargs):
-        ''' Process entities having Position and Camera components. Basically,
-        blit the relevant part of the map on camera screen surface.
+        ''' Process entities having Position and Camera components.
+
+        For each visible layer, blits the pre-rendered static surface slice
+        (one Surface.blit call) and then overlays only the animated tiles that
+        fall within the visible area. This replaces the previous per-tile loop
+        that called get_tile_image() for every tile every frame.
+
+        Layer order is preserved so that higher layers correctly composite over
+        lower ones, including the edge case where an animated tile in a lower
+        layer is partially covered by a static tile in a higher layer.
         '''
         try:
             super().process(*args, **kwargs)
         except SkipProcessorExecution:
             return
 
-        # Find the entity with Camera and use its position
-        # position - position and map of the object that is in camera's focus
-        # camera - camera component itself
+        tile_px = GAME["TILE_RES_PX"]
+
         for _, (position, camera) in self.world.get_components(Position, Camera):
 
-            # Get map that is on the object in camera's focus
-            map = self.maps.get(position.map)
+            map_obj = self.maps.get(position.map)
+            x1, y1, x2, y2 = camera.map_screen_rect
 
-            # Cycle through visible layers and display tiles
-            for layer in map.tmxdata.visible_tile_layers:
+            # Tile-coordinate bounds of the visible area (for animated tile culling)
+            vtx1 = int(x1 // tile_px)
+            vty1 = int(y1 // tile_px)
+            vtx2 = int(x2 // tile_px) + 1
+            vty2 = int(y2 // tile_px) + 1
 
-                for x, y, tile in map.get_tile_images_by_rect(layer, camera.map_screen_rect): # is this needed - can we simplify this?
-                    camera.screen.blit(tile, camera.apply((x * GAME["TILE_RES_PX"], y * GAME["TILE_RES_PX"])))
+            for layer in map_obj.tmxdata.visible_tile_layers:
+
+                # Single blit of the pre-rendered static surface slice for this layer
+                camera.screen.blit(map_obj.static_surfaces[layer], (0, 0), (x1, y1, x2 - x1, y2 - y1))
+
+                # Overlay only animated tiles in view on top of the static slice
+                for tx, ty in map_obj.anim_tile_positions.get(layer, []):
+                    if vtx1 <= tx <= vtx2 and vty1 <= ty <= vty2:
+                        tile = map_obj.get_tile_image(tx, ty, layer)
+                        if tile:
+                            camera.screen.blit(tile, camera.apply((tx * tile_px, ty * tile_px)))
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 

@@ -65,6 +65,14 @@ class Map:
 		# Generate the graph for pathfinding on the given map
 		self.path_graph = self.generate_path_graph()
 
+		# Pre-render static (non-animated) tiles per layer for fast rendering.
+		# anim_tile_positions: {layer_index: [(tile_x, tile_y), ...]}
+		# static_surfaces:     {layer_index: pygame.Surface (full map size)}
+		# Built once at load time; static_surfaces is blitted with a single
+		# Surface.blit call per layer each frame instead of per-tile blits.
+		self.anim_tile_positions = self._find_animated_tiles()
+		self.static_surfaces = self._build_static_surfaces()
+
 	def info(self):
 		print(f'Tile dims: {self.tmxdata.width=}, {map.tmxdata.height=}')
 		print(f'Pixel dims: {self.width=}, {map.height=}')
@@ -274,6 +282,54 @@ class Map:
 					path_graph.update({(x,y): neighbours})		
 	
 		return path_graph
+
+	def _find_animated_tiles(self) -> dict:
+		"""Return {layer_index: [(tile_x, tile_y), ...]} for tiles that have animation frames.
+
+		Called once at map load time. The result drives per-frame animated tile blitting
+		so that static_surfaces can skip those positions.
+		"""
+		result = {}
+		for layer in self.tmxdata.visible_tile_layers:
+			positions = []
+			for y in range(self.tmxdata.height):
+				for x in range(self.tmxdata.width):
+					if not self.tmxdata.get_tile_gid(x, y, layer):
+						continue
+					props = self.tmxdata.get_tile_properties(x, y, layer)
+					if props and props.get('frames'):
+						positions.append((x, y))
+			if positions:
+				result[layer] = positions
+		return result
+
+	def _build_static_surfaces(self) -> dict:
+		"""Pre-render all non-animated tiles per visible layer to full-map Surfaces.
+
+		Returns {layer_index: pygame.Surface} where each Surface has pixel dimensions
+		(map_width_px, map_height_px) and contains every non-animated tile for that layer.
+		Animated tile positions are left transparent so they can be overlaid each frame.
+
+		Memory: num_visible_layers × map_width_px × map_height_px × 4 bytes (RGBA).
+		"""
+		tile_px = GAME["TILE_RES_PX"]
+		surfaces = {}
+		for layer in self.tmxdata.visible_tile_layers:
+			surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+			anim_set = set(self.anim_tile_positions.get(layer, []))
+			for y in range(self.tmxdata.height):
+				for x in range(self.tmxdata.width):
+					if (x, y) in anim_set:
+						continue  # animated — rendered per-frame by the processor
+					tile = self.tmxdata.get_tile_image(x, y, layer)
+					if tile:
+						surface.blit(tile, (x * tile_px, y * tile_px))
+			# Convert to display pixel format so future blits bypass software alpha
+			# blending. SRCALPHA is kept during construction for correct per-tile
+			# compositing; convert_alpha() preserves per-pixel alpha while enabling
+			# SDL's fast display-format blit path.
+			surfaces[layer] = surface.convert_alpha()
+		return surfaces
 
 	def get_path_bfs(
 			self,
