@@ -573,7 +573,7 @@ Tasks specifically targeting Claude Code assistance:
 
 - [x] Improve performance of MAP rendering — redo with caching
 - [x] Review `GenerateCollisionsOptimizedProcessor` for performance
-- [ ] Review `PerformFrameUpdateProcessor` for performance
+- [x] Review `PerformFrameUpdateProcessor` for performance
 - [ ] Review `PerformIdleAnimationProcessor` for performance
 - [ ] Prepare pytest tests for pgrpg functions/classes
 - [ ] Prepare complex Behavior Tree logic for NPC — described as text, output as JSON

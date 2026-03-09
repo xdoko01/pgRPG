@@ -102,12 +102,12 @@ class RenderableModel(Component):
         '''
         return self.model.get_frame_image(self.action if action is None else action, direction, self.last_frame if frame_id is None else frame_id)
 
-    def update_frame(self, direction):
+    def update_frame(self, direction, current_time=None):
         ''' Update last_frame, last_time, is_action_frame based
-        on elapsed time. 
+        on elapsed time.
         '''
         # Get the currect time and measure the delay from last_time
-        current_time = pygame.time.get_ticks()
+        current_time = pygame.time.get_ticks() if current_time is None else current_time
         elapsed_time = current_time - self.last_time
         frame_duration = self.model.get_frame_duration(self.action, direction, self.last_frame)
 

@@ -1,6 +1,7 @@
 __all__ = ['PerformFrameUpdateProcessor']
 
 import logging
+import pygame
 
 # Parent super-class
 from pgrpg.core.ecs import Processor, SkipProcessorExecution
@@ -56,6 +57,9 @@ class PerformFrameUpdateProcessor(Processor):
         # Remember updated entities - to prevent several updates on single entity in case same entity is on more cameras
         already_updated = set()
 
+        # Call pygame.time.get_ticks() once for all entities — avoids repeated Python-C crossings
+        current_time = pygame.time.get_ticks()
+
         # Iterate all cameras
         for cam, (camera) in self.world.get_component(Camera):
 
@@ -67,13 +71,18 @@ class PerformFrameUpdateProcessor(Processor):
                     continue
 
                 # Update to the next proper animation frame
-                renderable_model.update_frame(position.dir_name)
-                logger.debug(f'({self.cycle}) - Entity {ent} animation frame updated to {renderable_model.last_frame} for direction {position.dir_name}.')
+                renderable_model.update_frame(position.dir_name, current_time)
+
+                # NOTE: debug logging commented out — f-string formatting on every entity every frame
+                # degrades performance significantly even when DEBUG level is not active.
+                # logger.debug(f'({self.cycle}) - Entity {ent} animation frame updated to {renderable_model.last_frame} for direction {position.dir_name}.')
 
                 # Set Flag in case that the new frame is action frame (and hence some projectile might be generated)
                 if renderable_model.is_action_frame:
                     self.world.add_component(ent, FlagIsAnimationActionFrame())
-                    logger.debug(f'({self.cycle}) - Entity {ent} animation frame {renderable_model.last_frame} is action frame.')
+
+                    # NOTE: debug logging commented out — same performance reason as above.
+                    # logger.debug(f'({self.cycle}) - Entity {ent} animation frame {renderable_model.last_frame} is action frame.')
 
                 # Remember that entity was updated - not to update it again on other camera
                 already_updated.add(ent)
