@@ -57,15 +57,28 @@ class PerformIdleAnimationProcessor(Processor):
         except SkipProcessorExecution:
             return
 
+        # Remember updated entities - to prevent several updates on single entity in case same entity is on more cameras
+        already_updated = set()
+
         # Iterate all cameras
         for _, (camera) in self.world.get_component(Camera):
 
             # Search for entities that contain Position + RenderableModel and at the same time do not have FlagDoMove and FlagDoAttack component
             for ent, (_, renderable_model) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components_exs(include=(Position, RenderableModel), exclude=(FlagDoMove, FlagDoAttack, WeaponInUse, IsDestroyed))):
 
+                # If already updated skip
+                if ent in already_updated:
+                    continue
+
                 # Update to proper animation
                 renderable_model.set_action('idle')
-                logger.debug(f'({self.cycle}) - Entity {ent} action animation updated to "idle" action.')
+
+                # NOTE: debug logging commented out — f-string formatting on every entity every frame
+                # degrades performance significantly even when DEBUG level is not active.
+                # logger.debug(f'({self.cycle}) - Entity {ent} action animation updated to "idle" action.')
+
+                # Remember that entity was updated - not to update it again on other camera
+                already_updated.add(ent)
 
     def pre_save(self):
         ''' Prepare processor for serialization by disabling links to 
