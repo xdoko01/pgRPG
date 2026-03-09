@@ -1,4 +1,6 @@
-# CLAUDE.md — pgrpg
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project summary
 
@@ -315,8 +317,9 @@ pip install -e .
 # Run with default scene (sokoban)
 python example_game/game.py
 
-# Run a specific scene
+# Run a specific scene (path is relative to SCENE_PATH in config, not project root)
 python example_game/game.py -f tests/01_movements/test_movement_01.jsonc
+python example_game/game.py -f games/sokoban/sokoban.jsonc
 
 # Start into main menu
 python example_game/game.py -s MAIN_MENU
@@ -332,13 +335,23 @@ The in-game dev console (toggle with F9 by default) supports commands and `.scr`
 ## Testing
 
 ```bash
+# Run all tests
 pytest tests/
-```
 
-Individual component modules also contain doctests:
-```bash
+# Run a single test by name
+pytest tests/test_ecs.py::test_processor_execution_control
+
+# Run doctests in a component module
 python -m example_game.core.components.brain -v
 ```
+
+---
+
+## JSON Schemas
+
+JSON Schema (Draft-07) definitions for all components, commands, and processors live in `example_game/core/schemas/`. They are auto-generated from Python class signatures via `pgrpg/utils/` tools and can be used in editors for validation and auto-complete when authoring `.jsonc` scene/entity files.
+
+Top-level schemas: `scene.schema.json`, `entity.schema.json`, `template.schema.json`, `component.schema.json`, `command.schema.json`.
 
 ---
 

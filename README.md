@@ -571,8 +571,8 @@ python -m example_game.core.components.brain -v
 
 Tasks specifically targeting Claude Code assistance:
 
-- [ ] Improve performance of MAP rendering — redo with caching
-- [ ] Review `GenerateCollisionsOptimizedProcessor` for performance
+- [x] Improve performance of MAP rendering — redo with caching
+- [x] Review `GenerateCollisionsOptimizedProcessor` for performance
 - [ ] Review `PerformFrameUpdateProcessor` for performance
 - [ ] Review `PerformIdleAnimationProcessor` for performance
 - [ ] Prepare pytest tests for pgrpg functions/classes

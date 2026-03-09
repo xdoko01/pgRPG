@@ -93,71 +93,80 @@ class GenerateCollisionsOptimizedProcessor(Processor):
         # For all camera screens in the game window
         for _, (camera) in self.world.get_component(Camera):
 
-            # Get the list of entities together with components on the camera - exclude those whose collisions has been already calculated
-            collision_candidates = list(filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components_ex(Position, Collidable, exclude=FlagHasCollided)))
+            # Get entities with Position+Collidable visible on this camera, excluding already-flagged ones
+            collision_candidates = [
+                x for x in self.world.get_components_ex(Position, Collidable, exclude=FlagHasCollided)
+                if filter_only_visible_on_camera(camera, x)
+            ]
 
             # Get only set of involved entities
-            collision_candidates_entities = set([ent for ent, [*_] in collision_candidates])
+            collision_candidates_entities = {ent for ent, _ in collision_candidates}
 
-            # NEW - final collisions
+            # Pre-compute AABB bounds: (left, right, top, bottom, map_id) — avoids 8 additions per pair in the O(n^2) loop.
+            aabb_bounds = [
+                (
+                    pos.x + coll.dx - coll.x,
+                    pos.x + coll.dx + coll.x,
+                    pos.y + coll.dy - coll.y,
+                    pos.y + coll.dy + coll.y,
+                    pos.map,
+                )
+                for _, (pos, coll) in collision_candidates
+            ]
+
+            # Final collisions per candidate
             coll_list = [list() for _ in collision_candidates]
 
-            # NEW - allowed collisions
+            # Allowed collisions
             allowed_collisions = [allow_deny_list_filter(input=collision_candidates_entities, allowlist=coll_comp.allowlist, denylist=coll_comp.denylist) for _, (pos_comp, coll_comp) in collision_candidates]
-            
-            # NEW - position_fix_other
+
+            # Position fix — which entities each candidate can push
             position_fix_other = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.apply_pos_fix_to_allowlist, denylist=coll_comp.apply_pos_fix_to_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
-            # NEW - position_fix_self
+            # Position fix — which entities each candidate accepts being pushed by
             position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.accept_pos_fix_from_allowlist, denylist=coll_comp.accept_pos_fix_from_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
-            # Get all entities that have Position, Collidable + are on some camera
-            #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
-            #for ent_moved, (pos_moved, coll_moved) in collision_candidates:
-            # NEW
-            for ent_moved_idx, ent_moved in enumerate(collision_candidates):
+            # O(n^2/2) symmetric pair loop over all visible collidable entities
+            for ent_moved_idx, (ent_moved_id, (pos_moved, coll_moved)) in enumerate(collision_candidates):
 
-                # Unpack ent_moved
-                ent_moved_id, (pos_moved, coll_moved) = ent_moved
+                # Unpack pre-computed AABB for the moved entity once (reused across all inner iterations)
+                moved_left, moved_right, moved_top, moved_bottom, moved_map = aabb_bounds[ent_moved_idx]
 
-                # Get all the other entities
-                for ent_other_idx, ent_other in enumerate(collision_candidates[ent_moved_idx+1:]):
+                # Test against all higher-indexed candidates to avoid duplicate pair checks
+                for ent_other_idx in range(ent_moved_idx + 1, len(collision_candidates)):
 
-                    # Unpack ent_other
-                    ent_other_id, (pos_other, coll_other) = ent_other
-
-                    # Position of the other entity in collision_candidates
-                    ent_other_idx = ent_moved_idx + 1 + ent_other_idx
+                    ent_other_id, (pos_other, coll_other) = collision_candidates[ent_other_idx]
+                    other_left, other_right, other_top, other_bottom, other_map = aabb_bounds[ent_other_idx]
 
                     # AABB comparison - Collision happened
-                    if (pos_moved.map == pos_other.map and
-                        pos_moved.x + coll_moved.dx - coll_moved.x < pos_other.x + coll_other.dx + coll_other.x and
-                        pos_moved.x + coll_moved.dx + coll_moved.x > pos_other.x + coll_other.dx - coll_other.x and
-                        pos_moved.y + coll_moved.dy - coll_moved.y < pos_other.y + coll_other.dy + coll_other.y and
-                        pos_moved.y + coll_moved.dy + coll_moved.y > pos_other.y + coll_other.dy - coll_other.y):
+                    if (moved_map == other_map and
+                        moved_left   < other_right  and
+                        moved_right  > other_left   and
+                        moved_top    < other_bottom and
+                        moved_bottom > other_top):
 
-                        logger.debug(f'({self.cycle}) - Entity {ent_moved} has collided with Entity {ent_other}.')
+                        logger.debug(f'({self.cycle}) - Entity {ent_moved_id} has collided with Entity {ent_other_id}.')
 
                         # Calculate vector from ent_other to ent_moved. Signs of this vector will be used for later calculation.
                         centres_vect = Vect((pos_moved.x + coll_moved.dx) - (pos_other.x + coll_other.dx), (pos_moved.y + coll_moved.dy) - (pos_other.y + coll_other.dy))
                         centres_sign_vect = Vect(sign(centres_vect.x), sign(centres_vect.y))
-                        
+
                         # Calculate how much are the collision zones overlaping on x and y axis (both in positive numbers)
                         overlap_vect = Vect(coll_moved.x + coll_other.x - abs(centres_vect.x), coll_moved.y + coll_other.y - abs(centres_vect.y))
 
                         # Correction vector - apply this vector on ent_moved and it will avoid ent_other on both axis x and y
                         correction_vect = Vect(overlap_vect.x * centres_sign_vect.x, overlap_vect.y * centres_sign_vect.y)
 
-                        # Can ent_moved can collide of ent_other
+                        # Can ent_moved collide with ent_other
                         if ent_other_id in allowed_collisions[ent_moved_idx]:
                             self.add_event_fnc(Event('COLLISION', ent_moved_id, ent_other_id, params={'entity1' : ent_moved_id, 'entity2' : ent_other_id}))
                             logger.debug(f'({self.cycle}) - Collision event between {ent_moved_id} and {ent_other_id} has been queued.')
 
                             coll_list[ent_moved_idx].append(
                                 Collision(
-                                    entity=ent_other_id, 
+                                    entity=ent_other_id,
                                     corr_vect=correction_vect,
-                                    # Ask ent_other_id entity if it can apply fix to ent_moved_id 
+                                    # Ask ent_other_id entity if it can apply fix to ent_moved_id
                                     apply_fix=ent_moved_id in position_fix_other[ent_other_idx],
                                     # Ask ent_moved_id entity if it allows to be fixed by ent_other_id entity
                                     accept_fix=ent_other_id in position_fix_self[ent_moved_idx],
@@ -165,24 +174,21 @@ class GenerateCollisionsOptimizedProcessor(Processor):
                                 )
                             )
 
-                        # Can ent_other can collide of ent_moved
+                        # Can ent_other collide with ent_moved
                         if ent_moved_id in allowed_collisions[ent_other_idx]:
                             self.add_event_fnc(Event('COLLISION', ent_other_id, ent_moved_id, params={'entity1' : ent_other_id, 'entity2' : ent_moved_id}))
                             logger.debug(f'({self.cycle}) - Collision event between {ent_other_id} and {ent_moved_id} has been queued.')
 
                             coll_list[ent_other_idx].append(
                                 Collision(
-                                    entity=ent_moved_id, 
-                                    corr_vect=Vect(x=-1*correction_vect.x,y=-1*correction_vect.y),
+                                    entity=ent_moved_id,
+                                    corr_vect=Vect(x=-1*correction_vect.x, y=-1*correction_vect.y),
                                     apply_fix=ent_other_id in position_fix_other[ent_moved_idx],
                                     accept_fix=ent_moved_id in position_fix_self[ent_other_idx],
                                     walkaround_mode=coll_moved.position_fix_walkaround_mode
                                 )
                             )
 
-
-
-                
                 if coll_list[ent_moved_idx]:
                     self.world.add_component(ent_moved_id, FlagHasCollided(collisions=coll_list[ent_moved_idx]))
                     logger.debug(f'({self.cycle}) - Entity {ent_moved_id} has collided with {coll_list[ent_moved_idx]}.')
@@ -251,86 +257,94 @@ class GenerateCollisionsOptimizedFullProcessor(Processor):
         except SkipProcessorExecution:
             return
 
-        # Get the list of entities together with components on the camera - exclude those whose collisions has been already calculated
+        # Get all entities with Position+Collidable, excluding already-flagged ones
         collision_candidates = list(self.world.get_components_ex(Position, Collidable, exclude=FlagHasCollided))
 
         # Get only set of involved entities
-        collision_candidates_entities = set([ent for ent, [*_] in collision_candidates])
+        collision_candidates_entities = {ent for ent, _ in collision_candidates}
 
-        # NEW - final collisions
+        # Pre-compute AABB bounds: (left, right, top, bottom, map_id) — avoids 8 additions per pair in the O(n^2) loop.
+        aabb_bounds = [
+            (
+                pos.x + coll.dx - coll.x,
+                pos.x + coll.dx + coll.x,
+                pos.y + coll.dy - coll.y,
+                pos.y + coll.dy + coll.y,
+                pos.map,
+            )
+            for _, (pos, coll) in collision_candidates
+        ]
+
+        # Final collisions per candidate
         coll_list = [list() for _ in collision_candidates]
 
-        # NEW - allowed collisions
+        # Allowed collisions
         allowed_collisions = [allow_deny_list_filter(input=collision_candidates_entities, allowlist=coll_comp.allowlist, denylist=coll_comp.denylist) for _, (pos_comp, coll_comp) in collision_candidates]
-        
-        # NEW - position_fix_other
+
+        # Position fix — which entities each candidate can push
         position_fix_other = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.apply_pos_fix_to_allowlist, denylist=coll_comp.apply_pos_fix_to_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
-        # NEW - position_fix_self
+        # Position fix — which entities each candidate accepts being pushed by
         position_fix_self = [allow_deny_list_filter(input=allowed_collisions[collision_candidates_idx], allowlist=coll_comp.accept_pos_fix_from_allowlist, denylist=coll_comp.accept_pos_fix_from_denylist) for collision_candidates_idx, (_, (pos_comp, coll_comp)) in enumerate(collision_candidates)]
 
-        # Get all entities that have Position, Collidable + are on some camera
-        #for ent_moved, (pos_moved, coll_moved) in filter(lambda x: filter_only_visible_on_camera(camera, x), self.world.get_components(Position, Collidable)):
-        #for ent_moved, (pos_moved, coll_moved) in collision_candidates:
-        # NEW
-        for ent_moved_idx, ent_moved in enumerate(collision_candidates):
+        # O(n^2/2) symmetric pair loop over all collidable entities
+        for ent_moved_idx, (ent_moved_id, (pos_moved, coll_moved)) in enumerate(collision_candidates):
 
-            # Unpack ent_moved
-            ent_moved_id, (pos_moved, coll_moved) = ent_moved
+            # Unpack pre-computed AABB for the moved entity once (reused across all inner iterations)
+            moved_left, moved_right, moved_top, moved_bottom, moved_map = aabb_bounds[ent_moved_idx]
 
-            # Get all the other entities
-            for ent_other_idx, ent_other in enumerate(collision_candidates[ent_moved_idx+1:]):
+            # Test against all higher-indexed candidates to avoid duplicate pair checks
+            for ent_other_idx in range(ent_moved_idx + 1, len(collision_candidates)):
 
-                # Unpack ent_other
-                ent_other_id, (pos_other, coll_other) = ent_other
+                ent_other_id, (pos_other, coll_other) = collision_candidates[ent_other_idx]
+                other_left, other_right, other_top, other_bottom, other_map = aabb_bounds[ent_other_idx]
 
-                # Position of the other entity in collision_candidates
-                ent_other_idx = ent_moved_idx + 1 + ent_other_idx
+                # AABB comparison - Collision happened
+                if (moved_map == other_map and
+                    moved_left   < other_right  and
+                    moved_right  > other_left   and
+                    moved_top    < other_bottom and
+                    moved_bottom > other_top):
 
-                # AABB comaprison - Collision happened
-                if (pos_moved.map == pos_other.map and
-                    pos_moved.x + coll_moved.dx - coll_moved.x < pos_other.x + coll_other.dx + coll_other.x and
-                    pos_moved.x + coll_moved.dx + coll_moved.x > pos_other.x + coll_other.dx - coll_other.x and
-                    pos_moved.y + coll_moved.dy - coll_moved.y < pos_other.y + coll_other.dy + coll_other.y and
-                    pos_moved.y + coll_moved.dy + coll_moved.y > pos_other.y + coll_other.dy - coll_other.y):
-
-                    logger.debug(f'({self.cycle}) - Entity {ent_moved} has collided with Entity {ent_other}.')
+                    logger.debug(f'({self.cycle}) - Entity {ent_moved_id} has collided with Entity {ent_other_id}.')
 
                     # Calculate vector from ent_other to ent_moved. Signs of this vector will be used for later calculation.
                     centres_vect = Vect((pos_moved.x + coll_moved.dx) - (pos_other.x + coll_other.dx), (pos_moved.y + coll_moved.dy) - (pos_other.y + coll_other.dy))
                     centres_sign_vect = Vect(sign(centres_vect.x), sign(centres_vect.y))
-                    
+
                     # Calculate how much are the collision zones overlaping on x and y axis (both in positive numbers)
                     overlap_vect = Vect(coll_moved.x + coll_other.x - abs(centres_vect.x), coll_moved.y + coll_other.y - abs(centres_vect.y))
 
                     # Correction vector - apply this vector on ent_moved and it will avoid ent_other on both axis x and y
                     correction_vect = Vect(overlap_vect.x * centres_sign_vect.x, overlap_vect.y * centres_sign_vect.y)
 
-                    # Can ent_moved can collide of ent_other
+                    # Can ent_moved collide with ent_other
                     if ent_other_id in allowed_collisions[ent_moved_idx]:
                         self.add_event_fnc(Event('COLLISION', ent_moved_id, ent_other_id, params={'entity1' : ent_moved_id, 'entity2' : ent_other_id}))
                         logger.debug(f'({self.cycle}) - Collision event between {ent_moved_id} and {ent_other_id} has been queued.')
 
                         coll_list[ent_moved_idx].append(
                             Collision(
-                                entity=ent_other_id, 
-                                corr_vect=correction_vect, 
-                                apply_fix=ent_other_id in position_fix_other[ent_moved_idx],
+                                entity=ent_other_id,
+                                corr_vect=correction_vect,
+                                # Ask ent_other_id entity if it can apply fix to ent_moved_id
+                                apply_fix=ent_moved_id in position_fix_other[ent_other_idx],
+                                # Ask ent_moved_id entity if it allows to be fixed by ent_other_id entity
                                 accept_fix=ent_other_id in position_fix_self[ent_moved_idx],
                                 walkaround_mode=coll_other.position_fix_walkaround_mode
                             )
                         )
 
-                    # Can ent_other can collide of ent_moved
+                    # Can ent_other collide with ent_moved
                     if ent_moved_id in allowed_collisions[ent_other_idx]:
                         self.add_event_fnc(Event('COLLISION', ent_other_id, ent_moved_id, params={'entity1' : ent_other_id, 'entity2' : ent_moved_id}))
                         logger.debug(f'({self.cycle}) - Collision event between {ent_other_id} and {ent_moved_id} has been queued.')
 
                         coll_list[ent_other_idx].append(
                             Collision(
-                                entity=ent_moved_id, 
-                                corr_vect=Vect(x=-1*correction_vect.x,y=-1*correction_vect.y),
-                                apply_fix=ent_moved_id in position_fix_other[ent_other_idx],
+                                entity=ent_moved_id,
+                                corr_vect=Vect(x=-1*correction_vect.x, y=-1*correction_vect.y),
+                                apply_fix=ent_other_id in position_fix_other[ent_moved_idx],
                                 accept_fix=ent_moved_id in position_fix_self[ent_other_idx],
                                 walkaround_mode=coll_moved.position_fix_walkaround_mode
                             )
