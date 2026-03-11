@@ -1,13 +1,22 @@
+"""Manage the entity command queue and command execution pipeline.
+
+Processors and the dev console enqueue Commands into the command queue.
+``process_commands`` drains the queue each frame, executing each command
+and feeding results back to the originating CommandGenerator (if any).
+
+Module Globals:
+    _command_queue: FIFO list of (Command, entity_id, generator) tuples.
+    _commands: Registry of command name -> callable mappings.
+"""
+
 import logging
 
-#from importlib import import_module
 from pgrpg.functions import str_to_package_module
-from pgrpg.core.config import MODULEPATHS # for COMMAND_MODULE_PATH
-from pgrpg.functions import translate # for substitution of command parameters with the values from the blackboard
+from pgrpg.core.config import MODULEPATHS
+from pgrpg.functions import translate
 
 from pgrpg.core.commands import CommandGenerator, Command, CommandContext
 
-# Create logger
 logger = logging.getLogger(__name__)
 
 
@@ -17,41 +26,26 @@ _commands = {}
 logger.info(f'CommandManager initiated.')
 
 def get_command_queue() -> list:
-    ''' Returns commands contained in the command queue.'''
+    """Return the live command queue list."""
     return _command_queue
 
 def clear_command_queue() -> None:
-    ''' Deletes all commands from the command queue.'''
+    """Remove all commands from the queue."""
     del _command_queue[:]
     logger.info(f'All commands cleared from the queue.')
 
 def add_command(cmd: Command, orig_entity_id: int, generator: CommandGenerator=None) -> None:
-    ''' Adds single command (tuple) to the command queue. Can be called also from the console for
-    the ad hoc commands that do not originate from any context.
+    """Add a command to the queue for deferred execution.
 
-        :param cmd: Command is tuple or list with 2 items - name(str) and parameters(dict)
-        :type cmd: Command
-
-        :param orig_entity_id: Number of the entity that has generated the command (owner of Brain, Controllable)
-                                or other component.
-        :type orig_entity_id: int
-
-        :param generator: Reference to instance of CommandGenerator class. When command is processed, the generator
-                            must be notified about the result of the command in order to generate the proper wanted
-                            next command (check process_commands method).
-        :type generator: CommandGenerator
-    '''
+    Args:
+        cmd: The Command namedtuple to enqueue. None is silently ignored.
+        orig_entity_id: Entity that generated the command (brain/controllable owner).
+        generator: Optional CommandGenerator to receive result callbacks.
+    """
 
     if cmd is None: return # ignore empty commands
 
-    #cmd_fnc, cmd_params = cmd # comand has name and parameters in form of dictionary
-
     # Use entity_id from parameters, if not exists, use entity of the brain owner
-    # Remove entity from command parameters
-    #logger.debug(f'Command params before entity id resolution are {cmd.params=}')
-    #entity_id = cmd.params.pop("entity", orig_entity_id)
-    #logger.debug(f'Target entity for the command is {entity_id=}')
-
     entity_id = orig_entity_id if cmd.entity_id is None else cmd.entity_id
     logger.debug(f'Command\'s target entity os {entity_id=}')
 
@@ -64,18 +58,21 @@ def add_command(cmd: Command, orig_entity_id: int, generator: CommandGenerator=N
     # but every command must be translated all the tile - performance is bad.
     # Better to handle on command level in the first cycle translate and keep the parameter in
     # the local_bb for the whole time when it is running.
-    #cmd.params = translate(generator.global_bb, cmd.params, prefix='^')
-
     _command_queue.append((cmd, entity_id, generator))
-    #self._command_queue.append((cmd, generator))
 
     logger.debug(f'Command "{cmd=}", "{entity_id=}", "{generator=}" added to the command queue.')
-    #logger.debug(f'Command "{cmd=}", "{generator=}" added to the command queue.')
 
 def process_commands(ecs_mng, keys=None, events=None) -> None:
-    ''' Process game commands. It is called by CommandsProcessor.
-    Processes the command_queue.
-    '''
+    """Drain and execute all queued commands.
+
+    Called by CommandsProcessor each frame. For generator-sourced commands,
+    notifies the generator before execution and feeds back the result.
+
+    Args:
+        ecs_mng: Reference to the ECS manager module.
+        keys: Currently pressed keys (unused, reserved for future use).
+        events: Current events (unused, reserved for future use).
+    """
 
     # Process every command in the queue
     while _command_queue:
@@ -93,21 +90,33 @@ def process_commands(ecs_mng, keys=None, events=None) -> None:
             execute_command(ecs_mng=ecs_mng, entity_id=entity_id, cmd_name=cmd.name, cmd_params=cmd.params)
 
 def _register_command(fnc, alias) -> None:
-    '''Registers new command in CommandManager under some
-    specific name.
-    It is called from command module initialize function.
-    '''
+    """Register a command callable under the given alias.
+
+    Args:
+        fnc: The command's entry-point function.
+        alias: Name used to reference this command.
+    """
     _commands.update({alias: fnc})
     logger.info(f'Command function name: {alias} registered at CommandManager.')
 
 def register_command(command_module_name: str, init=False):
-    '''Returns the registered command function if registered. Else register it first.'''
+    """Import and register a command module, then return its callable.
+
+    Args:
+        command_module_name: Module name relative to COMMAND_MODULE_PATH.
+        init: If True, return the ``_init`` variant of the command.
+
+    Returns:
+        The registered command callable.
+
+    Raises:
+        ValueError: If the module cannot be loaded or registered.
+    """
 
     command_module_path_absolute = f"{MODULEPATHS['COMMAND_MODULE_PATH']}.{command_module_name}"
 
     # Try to find the command module and get its reference
     try:
-        #command_module = import_module(command_module_path_absolute)
         command_module = str_to_package_module(None, command_module_path_absolute)
 
     except ValueError:
@@ -126,9 +135,16 @@ def register_command(command_module_name: str, init=False):
     command_module_name = f'{command_module_name}_init' if init else command_module_name
     return _commands.get(command_module_name)
 
-def get_command(cmd_name, init=False):    
-    '''Gets the command module from the storage if registered or register it first.
-    '''
+def get_command(cmd_name, init=False):
+    """Return the command callable, lazy-registering it if needed.
+
+    Args:
+        cmd_name: The command name to look up.
+        init: If True, return the ``_init`` variant.
+
+    Returns:
+        The command callable.
+    """
     logger.debug(f'Command module search in the _commands {_commands.get(cmd_name, "NOT FOUND")}')
 
     final_name = f'{cmd_name}_init' if init else cmd_name
@@ -136,8 +152,18 @@ def get_command(cmd_name, init=False):
     return cmd_module if cmd_module is not None else register_command(cmd_name, init)
 
 def execute_command_init(ecs_mng, entity_id: int, cmd_ctx: CommandContext, cmd_name: str, cmd_params: dict):
-    '''Execute the init part of the command
-    '''
+    """Execute the one-time initialization phase of a command.
+
+    Substitutes blackboard globals into command params, stores them in
+    the local blackboard, and calls the command's ``_init`` function.
+
+    Args:
+        ecs_mng: Reference to the ECS manager module.
+        entity_id: Target entity for the command.
+        cmd_ctx: The CommandContext holding global/local blackboards.
+        cmd_name: Name of the command to initialize.
+        cmd_params: Raw command parameters from the Command namedtuple.
+    """
     #   1. Substitute command parameters with values from global blackboard if possible.
     #      Parameters that should be substitutedmust start with ^ character
     cmd_params_with_bb_values = translate(trans_dict=cmd_ctx.globals.__dict__, value=cmd_params, prefix='^')
@@ -155,32 +181,42 @@ def execute_command_init(ecs_mng, entity_id: int, cmd_ctx: CommandContext, cmd_n
     logger.debug(f'Init function {cmd_name}_init finished with {cmd_ctx.locals=}')
 
 def execute_command(ecs_mng, entity_id: int, cmd_name: str, cmd_params: dict, cmd_ctx=None):
-    '''Executes command and returns the result
-        
-        This function should not be called directly from the console if the player
-        wants to execute some ad hoc command. It must be always called from process_commands function
-        that will deliver the necessary ecs_mng object that is necessary for every command.
+    """Execute a command by name and return its result.
 
-        From console probably CommandManager.add_command(command) would need to be called. This will add the
-        command to the queue and consequently processes the command in the next run of the PerformCommand 
-        processor.
-    '''
+    Should not be called directly for ad-hoc commands; use ``add_command``
+    to enqueue instead, which ensures ``ecs_mng`` is provided by the
+    PerformCommand processor.
+
+    Args:
+        ecs_mng: Reference to the ECS manager module.
+        entity_id: Target entity for the command.
+        cmd_name: Name of the command to execute.
+        cmd_params: Keyword arguments passed to the command callable.
+        cmd_ctx: Optional CommandContext for generator-sourced commands.
+
+    Returns:
+        The CommandStatus result from the command callable.
+    """
     cmd_fnc = get_command(cmd_name)
 
     logger.debug(f'Calling "{cmd_name}" function with {cmd_params=}')
     return cmd_fnc(ecs_mng=ecs_mng, entity_id=entity_id, ctx=cmd_ctx, **cmd_params)
 
 def execute_command_with_ctx(ecs_mng, entity_id: int, cmd_ctx: CommandContext, cmd: Command):
-    '''Executes command and returns the result
-        
-        This function should not be called directly from the console if the player
-        wants to execute some ad hoc command. It must be always called from process_commands function
-        that will deliver the necessary ecs_mng object that is necessary for every command.
+    """Execute a command with its full CommandContext.
 
-        From console probably CommandManager.add_command(command) would need to be called. This will add the
-        command to the queue and consequently processes the command in the next run of the PerformCommand 
-        processor.
-    '''
+    On the first tick (``cmd_ctx.tick_count == 1``), runs the init phase
+    before the main execution.
+
+    Args:
+        ecs_mng: Reference to the ECS manager module.
+        entity_id: Target entity for the command.
+        cmd_ctx: The CommandContext with blackboard and tick tracking.
+        cmd: The Command namedtuple to execute.
+
+    Returns:
+        The CommandStatus result from the command callable.
+    """
 
     # On first call of the command, call the init part and then the process part in one tick
     if cmd_ctx.tick_count == 1:
@@ -190,187 +226,3 @@ def execute_command_with_ctx(ecs_mng, entity_id: int, cmd_ctx: CommandContext, c
     logger.debug(f'Executing command {cmd=} substituted with parameters of {cmd_ctx.locals=}')
     return execute_command(ecs_mng, entity_id, cmd_name=cmd.name, cmd_params=cmd_ctx.locals.__dict__, cmd_ctx=cmd_ctx)
 
-"""
-class CommandManager:
-
-    def __init__(self) -> None:
-        self._command_queue = []
-        self._commands = {}
-        logger.info(f'CommandManager initiated.')
-
-    def get_command_queue(self) -> list:
-        ''' Returns commands contained in the command queue.'''
-        return self._command_queue
-
-    def clear_command_queue(self) -> None:
-        ''' Deletes all commands from the command queue.'''
-
-        del self._command_queue[:]
-        logger.info(f'All commands cleared from the queue.')
-
-    def add_command(self, cmd: Command, orig_entity_id: int, generator: CommandGenerator=None) -> None:
-        ''' Adds single command (tuple) to the command queue. Can be called also from the console for
-        the ad hoc commands that do not originate from any context.
-
-            :param cmd: Command is tuple or list with 2 items - name(str) and parameters(dict)
-            :type cmd: Command
-
-            :param orig_entity_id: Number of the entity that has generated the command (owner of Brain, Controllable)
-                                    or other component.
-            :type orig_entity_id: int
-
-            :param generator: Reference to instance of CommandGenerator class. When command is processed, the generator
-                              must be notified about the result of the command in order to generate the proper wanted
-                              next command (check process_commands method).
-            :type generator: CommandGenerator
-        '''
-
-        if cmd is None: return # ignore empty commands
-
-        #cmd_fnc, cmd_params = cmd # comand has name and parameters in form of dictionary
-
-        # Use entity_id from parameters, if not exists, use entity of the brain owner
-        # Remove entity from command parameters
-        #logger.debug(f'Command params before entity id resolution are {cmd.params=}')
-        #entity_id = cmd.params.pop("entity", orig_entity_id)
-        #logger.debug(f'Target entity for the command is {entity_id=}')
-
-        entity_id = orig_entity_id if cmd.entity_id is None else cmd.entity_id
-        logger.debug(f'Command\'s target entity os {entity_id=}')
-
-        # Make sure that entity_id is an integer and not a string. Entity_id should be translated
-        # from entity on component creation level.
-        # Translation is performed in ECSManager.create_component_from_def function
-        assert isinstance(entity_id, int), f'Here entity should be already translated, but it is not.'
-
-        # Here we can check if the parameter value exists as a key in the generator's blackboard.
-        # but every command must be translated all the tile - performance is bad.
-        # Better to handle on command level in the first cycle translate and keep the parameter in
-        # the local_bb for the whole time when it is running.
-        #cmd.params = translate(generator.global_bb, cmd.params, prefix='^')
-
-        self._command_queue.append((cmd, entity_id, generator))
-        #self._command_queue.append((cmd, generator))
-
-        logger.debug(f'Command "{cmd=}", "{entity_id=}", "{generator=}" added to the command queue.')
-        #logger.debug(f'Command "{cmd=}", "{generator=}" added to the command queue.')
-
-    def process_commands(self, ecs_mng, keys=None, events=None) -> None:
-        ''' Process game commands. It is called by CommandsProcessor.
-        Processes the command_queue.
-        '''
-
-        # Process every command in the queue
-        while self._command_queue:
-
-            (cmd, entity_id, generator) = self._command_queue.pop(0)
-
-            # In case that command is generated by the generator and not ad hoc from the console
-            # update the generator based on the command result.
-            if generator is not None:
-                generator.notify_command_start() # CommandGenerator calculates the statistics on cmd_ctx
-                result = self.execute_command_with_ctx(ecs_mng=ecs_mng, entity_id=entity_id, cmd_ctx=generator.bb, cmd=cmd)
-                generator.process_command_result(result) # Callback result to the generator to modify its state
-            else:
-                # commands without context - ad hoc from console
-                self.execute_command(ecs_mng=ecs_mng, entity_id=entity_id, cmd_name=cmd.name, cmd_params=cmd.params)
-
-    def _register_command(self, fnc, alias) -> None:
-        '''Registers new command in CommandManager under some
-        specific name.
-        It is called from command module initialize function.
-        '''
-        self._commands.update({alias: fnc})
-        logger.info(f'Command function name: {alias} registered at CommandManager.')
-
-    def register_command(self, command_module_name: str, init=False):
-        '''Returns the registered command function if registered. Else register it first.'''
-
-        command_module_path_absolute = f"{MODULEPATHS['COMMAND_MODULE_PATH']}.{command_module_name}"
-
-        # Try to find the command module and get its reference
-        try:
-            #command_module = import_module(command_module_path_absolute)
-            command_module = str_to_package_module(None, command_module_path_absolute)
-
-        except ValueError:
-            logger.error(f'Error during loading of command module "{command_module_path_absolute}".')
-            raise ValueError(f'Error during loading of command module "{command_module_path_absolute}".')
-
-        # Try to register the script
-        try:
-            command_module.initialize(self._register_command, command_module_name)
-            logger.debug(f'Following commands are now registered. {self._commands=}')
-
-        except ValueError:
-            logger.error(f'Error during initiating/registering of command "{command_module_path_absolute}".')
-            raise ValueError(f'Error during initiating/registering of command module "{command_module_path_absolute}".')
-
-        command_module_name = f'{command_module_name}_init' if init else command_module_name
-        return self._commands.get(command_module_name)
-
-    def get_command(self, cmd_name, init=False):    
-        '''Gets the command module from the storage if registered or register it first.
-        '''
-        logger.debug(f'Command module search in the _commands {self._commands.get(cmd_name, "NOT FOUND")}')
-
-        final_name = f'{cmd_name}_init' if init else cmd_name
-        cmd_module = self._commands.get(final_name)
-        return cmd_module if cmd_module is not None else self.register_command(cmd_name, init)
-
-    def execute_command_init(self, ecs_mng, entity_id: int, cmd_ctx: CommandContext, cmd_name: str, cmd_params: dict):
-        '''Execute the init part of the command
-        '''
-        #   1. Substitute command parameters with values from global blackboard if possible.
-        #      Parameters that should be substitutedmust start with ^ character
-        cmd_params_with_bb_values = translate(trans_dict=cmd_ctx.globals.__dict__, value=cmd_params, prefix='^')
-        logger.debug(f'Global BB translated params for {cmd_name=} are {cmd_params_with_bb_values=}')
-
-        #   2. Store all existing and translated parameters to the locals
-        for k, v in cmd_params_with_bb_values.items(): cmd_ctx.locals.add(k, v)
-        logger.debug(f'Locals BB filled by cmd params {cmd_ctx.locals=}')
-
-        #   3. Call command init part that will further do some command specific operations
-        cmd_init_fnc = self.get_command(cmd_name, init=True)
-        logger.debug(f'Calling {cmd_name}_init function {cmd_init_fnc=}...')
-
-        cmd_init_fnc(ecs_mng, entity_id, cmd_ctx, **cmd_ctx.locals.__dict__)
-        logger.debug(f'Init function {cmd_name}_init finished with {cmd_ctx.locals=}')
-
-    def execute_command(self, ecs_mng, entity_id: int, cmd_name: str, cmd_params: dict, cmd_ctx=None):
-        '''Executes command and returns the result
-            
-            This function should not be called directly from the console if the player
-            wants to execute some ad hoc command. It must be always called from process_commands function
-            that will deliver the necessary ecs_mng object that is necessary for every command.
-
-            From console probably CommandManager.add_command(command) would need to be called. This will add the
-            command to the queue and consequently processes the command in the next run of the PerformCommand 
-            processor.
-        '''
-        cmd_fnc = self.get_command(cmd_name)
-
-        logger.debug(f'Calling "{cmd_name}" function with {cmd_params=}')
-        return cmd_fnc(ecs_mng=ecs_mng, entity_id=entity_id, ctx=cmd_ctx, **cmd_params)
-
-    def execute_command_with_ctx(self, ecs_mng, entity_id: int, cmd_ctx: CommandContext, cmd: Command):
-        '''Executes command and returns the result
-            
-            This function should not be called directly from the console if the player
-            wants to execute some ad hoc command. It must be always called from process_commands function
-            that will deliver the necessary ecs_mng object that is necessary for every command.
-
-            From console probably CommandManager.add_command(command) would need to be called. This will add the
-            command to the queue and consequently processes the command in the next run of the PerformCommand 
-            processor.
-        '''
-
-        # On first call of the command, call the init part and then the process part in one tick
-        if cmd_ctx.tick_count == 1:
-            logger.debug(f'First call of command {cmd.name=} with {cmd.params=}')
-            self.execute_command_init(ecs_mng=ecs_mng, entity_id=entity_id, cmd_ctx=cmd_ctx, cmd_name=cmd.name, cmd_params=cmd.params)
-
-        logger.debug(f'Executing command {cmd=} substituted with parameters of {cmd_ctx.locals=}')
-        return self.execute_command(ecs_mng, entity_id, cmd_name=cmd.name, cmd_params=cmd_ctx.locals.__dict__, cmd_ctx=cmd_ctx)
-
-"""

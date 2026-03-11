@@ -1,15 +1,20 @@
+"""Load a dictionary from a YAML file."""
+
 import yaml
 from pathlib import Path
 
 def get_dict_from_yaml(filepath: Path) -> dict:
-    ''' Returns dictionary based on yaml file.
+    """Parse a YAML file into a dictionary.
 
-    Parameters:
-        :param filepath: Path to the yaml file
-        :type filepath: Path
+    Args:
+        filepath: Path to the YAML file.
 
-        :returns: Dictionary of data
-    '''
+    Returns:
+        Dictionary of parsed YAML data.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
 
     try:
         with open(filepath, 'r') as yaml_file:

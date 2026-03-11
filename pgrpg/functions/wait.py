@@ -1,10 +1,18 @@
+"""Blocking key-wait utility for pygame."""
+
 import pygame
 from pygame.locals import *  # used for wait(function)
 
 def wait(*continue_keys):
-	''' Waits for one of the given keys to be pressed
-	Enter in this case but can be enhanced to any key.
-	'''
+	"""Block until one of the specified keys is pressed.
+
+	Clears the event queue, then waits for a KEYDOWN event matching
+	one of the given key constants. Also returns on QUIT events.
+
+	Args:
+		*continue_keys: One or more pygame key constants that will
+			end the wait when pressed.
+	"""
 
 	pygame.event.clear()
 

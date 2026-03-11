@@ -1,21 +1,23 @@
+"""Compute tile coordinates along a line between two pixel positions."""
+
 from .sign import sign_wo_zero
 
 def get_tiles_in_line(source_px: tuple, target_px: tuple, tile_res: int):
-    '''Get the tiles between 2 points in px. Tiles coordinates are returned in
-    lazy mode and in the raster specified by tile_res.
+    """Yield tile coordinates along a line between two pixel positions.
 
-    Tiles include both starting and ending tiles.
+    Uses incremental stepping at tile resolution to walk from source
+    to target, yielding each tile's grid coordinates. Both the starting
+    and ending tiles are included.
 
-    Parameters:
-        :param source_px: Path to the package, for example pgrpg.core.ecs
-        :type source_px: tuple
+    Args:
+        source_px: Starting position in pixels as ``(x, y)``.
+        target_px: Ending position in pixels as ``(x, y)``.
+        tile_res: Dimension of a square tile in pixels.
 
-        :param target_px: Path to the module, relative to the package
-        :type target_px: tuple
-
-        :param tile_res: Dimension of the rectancular tile in px.
-        :type tile_res: int
-    '''
+    Yields:
+        Tuple of ``(tile_x, tile_y)`` grid coordinates for each tile
+        along the line.
+    """
 
     dx, dy = target_px[0] - source_px[0], target_px[1] - source_px[1]
     sx, sy = sign_wo_zero(dx), sign_wo_zero(dy)

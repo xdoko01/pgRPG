@@ -1,21 +1,31 @@
+"""Translate entity aliases to entity IDs using a translation dictionary.
+
+Used during component creation from JSON definitions to substitute
+string aliases with integer ECS entity IDs.
+"""
+
 def translate(trans_dict, value, prefix=''):
-    ''' Takes value and translates it to another value based on the
-    translation dictionary. It is used to substitute entity aliases
-    with entity ids while creating component from json definition.
+    """Recursively translate values using a translation dictionary.
 
-    Parameters:
-        :param trans_dict: Dictionary hodling source -> destination mapping
-        :type trans_dict: dict
+    Walks dicts, lists, and tuples, replacing any value found in
+    ``trans_dict`` with its mapped counterpart. When ``prefix`` is set,
+    only strings starting with that prefix are translated (after
+    stripping the prefix).
 
-        :param value: Value for translation
-        :type value: int, str, dict, list, tuple
+    Args:
+        trans_dict: Source-to-destination mapping dictionary.
+        value: Value to translate. Can be int, str, dict, list, or tuple.
+        prefix: If set, only translate strings starting with this prefix
+            (the prefix is removed before lookup).
 
-        :param prefix: First remove prefix from the value and next substitute the value without prefix.
-                It is used for substituing values for the blackboard values.
-        :type prefix: str
+    Returns:
+        The translated value, with the same structure as the input.
 
-        :returns: Translated value
-    '''
+    Raises:
+        KeyError: If a prefixed value is not found in the translation
+            dictionary.
+        ValueError: If translation fails for any other reason.
+    """
     try:
         if isinstance(value, dict):
             translated_dict = {}
@@ -30,7 +40,7 @@ def translate(trans_dict, value, prefix=''):
 
         # Extra part only due to prefix functionality.
         # Only translate, if the value has desired prefix if prefix defined.
-        elif isinstance(value, str): 
+        elif isinstance(value, str):
             if prefix:
                 if value.startswith(prefix):
                     try:

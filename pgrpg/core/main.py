@@ -1,10 +1,14 @@
-# Init logging config
+"""Entry point for the pgrpg game loop.
+
+Provides ``init()`` to bootstrap the engine, state modules, and an optional
+starting scene or state, and ``run()`` for the main pygame event loop.
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
-# Init the configuration
-# Config variables were merged from default.jsonc and config.jsonc. Now we need to init
-# all the necessary configurations, bring them to life (init display, console, logging, ...)
+# Init the configuration — merge default.jsonc + game config.jsonc and bring
+# all subsystems (display, console, logging, …) to life.
 import pgrpg.core.config as config
 import sys
 from pprint import pprint, pformat # for pretty printing in the console
@@ -26,7 +30,7 @@ from pgrpg.core.config import cons # handler for manipulation with the game cons
 engine = None
 
 def _init_engine() -> None:
-    # Create engine instance if not yet created
+    """Import and initialize the engine module (idempotent)."""
     from pgrpg.core import engine as e
 
     global engine
@@ -36,12 +40,7 @@ def _init_engine() -> None:
     engine.init() # Init can be removed as timed parameter is no longer passed
 
 def _init_game(scene_file: str) -> None:
-    # Create engine instance if not yet created
-    #global engine
-    #from pgrpg.core import engine as e
-    #engine = e
-    #engine.init() # Init can be removed as timed parameter is no longer passed
-    #global engine
+    """Initialize the engine and load the given scene file."""
     _init_engine()
     engine.load_scene(scene_file, show_progress=True)
 
@@ -53,9 +52,13 @@ def _init_state_modules() -> None:
         state_module.init()
         logger.info(f"State module '{state_module}' initiated.")
 
-# Start the program
 def init(scene_file: str=None, state: str=None) -> None:
-    """ Start either into the game or in the console with default script or into any state.
+    """Bootstrap the engine and enter the initial game state.
+
+    Args:
+        scene_file: Optional scene file path to load immediately.
+        state: Optional state name (e.g. ``'MAIN_MENU'``) to start in.
+            If neither is given, starts into the dev console.
     """
     _init_engine()
     _init_state_modules()
@@ -102,8 +105,11 @@ def reinit() -> None:
     logger.info(f'Reinit done')
 
 def run():
-    """ Main game and menu loop. Contains references to other
-    loop codes depending of current GameState.
+    """Run the main game loop until the process exits.
+
+    Each iteration reads pygame events, delegates to the active state
+    module, updates the console overlay, displays FPS if enabled, and
+    flips the display buffer.
     """
 
     # Fix of the problem with the first frame that has too

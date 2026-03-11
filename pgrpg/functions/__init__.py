@@ -1,3 +1,9 @@
+"""Utility functions for the pgrpg engine.
+
+Provides data loading, translation, filtering, and string/dict manipulation
+utilities used throughout the engine.
+"""
+
 from .get_dict_from_toml import get_dict_from_toml
 from .get_dict_from_yaml import get_dict_from_yaml
 from .get_dict_from_json import get_dict_from_json

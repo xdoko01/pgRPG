@@ -1,12 +1,19 @@
-from pgrpg.core.states.state import State
+"""State machine managing game states (MAIN_MENU, GAME, CONSOLE, etc.).
 
-# Init logging config
+Dynamically creates a ``State`` enum from config, maintains the state graph
+for allowed transitions, and registers per-state Python modules.
+
+Module Globals:
+    state: Current State enum value.
+    prev_state: Previous State value (for revert).
+    game_state: Current game-specific state (None if in a non-game state).
+    changed: True if a state transition occurred this frame.
+    state_modules: Dict mapping State -> state module instance.
+    state_graph: Dict mapping State -> list of allowed next States.
+"""
+
 import logging
 logger = logging.getLogger(__name__)
-
-# Get STATES and translate STATES_GRAPH,NON_GAME_STATES, START_STATE to State Enum variables
-#from pgrpg.core.states.state import State
-#from pgrpg.core.config.states import STATES_GRAPH, NON_GAME_STATES, START_STATE
 
 from pgrpg.core.config import STATES
 
@@ -20,8 +27,6 @@ new_states_graph = dict()
 for k, v in STATES["STATES_GRAPH"].items():
     new_states_graph[State[k]] = [State[s] for s in v.copy()]
 STATES["STATES_GRAPH"] = new_states_graph
-
-#print(f'{STATES=}')
 
 # Globals
 state_graph: dict | None = None
@@ -40,9 +45,12 @@ changed_game_state: bool = False
 state_modules: dict = None
 
 def init(states: dict) -> None:
+    """Initialize the state machine from the config STATES dict.
 
-    print(f'{STATES=}')
-
+    Args:
+        states: Dict with keys ALL_STATES, STATES_GRAPH, NON_GAME_STATES,
+            START_STATE (all already converted to State enum values).
+    """
     global all_states
     all_states = states["ALL_STATES"]
 
@@ -69,29 +77,11 @@ def init(states: dict) -> None:
     global game_state
     game_state = state if state in game_states else None
 
-    ### NEW - initialize module for every state
-    ##from pgrpg.core.config import MODULEPATHS
-    ##from importlib import import_module
-
-    # Here all state modules are stored
-    ##global state_modules
-    ##state_modules = {}
-
-    ##for s in STATES["ALL_STATES"]:
-    ##    print(s.name.lower())
-    ##    try:
-    ##        state_module = import_module(f'{MODULEPATHS["STATE_MODULE_PATH"]}.{s.name.lower()}')
-    ##        state_modules[s] = state_module
-    ##        logger.info(f'State module registered {state_modules[s]=}.')
-    ##    except ModuleNotFoundError:
-    ##        logger.info(f'State module not found for {s=}.')
-
     # Register all state modules in the state_modules dictionary where keys are the states
     _initialize_state_modules()
 
 def _initialize_state_modules() -> None:
-    """Initialize and register all state modules with the state manager.
-    """
+    """Import and register a Python module for each defined state."""
     from pgrpg.core.config import MODULEPATHS
     from importlib import import_module
 
@@ -107,23 +97,23 @@ def _initialize_state_modules() -> None:
 
 
 def _register_state_module(state: State, module) -> None:
-    """Register the state module. Called by the state module.
-    """
-    #global state_modules
+    """Register a state module (callback invoked by the module itself)."""
     state_modules[state] = module
 
 
 def get_avail_states() -> list:
-    """Return allowed states for continuation.
-    """
-    #global state_graph
+    """Return the list of states reachable from the current state."""
     try:
         return state_graph[state]
     except KeyError:
         raise ValueError(f"No available states for State '{state}'.")
 
 def change_state(new_state: str) -> None:
-    '''Changes the game state and saves the previous state.'''
+    """Transition to a new state if allowed by the state graph.
+
+    Args:
+        new_state: The target State enum value.
+    """
 
     global changed
     global changed_game_state
@@ -158,28 +148,8 @@ def change_state(new_state: str) -> None:
         logger.warning(f'Cannot change from "{state}" to state "{new_state}". Available states are "{get_avail_states()}".')
 
 def revert_state() -> None:
-    '''Return to the previous game state.'''
+    """Return to the previous game state."""
     change_state(prev_state)
 
 def clear() -> None:
     pass
-
-
-'''
-STATES_GRAPH = {
-    State.START_PROGRAM    : [State.MAIN_MENU,  State.GAME],
-    State.MAIN_MENU        : [State.LOAD_QUEST_MENU, State.EXIT_GAME_DIALOG, State.CONSOLE],
-    State.LOAD_QUEST_MENU  : [State.MAIN_MENU, State.GAME, State.CONSOLE],
-    State.GAME             : [State.MAIN_MENU, State.PAUSE_GAME, State.CONSOLE, State.EXIT_GAME_DIALOG],
-    State.PAUSE_GAME       : [State.GAME, State.CONSOLE],
-    State.CONSOLE          : [State.MAIN_MENU, State.LOAD_QUEST_MENU, State.GAME],
-    State.EXIT_GAME_DIALOG : [State.END_PROGRAM, State.GAME, State.MAIN_MENU],
-    State.END_PROGRAM      : []
-}
-
-NON_GAME_STATES = [State.CONSOLE, State.START_PROGRAM, State.END_PROGRAM]
-
-START_STATE = State.START_PROGRAM
-
-logger.debug(f"States config initiated.")
-'''

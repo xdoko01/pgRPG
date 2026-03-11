@@ -1,5 +1,19 @@
+"""Lightweight data object holding metadata for a loaded game scene."""
+
 
 class Scene:
+    """Immutable metadata extracted from a scene definition dict.
+
+    Attributes:
+        filepath: Path to the source scene file (set after loading).
+        id: Scene identifier from the definition.
+        alias: Alias used to register the scene (same as id).
+        title: Human-readable scene title.
+        description: Scene description text.
+        objective: Player objective text.
+        stats: Dict of element counts (entities, processors, maps, etc.).
+    """
+
     def __init__(self, alias: str, scene_def: dict) -> None:
         self.filepath: str = None
         self.id, self.alias = alias, alias
