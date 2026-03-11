@@ -1,42 +1,61 @@
+"""Resolve Python class references from string paths.
+
+Provides utilities for dynamically importing modules and retrieving
+class objects given package, module, and class name strings.
+"""
+
 from importlib import import_module
 
 def str_to_package_module(package: str, module: str):
-    '''Gets reference to the module in the package
+    """Import and return a module from a package.
 
-    Parameters:
-        :param package: Path to the package, for example pgrpg.core.ecs
-        :type package: str
+    Args:
+        package: Package path, e.g. ``"pgrpg.core.ecs"``.
+        module: Module path relative to the package.
 
-        :param module: Path to the module, relative to the package
-        :type module: str
-    '''
+    Returns:
+        The imported module object.
+
+    Raises:
+        ValueError: If the module cannot be found.
+    """
     try:
         return import_module(module, package=package)
     except ModuleNotFoundError:
         raise ValueError(f'Incorrect package.module name "{package}.{module}"')
 
 def str_to_class(module, class_name):
-    '''Translate class name to class'''
+    """Get a class from a module by name.
+
+    Args:
+        module: Module object to look up the class in.
+        class_name: Name of the class to retrieve.
+
+    Returns:
+        The class object.
+
+    Raises:
+        ValueError: If the class does not exist in the module.
+    """
     try:
         return getattr(module, class_name)
     except AttributeError:
         raise ValueError(f'Module "{module.__name__}" has no class named "{class_name}"')
 
 def get_class_object(package: str, module: str, class_name: str) -> type:
-    '''Gets reference to the the class given the package, module and the class name strings
-    
-    Parameters:
-        :param package: Path to the package, for example pgrpg.core.ecs
-        :type package: str
+    """Get a class reference given package, module, and class name strings.
 
-        :param module: Path to the module, relative to the package
-        :type module: str
+    Args:
+        package: Package path, e.g. ``"pgrpg.core.ecs"``.
+        module: Module path relative to the package.
+        class_name: Name of the class in the module.
 
-        :param class_name: Name of the class in the module
-        :type class_name: str
+    Returns:
+        Reference to the class.
 
-        :returns: Reference to the class
-    '''
+    Raises:
+        ValueError: If the class cannot be resolved.
+    """
 
     try:
         module = str_to_package_module(package=package, module=module)
@@ -45,14 +64,19 @@ def get_class_object(package: str, module: str, class_name: str) -> type:
         raise ValueError(f'Error getting class reference for "{package=}","{module=}" and "{class_name=}"')
 
 def get_class_from_def(class_def: str, class_package: str='pgrpg.core.ecs'):
-    '''Returns class object based on string path.
+    """Return a class object from a ``"module:ClassName"`` string path.
 
-    :param class_def: Path to the  class in format of path.to.module:Class
-    :type class_def: str
+    Args:
+        class_def: Class definition in ``"path.to.module:ClassName"``
+            format.
+        class_package: Base package to prefix the module path with.
 
-    :return: Returns reference to the Class.
-    :raises: ValueException, if class cannot be identified
-    '''
+    Returns:
+        Reference to the class.
+
+    Raises:
+        ValueError: If the class cannot be identified.
+    """
 
     try:
         module, name = class_def.split(':')

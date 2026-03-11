@@ -1,12 +1,21 @@
-''' Function json_logic is aiming to evaluate logical expressions written 
-in JSON.
+"""Evaluate logical expressions written in JSON.
 
-In pgrpg it is used for example to evaluate prerequisities of scene processors.
-'''
+Provides a recursive evaluator for JSON-encoded condition/action trees,
+used throughout pgrpg for scene processor prerequisites and event actions.
+"""
 
 from functools import reduce
 
 def get_var(data: dict, key):
+	"""Retrieve a value from a data dictionary by key.
+
+	Args:
+		data: Dictionary to look up the key in.
+		key: Key to retrieve.
+
+	Returns:
+		The value associated with the key, or None if not found.
+	"""
 	try:
 		result = data[key]
 	except (KeyError, TypeError, ValueError):
@@ -40,15 +49,27 @@ OPERATORS = {
 }
 
 def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: None, data: dict={}):
-	''' Evaluate expression given by 'expr'. Single expression is
-	evaluated using 'fnc' and complex expressions are evaluated
-	using operators.
+	"""Evaluate a JSON-encoded logical or action expression recursively.
 
-	expr: the expression
-	value_fnc: function that should be executed on literal (simple expression)
-	script_fnc: function that should be executed on SCRIPT operator ["SCRIPT", "dialog", {}]
-	TODO data: dictionary with data that are used in the expression - google jsonLogic
-	'''
+	Single (non-list) expressions are evaluated using ``value_fnc``.
+	List expressions are interpreted as ``[OPERATOR, arg1, arg2, ...]``
+	and evaluated recursively using the operators defined in ``OPERATORS``.
+
+	Args:
+		expr: The expression to evaluate. Can be a literal value or a
+			list starting with an operator string.
+		value_fnc: Function applied to literal (non-list) expressions.
+		script_fnc: Function executed when the SCRIPT operator is
+			encountered, e.g. ``["SCRIPT", "dialog", {}]``.
+		data: Dictionary of variables accessible via the VAR operator.
+
+	Returns:
+		The result of evaluating the expression.
+
+	Raises:
+		ValueError: If the expression contains an unsupported operator
+			or cannot be evaluated.
+	"""
 
 	#print(f'JSON_LOGIC: {expr=}, {value_fnc=}, {script_fnc=}, {data=}')
 
@@ -73,7 +94,7 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 		# In case of unknown operator
 		if operator not in OPERATORS:
 			raise ValueError(f'Not supported logical operator: "{operator}".')
-		
+
 		# Process the expression recursivelly
 		else:
 
@@ -82,7 +103,7 @@ def json_logic(expr, value_fnc=lambda value: value, script_fnc=lambda *args: Non
 
 			if operator == 'VAR':
 				return get_var(data, expr[1])
-			
+
 			if operator == 'IF':
 				return json_logic(expr=expr[2], value_fnc=value_fnc, script_fnc=script_fnc, data=data) if json_logic(expr=expr[1], value_fnc=value_fnc, script_fnc=script_fnc, data=data) else None
 
@@ -113,11 +134,11 @@ if __name__ == '__main__':
 	#expression = ["SEQ", "print('hello')", "print('hello')", "print('hello again')"] # None
 	#expression = ["IF", ["==", ["var", "param1"], 10], ["SEQ", "print('hello')", "print('hello')", "print('hello again')"]]
 	expression = [
-	"IF", 
-		["==", ["var", "param1"], 10], 
-		["SEQ", 
-			["SCRIPT", "script.name.1", "script.args.1"], 
-			["IF", 
+	"IF",
+		["==", ["var", "param1"], 10],
+		["SEQ",
+			["SCRIPT", "script.name.1", "script.args.1"],
+			["IF",
 				["ONEOF",
 					["!=", ["var", "param2"], "Hello"],
 					["!=", ["var", "param1"], 10]
@@ -133,7 +154,7 @@ if __name__ == '__main__':
 	expression = ["==", ["VAR", "param3"], 0]
 
 	expression = ["IN", 5, ["VAR", "param_list"]]
-	
+
 	expression = ["IN", ["VAR", "param1"], ["VAR", "param_list"]]
 
 	#expression = ["IN", ["VAR", "param1"], [1,2,3,4,5,6,7,8,9,10]] # not supported now

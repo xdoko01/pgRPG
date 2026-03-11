@@ -1,17 +1,20 @@
-""" Code below is based on old Esper version 1.3 (MIT license) and further modified
-    to support more features such as:
+"""ECS framework based on esper 1.3 (MIT license) with extended features.
 
-    - processor groups
-    - processor execution skipping
-    - queries for entities with included / excluded components
+Extensions beyond the original esper:
+    - Processor groups: processors can be assigned to named groups and
+      processed independently via ``World.process(proc_group_id)``.
+    - Execution throttling: ``Processor.exec_cycle_step`` lets a processor
+      run every N cycles instead of every frame.
+    - Extended queries: ``get_components_ex`` / ``get_components_exs`` /
+      ``get_components_opt`` for include/exclude/optional component filtering.
+    - ``SkipProcessorExecution`` exception to skip a processor's current
+      cycle without treating it as an error.
 
-    see https://github.com/benmoran56/esper for the original Esper project
+See https://github.com/benmoran56/esper for the original esper project.
 """
-# Create logger -added by xdoko01
+
 import logging
 logger = logging.getLogger(__name__)
-
-#import time as _time
 
 import pygame # for get_ticks function
 
@@ -23,33 +26,31 @@ from collections import defaultdict # Added by xdoko01 to support processor grou
 import sys
 
 class Component(object):
-    """Base class for all Components to inherit from.
-    Inheritance from object is a must because __slots__ are used in inherited component classes.
+    """Base class for all Components.
+
+    Subclasses must use ``__slots__`` for memory efficiency. Inheriting
+    from ``object`` explicitly is required for ``__slots__`` to work.
     """
 
     def __init__(self):
-        '''Called when the component is created.'''
+        """Initialize the component (override in subclasses)."""
         pass
 
     def reinit(self):
-        '''Called when configuration is changed.'''
+        """Reinitialize after a display configuration change."""
         pass
 
     def __str__(self):
-        ''' Print representation of the component instance
-        '''
+        """Return a string representation including all slot values."""
         slots_dict = {k : getattr(self, k) for k in self.__slots__} # get content of slots for print
         return f"Component '{self.__class__.__name__}' at {hex(id(self))} ({sys.getsizeof(self)} bytes): {slots_dict}"
 
     def pre_save(self):
-        ''' Prepare component for saving - remove all references to
-        non-serializable objects.
-        '''
+        """Prepare for serialization by removing non-serializable references."""
         pass
 
     def post_load(self):
-        ''' Regenerate all non-serializable objects for the component
-        '''
+        """Restore non-serializable references after deserialization."""
         pass
 
 class SkipProcessorExecution(Exception): ...
@@ -69,51 +70,56 @@ class Processor:
     exec_cycle_step = None # Added by xdoko01 to note that the process fnc should be called every exec_cycle, ie. not every cycle
 
     def __init__(self, *args, **kwargs):
-        """Init the processor values - added by xdoko01"""
+        """Initialize cycle counter and execution throttle.
+
+        Args:
+            **kwargs: Accepts ``step`` (int) to set ``exec_cycle_step``.
+        """
         self.cycle = 0
         self.exec_cycle_step = kwargs.get('step', 1)
-        #self.skip_cycle = kwargs.get('skip_cycle', 0)
 
     def reinit(self):
-        '''Used for repetitive initiation after change of configuration.
-        '''
+        """Reinitialize after a display configuration change."""
         pass
 
     def initialize(self, register, proc_group_id: str='default'):
-        """Register the processor at the esper World"""
+        """Register this processor with the World via the register callback.
+
+        Args:
+            register: Callable ``(processor, group_id)`` to add the processor.
+            proc_group_id: Processor group to register into.
+        """
         logger.debug(f'About to initialize Processor instance "{self}" using function "{register}" with the processor group "{proc_group_id}".')
         register(self, proc_group_id)
         logger.debug(f'Initialization of Processor instance "{self}" with the processor group "{proc_group_id}" is done.')
         #raise NotImplementedError
 
     def process(self, *args, **kwargs):
-        # increase cycle count
+        """Advance the cycle counter and skip if not on the execution step.
+
+        Subclasses must call ``super().process()`` first to handle throttling.
+
+        Raises:
+            SkipProcessorExecution: When the current cycle is not a
+                multiple of ``exec_cycle_step``.
+        """
         self.cycle += 1
-        # do not process if it is not the right time
         if self.cycle % self.exec_cycle_step != 0: raise SkipProcessorExecution
-        # skip the specific cycle
-        #if self.cycle == self.skip_cycle: raise SkipProcessorExecution
 
 
     def __str__(self):
         return f"Processor '{self.__class__.__name__}' at {hex(id(self))}: {self.__dict__}"
 
     def pre_save(self, *args, **kwargs):
-        """ Prepare processor for serialization by disabling links to 
-        non-serializable components.
-        """
+        """Prepare for serialization by removing non-serializable references."""
         raise NotImplementedError
 
     def post_load(self, *args, **kwargs):
-        """ Reconfigure the processor after de-serialization by attaching
-        the reference to objects again.
-        """
+        """Restore references after deserialization."""
         raise NotImplementedError
 
     def finalize(self, *args, **kwargs):
-        """ Finish processing of the processor before end of the program.
-        Do clean-up (ex. close open files).
-        """
+        """Clean up resources before program exit (e.g. close open files)."""
         raise NotImplementedError
 
 class World:
@@ -153,11 +159,10 @@ class World:
     def add_processor(self, processor_instance: Processor, proc_group_id: str='default', priority=0) -> None:
         """Add a Processor instance to the World.
 
-        :param processor_instance: An instance of a Processor,
-               subclassed from the Processor class
-        :param priority: A higher number is processed first.
-
-        :param proc_group_id: To which group ID this processor is assigned.
+        Args:
+            processor_instance: A Processor subclass instance.
+            proc_group_id: Group to assign the processor to.
+            priority: Higher number means processed first.
         """
         assert issubclass(processor_instance.__class__, Processor)
         processor_instance.priority = priority
@@ -169,10 +174,12 @@ class World:
         logger.debug(f'Processor instance "{processor_instance}" added to the processor group "{proc_group_id}".')
         logger.debug(f'Processor Group "{proc_group_id}" now contains the following processors: "{self._processors[proc_group_id]}".')
 
-    def remove_processor(self, processor_type: Processor, proc_group_id: str='default') -> None: # changed by xdoko01  to suppoet processor groups
-        """Remove a Processor from the World, by type.
+    def remove_processor(self, processor_type: Processor, proc_group_id: str='default') -> None:
+        """Remove a Processor from the World by type.
 
-        :param processor_type: The class type of the Processor to remove.
+        Args:
+            processor_type: The class type of the Processor to remove.
+            proc_group_id: Group to remove the processor from.
         """
         #for processor in self._processors:
         for processor in self._processors[proc_group_id]: # changed by xdoko01 to support processor groups
@@ -181,21 +188,21 @@ class World:
                 self._processors[proc_group_id].remove(processor) # changed by xdoko01 to suppoet processor groups
 
     def clear_processors(self) -> None:
-        """Remove all processors - ODO"""
+        """Remove all processors from all groups."""
         for proc_group_id, proc_group in self._processors.copy().items():
             for processor in proc_group:
                 processor.world = None
                 self._processors[proc_group_id].remove(processor)
 
-    def get_processor(self, processor_type: type[Processor], proc_group_id: str='default') -> Processor: # changed by xdoko01 to support processor groups
-        """Get a Processor instance, by type.
+    def get_processor(self, processor_type: type[Processor], proc_group_id: str='default') -> Processor:
+        """Get a Processor instance by type.
 
-        This method returns a Processor instance by type. This could be
-        useful in certain situations, such as wanting to call a method on a
-        Processor, from within another Processor.
+        Args:
+            processor_type: The Processor class type to retrieve.
+            proc_group_id: Group to search in.
 
-        :param processor_type: The type of the Processor you wish to retrieve.
-        :return: A Processor instance that has previously been added to the World.
+        Returns:
+            The matching Processor instance, or None if not found.
         """
 
         for processor in self._processors[proc_group_id]:
@@ -203,15 +210,13 @@ class World:
                 return processor
 
     def create_entity(self, *components) -> int:
-        """Create a new Entity.
+        """Create a new Entity, optionally with initial Components.
 
-        This method returns an Entity ID, which is just a plain integer.
-        You can optionally pass one or more Component instances to be
-        assigned to the Entity.
+        Args:
+            *components: Component instances to assign to the new Entity.
 
-        :param components: Optional components to be assigned to the
-               entity on creation.
-        :return: The next Entity ID in sequence.
+        Returns:
+            The new Entity's integer ID.
         """
         self._next_entity_id += 1
 
@@ -223,17 +228,17 @@ class World:
         return self._next_entity_id
 
     def delete_entity(self, entity: int, immediate=False) -> None:
-        """Delete an Entity from the World.
+        """Delete an Entity and all its Components from the World.
 
-        Delete an Entity and all of it's assigned Component instances from
-        the world. By default, Entity deletion is delayed until the next call
-        to *World.process*. You can request immediate deletion, however, by
-        passing the "immediate=True" parameter. This should generally not be
-        done during Entity iteration (calls to World.get_component/s).
+        By default deletion is deferred until the next ``World.process()``
+        call. Use ``immediate=True`` only outside entity iteration.
 
-        Raises a KeyError if the given entity does not exist in the database.
-        :param entity: The Entity ID you wish to delete.
-        :param immediate: If True, delete the Entity immediately.
+        Args:
+            entity: The Entity ID to delete.
+            immediate: If True, delete immediately instead of deferring.
+
+        Raises:
+            KeyError: If the entity does not exist.
         """
         if immediate:
 
@@ -250,63 +255,48 @@ class World:
             self._dead_entities.add(entity)
 
     def component_for_entity(self, entity: int, component_type: type[Component]) -> Component:
-        """Retrieve a Component instance for a specific Entity.
+        """Retrieve a specific Component instance for an Entity.
 
-        Retrieve a Component instance for a specific Entity. In some cases,
-        it may be necessary to access a specific Component instance.
-        For example: directly modifying a Component to handle user input.
+        Args:
+            entity: The Entity ID.
+            component_type: The Component class type to retrieve.
 
-        Raises a KeyError if the given Entity and Component do not exist.
-        :param entity: The Entity ID to retrieve the Component for.
-        :param component_type: The Component instance you wish to retrieve.
-        :return: The Component instance requested for the given Entity ID.
+        Returns:
+            The Component instance.
+
+        Raises:
+            KeyError: If the Entity or Component type does not exist.
         """
         return self._entities[entity][component_type]
 
     def components_for_entity(self, entity: int) -> tuple[Component, ...]:
-        """Retrieve all Components for a specific Entity, as a Tuple.
+        """Retrieve all Components for an Entity as a tuple.
 
-        Retrieve all Components for a specific Entity. The method is probably
-        not appropriate to use in your Processors, but might be useful for
-        saving state, or passing specific Components between World instances.
-        Unlike most other methods, this returns all of the Components as a
-        Tuple in one batch, instead of returning a Generator for iteration.
+        Args:
+            entity: The Entity ID.
 
-        Raises a KeyError if the given entity does not exist in the database.
-        :param entity: The Entity ID to retrieve the Components for.
-        :return: A tuple of all Component instances that have been
-        assigned to the passed Entity ID.
+        Returns:
+            Tuple of all Component instances assigned to the Entity.
+
+        Raises:
+            KeyError: If the entity does not exist.
         """
         return tuple(self._entities[entity].values())
 
     def has_component(self, entity: int, component_type: Any) -> bool:
-        """Check if a specific Entity has a Component of a certain type.
-
-        :param entity: The Entity you are querying.
-        :param component_type: The type of Component to check for.
-        :return: True if the Entity has a Component of this type,
-                 otherwise False
-        """
+        """Check if an Entity has a Component of a certain type."""
         return component_type in self._entities[entity]
 
     def has_components(self, entity: int, *component_types: Any) -> bool:
-        """Check if an Entity has all of the specified Component types.
-
-        :param entity: The Entity you are querying.
-        :param component_types: Two or more Component types to check for.
-        :return: True if the Entity has all of the Components,
-                 otherwise False
-        """
+        """Check if an Entity has all of the specified Component types."""
         return all(comp_type in self._entities[entity] for comp_type in component_types)
 
     def add_component(self, entity: int, component_instance: Any) -> None:
-        """Add a new Component instance to an Entity.
+        """Add a Component instance to an Entity (replaces if type exists).
 
-        Add a Component instance to an Entiy. If a Component of the same type
-        is already assigned to the Entity, it will be replaced.
-
-        :param entity: The Entity to associate the Component with.
-        :param component_instance: A Component instance.
+        Args:
+            entity: The Entity ID.
+            component_instance: The Component instance to add.
         """
         component_type = type(component_instance)
 
@@ -322,16 +312,17 @@ class World:
         self.clear_cache()
 
     def remove_component(self, entity: int, component_type: Any) -> int:
-        """Remove a Component instance from an Entity, by type.
+        """Remove a Component from an Entity by type.
 
-        A Component instance can be removed by providing it's type.
-        For example: world.delete_component(enemy_a, Velocity) will remove
-        the Velocity instance from the Entity enemy_a.
+        Args:
+            entity: The Entity ID.
+            component_type: The Component class type to remove.
 
-        Raises a KeyError if either the given entity or Component type does
-        not exist in the database.
-        :param entity: The Entity to remove the Component from.
-        :param component_type: The type of the Component to remove.
+        Returns:
+            The entity ID.
+
+        Raises:
+            KeyError: If the entity or component type does not exist.
         """
         self._components[component_type].discard(entity)
 
@@ -347,17 +338,17 @@ class World:
         return entity
 
     def remove_component_force(self, entity: int, component_type: Any) -> int:
-        """ODO added - do not throw exception if entity and/or component not found
-        Remove a Component instance from an Entity, by type.
+        """Remove a Component from an Entity, silently ignoring missing entries.
 
-        A Component instance can be removed by providing it's type.
-        For example: world.delete_component(enemy_a, Velocity) will remove
-        the Velocity instance from the Entity enemy_a.
+        Same as ``remove_component`` but returns None instead of raising
+        KeyError if the entity or component type does not exist.
 
-        Raises a KeyError if either the given entity or Component type does
-        not exist in the database.
-        :param entity: The Entity to remove the Component from.
-        :param component_type: The type of the Component to remove.
+        Args:
+            entity: The Entity ID.
+            component_type: The Component class type to remove.
+
+        Returns:
+            The entity ID, or None if not found.
         """
         try:
             self._components[component_type].discard(entity)
@@ -376,23 +367,14 @@ class World:
             return None
 
     def _get_component(self, component_type: type[Component]) -> Iterable[tuple[int, Component]]:
-        """Get an iterator for Entity, Component pairs.
-
-        :param component_type: The Component type to retrieve.
-        :return: An iterator for (Entity, Component) tuples.
-        """
+        """Yield (entity_id, component) pairs for a single Component type."""
         entity_db = self._entities
 
         for entity in self._components.get(component_type, []):
             yield entity, entity_db[entity][component_type]
 
     def _get_components(self, *component_types: Type) -> Iterable[tuple[int, ...]]:
-        """Get an iterator for Entity and multiple Component sets.
-
-        :param component_types: Two or more Component types.
-        :return: An iterator for Entity, (Component1, Component2, etc)
-        tuples.
-        """
+        """Yield (entity_id, [comp1, comp2, ...]) for entities having all types."""
         entity_db = self._entities
         comp_db = self._components
 
@@ -403,17 +385,14 @@ class World:
             pass
 
     def _get_components_ex(self, *component_types: Type, **kwargs) -> Iterable[tuple[int, ...]]:
-        """Get an iterator for Entity and multiple Component sets + excluding entities
-        that have one specific component_type.
+        """Yield entities with all included types, excluding one type.
 
-        :param component_types: Two or more Component types to include in a list.
-        :param exclude: One Component type to exclude in a list.
-        :return: An iterator for Entity, (Component1, Component2, etc)
-        tuples.
+        Args:
+            *component_types: Component types to require.
+            **kwargs: ``exclude`` — a single Component type to exclude.
 
-        example:
-
-        _get_components_ex(c.Pos, c.Move, c.Render, exclude=c.Ai)
+        Example:
+            ``_get_components_ex(Pos, Move, Render, exclude=Ai)``
         """
         entity_db = self._entities
         comp_db = self._components
@@ -443,18 +422,14 @@ class World:
             pass
 
     def _get_components_exs(self, **kwargs) -> Iterable[tuple[int, ...]]:
-        """Get an iterator for Entity and multiple Component sets + excluding entities
-        that are in exclude_component_types.
+        """Yield entities with all included types, excluding multiple types.
 
-        :param include: Two or more Component types to include in a list.
-        :param exclude: Two or more Component types to exclude in a list.
-        :return: An iterator for Entity, (Component1, Component2, etc)
-        tuples.
+        Args:
+            **kwargs: ``include`` — tuple of required Component types.
+                ``exclude`` — tuple of Component types to exclude.
 
-        example:
-
-        _get_components_exs(include=(c.Pos, c.Move, c.Render), exclude=(c.Ai, c.Attack))
-
+        Example:
+            ``_get_components_exs(include=(Pos, Move), exclude=(Ai, Attack))``
         """
         entity_db = self._entities
         comp_db = self._components
@@ -469,12 +444,11 @@ class World:
             pass
 
     def _get_components_opt(self, *component_types: Type, **kwargs) -> Iterable[tuple[int, ...]]:
-        """Get an iterator for Entity and multiple Component sets.
+        """Yield entities with required types plus an optional Component (or None).
 
-        :param component_types: Two or more Component types.
-        :param optional: Component type whose entity should be returned also or None if entity does not have it
-        :return: An iterator for Entity, (Component1, Component2, etc)
-        tuples.
+        Args:
+            *component_types: Required Component types.
+            **kwargs: ``optional`` — a Component type returned as None if missing.
         """
         entity_db = self._entities
         comp_db = self._components
@@ -509,36 +483,14 @@ class World:
 
 
     def try_component(self, entity: int, component_type: type[Component]) -> Optional[Component]:
-        """Try to get a single component type for an Entity.
-
-        This method will return the requested Component if it exists, but
-        will pass silently if it does not. This allows a way to access
-        optional Components that may or may not exist, without having to
-        first querty the Entity to see if it has the Component type.
-
-        :param entity: The Entity ID to retrieve the Component for.
-        :param component_type: The Component instance you wish to retrieve.
-        :return: A iterator containg the single Component instance requested,
-                 which is empty if the component doesn't exist.
-        """
+        """Return a Component for an Entity, or None if it doesn't exist."""
         if component_type in self._entities[entity]:
             return self._entities[entity][component_type]
         else:
             return None
 
     def try_components(self, entity: int, *component_types: type):
-        """Try to get a multiple component types for an Entity.
-
-        This method will return the requested Components if they exist, but
-        will pass silently if they do not. This allows a way to access
-        optional Components that may or may not exist, without first having
-        to query if the entity has the Component types.
-
-        :param entity: The Entity ID to retrieve the Component for.
-        :param component_types: The Components types you wish to retrieve.
-        :return: A iterator containg the multiple Component instances requested,
-                 which is empty if the components do not exist.
-        """
+        """Yield all requested Components for an Entity, or None if any are missing."""
         if all(comp_type in self._entities[entity] for comp_type in component_types):
             yield [self._entities[entity][comp_type] for comp_type in component_types]
         else:
@@ -587,22 +539,18 @@ class World:
             self.process_times[processor.__class__.__name__] += process_time # cumulate the process times in ms
 
     def process(self, proc_group_id: str='default', *args, **kwargs) -> None:
-        """Call the process method on all Processors, in order of their priority.
+        """Process all Processors in priority order, clearing dead entities first.
 
-        Call the *process* method on all assigned Processors, respecting their
-        optional priority setting. In addition, any Entities that were marked
-        for deletion since the last call to *World.process*, will be deleted
-        at the start of this method call.
-
-        :param args: Optional arguments that will be passed through to the
-                     *process* method of all Processors.
+        Args:
+            proc_group_id: Which processor group to run.
+            *args: Forwarded to each Processor's ``process()`` method.
+            **kwargs: Forwarded to each Processor's ``process()`` method.
         """
         self._clear_dead_entities()
         self._process(proc_group_id, *args, **kwargs)
 
     def _finalize(self, proc_group_id: str='default', *args, **kwargs) -> None:
-        """ Add by xdoko01
-        """
+        """Call finalize on all Processors in a group."""
         for processor in self._processors[proc_group_id]:
             try:
                 processor.finalize(*args, **kwargs)
@@ -610,24 +558,10 @@ class World:
                 raise ValueError(processor)
 
     def finalize_group(self, proc_group_id: str='default', *args, **kwargs) -> None:
-        """ Call the finalize method on all Processors in the processor group, in order of their priority.
-
-        Call the *finalize* method on all assigned Processors, respecting their
-        optional priority setting.
-
-        :param args: Optional arguments that will be passed through to the
-                     *finalize* method of all Processors.
-        """
+        """Call finalize on all Processors in a specific group."""
         self._finalize(proc_group_id=proc_group_id, *args, **kwargs)
 
     def finalize(self, *args, **kwargs) -> None:
-        """ Call the finalize method on all Processors, in order of their priority.
-
-        Call the *finalize* method on all assigned Processors, respecting their
-        optional priority setting.
-
-        :param args: Optional arguments that will be passed through to the
-                     *finalize* method of all Processors.
-        """
+        """Call finalize on all Processors across all groups."""
         for proc_group_id in self._processors:
             self.finalize_group(proc_group_id=proc_group_id, *args, **kwargs)

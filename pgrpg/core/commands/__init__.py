@@ -1,3 +1,10 @@
+"""Command types, protocols, and factories for entity command generation.
+
+Defines the Command namedtuple, CommandStatus enum, CommandContext protocol,
+CommandGenerator protocol, and the Container helper dataclass used as a
+simple attribute-based key-value store for blackboard data.
+"""
+
 from enum import Enum
 from typing import Protocol, Iterable
 from collections import namedtuple
@@ -5,17 +12,20 @@ from dataclasses import dataclass, field
 
 Command = namedtuple('Command', ['name', 'params', 'entity_id'])
 
-'''
-@dataclass(frozen=True)
-class Command:
-    name: str
-    params: dict
-'''
-
 def cmd_factory(cmd: Iterable) -> Command:
-    '''Transform command provided as a list or tuple into
-    Command instance.
-    '''
+    """Transform a list/tuple command definition into a Command namedtuple.
+
+    Args:
+        cmd: A sequence of [name, params_dict] where params may contain
+            an ``'entity'`` key that is extracted as the target entity_id.
+
+    Returns:
+        A Command namedtuple, or the original value if cmd is None.
+
+    Raises:
+        AssertionError: If name is not a string, params is not a dict,
+            or entity alias was not translated to int.
+    """
     assert isinstance(cmd[0], str), f'Name of the command must be a string value.'
     assert isinstance(cmd[1], dict), f'Parameters of the command must be in the form of a dictionary.'
 
@@ -25,7 +35,7 @@ def cmd_factory(cmd: Iterable) -> Command:
     return Command(name=cmd[0], params=cmd[1], entity_id=entity_id_from_cmd) if cmd is not None else cmd
 
 class CommandStatus(Enum):
-    '''Class representing possible statuses of the the command'''
+    """Possible result statuses returned by command execution."""
 
     NONE = 'NONE'
     RUNNING = 'RUNNING'
@@ -34,9 +44,11 @@ class CommandStatus(Enum):
 
 @dataclass
 class Container:
-    '''Container for data stored as class instance attributes. 
-    Used to access data as attributes rather than dictionary.
-    '''
+    """Attribute-based key-value store for blackboard data.
+
+    Used by CommandContext to hold globals/locals as named attributes
+    rather than dict keys.
+    """
     def __init__(self, attrs: dict={}):
         for k, v in attrs.items():
             self.add(k, v)
@@ -55,8 +67,7 @@ class Container:
 
 @dataclass
 class CommandContext(Protocol):
-    '''Requirement for information about the status of the 
-    CommandGenerator.'''
+    """Protocol defining the required state interface for command generators."""
 
     globals: Container
     locals: Container
@@ -65,19 +76,8 @@ class CommandContext(Protocol):
     tick_count: int
     current_time: int
 
-@dataclass
-class CommandContextMock(CommandContext):
-    globals: Container = field(default_factory=Container)
-    locals: Container = field(default_factory=Container)
-    init_time: int = 0
-    duration: int = 0
-    tick_count: int = 1
-    current_time: int = 0
-
-
 class CommandGenerator(Protocol):
-    '''Protocol class for all data structures that can generate
-    commands - trees, lists, ...'''
+    """Protocol for command-generating data structures (trees, lists, etc.)."""
 
     bb: CommandContext
 
@@ -98,11 +98,4 @@ class CommandGenerator(Protocol):
         '''Callback from command manager before the command starts
         in order to set the CommandContext statistics.'''
         pass
-
-class CommandGeneratorMock(CommandGenerator):
-    bb: CommandContextMock = CommandContextMock()
-    reset = lambda self, new_ai_struct: None
-    get_command = lambda self: CommandStatus.SUCCESS
-    process_command_result = lambda self, result: None
-    notify_command_start = lambda self: None
 

@@ -1,9 +1,22 @@
+"""Load and prepare sprite images and animations from disk."""
+
 import pygame
 from pathlib import Path
 
 def load_image(image_folder_path: Path, resize: tuple=None) -> pygame.image:
-	''' load and resize image from the given path
-	'''
+	"""Load a single image and optionally resize it.
+
+	Args:
+		image_folder_path: Path to the image file.
+		resize: Target ``(width, height)`` to scale the image to.
+			None keeps the original size.
+
+	Returns:
+		The loaded (and optionally resized) pygame Surface.
+
+	Raises:
+		ValueError: If the image cannot be loaded.
+	"""
 	try:
 		image = pygame.image.load(str(image_folder_path)).convert()
 		if resize: image = pygame.transform.scale(image, resize)
@@ -14,26 +27,27 @@ def load_image(image_folder_path: Path, resize: tuple=None) -> pygame.image:
 
 
 def load_animation(background_folder_path: Path, filetype_mask: str = '**/*.gif', resize: tuple=None) -> list:
-	''' Load all pictures from folder, resize them and
-	store them in the list for further use.
+	"""Load all images from a folder as animation frames.
 
-	Parameters:
-		:param background_folder_path: Path to the folder containing images from which the animation should be created.
-		:type background_folder_path: Path
+	Args:
+		background_folder_path: Path to the folder containing the
+			animation frame images.
+		filetype_mask: Glob pattern for selecting image files.
+		resize: Target ``(width, height)`` to scale each frame to.
+			None keeps the original size.
 
-		:param filetype_mask: Wildcard used for selection of files from which the animation should be created.
-		:type filetype_mask: str
+	Returns:
+		List of pygame Surfaces, one per animation frame.
 
-		:param resize: New width and height for images to be resized.
-		:type resize: tuple
-
-		:return: list of images
-	'''
+	Raises:
+		ValueError: If the folder does not exist or an image fails
+			to load.
+	"""
 
 	list_of_images = []
 
 	# check that the path is valid
-	if not Path(background_folder_path).exists(): 
+	if not Path(background_folder_path).exists():
 		raise ValueError(f'Path {background_folder_path} does not exist.')
 
 	# get the folder path and list of all files in the folder

@@ -1,67 +1,69 @@
-''' Run python -m pgrpg.functions.dict_utils -v for test.
-'''
+"""Dictionary and collection manipulation utilities.
+
+Provides functions for creating, searching, modifying, and merging
+nested dictionaries and collections used throughout the engine.
+
+Run ``python -m pgrpg.functions.dict_utils -v`` for doctests.
+"""
 
 def _create_dict_list(path: list, value) -> dict:
-    '''Create a dictionary(tree) specified by the list of
-    embeded keys. The value is put to the deepest key.
-    
-    Paramaters:
-        :param path: List of embeded keys to be created in the dictionary
-        :type path: list
+    """Create a nested dictionary from a list of keys.
 
-        :param value: Value to be added to the most inner key of the dict
-        :type value: any
-    
-    Tests:
+    The value is placed at the innermost key.
+
+    Args:
+        path: List of nested keys to create in the dictionary.
+        value: Value to assign to the deepest key.
+
+    Returns:
+        A nested dictionary following the key path.
+
+    Examples:
         >>> print(_create_dict_list(['a', 'b', 'c'], "hello"))
         {'a': {'b': {'c': 'hello'}}}
-    '''
+    """
 
     new_dict = {path[-1]: value}
 
     for p in reversed(path[:-1]):
         new_dict = {p: new_dict}
-    
+
     return new_dict
 
 def _create_dict_str(path: str, value, sep: str='.') -> None:
-    '''Create a dictionary(tree) specified by path and
-    put the value to the deepest key.
+    """Create a nested dictionary from a dot-separated path string.
 
-    Parameters:
-        :param path: List of embeded keys as a string separated by separator
-        :type path: str
+    Args:
+        path: Dot-separated (or custom separator) string of nested keys.
+        value: Value to assign to the deepest key.
+        sep: Separator used between keys in the path string.
 
-        :param value: Value to be added to the most inner key
-        :type value: any
+    Returns:
+        A nested dictionary following the key path.
 
-        :param sep: Separator used to separate the keys in path string
-        :type sep: str
-
-    Tests:
+    Examples:
         >>> print(_create_dict_str('a.b.c', 'hello'))
         {'a': {'b': {'c': 'hello'}}}
 
         >>> print(_create_dict_str('a/b/c', 'hello', sep='/'))
         {'a': {'b': {'c': 'hello'}}}
-    '''
+    """
 
     return _create_dict_list(path.split(sep), value)
 
 def get_dict_keys_having_value(d: dict, value, sep: str|None=None) -> list:
-    '''Get the list of dictionary keys in which the value is present.
+    """Find all key paths in a dictionary that contain a given value.
 
-    Parameters:
-        :param d: Dictionary that is being searched for value
-        :type d: dict
+    Args:
+        d: Dictionary to search.
+        value: Value to search for.
+        sep: If provided, join key paths into strings using this
+            separator. Otherwise return paths as lists of keys.
 
-        :param value: Searched value
-        :type value: any
+    Returns:
+        List of key paths where the value was found.
 
-        :param sep: Dictionary path separator. If none then put the keys in the list. Else merge them to string using the separator.
-        :type sep: str | None
-
-    Tests:
+    Examples:
         >>> d = {"items": {\
                     "weapons": {"sword": {"weapon": [2, 3]}},\
                     "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
@@ -74,7 +76,7 @@ def get_dict_keys_having_value(d: dict, value, sep: str|None=None) -> list:
         >>> res = get_dict_keys_having_value(d, 3, sep='.')
         >>> print(res)
         ['items.weapons.sword.weapon', 'items.coins.copper']
-    '''
+    """
     results = []
 
     def recursive_search(obj, path):
@@ -101,17 +103,19 @@ def get_dict_keys_having_value(d: dict, value, sep: str|None=None) -> list:
 
 
 def del_dict_value(d: dict, value) -> dict:
-    '''Delete specific value from all (even nested) places in the dictionary.
-    Returns new dictionaly without the values.
+    """Delete a specific value from all nested locations in a dictionary.
 
-    Parameters:
-        :param d: Dictionary that is being modified (by deleting value)
-        :type d: dict
+    Modifies the dictionary in place, removing the value from dicts,
+    lists, and sets at any nesting depth.
 
-        :param value: Value to be deleted
-        :type value: any
+    Args:
+        d: Dictionary to modify.
+        value: Value to remove.
 
-    Tests:
+    Raises:
+        TypeError: If the input is not a dictionary.
+
+    Examples:
         >>> d = {"items": {\
                     "weapons": {"sword": {"weapon": [2, 3]}},\
                     "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
@@ -120,7 +124,7 @@ def del_dict_value(d: dict, value) -> dict:
         >>> del_dict_value(d, 3)
         >>> print(d)
         {'items': {'weapons': {'sword': {'weapon': [2]}}, 'coins': {'golden': [10, 22, 33], 'copper': [1, 2]}}}
-    '''
+    """
 
     if not isinstance(d, dict):
         raise TypeError("Input must be a dictionary")
@@ -176,24 +180,17 @@ def del_dict_value(d: dict, value) -> dict:
     recursive_clean(d)
 
 def set_dict_value(d: dict, path: str, value, sep: str='.') -> None:
-    '''Create a new path in the dictionary and
-    put the required value there.
+    """Set a value at a nested path in a dictionary.
 
-    Parameters:
-        :param d: Dictionary that is being modified (by adding new value)
-        :type d: dict
+    Creates intermediate keys if they do not exist.
 
-        :param path: List of keys in form of a string separated by sep
-                     where new value should be added.
-        :type path: str
+    Args:
+        d: Dictionary to modify.
+        path: Dot-separated (or custom separator) string of nested keys.
+        value: Value to set at the target path.
+        sep: Separator used between keys in the path string.
 
-        :param value: Value to be added to the most inner key in path
-        :type value: any
-
-        :param sep: Separator used to separate the keys in path string
-        :type sep: str
-
-    Tests:
+    Examples:
         >>> d = {"items": {\
                     "weapons": {"sword": {"weapon": [2, 3]}},\
                     "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
@@ -202,7 +199,7 @@ def set_dict_value(d: dict, path: str, value, sep: str='.') -> None:
         >>> set_dict_value(d, 'items.coins.silver', 'value')
         >>> print(d)
         {'items': {'weapons': {'sword': {'weapon': [2, 3]}}, 'coins': {'golden': [10, 22, 33], 'copper': [1, 2, 3], 'silver': 'value'}}}
-    '''
+    """
 
     # For tracing the path
     parse_path = path.split(sep)
@@ -224,25 +221,20 @@ def set_dict_value(d: dict, path: str, value, sep: str='.') -> None:
         d.update(_create_dict_list(parse_path[depth:], value))
 
 def get_dict_value(d: dict, path: str, sep :str='.', not_found=None):
-    '''Get the value from the dictionary that
-    is on the path specified by the path string.
+    """Get a value from a nested dictionary by dot-separated path.
 
-    Parameters:
-        :param d: Dictionary that is being searched
-        :type d: dict
+    Args:
+        d: Dictionary to search.
+        path: Dot-separated (or custom separator) key path. Empty string
+            returns the entire dictionary.
+        sep: Separator used between keys in the path string.
+        not_found: Value returned when the key path does not exist.
 
-        :param path: List of keys in form of a string separated by sep
-                     where new value should be found.
-        :type path: str
+    Returns:
+        The value at the given path, or ``not_found`` if the path is
+        missing.
 
-        :param sep: Separator used to separate the keys in path string
-        :type sep: str
-
-        :param not_found: Value that is returned in case the searched
-                          key and its value is not found.
-        :type not_found: any
-
-    Tests:
+    Examples:
         >>> d = {"items": {\
                 "weapons": {"sword": {"weapon": [2, 3]}},\
                 "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
@@ -264,44 +256,39 @@ def get_dict_value(d: dict, path: str, sep :str='.', not_found=None):
         # Get number of silver coins available
         >>> print(f"Number of silver coins: {len(get_dict_value(d, 'items.coins.silver', not_found=[]))}")
         Number of silver coins: 0
-    '''
+    """
 
     # In case path is not specified, return the whole dict
     if not path: return d
-    
+
     # For narrowed down dictionary
     parse_dict = d
     try:
         # Dive deep into the dictionary
         for p in path.split(sep):
             parse_dict = parse_dict[p]
-        
+
         return parse_dict
     except KeyError:
         return not_found
 
 def add_dict_value(d: dict, path: str, value, sep: str='.') -> int:
-    '''Add new value to the dictionary. Do not overwrite
-    the existing value but convert to set and add it to
-    the set.
+    """Add a value to a set stored at a nested dictionary path.
 
-    Parameters:
-        :param d: Dictionary that is being modified (by adding new value)
-        :type d: dict
+    If the path already holds an iterable, the value is added to it
+    (converted to a set). If the path does not exist, a new single-
+    element set is created.
 
-        :param path: List of keys in form of a string separated by sep
-                     where new value should be added.
-        :type path: str
+    Args:
+        d: Dictionary to modify.
+        path: Dot-separated (or custom separator) key path.
+        value: Value to add to the set.
+        sep: Separator used between keys in the path string.
 
-        :param value: Value to be appended to the most inner key in path
-        :type value: any
+    Returns:
+        Number of items in the set after adding the value.
 
-        :param sep: Separator used to separate the keys in path string
-        :type sep: str
-
-        :returns: Number of items stored in the set that is the value of the key
-
-    Tests:
+    Examples:
         >>> d = {"items": {\
                     "weapons": {"sword": {"weapon": [2, 3]}},\
                     "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
@@ -319,7 +306,7 @@ def add_dict_value(d: dict, path: str, value, sep: str='.') -> int:
         1
         >>> add_dict_value(d, 'items.coins.iron', 777)
         2
-    '''
+    """
 
     try:
         #assert isinstance(value, int), f'Value must be integer.'
@@ -340,17 +327,18 @@ def add_dict_value(d: dict, path: str, value, sep: str='.') -> int:
         raise
 
 def get_all_dict_values(d: dict):
-    '''Parse the dictionary and get all the values as
-    generator.
-    By calling list(get_all_dict_values(d)) or
-    set(get_all_dict_values(d)) the result can be obtained
-    in form of the set or the list.
+    """Yield all leaf values from a nested dictionary.
 
-    Parameters:
-        :param d: Dictionary that is being modified (by adding new value)
-        :type d: dict
+    Recursively traverses dicts, lists, and sets, yielding every
+    non-container value encountered.
 
-    Tests:
+    Args:
+        d: Dictionary to extract values from.
+
+    Yields:
+        Individual leaf values from the nested structure.
+
+    Examples:
         >>> d = {"items": {\
                     "weapons": {"sword": {"weapon": [2, 3]}},\
                     "coins": {"golden" : [10,22,33], "copper": [1,2,3]}\
@@ -360,7 +348,7 @@ def get_all_dict_values(d: dict):
         {33, 2, 3, 1, 10, 22}
         >>> set(get_all_dict_values(d['items']['weapons']))
         {2, 3}
-    '''
+    """
 
     for val in d.values():
         if isinstance(val, dict):
@@ -372,17 +360,15 @@ def get_all_dict_values(d: dict):
             yield val
 
 def _get_coll_len(coll, keys: list) -> int:
-    '''Get the length of collection on the path specified by sequence of keys.
+    """Get the length of a collection at a path specified by a list of keys.
 
-    Parameters:
-        :param coll: Collection that is being searched
-        :type coll: dict/list/tuple/set/...
+    Args:
+        coll: Collection (dict, list, tuple, or set) to search.
+        keys: List of keys forming the path to the target collection.
 
-        :param keys: List of keys where new value should be found.
-        :type keys: list
-
-        :returns int: Length of the found collection.
-    '''
+    Returns:
+        Length of the found collection, or count of matching items.
+    """
     if len(keys) == 0: return len(coll)
 
     sum = 0
@@ -410,20 +396,18 @@ def _get_coll_len(coll, keys: list) -> int:
         return sum
 
 def get_coll_len(coll, path: str, sep: str='.'):
-    '''Get the length of value specified on the path from the collection.
+    """Get the total length of values at a path in a nested collection.
 
-    Parameters:
-        :param coll: Collection that is being searched
-        :type coll: dict/list/tuple/set/...
+    Args:
+        coll: Collection (dict, list, tuple, or set) to search.
+        path: Separator-delimited key path to the target.
+        sep: Separator used between keys in the path string.
 
-        :param path: List of keys in form of a string separated by sep
-                     where new value should be found.
-        :type path: str
+    Returns:
+        Total count of items found at the specified path across all
+        matching sub-collections.
 
-        :param sep: Separator used to separate the keys in path string
-        :type sep: str
-
-    Tests:
+    Examples:
         >>> ex = {\
             'prereqs': [],\
             'entities': [\
@@ -462,24 +446,23 @@ def get_coll_len(coll, path: str, sep: str='.'):
         >>> print(get_coll_len(coll=ex, path='entities/components/params/health', sep='/'))
         2
 
-        # Length of empty collection 
+        # Length of empty collection
         >>> print(get_coll_len(coll=ex, path='prereqs', sep='/'))
         0
-    '''
+    """
     keys = [] if path == '' else path.split(sep)
     return _get_coll_len(coll=coll, keys=keys)
 
 def _get_coll_value(coll, keys: list):
-    '''Get the value specified on the path (specified by sequence of keys) 
-    from the collection as a generator.
+    """Yield values at a path specified by a list of keys in a collection.
 
-    Parameters:
-        :param coll: Collection that is being searched
-        :type coll: dict/list/tuple/set/...
+    Args:
+        coll: Collection (dict, list, tuple, or set) to search.
+        keys: List of keys forming the path to the target values.
 
-        :param keys: List of keys where new value should be found.
-        :type keys: list
-    '''
+    Yields:
+        Values found at the specified path.
+    """
 
     if len(keys) == 0: yield coll
 
@@ -503,20 +486,18 @@ def _get_coll_value(coll, keys: list):
             yield from _get_coll_value(coll=item, keys=keys)
 
 def get_coll_value(coll, path: str, sep: str='.'):
-    '''Get the value specified on the path from the collection.
+    """Yield values at a path in a nested collection.
 
-    Parameters:
-        :param coll: Collection that is being searched
-        :type coll: dict/list/tuple/set/...
+    Args:
+        coll: Collection (dict, list, tuple, or set) to search.
+        path: Separator-delimited key path to the target.
+        sep: Separator used between keys in the path string.
 
-        :param path: List of keys in form of a string separated by sep
-                     where new value should be found.
-        :type path: str
+    Yields:
+        Values found at the specified path across all matching
+        sub-collections.
 
-        :param sep: Separator used to separate the keys in path string
-        :type sep: str
-
-    Tests:
+    Examples:
         >>> ex = {\
             'prereqs': [],\
             'entities': [\
@@ -542,11 +523,11 @@ def get_coll_value(coll, path: str, sep: str='.'):
         # List all components
         >>> print([i for i in get_coll_value(coll=ex, path='entities/components', sep='/')])
         [{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'damageable:Damageable', 'params': {'health': 100}}, {'type': 'destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [11, 22, 33]}}, {'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'damageable:Damageable', 'params': {'health': 100}}, {'type': 'destroy_on_no_health:DestroyOnNoHealth', 'params': {'ttl': 10000, 'handlers': [111, 222, 333]}}]
-        
+
         # List all component types
         >>> print([i for i in get_coll_value(coll=ex, path='entities/components/type', sep='/')])
         ['collidable:Collidable', 'damageable:Damageable', 'destroy_on_no_health:DestroyOnNoHealth', 'collidable:Collidable', 'damageable:Damageable', 'destroy_on_no_health:DestroyOnNoHealth']
-        
+
         # List all entity ids
         >>> print([i for i in get_coll_value(coll=ex, path='entities/id', sep='/')])
         ['NPC', 'PLAYER']
@@ -559,29 +540,24 @@ def get_coll_value(coll, path: str, sep: str='.'):
         >>> print( list( filter( lambda x: x["type"] == "collidable:Collidable", get_coll_value(coll=ex, path='entities/components', sep='/') ) ) )
         [{'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}, {'type': 'collidable:Collidable', 'params': {'x': 15, 'y': 27, 'dx': 0, 'dy': 8}}]
 
-    '''
+    """
     keys = [] if path == '' else path.split(sep)
     yield from _get_coll_value(coll=coll, keys=keys)
 
 def merge_dicts(orig: dict, new: dict) -> dict:
-    """ Merge 2 dictionaries original and new, so that:
+    """Recursively merge two dictionaries.
 
-        - if key exists in both, value from new i sused
-        - if key exists only in default, key: value from default is used
-        - if key exists only in new, key: value from new is used
+    Values from ``new`` take precedence. Nested dicts are merged
+    recursively rather than replaced wholesale.
 
-    Parameters:
-        :param orig: Dictionary that is taken as a base for adding and updating items from new dict (slave)
-        :type orig: dict
+    Args:
+        orig: Base dictionary (lower priority).
+        new: Override dictionary (higher priority).
 
-        :param new: Dictionary from which items are added and modified (master)
-                     where new value should be found.
-        :type new: dict
+    Returns:
+        Merged dictionary combining both inputs.
 
-        :returns: merge dict as a result of orig (slave) and new (master)
-
-
-    Tests:
+    Examples:
         >>> orig = {\
             "RESOLUTION" : [640, 480],\
             "BITDEPTH" : 32,\
@@ -617,23 +593,23 @@ def merge_dicts(orig: dict, new: dict) -> dict:
     merged = {k: v for k,v in new.items() if k not in orig}
 
     for orig_key in orig:
-        # check if exists in orig dict 
+        # check if exists in orig dict
         if orig_key not in new:
             merged[orig_key] = orig[orig_key]
-        else: 
+        else:
             # key exists in both original and new
             # if in the new dict the value is not dict - merge it
             if not isinstance(new[orig_key], dict):
                 merged[orig_key] = new[orig_key]
             else: # the value is again dict
                 merged[orig_key] = merge_dicts(orig[orig_key], new[orig_key])
-    
+
     return merged
 
 
 if __name__ == '__main__':
-    
-    
+
+
     import doctest
     doctest.testmod()
     '''
@@ -658,6 +634,6 @@ if __name__ == '__main__':
                 }
             ]
         }
-    
+
     print(get_coll_len(coll=ex, path='entities/components/params/health', sep='/'))
     '''

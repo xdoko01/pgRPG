@@ -1,3 +1,8 @@
+"""Fill parameterized templates with variable substitution.
+
+Loads a template by name (from storage or file), parses the provided
+arguments, and substitutes template variables with the given values.
+"""
 
 from .str_utils import parse_fnc_str, parse_fnc_list, get_args_kwargs_from_list, get_kw_from_str
 from .translate import translate
@@ -6,37 +11,24 @@ from .get_dict import get_dict
 from pathlib import Path
 
 def get_dict_params(definition: str | list, storage: dict=None, dir: Path=Path('')) -> dict:
-    '''Takes template name and parameters as one string (definition). Fills the parameters
-    into the template and returns the resulting dictionary.
-    
-    Parameters:
-        :param definition: Identifies template name/path 
-        :type definition: str | list
+    """Fill a template dictionary with parameters from a definition.
 
-        :param storage: Reference to the dictionary, where the template might
-                                be stored. If not found there, function will continue to
-                                look for the template in the json or yaml file stored
-                                in the template_dir.
-        :type storage: dict
+    The definition can be a string like ``"template_name(arg1, arg2)"``
+    or a list like ``["template_name", [args], {kwargs}]``. The template
+    is loaded from ``storage`` or from a file, and its ``vars`` entries
+    are substituted with the provided arguments.
 
-        :param dir: Directory where to look for the template file
-        :type dir: Path
+    Args:
+        definition: Template name with parameters, as a string or list.
+        storage: Dictionary where the template may be stored by name.
+            Falls back to loading from a file if not found.
+        dir: Directory to search for template files.
 
-        :returns: Dictionary with data substituted using parameters
-    
+    Returns:
+        Dictionary with template variables substituted by parameter
+        values.
+
     Examples:
-        (definition)
-            t_tile_pos(5, 5, test_arena_sand)
-        (template)
-            {
-                "id": "t_tile_pos",
-                "vars": ["$tileX", "$tileY", "$map"],
-                "components": [
-                    {"type" : "position:Position", "params" : {"tile_x" : "$tileX", "tile_y" : "$tileY", "map" : "$map"}}
-                ]
-            }
-
-    Tests:
 
         >>> storage = { \
             "t_tile_pos": { \
@@ -47,7 +39,7 @@ def get_dict_params(definition: str | list, storage: dict=None, dir: Path=Path('
                 ] \
             } \
         }
-        
+
         # Cases for template and parameters parsed as s string
         >>> print(get_dict_params(definition="t_tile_pos(5, 5, test_arena_sand)", storage=storage))
         {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 5, 'map': 'test_arena_sand'}}]}
@@ -78,12 +70,12 @@ def get_dict_params(definition: str | list, storage: dict=None, dir: Path=Path('
         >>> print(get_dict_params(definition="t_tile_pos(5, 2, 4, $map=test_arena_sand)", storage=storage))
         {'id': 't_tile_pos', 'vars': ['$tileX=0', '$tileY=0', 'test_arena_sand'], 'components': [{'type': 'position:Position', 'params': {'tile_x': 5, 'tile_y': 2, 'map': 'test_arena_sand'}}]}
 
-    '''
+    """
     ###
     # Based on the type of definition, decide how to handle the parameters and the template
     # Either handle it as a string or as a list with template and parameters definition
     ###
-    assert isinstance(definition, str) or isinstance(definition, list), f'Template call must be either string or list' 
+    assert isinstance(definition, str) or isinstance(definition, list), f'Template call must be either string or list'
     name, args, kwargs = parse_fnc_str(definition) if isinstance(definition, str) else parse_fnc_list(definition)
 
     raw_data = get_dict(dictpath=name, storage=storage, dir=dir)

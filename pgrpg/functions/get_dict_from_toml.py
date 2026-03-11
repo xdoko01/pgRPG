@@ -1,15 +1,20 @@
+"""Load a dictionary from a TOML file."""
+
 import toml
 from pathlib import Path
 
 def get_dict_from_toml(filepath: Path) -> dict:
-    ''' Returns dictionary based on toml file.
+    """Parse a TOML file into a dictionary.
 
-    Parameters:
-        :param filepath: Path to the yaml file
-        :type filepath: Path
+    Args:
+        filepath: Path to the TOML file.
 
-        :returns: Dictionary of data
-    '''
+    Returns:
+        Dictionary of parsed TOML data.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
 
     try:
         with open(filepath, 'r') as toml_file:

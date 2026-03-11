@@ -1,3 +1,9 @@
+"""Load a dictionary from a JSON, YAML, or TOML file.
+
+Supports automatic file extension detection when the suffix is omitted,
+trying TOML, YAML, JSON, and JSONC in order.
+"""
+
 from pathlib import Path
 from .get_dict_from_json import get_dict_from_json
 from .get_dict_from_yaml import get_dict_from_yaml
@@ -5,28 +11,29 @@ from .get_dict_from_toml import get_dict_from_toml
 
 
 def get_dict_from_file(filepath: Path, dir: Path=Path('')) -> dict:
-    '''Loads dictionary from the file specified by the filepath
-    either using absolute or relative path. Also filepath can
-    specify the file without file suffix. The functionality will
-    try to guess the suffix and load.
-    
-    Parameters:
-        :param filepath: Path to the json/yaml file in the dir directory or absolute path.
-                        It is not necessary to specify the suffix.
-        :type dict_path: Path
+    """Load a dictionary from a file, guessing the format if needed.
 
-        :param dir: Relative path, where to look for json/yaml file specified by filepath.
-        :type dir: Path
+    Supports absolute and relative paths. When no file extension is
+    provided, tries ``.toml``, ``.yaml``, ``.json``, and ``.jsonc``
+    in that order.
 
-        :returns: dict
-    
-    Tests:
+    Args:
+        filepath: Path to the data file. Extension is optional.
+        dir: Base directory for resolving relative paths.
+
+    Returns:
+        Dictionary parsed from the file.
+
+    Raises:
+        ValueError: If the file cannot be found or loaded.
+
+    Examples:
         >>> d = get_dict_from_file(filepath=Path('C:/Users/otakar/OneDrive/Personal/Python/pgrpg/config.json'))
         >>> d = get_dict_from_file(filepath=Path('C:/Users/otakar/OneDrive/Personal/Python/pgrpg/config'))
         >>> d = get_dict_from_file(filepath=Path('config.json'), dir=Path('C:/Users/otakar/OneDrive/Personal/Python/pgrpg'))
         >>> d = get_dict_from_file(filepath=Path('config'), dir=Path('C:/Users/otakar/OneDrive/Personal/Python/pgrpg'))
         >>> d = get_dict_from_file(filepath=Path('C:/Users/otakar/OneDrive/Personal/Python/pgrpg/test.toml'))
-    '''
+    """
 
     # Check if the filepath has some file extension specified - if not we will try to guess json or yaml
     file_extension = filepath.suffix

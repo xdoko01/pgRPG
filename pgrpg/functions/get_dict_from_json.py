@@ -1,16 +1,20 @@
+"""Load a dictionary from a JSON file with C-style comment support."""
+
 import json, re
 from pathlib import Path
 
 def get_dict_from_json(filepath: Path) -> dict:
-    ''' Returns dictionary based of json file with C-style 
-    comments removed.
+    """Parse a JSON file into a dictionary, stripping C-style comments.
 
-    Parameters:
-        :param filepath: Path to the json file
-        :type filepath: Path
+    Args:
+        filepath: Path to the JSON or JSONC file.
 
-        :returns: Dictionary of json data
-    '''
+    Returns:
+        Dictionary of parsed JSON data.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
 
     try:
         with open(filepath, 'r') as json_file:
