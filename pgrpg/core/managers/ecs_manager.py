@@ -601,3 +601,33 @@ def get_debug_info() -> str:
             "_processors": _world._processors
         }
     })
+
+# --- Test mock (used by example_game/ command doctests) ---
+
+class ECSManagerMock:
+    """Mock ECS manager for use in command module doctests."""
+
+    add_component = lambda self, e, c: None
+    try_component = lambda self, e, c: None
+
+    def try_component(self, entity, comp):
+        from core.components.position import Position, PositionMock
+        if comp == Position:
+            return PositionMock(x=0, y=0)
+        else:
+            return None
+
+    def component_for_entity(self, entity, comp):
+        from core.components.position import Position, PositionMock
+        if comp == Position:
+            return PositionMock(x=0, y=0)
+        else:
+            return None
+
+    def fnc_get_map_mock(map_name):
+        from pgrpg.core.managers.map_manager import MapManagerMock
+        return MapManagerMock().get_map(map_name)
+
+    _game_functions = {
+        'FNC_GET_MAP': fnc_get_map_mock
+    }

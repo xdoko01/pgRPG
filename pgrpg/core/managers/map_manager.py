@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 from fnmatch import fnmatchcase
 
+from dataclasses import dataclass
 from pgrpg.core.maps.map import Map
 
 _maps = dict()
@@ -65,4 +66,14 @@ def clear_maps() -> None:
     for map_name in maps:
         delete_map(map_name)
     logger.info(f'All maps cleared.')
+
+# --- Test mock (used by example_game/ command doctests via ECSManagerMock) ---
+
+@dataclass
+class MapManagerMock:
+    """Mock map manager returning a MapMock instance."""
+
+    def get_map(self, map_name):
+        from pgrpg.core.maps.map import MapMock
+        return MapMock()
 

@@ -1,8 +1,8 @@
-"""Command types, protocols, and factories for entity command generation.
+"""Command types, protocols, factories, and test mocks for entity command generation.
 
 Defines the Command namedtuple, CommandStatus enum, CommandContext protocol,
-CommandGenerator protocol, and the Container helper dataclass used as a
-simple attribute-based key-value store for blackboard data.
+CommandGenerator protocol, the Container helper dataclass, and mock
+implementations used by example_game doctests.
 """
 
 from enum import Enum
@@ -98,4 +98,24 @@ class CommandGenerator(Protocol):
         '''Callback from command manager before the command starts
         in order to set the CommandContext statistics.'''
         pass
+
+# --- Test mocks (used by example_game/ doctests) ---
+
+@dataclass
+class CommandContextMock(CommandContext):
+    """Mock CommandContext for use in command doctests."""
+    globals: Container = field(default_factory=Container)
+    locals: Container = field(default_factory=Container)
+    init_time: int = 0
+    duration: int = 0
+    tick_count: int = 1
+    current_time: int = 0
+
+class CommandGeneratorMock(CommandGenerator):
+    """Mock CommandGenerator for use in component doctests."""
+    bb: CommandContextMock = CommandContextMock()
+    reset = lambda self, new_ai_struct: None
+    get_command = lambda self: CommandStatus.SUCCESS
+    process_command_result = lambda self, result: None
+    notify_command_start = lambda self: None
 
