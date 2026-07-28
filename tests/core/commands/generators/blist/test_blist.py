@@ -51,14 +51,16 @@ def test_blist_empty_is_finished():
 def test_blist_advance_on_success():
     """On SUCCESS, the blist advances to the next line."""
     blist = BList(list_def=b_list_data2, cmd_factory=_factory)
-    assert blist._line_idx == 0
+    assert blist.current_cmd_idx == 0
 
-    cmd = blist.get_command()
+    # get_command returns (command, is_first_call) — never None
+    cmd, is_first_call = blist.get_command()
     assert cmd is not None
+    assert is_first_call
 
     blist.notify_command_start()
     blist.process_command_result(CommandStatus.SUCCESS)
-    assert blist._line_idx == 1
+    assert blist.current_cmd_idx == 1
 
 
 def test_blist_on_fail_jmp():
@@ -68,7 +70,7 @@ def test_blist_on_fail_jmp():
     blist.get_command()
     blist.notify_command_start()
     blist.process_command_result(CommandStatus.FAILURE)
-    assert blist._line_idx == 0
+    assert blist.current_cmd_idx == 0
 
 
 def test_blist_running_stays_on_same_line():
@@ -77,7 +79,7 @@ def test_blist_running_stays_on_same_line():
     blist.get_command()
     blist.notify_command_start()
     blist.process_command_result(CommandStatus.RUNNING)
-    assert blist._line_idx == 0
+    assert blist.current_cmd_idx == 0
 
 
 def test_blist_goto_jumps():
@@ -90,10 +92,10 @@ def test_blist_goto_jumps():
         blist.process_command_result(CommandStatus.SUCCESS)
 
     # Now at line 3 (Goto), get_command should process the Goto
-    assert blist._line_idx == 3
+    assert blist.current_cmd_idx == 3
     blist.get_command()
     # After Goto, should be at line 1
-    assert blist._line_idx == 1
+    assert blist.current_cmd_idx == 1
 
 
 def test_blist_loop_repeats():
@@ -108,7 +110,7 @@ def test_blist_loop_repeats():
 
     # Now at line 2 (Loop), get_command should jump back to 0
     blist.get_command()
-    assert blist._line_idx == 0
+    assert blist.current_cmd_idx == 0
 
     # Second pass
     for _ in range(2):
@@ -118,7 +120,7 @@ def test_blist_loop_repeats():
 
     # Loop again
     blist.get_command()
-    assert blist._line_idx == 0
+    assert blist.current_cmd_idx == 0
 
     # Third pass — loop counter exhausted, should advance past loop
     for _ in range(2):
@@ -126,6 +128,10 @@ def test_blist_loop_repeats():
         blist.notify_command_start()
         blist.process_command_result(CommandStatus.SUCCESS)
 
-    blist.get_command()
-    # Should now be at line 3 (Goto with jmp_to=-1 means finish)
-    assert blist._line_idx == 3
+    # Loop counter is exhausted, so the list advances past the Loop onto line 3
+    # (Goto) and follows its jmp_to=-1. get_command never rests on a non-Behavior
+    # node: it chases through until it lands on a Behavior or the list finishes.
+    cmd, _ = blist.get_command()
+    assert blist._is_finished
+    assert blist.current_cmd_idx == -1
+    assert cmd is None
