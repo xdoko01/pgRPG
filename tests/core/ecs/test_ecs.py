@@ -48,6 +48,43 @@ def test_component_retrieval_and_deletion():
     world.remove_component(entity, Position)
     assert not world.has_component(entity, Position)
 
+def test_entity_survives_losing_its_last_component():
+    """Only delete_entity() removes an Entity from the World."""
+    world = World()
+    entity = world.create_entity(Position(5, 5))
+
+    world.remove_component(entity, Position)
+
+    assert entity in world._entities
+    assert not world.has_component(entity, Position)
+    assert world.components_for_entity(entity) == ()
+
+def test_deferred_delete_after_removing_last_component():
+    """A dead Entity that also lost its last Component must not break process().
+
+    Regression: remove_component() used to drop the Entity record, so
+    _clear_dead_entities() raised KeyError and took down the frame loop.
+    """
+    world = World()
+    entity = world.create_entity(Position(1, 1))
+
+    world.delete_entity(entity)              # deferred until next process()
+    world.remove_component(entity, Position) # last component gone
+
+    world.process()
+
+    assert entity not in world._entities
+
+def test_immediate_delete_after_removing_last_component():
+    """delete_entity(immediate=True) must survive the same situation."""
+    world = World()
+    entity = world.create_entity(Position(1, 1))
+
+    world.remove_component(entity, Position)
+    world.delete_entity(entity, immediate=True)
+
+    assert entity not in world._entities
+
 def test_try_component_methods():
     world = World()
     e = world.create_entity(Position(1, 2))

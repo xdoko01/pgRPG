@@ -327,6 +327,17 @@ class World:
             entity: The Entity ID.
             component_type: The Component class type to remove.
 
+        The Entity itself is kept even once its last Component is removed, so
+        that delete_entity() stays the only way an Entity leaves the World.
+        Upstream esper drops the Entity record here, which makes an Entity
+        disappear without ever being marked dead - that crashes
+        _clear_dead_entities() and delete_entity(immediate=True), and leaves
+        aliases in ecs_manager pointing at an Entity that no longer exists.
+
+        Args:
+            entity: The Entity ID.
+            component_type: The Component class type to remove.
+
         Returns:
             The entity ID.
 
@@ -339,9 +350,6 @@ class World:
             del self._components[component_type]
 
         del self._entities[entity][component_type]
-
-        if not self._entities[entity]:
-            del self._entities[entity]
 
         self.clear_cache()
         return entity
@@ -366,9 +374,6 @@ class World:
                 del self._components[component_type]
 
             del self._entities[entity][component_type]
-
-            if not self._entities[entity]:
-                del self._entities[entity]
 
             self.clear_cache()
             return entity
