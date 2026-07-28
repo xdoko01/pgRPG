@@ -56,9 +56,15 @@ def translate(trans_dict, value, prefix=''):
         else:
             return trans_dict.get(value, value)
 
-    except:
-        #print(f'Cannot translate "{value}" by using translation dictionary "{trans_dict}"')
-        raise ValueError
+    except KeyError:
+        # A missing prefixed alias is a meaningful, documented failure - let it
+        # through with its message intact instead of flattening it to ValueError.
+        raise
+
+    except Exception as e:
+        raise ValueError(
+            f'Cannot translate "{value}" by using translation dictionary "{trans_dict}"'
+        ) from e
 
 if __name__ == '__main__':
     ''' Test the translate function on different examples
