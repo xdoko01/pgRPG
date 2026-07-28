@@ -574,8 +574,13 @@ Tasks specifically targeting Claude Code assistance:
 - [x] Improve performance of MAP rendering — redo with caching
 - [x] Review `GenerateCollisionsOptimizedProcessor` for performance
 - [x] Review `PerformFrameUpdateProcessor` for performance
-- [ ] Review `PerformIdleAnimationProcessor` for performance
-- [ ] Prepare pytest tests for pgrpg functions/classes
+- [x] Review `PerformIdleAnimationProcessor` for performance
+- [x] Prepare pytest tests for pgrpg functions/classes
+- [ ] Install gh command for GitHub from CLI
+- [ ] Is it possible to create issues and features directly in GitHub? I know there is issue tab but is there also some backlog available there?
+- [ ] Can I somehow automate usage of Claude - Claude taking individual issues, fixing them and then submitting the pull request for review?
+- [ ] The tests are failing find the errors and fix.
+- [ ] Prepare functionality for saving and loading the game.
 - [ ] Prepare complex Behavior Tree logic for NPC — described as text, output as JSON
 - [ ] Prepare a series of JSON scene files using human-language descriptions
 - [ ] Porting to browser/mobile

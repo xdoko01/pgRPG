@@ -15,7 +15,8 @@ dependencies = [
     "pgbitmapfont>=0.1.5",
     "pgconsole>=0.1.1",
     "psutil",
-    "pyyaml"
+    "pyyaml",
+    "toml"
 ]
 
 [tool.setuptools.packages.find]
