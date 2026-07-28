@@ -14,10 +14,17 @@ class Velocity(Component):
         self.vx = vx
         self.vy = vy
 
-# Dummy processor
+# Dummy processor. Mirrors the convention every real processor follows: the
+# throttle check raises SkipProcessorExecution, and each processor catches it
+# itself. World._process does not catch it, so a processor that lets it escape
+# would abort every later processor in its group for that cycle.
 class MoveProcessor(Processor):
     def process(self):
-        super().process()
+        try:
+            super().process()
+        except SkipProcessorExecution:
+            return
+
         for ent, (pos, vel) in self.world.get_components(Position, Velocity):
             pos.x += vel.vx
             pos.y += vel.vy

@@ -284,12 +284,21 @@ class World:
         return tuple(self._entities[entity].values())
 
     def has_component(self, entity: int, component_type: Any) -> bool:
-        """Check if an Entity has a Component of a certain type."""
-        return component_type in self._entities[entity]
+        """Check if an Entity has a Component of a certain type.
+
+        Returns False for an unknown Entity rather than raising. This matters
+        because remove_component() drops the Entity's record entirely once its
+        last Component is removed.
+        """
+        return component_type in self._entities.get(entity, {})
 
     def has_components(self, entity: int, *component_types: Any) -> bool:
-        """Check if an Entity has all of the specified Component types."""
-        return all(comp_type in self._entities[entity] for comp_type in component_types)
+        """Check if an Entity has all of the specified Component types.
+
+        Returns False for an unknown Entity rather than raising.
+        """
+        components = self._entities.get(entity, {})
+        return all(comp_type in components for comp_type in component_types)
 
     def add_component(self, entity: int, component_instance: Any) -> None:
         """Add a Component instance to an Entity (replaces if type exists).
