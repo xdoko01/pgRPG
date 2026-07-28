@@ -823,24 +823,24 @@ def create_tree(tree_def: dict, parent: TreeNode=None, depth: int=0, cmd_factory
         return result
 
     else:
-        # Get TreeNode parameters
-        ##node_type = tree_def['type'] # mandatory
-        ##node_name = tree_def['name'] # mandatory
-        node_type = tree_def.pop('type') # mandatory
-        
-        # Optional for Behavior - None if not present
-        try:
-            tree_def['command'] = cmd_factory(tree_def['command'])
-        except KeyError:
-            pass
+        # Get TreeNode parameters. Read them WITHOUT consuming tree_def: the
+        # caller's definition must stay reusable, because restart_brain()
+        # rebuilds the tree from the stored self.tree_def, and one definition
+        # (e.g. loaded from a template file) can be shared by several entities.
+        node_type = tree_def['type'] # mandatory
+        children_def = tree_def.get('children', [])
+
+        # Everything except 'type'/'children' is passed to the node constructor.
+        node_params = {k: v for k, v in tree_def.items() if k not in ('type', 'children')}
+
+        # Optional for Behavior - absent if not present
+        if 'command' in node_params:
+            node_params['command'] = cmd_factory(node_params['command'])
 
         # Get TreeNode class object based on 'type' from the JSON
         node_class = str_to_class(module=sys.modules[__name__], class_name=node_type)
 
         ##logger.debug(f'{depth * ">>> "}Creating TreeNode: class="{node_class}", name="{node_name}", command="{node_command}"')
-
-        ## Remove children from the tree_def
-        children_def = tree_def.pop('children', [])
 
         ##node = node_class(
         ##            name=node_name,
@@ -848,7 +848,7 @@ def create_tree(tree_def: dict, parent: TreeNode=None, depth: int=0, cmd_factory
         ##            command=node_command
         ##)
 
-        node = node_class(parent=parent, **tree_def)
+        node = node_class(parent=parent, **node_params)
         ##print(f'CREATING {node_class=}, {tree_def=}, {children_def=}')
 
         ##children_def = tree_def.get('children', [])

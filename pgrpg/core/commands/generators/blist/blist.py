@@ -114,7 +114,7 @@ class BList(CommandGenerator):
                     self.loop_counter = 0
                     self._move_to_idx(new_idx=self.current_cmd_idx+1)
                 else:
-                    print(f'{self.loop_counter = }')
+                    logger.debug(f'{self.loop_counter = }')
                     self.loop_counter += 1
                     self._move_to_idx(new_idx=self.commands[self.current_cmd_idx]['jmp_to'])
 
@@ -142,7 +142,12 @@ class BList(CommandGenerator):
         '''
         # Brain algorithm in form of the list
         logger.debug(f'About to reset the BList with the following new structure {new_ai_struct=}')
-        self.commands = new_ai_struct['cmd_list']
+
+        # Copy each command line, because the loop below rewrites the 'command'
+        # entries in place. Without the copy the caller's definition would be
+        # consumed and could not be reused - reset() is called again on restart,
+        # and one definition can be shared by several entities.
+        self.commands = [command.copy() for command in new_ai_struct['cmd_list']]
         logger.debug(f'New set of commands in BList before translation is {self.commands=}')
 
         #Apply function to every command if defined
