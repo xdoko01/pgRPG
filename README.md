@@ -611,10 +611,12 @@ Tasks specifically targeting Claude Code assistance:
 - [ ] When restarting `collect_coins`, loading screen shows in background
 - [ ] Some problem in `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
 - [ ] `event_manager._event_queue` can grow unbounded during heavy collision frames — needs max capacity or event TTL
+- [ ] `World.try_component` / `try_components` (`ecs/__init__.py:496,503`) index `self._entities[entity]` directly, so they raise `KeyError` for an Entity that never existed — even though the whole point of a `try_*` accessor is to fail silently. Same class of bug as the `has_component` fix; use `.get(entity, {})`.
 
 ### Open features
 
 **Engine / Architecture**
+- [ ] Entity lifecycle: `remove_component` no longer deletes the Entity record when its last Component goes, so `delete_entity()` is the only way an Entity leaves the World (this fixed a `KeyError` crash in `_clear_dead_entities`). Consequence: an Entity stripped of all Components lingers until explicitly deleted, inflating `len(_world._entities)` in the console status bar (`config/console.py:32`) and `ecs_manager.get_all_entities()`. Never measured whether any scene actually produces one — needs a diagnostic (e.g. a console command listing zero-Component Entities) rather than auto-deletion, which would break any flow that empties and refills an Entity in the same frame.
 - [ ] Move Flag-removal processors before Flag-generator processors in the default ordering
 - [ ] Implement post-requisite checks for processors (after all loaded, verify dependencies)
 - [ ] Named processor group: `ALL` cleanup option
@@ -654,6 +656,7 @@ Tasks specifically targeting Claude Code assistance:
 - [ ] Test recording — verify that inventory commands are captured
 
 **Developer experience**
+- [ ] Drop the obsolete PyPI `pathlib` dependency from `pgbitmapfont` and `pgconsole` — fix is in those two repos, nothing to change in pgrpg. Both declare `pathlib` as a dependency, which installs the abandoned 2014 standalone backport (1.0.1) of a module that has been in the stdlib since Python 3.4. It is currently inert because the stdlib wins on `sys.path`, but it (a) can break `pip install` on future Pythons, since its packaging predates them by a decade, and (b) can shadow the real stdlib module when something reorders `sys.path` — freezers/bundlers such as PyInstaller — which makes it a live risk for the browser/mobile porting task. Remove from both dependency lists and release patch versions.
 - [ ] `tile_to_px` / `px_to_tile` utility stored universally
 - [ ] `dict_utils` as standalone package
 - [ ] `main.reinit()` — more universal, selective reinit
