@@ -160,7 +160,7 @@ def del_dict_value(d: dict, value) -> dict:
             return obj
 
         elif isinstance(obj, set):
-            to_remove = {item for item in obj if item == v}
+            to_remove = {item for item in obj if item == value}
             to_add = set()
             for item in list(obj):
                 if item != value:

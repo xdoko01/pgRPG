@@ -92,6 +92,12 @@ class TestDelDictValue:
         # Other values should remain
         assert 2 in d["items"]["weapons"]["sword"]["weapon"]
 
+    def test_del_value_from_nested_set(self):
+        """Sets are handled by their own branch of recursive_clean."""
+        d = {"items": {"tags": {1, 2, 3}}}
+        del_dict_value(d, 3)
+        assert d["items"]["tags"] == {1, 2}
+
 
 class TestGetDictKeysHavingValue:
     def test_find_keys_with_value(self):

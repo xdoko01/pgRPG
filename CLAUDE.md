@@ -259,7 +259,15 @@ class MyProcessor(Processor):
         self._add_event = game_functions["FNC_ADD_EVENT"]
 
     def process(self, events, keys, dt, **kwargs):
-        super().process()  # handles exec_cycle_step throttling
+        # Handles exec_cycle_step throttling. The throttle is signalled by
+        # SkipProcessorExecution, which every processor MUST catch itself:
+        # World._process does not, so letting it escape would abort every
+        # later processor in the same group for this cycle.
+        try:
+            super().process()
+        except SkipProcessorExecution:
+            return
+
         for ent, [pos, mov] in self.world.get_components(c.Position, c.Movable):
             # ... do work ...
             pass
