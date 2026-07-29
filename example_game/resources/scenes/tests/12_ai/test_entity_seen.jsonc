@@ -141,8 +141,8 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 27, 
-						"dx" : 0, "dy" : 8,
+						"x_tiles" : 0.234375, "y_tiles" : 0.421875, 
+						"dx_tiles" : 0.0, "dy_tiles" : 0.125,
 						"accept_pos_fix_from_denylist" : [] // ["ALL"] // no one can move the player
 					}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
@@ -228,10 +228,10 @@
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {
-					"x" : 15, 
-					"y" : 27, 
-					"dx" : 0, 
-					"dy" : 8,
+					"x_tiles" : 0.234375, 
+					"y_tiles" : 0.421875, 
+					"dx_tiles" : 0.0, 
+					"dy_tiles" : 0.125,
 					"accept_pos_fix_from_allowlist" : ["player01"] // only player01 can move me
 					}}
 			]
@@ -258,7 +258,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 219, "y" : 800, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -283,7 +283,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 319, "y" : 10, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -309,7 +309,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 1000, "y" : 500, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -334,10 +334,10 @@
 				
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15,
-														"y" : 27,
-														"dx" : 0,
-														"dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375,
+														"y_tiles" : 0.421875,
+														"dx_tiles" : 0.0,
+														"dy_tiles" : 0.125}}
 			]
 		}
 	],

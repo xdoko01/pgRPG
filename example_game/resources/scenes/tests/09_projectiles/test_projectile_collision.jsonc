@@ -428,7 +428,7 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8
+						"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
 					}
 				},
@@ -461,7 +461,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 10, "y" : 450, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 
@@ -474,7 +474,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 100, "y" : 100, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		}
 

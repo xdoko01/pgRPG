@@ -145,7 +145,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		},
@@ -158,7 +158,7 @@
 				// New component for facilitationg pickup
 				{"type" : "pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.234375, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -170,7 +170,7 @@
 				// New component for facilitationg pickup
 				{"type" : "pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 240, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.234375, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -182,7 +182,7 @@
 				// New component for facilitationg pickup
 				{"type" : "pickable:Pickable", "params" :  {}},
 				{"type" : "position:Position", "params" : {"x" : 270, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.234375, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		}
 

@@ -2,7 +2,7 @@
 	"id" : "coin",
 	"templates" : ["thing/item"],
 	"components" : [
-		{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8}},
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.125, "y_tiles" : 0.125}},
 		{"type" : "pickable:Pickable", "params" : {}}
 	]
 }

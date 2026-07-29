@@ -73,8 +73,8 @@
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {
-					"x" : 30, 
-					"y" : 30, 
+					"x_tiles" : 0.46875, 
+					"y_tiles" : 0.46875, 
 					"position_fix_walkaround_mode" : false // can be pushed only straight
 					}
 				}

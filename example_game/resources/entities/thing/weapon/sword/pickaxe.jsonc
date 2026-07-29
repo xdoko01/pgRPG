@@ -7,6 +7,6 @@
 	],
 
 	"components" : [
-		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}}
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.15625, "y_tiles" : 0.15625}}
 	]
 }

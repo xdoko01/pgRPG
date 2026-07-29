@@ -95,7 +95,7 @@
 				{"type" : "debug:Debug", "params": {"info": {"name" : "NPC"}}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "position:Position", "params" : {"tile_x" : 10, "tile_y" : 10, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x": 15, "y": 27, "dx": 0, "dy": 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles": 0.234375, "y_tiles": 0.421875, "dx_tiles": 0.0, "dy_tiles": 0.125}}
 			]
 		},
 
@@ -134,7 +134,7 @@
 								//{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 300, "accelerate" : -3}},
-								//{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								//{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.125, "y_tiles" : 0.125, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								//{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
 								

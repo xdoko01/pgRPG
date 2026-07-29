@@ -35,8 +35,8 @@
 				{
 					"type" : "collidable:Collidable",
 					"params" :  {
-						"x" : 32, 
-						"y" : 32, 
+						"x_tiles" : 0.5, 
+						"y_tiles" : 0.5, 
 						"position_fix_walkaround_mode": true,
 						"accept_pos_fix_from_denylist" : ["ALL"] // noone can move the wall
 					}
@@ -72,8 +72,8 @@
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
 				{"type" : "collidable:Collidable", "params" :  {
-					"x" : 30, 
-					"y" : 30, 
+					"x_tiles" : 0.46875, 
+					"y_tiles" : 0.46875, 
 					"position_fix_walkaround_mode": false // can be pushed only straight
 					//"accept_pos_fix_from_denylist" : ["ALL"], // noone can move me
 					//"accept_pos_fix_from_allowlist" : ["player01"] // only player can move the crate	
@@ -200,7 +200,7 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 25, "dx": 0, "dy": 5,
+						"x_tiles" : 0.234375, "y_tiles" : 0.390625, "dx_tiles": 0.0, "dy_tiles": 0.078125,
 						"position_fix_walkaround_mode": false // can pushed only straight
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player
 					}

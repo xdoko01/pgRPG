@@ -7,22 +7,25 @@ module tests.
 
 from pgrpg.core.ecs import Component
 
+from pgrpg.core.config import GAME # for TILE_RES_PX - to size collision zones relative to the tile
+
 class Collidable(Component):
     ''' Entity collides with other collidable entities.
 
     Used by:
         - GenerateCollisionsProcessor
 
-    Examples of JSON definition:
-        {"type" : "NewCollidable", "params" : {"x" : 20, "y" : 20, "dx" : 0, "dy" : 0}}
+    The collision zone describes the entity's body, and the body is drawn at
+    GAME["TILE_RES_PX"]. Prefer the tile-relative params ('x_tiles', 'y_tiles',
+    'dx_tiles', 'dy_tiles') so the zone keeps its proportion of the body at any
+    resolution. The absolute pixel params ('x', 'y', 'dx', 'dy') are kept for
+    zones that must be a fixed pixel size and are never scaled, matching
+    Position.x.
 
-    Tests:
-        >>> c = NewCollidable()
-        >>> c.x
-        0
-        >>> c = NewCollidable(**{"x" : 20, "y" : 20})
-        >>> c.x
-        20
+    Examples of JSON definition:
+        {"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.234375, "y_tiles" : 0.421875}}
+        {"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.25, "y_tiles" : 0.25, "dy_tiles" : 0.125}}
+        {"type" : "collidable:Collidable", "params" : {"x" : 20, "y" : 20}}
     '''
 
     __slots__ = [
@@ -42,7 +45,22 @@ class Collidable(Component):
     def __init__(self, *args, **kwargs):
         ''' Initiate values for the Collidable component.
 
+        Either the tile-relative or the absolute pixel form must be given for
+        the collision zone. Tile-relative is preferred - see the class docstring.
+
         Parameters:
+            :param x_tiles: X-axis collision zone +- from the x-centre, as a fraction of a tile
+            :type x_tiles: float
+
+            :param y_tiles: Y-axis collision zone +- from the y-centre, as a fraction of a tile
+            :type y_tiles: float
+
+            :param dx_tiles: X-axis offset of the zone centre, as a fraction of a tile
+            :type dx_tiles: float
+
+            :param dy_tiles: Y-axis offset of the zone centre, as a fraction of a tile
+            :type dy_tiles: float
+
             :param x: X-axis collision zone +- from the x-centre of the entity in pixel coordinates
             :type x: int
 
@@ -82,12 +100,12 @@ class Collidable(Component):
         super().__init__()
 
         # With and height of the collision zone - from the center +/-x and +/-y
-        self.x = kwargs.get('x')
-        self.y = kwargs.get('y')
+        self.x = self._extent(kwargs, 'x', 'x_tiles')
+        self.y = self._extent(kwargs, 'y', 'y_tiles')
 
         # Correction of the centre from which the collision zone is calculated
-        self.dx = kwargs.get('dx', 0)
-        self.dy = kwargs.get('dy', 0)
+        self.dx = self._extent(kwargs, 'dx', 'dx_tiles', default=0)
+        self.dy = self._extent(kwargs, 'dy', 'dy_tiles', default=0)
 
         # Allow collision only on items from allowlist, if filled
         self.allowlist = set(kwargs.get('allowlist', {}))
@@ -126,6 +144,27 @@ class Collidable(Component):
         except AssertionError:
             # Notify component factory that initiation has failed
             raise ValueError
+
+    @staticmethod
+    def _extent(kwargs, px_key, tiles_key, default=None):
+        ''' Resolve one collision zone dimension in pixels.
+
+        The two forms are alternatives, absolute pixels taking precedence if
+        both are given. A tile-relative value is multiplied by TILE_RES_PX so
+        the zone keeps its proportion of the body at any resolution; an absolute
+        value is taken literally and never scaled.
+
+        Rounded to an int because the map collision maths divides these to reach
+        tile coordinates. Values authored as n/64 are dyadic rationals, so they
+        are exact in binary floating point and reproduce n exactly at 64 px.
+        '''
+        if px_key in kwargs:
+            return kwargs[px_key]
+
+        if tiles_key in kwargs:
+            return round(kwargs[tiles_key] * GAME["TILE_RES_PX"])
+
+        return default
 
 class CollidableObsolete(Component):
     ''' Entity collides with other collidable entities.

@@ -184,7 +184,7 @@
 			"components" : [
 				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "ammo_pack:AmmoPack", "params" : {"weapon" : "bow", "type" : "wooden_arrows_pack"}},
-				{"type" : "collidable:Collidable", "params" : {"x" : 20, "y" : 20}},
+				{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.3125, "y_tiles" : 0.3125}},
 
 				{
 					"type" : "factory:Factory", 
@@ -212,7 +212,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "weapon:Weapon", "params" : {"type" : "bow",	"max_projectiles" : 5}},
 				{"type" : "pickable:Pickable", "params" : {}},
-				{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
+				{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.15625, "y_tiles" : 0.3125}},
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 350, "map" : "test_arena_sand"}}
 			]
 		},
@@ -224,7 +224,7 @@
 				{"type" : "debug:Debug", "params" : {}},
 				{"type" : "weapon:Weapon", "params" : {"type" : "sword", "max_projectiles" : 1}},
 				{"type" : "pickable:Pickable", "params" : {}},
-				{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 10}},
+				{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.15625, "y_tiles" : 0.15625}},
 				{"type" : "position:Position", "params" : {"x" : 200, "y" : 350, "map" : "test_arena_sand"}}
 			]
 		},
@@ -246,7 +246,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		}
