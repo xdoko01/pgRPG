@@ -6,6 +6,9 @@ nested dictionaries and collections used throughout the engine.
 Run ``python -m pgrpg.functions.dict_utils -v`` for doctests.
 """
 
+# Keep `X | None` annotations working on Python 3.9, which evaluates them eagerly.
+from __future__ import annotations
+
 def _create_dict_list(path: list, value) -> dict:
     """Create a nested dictionary from a list of keys.
 

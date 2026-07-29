@@ -4,6 +4,9 @@ Loads a template by name (from storage or file), parses the provided
 arguments, and substitutes template variables with the given values.
 """
 
+# Keep `X | Y` annotations working on Python 3.9, which evaluates them eagerly.
+from __future__ import annotations
+
 from .str_utils import parse_fnc_str, parse_fnc_list, get_args_kwargs_from_list, get_kw_from_str
 from .translate import translate
 from .get_dict import get_dict

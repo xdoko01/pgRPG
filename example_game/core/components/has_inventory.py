@@ -4,6 +4,10 @@ HasInventory component implemented as a HasInventory class.
 Use 'python -m core.components.has_inventory -v' to run
 module tests.
 '''
+
+# Keep `X | None` annotations working on Python 3.9, which evaluates them eagerly.
+from __future__ import annotations
+
 # Logger init
 import logging
 logger = logging.getLogger(__name__)

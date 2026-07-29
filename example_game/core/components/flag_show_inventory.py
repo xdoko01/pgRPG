@@ -5,6 +5,9 @@ Use 'python -m example_game.core.components.flag_show_inventory -v' to run
 module tests.
 '''
 
+# Keep `X | None` annotations working on Python 3.9, which evaluates them eagerly.
+from __future__ import annotations
+
 from pygame import Rect
 from pgrpg.core.ecs import Component
 from pgrpg.core.config import DISPLAY, GAME

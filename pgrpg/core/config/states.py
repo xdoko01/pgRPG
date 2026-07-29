@@ -12,6 +12,9 @@ Module Globals:
     state_graph: Dict mapping State -> list of allowed next States.
 """
 
+# Keep `X | None` annotations working on Python 3.9, which evaluates them eagerly.
+from __future__ import annotations
+
 import logging
 logger = logging.getLogger(__name__)
 

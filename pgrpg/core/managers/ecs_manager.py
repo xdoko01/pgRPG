@@ -12,6 +12,9 @@ Module Globals:
     _template_definitions: Dict of stored entity template definitions.
 """
 
+# Keep `X | None` annotations working on Python 3.9, which evaluates them eagerly.
+from __future__ import annotations
+
 import logging
 logger = logging.getLogger(__name__)
 
