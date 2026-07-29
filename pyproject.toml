@@ -7,7 +7,8 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.7"
+# 3.9 is the real floor: str.removeprefix (used in functions/translate.py) is 3.9+.
+requires-python = ">=3.9"
 dependencies = [
     "pygame-ce",
     "pygame-gui>=0.6.4",
