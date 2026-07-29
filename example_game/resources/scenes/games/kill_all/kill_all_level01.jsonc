@@ -54,7 +54,7 @@
 								{
 									"type" : "collidable:Collidable", 
 									"params" : {
-										"x" : 8, "y" : 8, 
+										"x_tiles" : 0.125, "y_tiles" : 0.125, 
 										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
@@ -99,7 +99,7 @@
 								{
 									"type" : "collidable:Collidable", 
 									"params" : {
-										"x" : 8, "y" : 8, 
+										"x_tiles" : 0.125, "y_tiles" : 0.125, 
 										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
@@ -148,7 +148,7 @@
 								{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.125, "y_tiles" : 0.125, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
@@ -190,7 +190,7 @@
 								{"type" : "damaging:Damaging", "params" : {"damage" : 50}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500}},
-								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.125, "y_tiles" : 0.125, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								
 								{"type" : "visual_fx_on_collision:VisualFXOnCollision", "params" : {"effect" : "effects/explosion"}}
@@ -222,7 +222,7 @@
 				{
 					"type" : "collidable:Collidable", 
 					"params" :  {
-						"x" : 15, "y" : 27, "dx" : 0, "dy" : 8 
+						"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125 
 						//"accept_pos_fix_from_denylist" : ["ALL"] // no one can move the player - projectile cannot move the player. If missing projectile will move the player
 					}
 				},
@@ -276,7 +276,7 @@
 								{
 									"type" : "collidable:Collidable", 
 									"params" : {
-										"x" : 16, "y" : 16, 
+										"x_tiles" : 0.25, "y_tiles" : 0.25, 
 										"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
 										"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 										}},
@@ -332,7 +332,7 @@
 
 
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -355,7 +355,7 @@
 								{"type" : "damaging:Damaging", "params" : {"damage" : 25}},
 
 								{"type" : "movable:Movable", "params" :  {"velocity" : 500, "accelerate" : -3}},
-								{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+								{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.125, "y_tiles" : 0.125, "accept_pos_fix_from_denylist" : ["ALL"]}},
 								{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 								{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}},
 								
@@ -394,7 +394,7 @@
 				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 50}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 		{
@@ -409,7 +409,7 @@
 				{"type" : "damageable:Damageable", "params" : {"health" : 100}},
 				{"type" : "destroy_on_no_health:DestroyOnNoHealth", "params" : {"ttl" : 10000}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 100}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		}
 	],

@@ -156,7 +156,7 @@
 
 				{"type" : "position:Position", "params" : {"x" : 250, "y" : 250, "map" : "test_arena_sand"}},
 				{"type" : "movable:Movable", "params" :  {"velocity" : 200}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 27, "dx" : 0, "dy" : 8}},
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.421875, "dx_tiles" : 0.0, "dy_tiles" : 0.125}},
 				{"type" : "camera:Camera", "params" : {"always_center": false, "screen_fill": true}}
 			]
 		},
@@ -171,7 +171,7 @@
 				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3}},
 
 				{"type" : "position:Position", "params" : {"x" : 150, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.234375, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 
@@ -185,7 +185,7 @@
 				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 10, "tile_dest_y" : 10, "key" : "key01"}},
 
 				{"type" : "position:Position", "params" : {"x" : 210, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.234375, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		},
 
@@ -199,7 +199,7 @@
 				{"type" : "teleport:Teleport", "params" : {"dest_map" : "test_arena_sand", "tile_dest_x" : 18, "tile_dest_y" : 3, "key" : "key02"}},
 
 				{"type" : "position:Position", "params" : {"x" : 260, "y" : 450, "map" : "test_arena_sand"}},
-				{"type" : "collidable:Collidable", "params" :  {"x" : 15, "y" : 15, "dx" : 0, "dy" : 8}}
+				{"type" : "collidable:Collidable", "params" :  {"x_tiles" : 0.234375, "y_tiles" : 0.234375, "dx_tiles" : 0.0, "dy_tiles" : 0.125}}
 			]
 		}
 	],

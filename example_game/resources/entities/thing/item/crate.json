@@ -2,6 +2,6 @@
 	"id" : "crate",
 	"templates" : ["thing/item"],
 	"components" : [
-		{"type" : "collidable:Collidable", "params" : {"x" : 30, "y" : 30}}
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.46875, "y_tiles" : 0.46875}}
 	]
 }

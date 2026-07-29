@@ -185,6 +185,13 @@ The same value defines the world grid: entity positions are stored in pixels and
 to tile coordinates by integer division by `TILE_RES_PX`. It also sizes inventory slots and
 converts `distance_tiles` to pixels in `CanSee` / `CanHear`.
 
+This is why components that describe world geometry accept **tile-relative** params and
+convert them at construction: `Position` (`tile_x`), `Teleport` (`tile_dest_x`), `CanSee` /
+`CanHear` (`distance_tiles`), `HasTargetPosition`, and `Collidable`
+(`x_tiles` / `y_tiles` / `dx_tiles` / `dy_tiles`). Prefer those forms when authoring
+entities. Absolute pixel params still exist and are never scaled — use them only when a
+value must be a fixed pixel size regardless of resolution.
+
 Never hardcode a pixel size for a sprite, tile, cull margin or UI slot — read
 `GAME["TILE_RES_PX"]` or derive from it. `tests/core/maps/test_map.py` and
 `tests/core/models/test_model.py` assert correct rendering at 32, 64 and 96 px, so a

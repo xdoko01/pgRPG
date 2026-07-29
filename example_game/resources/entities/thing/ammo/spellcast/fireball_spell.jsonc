@@ -26,7 +26,7 @@
 
 		{"type" : "damaging:Damaging", "params" : {"damage" : "$damage"}},
 		{"type" : "movable:Movable", "params" :  {"velocity" : "$velocity", "accelerate" : "$acc"}},
-		{"type" : "collidable:Collidable", "params" : {"x" : 8, "y" : 8, "accept_pos_fix_from_denylist" : ["ALL"]}},
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.125, "y_tiles" : 0.125, "accept_pos_fix_from_denylist" : ["ALL"]}},
 		{"type" : "destroy_on_collision:DestroyOnCollision", "params" : {"ttl" : 0}},
 		{"type" : "destroy_on_no_movement:DestroyOnNoMovement", "params" : {"ttl" : 0}}
 	]

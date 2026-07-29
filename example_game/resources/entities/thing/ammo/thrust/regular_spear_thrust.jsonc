@@ -16,7 +16,7 @@
 		{
 			"type" : "collidable:Collidable", 
 			"params" : {
-				"x" : 8, "y" : 8, 
+				"x_tiles" : 0.125, "y_tiles" : 0.125, 
 				"accept_pos_fix_from_denylist" : ["ALL"], // never change position of the sword slash upon collision with anybody
 				"apply_pos_fix_to_denylist" : ["ALL"] // never change position of the entity that was slashed
 			}

@@ -6,9 +6,10 @@
 	"description": "Schema validating the Collidable component.",
 
 	"examples" : [
-		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20}},
-		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10}},
-		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20, "dx" : 5, "dy" : 10, "allowlist" : ["player"]}}
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.234375, "y_tiles" : 0.421875}},
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.25, "y_tiles" : 0.25, "dy_tiles" : 0.125}},
+		{"type" : "collidable:Collidable", "params" : {"x_tiles" : 0.25, "y_tiles" : 0.25, "allowlist" : ["player"]}},
+		{"type" : "collidable:Collidable", "params" : {"x" : 10, "y" : 20}}
 	],
 
 	"required": [ "type", "params"],
@@ -19,34 +20,61 @@
 		},
 		"params": {
 			"title": "Component parameters",
-			"description" : "Parameters of the Collidable component class - 'x', 'y', 'dx', 'dy', 'allowlist', 'denylist', 'apply_pos_fix_to_allowlist', 'apply_pos_fix_to_denylist', 'accept_pos_fix_from_allowlist', 'accept_pos_fix_from_denylist', 'position_fix_walkaround_mode'.",
-			
+			"description" : "Parameters of the Collidable component class - 'x_tiles', 'y_tiles', 'dx_tiles', 'dy_tiles' (preferred) or 'x', 'y', 'dx', 'dy' (absolute pixels), plus 'allowlist', 'denylist', 'apply_pos_fix_to_allowlist', 'apply_pos_fix_to_denylist', 'accept_pos_fix_from_allowlist', 'accept_pos_fix_from_denylist', 'position_fix_walkaround_mode'.",
+
 			"type": "object",
-			"required": ["x", "y"],
+			"anyOf": [
+				{"required": ["x_tiles", "y_tiles"]},
+				{"required": ["x", "y"]}
+			],
 			"$ref": "#/$defs/cond_params",
 			"properties": {
+				"x_tiles" : {
+					"title": "X-axis (tiles)",
+					"description": "X-axis collision zone +- from the centre, as a fraction of a tile. Scales with GAME.TILE_RES_PX. Preferred over 'x'.",
+					"type": "number",
+					"minimum": 0
+				},
+				"y_tiles" : {
+					"title": "Y-axis (tiles)",
+					"description": "Y-axis collision zone +- from the centre, as a fraction of a tile. Scales with GAME.TILE_RES_PX. Preferred over 'y'.",
+					"type": "number",
+					"minimum": 0
+				},
+				"dx_tiles" : {
+					"title": "X-axis offset (tiles)",
+					"description": "Offset of the zone centre on the X-axis, as a fraction of a tile. Scales with GAME.TILE_RES_PX.",
+					"default" : 0,
+					"type": "number"
+				},
+				"dy_tiles" : {
+					"title": "Y-axis offset (tiles)",
+					"description": "Offset of the zone centre on the Y-axis, as a fraction of a tile. Scales with GAME.TILE_RES_PX.",
+					"default" : 0,
+					"type": "number"
+				},
 				"x" : {
-					"title": "X-axis",
-					"description": "X-axis collision zone in pixels.",
+					"title": "X-axis (pixels)",
+					"description": "X-axis collision zone in absolute pixels. Never scaled - prefer 'x_tiles' so the zone stays in proportion with the sprite.",
 					"type": "integer",
 					"minimum": 0
 				},
 				"dx" : {
-					"title": "X-axis offset",
-					"description": "Offset for X-axis collision zone.",
+					"title": "X-axis offset (pixels)",
+					"description": "Offset for X-axis collision zone in absolute pixels. Never scaled - prefer 'dx_tiles'.",
 					"default" : 0,
 					"type": "integer",
 					"minimum": 0
 				},
 				"y" : {
-					"title": "Y-axis",
-					"description": "Y-axis collision zone in pixels.",
+					"title": "Y-axis (pixels)",
+					"description": "Y-axis collision zone in absolute pixels. Never scaled - prefer 'y_tiles' so the zone stays in proportion with the sprite.",
 					"type": "integer",
 					"minimum": 0
 				},
 				"dy" : {
-					"title": "Y-axis offset",
-					"description": "Offset for Y-axis collision zone.",
+					"title": "Y-axis offset (pixels)",
+					"description": "Offset for Y-axis collision zone in absolute pixels. Never scaled - prefer 'dy_tiles'.",
 					"default" : 0,
 					"type": "integer",
 					"minimum": 0

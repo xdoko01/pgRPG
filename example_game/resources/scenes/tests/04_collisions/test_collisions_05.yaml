@@ -127,10 +127,10 @@ entities:
   # Collidable component
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 27
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.421875
+      dx_tiles: 0.0
+      dy_tiles: 0.125
       accept_pos_fix_from_denylist:
       - ALL
 
@@ -171,10 +171,10 @@ entities:
       velocity: 100
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 15
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.234375
+      dx_tiles: 0.0
+      dy_tiles: 0.125
       accept_pos_fix_from_allowlist:
       - player01
       position_fix_walkaround_mode: false
@@ -193,10 +193,10 @@ entities:
       map: test_arena_sand
   - type: collidable:Collidable
     params:
-      x: 100
-      y: 100
-      dx: 0
-      dy: 8
+      x_tiles: 1.5625
+      y_tiles: 1.5625
+      dx_tiles: 0.0
+      dy_tiles: 0.125
 - id: NPC01
   templates:
   - model/body/male/skeleton/white
@@ -237,10 +237,10 @@ entities:
       velocity: 100
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 27
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.421875
+      dx_tiles: 0.0
+      dy_tiles: 0.125
       accept_pos_fix_from_allowlist:
       - player01
 - id: NPC02
@@ -281,10 +281,10 @@ entities:
       velocity: 100
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 27
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.421875
+      dx_tiles: 0.0
+      dy_tiles: 0.125
 - id: NPC03
   templates:
   - model/body/male/skeleton/grey
@@ -316,10 +316,10 @@ entities:
       velocity: 100
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 27
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.421875
+      dx_tiles: 0.0
+      dy_tiles: 0.125
 - id: NPC04
   templates:
   - model/body/male/zombie/green
@@ -351,10 +351,10 @@ entities:
       velocity: 100
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 27
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.421875
+      dx_tiles: 0.0
+      dy_tiles: 0.125
 - id: NPC05
   templates:
   - model/body/male/wolfman/gold
@@ -386,10 +386,10 @@ entities:
       map: test_arena_sand
   - type: collidable:Collidable
     params:
-      x: 15
-      y: 27
-      dx: 0
-      dy: 8
+      x_tiles: 0.234375
+      y_tiles: 0.421875
+      dx_tiles: 0.0
+      dy_tiles: 0.125
 
 # How to handle events
 handlers:
