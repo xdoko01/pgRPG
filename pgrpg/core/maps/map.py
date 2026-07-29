@@ -24,7 +24,13 @@ if not pygame.get_init(): pygame.init()
 ### Module functions
 ########################################################
 
-def images_rescale(images=[], scale=(64, 64)):
+def images_rescale(images, scale):
+	'''Scale every tile image to scale, keeping empty slots empty.
+
+	Both arguments are required on purpose. A default scale would silently
+	produce wrongly-sized tiles at any resolution other than the one hardcoded,
+	and pytmx relies on unused GIDs staying None rather than blank surfaces.
+	'''
 	return [pygame.transform.scale(i, scale) if i else None for i in images]
 
 ########################################################

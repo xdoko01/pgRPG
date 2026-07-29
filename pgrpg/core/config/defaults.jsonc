@@ -82,6 +82,23 @@
 		"MENU_BACKGROUND_ANIMATION_DELAY_MS": 130
 	},
 
+	"GAME": {
+		// The single resolution the engine renders at, in pixels.
+		//
+		// All art is scaled to this size once, when the map or model is loaded -
+		// Tiled tile images in pgrpg.core.maps.Map and animated models in
+		// pgrpg.core.models.Model alike. The native resolution of a source asset
+		// is therefore not significant; author art at whatever resolution suits it.
+		//
+		// This also defines the world grid: entity positions are stored in pixels
+		// and converted to tile coordinates by integer division by this value.
+		//
+		// Effectively start-up only. Modules bind the GAME dict at import time,
+		// and config.load() replaces it, so a mid-game config reload does not
+		// reach them - a changed value here is silently ignored until restart.
+		"TILE_RES_PX": 64
+	},
+
     //MESSAGES contain format of message that should be generated
     //upon game event generation. Such message is then displayed on 
     //the game window. If event is not represented as a key in 'on_events'

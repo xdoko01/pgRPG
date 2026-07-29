@@ -4,6 +4,8 @@ from core.components.position import Position
 from core.components.camera import Camera
 from pgrpg.core.maps.map import Map
 
+from pgrpg.core.config import GAME # for TILE_RES_PX
+
 def filter_only_not_behind_wall(ent_pos_comp: Position, map: Map, comp_tuple: tuple) -> bool:
     ''' Filter that is used for filtering of entities that are not hidden
     behind some wall from the entity.
@@ -126,11 +128,14 @@ def filter_only_in_sight_of_ent(ent_pos_comp: Position, max_distance: int, sin_a
     return False
 """
 
-def filter_only_visible_on_camera(camera: Camera, comp_tuple: tuple, corr: int=32) -> bool:
+def filter_only_visible_on_camera(camera: Camera, comp_tuple: tuple, corr: int=None) -> bool:
     ''' Filter that is used for selection of only those entities
     that are within visible scope of the camera screen.
 
-    Correction corr is by default 32 pixels
+    Correction corr defaults to half a tile, because sprites are blitted
+    centred on their position (see RenderableModel.topleft). An entity up to
+    half a sprite outside the camera rect is therefore still partly on screen
+    and must not be culled.
 
     !! Position component must be the first component in the tuple in order to work !!
     '''
@@ -139,6 +144,7 @@ def filter_only_visible_on_camera(camera: Camera, comp_tuple: tuple, corr: int=3
 
     # Correction corr - part of sprite must be visible even if
     # position is beneath borders
+    if corr is None: corr = GAME["TILE_RES_PX"] // 2
 
     # Select position component from the return tuple. Must be the first
     _, (position, *_) = comp_tuple

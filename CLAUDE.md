@@ -170,6 +170,36 @@ Key config sections:
 "COMPONENT_MODULE_PATH": "core.components"  // → example_game.core.components.*
 ```
 
+### Sprite resolution — one value, applied at load time
+
+`GAME.TILE_RES_PX` (default `64`, set in `defaults.jsonc`) is the single resolution the
+engine renders at. **All art is scaled to it once, when the asset is loaded** — Tiled tile
+images in `pgrpg/core/maps/map.py` and animated models in `pgrpg/core/models/model.py`
+alike.
+
+The native resolution of a source asset is therefore not significant. Author art at
+whatever resolution suits it; the engine normalizes. In this repo the tilesets are 32×32
+and nearly every model is 64×64, and both render correctly at any `TILE_RES_PX`.
+
+The same value defines the world grid: entity positions are stored in pixels and converted
+to tile coordinates by integer division by `TILE_RES_PX`. It also sizes inventory slots and
+converts `distance_tiles` to pixels in `CanSee` / `CanHear`.
+
+Never hardcode a pixel size for a sprite, tile, cull margin or UI slot — read
+`GAME["TILE_RES_PX"]` or derive from it. `tests/core/maps/test_map.py` and
+`tests/core/models/test_model.py` assert correct rendering at 32, 64 and 96 px, so a
+hardcoded size will fail the suite.
+
+Two limitations worth knowing:
+
+- **Start-up only in practice.** Modules bind the `GAME` dict with
+  `from pgrpg.core.config import GAME` at import time, and `config.load()` *replaces* that
+  dict rather than mutating it. A mid-game config reload therefore never reaches them and a
+  changed `TILE_RES_PX` is silently ignored until restart. This applies to `FILEPATHS` and
+  `DISPLAY` too.
+- **One grid cell per model.** A model cannot declare a footprint larger than a single
+  cell; anything authored bigger is squashed into one.
+
 ---
 
 ## Scene file format
@@ -371,5 +401,6 @@ Top-level schemas: `scene.schema.json`, `entity.schema.json`, `template.schema.j
 - **UNIX wildcard patterns** in `cleanup` sections (`"enemy_*"`) for bulk removal when reloading scenes.
 - **C-style comments** (`// ...`) are supported in all `.jsonc` files.
 - **Processor priority** — higher number = processed first. Default group is `"default"`.
+- **One resolution** — all art is scaled to `GAME.TILE_RES_PX` at load time; never hardcode a sprite, tile or UI pixel size.
 - **`__slots__`** in Components — required for memory efficiency and the `__str__` implementation.
 - Managers are **modules, not classes** — do not instantiate them; call their functions directly.

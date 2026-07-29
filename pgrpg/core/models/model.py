@@ -29,12 +29,15 @@ def load_model(filepath, dim):
     ''' Loads model from the Tiled SW tileset
     and returns the new model instance.
 
+    The model is scaled to dim during construction, so the cached instance is
+    already at its final size and is never resized afterwards.
+
     Parameters:
         :param filepath: Path to JSON file with the model
         :type filepath: Path
 
         :param dim: Required dimensions of the model tiles
-        :type dim: vect (pygame.Vector2)
+        :type dim: tuple, list or vect (pygame.Vector2)
 
         :return: Returns model instance if success
 
@@ -44,17 +47,15 @@ def load_model(filepath, dim):
         components module -> RenderableModel init
     '''
 
+    # Canonicalise the target size so that (64, 64), [64, 64] and
+    # Vector2(64, 64) map to one cache entry instead of three.
+    target_dim = (int(dim[0]), int(dim[1]))
+
     try:
-        new_model = Model(filepath)
+        return Model(filepath, target_dim)
     except ValueError:
         print(f"Error during init of the model '{filepath}'")
-        raise ValueError
-
-    # If resize is needed, proceed
-    if new_model.dim != dim:
-        new_model.resize_model(dim)
-
-    return new_model
+        raise
 
 def get_cache_info():
     print(Model.cache_info())
@@ -87,13 +88,20 @@ class Model(object):
                 'idle_spellcast', 'spellcast',
                 'expire']
 
-    def __init__(self, model_file):
+    def __init__(self, model_file, target_dim):
         ''' Read the information about frames and animations from
-        json and png files and store it into the internal variables
+        json and png files and store it into the internal variables.
+
+        The model is scaled to target_dim here, before the instance is returned
+        to the lru_cache. Instances are therefore immutable once cached, and
+        the cache key covers both the file and the size it was scaled for.
 
         Parameters:
             :param model_file: Path to the model json file
             :type model_file: str
+
+            :param target_dim: Size in pixels every tile is scaled to
+            :type target_dim: tuple
 
             :raise: ValueError - in case model_file is not found or has problem
         '''
@@ -122,6 +130,11 @@ class Model(object):
 
             # Load model from model file and fill the Model instance variables
             self._load_model(self.model_file)
+
+            # Normalize to the engine resolution once, while this instance is
+            # still private to this constructor
+            if (self.dim.x, self.dim.y) != target_dim:
+                self._resize(target_dim)
 
             # Check that model is complete, i.e. for all actions contains all directions
             self._check_model()
@@ -314,8 +327,13 @@ class Model(object):
             print(f"Mandatory idle action is not defined for the model")
             raise ValueError
 
-    def resize_model(self, new_tile_dim=(64, 64)):
-        ''' Resize model if needed
+    def _resize(self, new_tile_dim):
+        ''' Scale every tile image of the model to new_tile_dim.
+
+        Private on purpose: this must only run from __init__, before the
+        instance reaches the lru_cache. Resizing a cached model in place would
+        scale pixels that were already scaled for an earlier caller, so a model
+        loaded at one size and then at another would come back degraded.
         '''
 
         # Iterate to the images dictionary and resize
