@@ -300,6 +300,18 @@ class World:
         components = self._entities.get(entity, {})
         return all(comp_type in components for comp_type in component_types)
 
+    def get_empty_entities(self) -> list:
+        """Return Entities that currently hold no Components at all.
+
+        Diagnostic helper. Since remove_component() keeps the Entity record,
+        an Entity stripped of every Component survives until delete_entity()
+        is called. No known code path does that - the destroy system adds
+        IsDestroyed before stripping, and flag removals always leave identity
+        Components behind - so this should normally return an empty list. A
+        non-empty result means something is leaking Entities.
+        """
+        return [entity for entity, components in self._entities.items() if not components]
+
     def add_component(self, entity: int, component_instance: Any) -> None:
         """Add a Component instance to an Entity (replaces if type exists).
 

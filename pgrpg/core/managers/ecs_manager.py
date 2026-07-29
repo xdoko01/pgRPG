@@ -401,6 +401,14 @@ def get_all_entities() -> list:
     """Return all existing entity ids."""
     return list(_world._entities.keys())
 
+def get_empty_entities() -> list:
+    """Return entity ids that hold no components at all.
+
+    Should normally be empty; a non-empty result means entities are being
+    stripped of every component without ever being deleted.
+    """
+    return _world.get_empty_entities()
+
 def get_entities_with_alias() -> list:
     """Return list of entity ids having alias."""
     return list(_entity_to_alias.keys())

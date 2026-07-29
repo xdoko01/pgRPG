@@ -59,6 +59,22 @@ def test_entity_survives_losing_its_last_component():
     assert not world.has_component(entity, Position)
     assert world.components_for_entity(entity) == ()
 
+def test_get_empty_entities_reports_stripped_entities():
+    """The diagnostic sees an Entity only while it holds no Components."""
+    world = World()
+    kept = world.create_entity(Position(1, 1), Velocity(1, 1))
+    stripped = world.create_entity(Position(2, 2))
+
+    assert world.get_empty_entities() == []
+
+    world.remove_component(stripped, Position)
+    assert world.get_empty_entities() == [stripped]
+
+    # Deleting it clears the diagnostic; the other Entity is untouched.
+    world.delete_entity(stripped, immediate=True)
+    assert world.get_empty_entities() == []
+    assert world.has_components(kept, Position, Velocity)
+
 def test_deferred_delete_after_removing_last_component():
     """A dead Entity that also lost its last Component must not break process().
 
