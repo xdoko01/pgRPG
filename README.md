@@ -583,91 +583,51 @@ Tasks specifically targeting Claude Code assistance:
 - [x] Review `PerformFrameUpdateProcessor` for performance
 - [x] Review `PerformIdleAnimationProcessor` for performance
 - [x] Prepare pytest tests for pgrpg functions/classes
-- [ ] Install gh command for GitHub from CLI
-- [ ] Is it possible to create issues and features directly in GitHub? I know there is issue tab but is there also some backlog available there?
-- [ ] Can I somehow automate usage of Claude - Claude taking individual issues, fixing them and then submitting the pull request for review?
-- [ ] The tests are failing find the errors and fix.
-- [ ] Prepare functionality for saving and loading the game.
-- [ ] Prepare complex Behavior Tree logic for NPC — described as text, output as JSON
-- [ ] Prepare a series of JSON scene files using human-language descriptions
-- [ ] Porting to browser/mobile
-- [ ] Prepare `kill_all` scenario scene with 4 enemies using existing commands
-- [ ] Fix playback speed to be computer-speed independent
-- [ ] Discuss architecture change to client/server model (multiplayer)
-- [ ] Suggest solution for game string translation
+- [x] Install the `gh` CLI
+- [x] Confirm GitHub can host a backlog — Issues + Labels + Milestones, plus Projects (v2) for a board with priority and manual ordering
+- [x] Fix the failing tests — the suite went from not collecting at all to 138 passing
+- [x] Migrate this backlog to GitHub Issues
+
+Remaining Claude-oriented work is tracked in [GitHub Issues](https://github.com/xdoko01/pgRPG/issues). See
+[#68](https://github.com/xdoko01/pgRPG/issues/68) for enabling `@claude` to pick up an issue and open a pull request.
 
 ---
 
 ## Roadmap & Known Issues
 
-### Open bugs
+**The backlog lives in [GitHub Issues](https://github.com/xdoko01/pgRPG/issues).** 59 issues were migrated out of this
+file on 2026-07-29 — duplicates merged, completed items ticked off, and vague one-liners
+annotated with what still needs triage. Please file new work there rather than here.
 
-- [ ] `Position` component `x`/`y` can be float — fix to int only
-- [ ] `move_to` command — NPCs walk through tiles (pathfinding ignores map collisions)
-- [ ] `move_to_pos_target_vect` — entity facing direction not updated during movement
-- [ ] Pushing entities into walls still possible despite map collision being enabled
-- [ ] Debug processor only works with one camera
-- [ ] Debug info hover raises render error
-- [ ] When restarting `collect_coins`, loading screen shows in background
-- [ ] Some problem in `tests/12_ai/simple/do_parallel.jsonc` when enemy approaches
-- [ ] `event_manager._event_queue` can grow unbounded during heavy collision frames — needs max capacity or event TTL
-- [ ] `World.try_component` / `try_components` (`ecs/__init__.py:496,503`) index `self._entities[entity]` directly, so they raise `KeyError` for an Entity that never existed — even though the whole point of a `try_*` accessor is to fail silently. Same class of bug as the `has_component` fix; use `.get(entity, {})`.
+Good places to start:
 
-### Open features
+- [#59](https://github.com/xdoko01/pgRPG/issues/59) — the game cannot run headless, which blocks all end-to-end testing
+- [#69](https://github.com/xdoko01/pgRPG/issues/69) — save/load; the `pre_save()` / `post_load()` hooks already exist but nothing calls them
+- [#30](https://github.com/xdoko01/pgRPG/issues/30) — multiplayer, starting with ADR-001 Phase A (event serializability)
+- [#25](https://github.com/xdoko01/pgRPG/issues/25) — the smallest fully specified fix, a good first issue
 
-**Engine / Architecture**
-- [ ] Entity lifecycle follow-up: expose `ecs_manager.get_empty_entities()` as a console command and confirm in a real (windowed) session that it stays empty. Background: `remove_component` no longer deletes the Entity record when its last Component goes, so `delete_entity()` is the only way an Entity leaves the World (this fixed a `KeyError` crash in `_clear_dead_entities`). Consequence: an Entity stripped of all Components would linger, inflating `len(_world._entities)` in the console status bar (`config/console.py:32`) and `get_all_entities()`. Static review found no path that can empty an Entity — the destroy system adds `IsDestroyed` *before* stripping, and flag removals always leave identity Components — but it was never confirmed at runtime, because headless (`SDL_VIDEODRIVER=dummy`) runs stall before gameplay starts. Do NOT "fix" this by auto-deleting empty Entities: that would break any flow that empties and refills an Entity within a frame (e.g. `load_from_template`).
-- [ ] Move Flag-removal processors before Flag-generator processors in the default ordering
-- [ ] Implement post-requisite checks for processors (after all loaded, verify dependencies)
-- [ ] Named processor group: `ALL` cleanup option
-- [ ] Consider client/server architecture for multiplayer
-- [ ] Refactor scripts to import `ecs_manager` directly instead of `main`
-- [ ] `gui.py` refactor — GUIContext to represent window/manager/etc.
-- [ ] Console height dynamically calculated from config
-- [ ] Settings screen with Apply button (UIWindow checkbox exception needs fix)
-- [ ] Universal asset loader (full path / partial / no suffix for models, sounds, VFX)
-- [ ] Console commands support UNIX-like patterns
-- [ ] Console `//` comment support in `.scr` scripts
-- [ ] `translations` — JSON key:value file switchable by config: `trans("Some_text")`
-- [ ] Font config automation — currently named one by one
-- [ ] State screens with layout based on resolution config
-- [ ] `for state screens prepare layout based on resolution config`
+Browse by label. Each issue carries one type label plus one area label, so these counts overlap:
 
-**Gameplay systems**
-- [ ] Throw items out of inventory (with `HasInventory.remove()` in dict_utils)
-- [ ] Show item information in inventory footer
-- [ ] How to prevent a just-dropped item from being immediately re-picked
-- [ ] `implement wear processors`
-- [ ] Messages should display on camera, not window
-- [ ] Enter/Esc to confirm/dismiss exit dialog
-- [ ] Weapon/ammo drop when armed — fix `RenderDataFromParent` cleanup on `WeaponInUse` removal
-- [ ] Shaders (reference: DaFluffyPotato)
-- [ ] Inventory weaponry slots (separate from general inventory)
-- [ ] `redo rendering of the tileset` — incremental rendering using previous frame data
-- [ ] Extend sound FX — `SoundFXOnGeneration` for projectiles; multi-FX per entity
-- [ ] Visual FX — `VisualFXOnGeneration`, `VisualFXOnCreation`
-- [ ] AStar pathfinding option alongside BFS; DFS option
-- [ ] BFS pathfinding preference for axis-aligned movement (reduce diagonal bias)
-- [ ] `do_parallel` — support skipping cycles (timed sub-commands)
-- [ ] New commands: `test_bb_value_in`, `test_bb_value_not_in` (faster json_logic alternatives)
-- [ ] Blackboard implicit `self` key (entity ID/name available to all handlers)
-- [ ] New command: `do_if_bb_test_true`
-- [ ] BTree/BList restart function (tree restarts on event)
-- [ ] Test recording — verify that inventory commands are captured
-
-**Developer experience**
-- [ ] Make the game runnable headless, so scenes can be driven in automated tests. Today it cannot be: with `SDL_VIDEODRIVER=dummy` / `SDL_AUDIODRIVER=dummy` the scene loads (the log reaches "Starting into the scene") and then gameplay never really starts — fewer than 10 `World.process()` calls in 100 s, with 0 entities at the first tick. A harness calling the active state module's `run()` directly, replicating `main.run()`'s per-frame body, hangs on the first call instead, so it is not merely slowness in the outer loop. Root cause not yet diagnosed; suspects are the display flip, the progress-bar/loading path, or `pygame_gui` under the dummy driver. Impact: no end-to-end/integration testing is possible — CI is limited to unit tests and doctests, and a `timeout`-based scene run only proves the scene *loads* without crashing, not that it plays. Fixing this would unlock real scene regression tests (load scene → tick N frames → assert on entity/component state).
-- [ ] Drop the obsolete PyPI `pathlib` dependency from `pgbitmapfont` and `pgconsole` — fix is in those two repos, nothing to change in pgrpg. Both declare `pathlib` as a dependency, which installs the abandoned 2014 standalone backport (1.0.1) of a module that has been in the stdlib since Python 3.4. It is currently inert because the stdlib wins on `sys.path`, but it (a) can break `pip install` on future Pythons, since its packaging predates them by a decade, and (b) can shadow the real stdlib module when something reorders `sys.path` — freezers/bundlers such as PyInstaller — which makes it a live risk for the browser/mobile porting task. Remove from both dependency lists and release patch versions.
-- [ ] `tile_to_px` / `px_to_tile` utility stored universally
-- [ ] `dict_utils` as standalone package
-- [ ] `main.reinit()` — more universal, selective reinit
-- [ ] Make state-change checks optional (warnings only, not hard errors)
-- [ ] `every game/test should live outside pgrpg/` — clean separation
-- [ ] Abstract manager interface (`clear()`, `register()`) for uniform iteration and progress bar
-- [ ] Logging: add `%`-style formatting throughout (avoid f-string construction when log level is off)
+| Label | Open | Covers |
+|---|---|---|
+| [`bug`](https://github.com/xdoko01/pgRPG/labels/bug) | 12 | Defects |
+| [`enhancement`](https://github.com/xdoko01/pgRPG/labels/enhancement) | 45 | Features and improvements |
+| [`engine`](https://github.com/xdoko01/pgRPG/labels/engine) | 13 | Core engine, ECS, managers, event/command flow |
+| [`ai-behavior`](https://github.com/xdoko01/pgRPG/labels/ai-behavior) | 11 | Behaviour trees, command lists, pathfinding, NPC AI |
+| [`gameplay`](https://github.com/xdoko01/pgRPG/labels/gameplay) | 10 | Collisions, pickup, inventory, combat |
+| [`ui-console`](https://github.com/xdoko01/pgRPG/labels/ui-console) | 8 | GUI, state screens, dev console, messages |
+| [`devex`](https://github.com/xdoko01/pgRPG/labels/devex) | 6 | Developer experience, tooling, refactors |
+| [`rendering`](https://github.com/xdoko01/pgRPG/labels/rendering) | 5 | Rendering, cameras, animations, visual debug |
+| [`packaging`](https://github.com/xdoko01/pgRPG/labels/packaging) | 4 | Packaging, distribution, porting |
+| [`testing`](https://github.com/xdoko01/pgRPG/labels/testing) | 2 | Tests, CI, test infrastructure |
+| [`multiplayer`](https://github.com/xdoko01/pgRPG/labels/multiplayer) | 1 | Client/server — see `docs/ADR_001_multiplayer_architecture.md` |
+| [`save-load`](https://github.com/xdoko01/pgRPG/labels/save-load) | 1 | Game state serialization |
 
 ### Completed (recent highlights)
 
+- [x] Test suite restored — went from 14 collection errors (no test ran at all) to 138 passing. Four real engine bugs surfaced and were fixed on the way: `BTree.restart_brain()` was impossible because `create_tree()` destructively consumed the tree definition; `World.has_component()` raised `KeyError` once an entity's last component was removed; `translate()` swallowed its own `KeyError` and re-raised a bare `ValueError`; and `del_dict_value()` had a `NameError` in its set branch
+- [x] CI unblocked — a single `flake8` F821 error had been short-circuiting the workflow, so **pytest had never once executed**. Declared `requires-python = ">=3.9"` (previously an untrue `>=3.7`), extended the matrix to 3.9–3.13, and bumped `setup-python` v3 → v5
+- [x] Backlog migrated to GitHub Issues
 - [x] `GameEventsExProcessor` optimized — `collections.deque` replaces list (O(1) popleft vs O(n) pop(0)); `ignore`/`process` filters converted to sets for O(1) membership tests
 - [x] `--file` and `--state` CLI parameters for targeted scene/state startup
 - [x] `PerformScrollDelayedCameraProcessor` — smooth delayed camera follow with `delay` param
