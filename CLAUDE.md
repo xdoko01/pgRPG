@@ -192,11 +192,16 @@ hardcoded size will fail the suite.
 
 Two limitations worth knowing:
 
-- **Start-up only in practice.** Modules bind the `GAME` dict with
-  `from pgrpg.core.config import GAME` at import time, and `config.load()` *replaces* that
-  dict rather than mutating it. A mid-game config reload therefore never reaches them and a
-  changed `TILE_RES_PX` is silently ignored until restart. This applies to `FILEPATHS` and
-  `DISPLAY` too.
+- **Set it at start-up, not at runtime.** The engine's reinit path — `main.reinit()`, used by
+  the settings screen and the `change_res` / `toggle_fullscreen` console commands — is scoped
+  to *display* configuration. It mutates the config dicts in place, so a changed
+  `TILE_RES_PX` does reach every module, but nothing re-normalizes assets that are already
+  loaded: `RenderableModel` implements no `reinit()`, and maps are neither components nor
+  processors so the reinit sweep never sees them. The result is a half-applied state — grid
+  maths, collisions and cull margins at the new size, tile and sprite images plus
+  `map.width` / `map.height` still at the old one. Only `Camera` and `FlagShowInventory`
+  implement `reinit()`. Nothing in the UI exposes `TILE_RES_PX`, so this is unreachable in
+  normal play; change the value in config and restart.
 - **One grid cell per model.** A model cannot declare a footprint larger than a single
   cell; anything authored bigger is squashed into one.
 

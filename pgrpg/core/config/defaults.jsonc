@@ -93,9 +93,10 @@
 		// This also defines the world grid: entity positions are stored in pixels
 		// and converted to tile coordinates by integer division by this value.
 		//
-		// Effectively start-up only. Modules bind the GAME dict at import time,
-		// and config.load() replaces it, so a mid-game config reload does not
-		// reach them - a changed value here is silently ignored until restart.
+		// Start-up value; restart after changing it. main.reinit() covers display
+		// config only - it would propagate a new number here, but already-loaded
+		// maps and models are not re-normalized, leaving grid maths and sprites
+		// at different sizes. See CLAUDE.md "Sprite resolution".
 		"TILE_RES_PX": 64
 	},
 
