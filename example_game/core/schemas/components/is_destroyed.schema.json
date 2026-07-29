@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the IsDestroyed component class - 'ttl', 'action'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"ttl" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_ttl"

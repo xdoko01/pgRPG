@@ -20,7 +20,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the Pickable component class - category.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"default": {},
 			"properties": {
 				"category" : {

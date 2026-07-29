@@ -27,7 +27,7 @@
 				{"required": ["x_tiles", "y_tiles"]},
 				{"required": ["x", "y"]}
 			],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"x_tiles" : {
 					"title": "X-axis (tiles)",

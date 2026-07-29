@@ -26,7 +26,7 @@
 			"markdownDescription" : "`screen_width` (optional), `screen_height` (optional), `screen_pos_x` (optional), `screen_pos_y` (optional), `always_center` (optional), `screen_fill (optional)`",
 			"type": "object",
 			"required": [],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 
 			"defaultSnippets": [
 				{

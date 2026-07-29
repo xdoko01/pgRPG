@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the DestroyOnNoHealth component class - 'ttl'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"ttl" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_ttl"

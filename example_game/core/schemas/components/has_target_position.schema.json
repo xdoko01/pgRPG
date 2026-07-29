@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the HasWeapon component class - 'targets'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"targets" : {
 					"$ref": "../definitions.schema.json#/definitions/list_of_position_targets"

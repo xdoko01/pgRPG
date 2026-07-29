@@ -22,7 +22,7 @@
 			"description" : "Parameters of the Movable component class - 'velocity', 'accelerate'.",
 			"type": "object",
 			"required": ["velocity"],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"velocity" : {
 					"title": "Velocity",

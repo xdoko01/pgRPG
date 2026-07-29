@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the Damaging component class - 'damage', 'parent'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"damage" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_damage"

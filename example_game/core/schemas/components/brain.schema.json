@@ -23,7 +23,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the Brain component class - 'commands' (optional).",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"commands" : {
 					"title": "Command List",

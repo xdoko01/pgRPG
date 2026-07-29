@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the GUIButton component class - 'name' (required), 'text', 'x', 'y', 'width', 'height' (optional).",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"required": ["name"],
 			"properties": {
 				"name": {

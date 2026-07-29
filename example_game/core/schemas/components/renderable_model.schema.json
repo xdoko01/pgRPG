@@ -20,7 +20,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the RenderableModel component class - 'model', 'action'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"model" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_model_file"

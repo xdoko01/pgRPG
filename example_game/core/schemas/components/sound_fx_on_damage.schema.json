@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the SoundFXOnDamage component class - 'sound' (required), 'stop_before_playback' (optional).",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"required": ["sound"],
 			"properties": {
 				"sound" : {
