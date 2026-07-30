@@ -3,8 +3,9 @@
 > Last updated: 2026-07-30 | Verified by: Source-verified `pgrpg/core/managers/ecs_manager.py`,
 > `pgrpg/functions/get_dict_params.py` (incl. its doctests), `pgrpg/functions/get_dict.py`,
 > `pgrpg/functions/str_utils.py`; cross-checked against
-> `example_game/resources/entities/**` and `resources/scenes/games/sokoban/sokoban_level01.jsonc`
-> @ `c7b9a5f1`
+> `example_game/resources/entities/**` and `resources/scenes/games/sokoban/sokoban_level01.jsonc`;
+> the call forms cross-checked against all 1349 template references in `resources/` (#95)
+> @ `14963a10`
 
 ## An entity definition
 
@@ -118,6 +119,12 @@ All of these produce the same result (verified by the doctests in
 ["t_tile_pos", {"$tileX": 5, "$tileY": 2, "$map": "test_arena_sand"}]   // list form, keyword
 ["t_tile_pos", [3, 4, 5], {"$tileX": 5, "$tileY": 2, "$map": "arena"}]  // list form, both
 ```
+
+These six are the whole set — `parse_fnc_list` accepts `[name]`, `[name, [args]]`,
+`[name, {kwargs}]` and `[name, [args], {kwargs}]`, and nothing else. Since #95 the schemas enforce
+exactly that set, through the single `definitions.schema.json#/definitions/template_ref` that both
+`entity.schema.json` and `template.schema.json` reference — so an editor now flags a malformed call.
+See [schemas.md](schemas.md#one-template-reference-definition-not-two).
 
 The list form is what you need when an argument is not a scalar — a list of checkpoints, say:
 

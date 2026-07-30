@@ -2,7 +2,7 @@
 
 > Last updated: 2026-07-30 | Verified by: Source-verified across `pgrpg/` and `example_game/`;
 > Runtime-verified where marked (unbound `finalize()` → `TypeError`; explicit `.toml` load →
-> `ValueError`; `pytest tests/` → 186 passed) @ `c7b9a5f1`
+> `ValueError`; `pytest tests/` → 194 passed) @ `14963a10`
 
 This is the **single canonical source** for whether a capability actually works. It exists because
 several parts of this engine are half-built, superseded or provably broken, and an agent that assumes
