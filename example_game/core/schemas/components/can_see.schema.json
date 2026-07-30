@@ -22,7 +22,7 @@
 			
 			"type": "object",
 			"required": ["angle"],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"angle" : {
 					"title": "Angle",

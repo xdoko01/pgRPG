@@ -24,7 +24,7 @@
 			"markdownDescription" : "`weapon` (required), `type` (required)",
 			"type": "object",
 			"required": ["weapon", "type"],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 
 			"defaultSnippets": [
 				{

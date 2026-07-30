@@ -20,7 +20,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the ScorableOnPickup component class - 'score' (optional).",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"score" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_score",

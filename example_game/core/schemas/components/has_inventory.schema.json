@@ -20,7 +20,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the HasInventory component class - 'inventory', 'categories', 'max_items'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"inventory" : {
 					"title": "List of Items",

@@ -20,7 +20,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the ScorableOnDamage component class - 'score'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"score" : {
 					"$ref": "../definitions.schema.json#/definitions/entity_score"

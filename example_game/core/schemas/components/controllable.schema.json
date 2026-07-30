@@ -38,7 +38,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the Controllable component class - 'key_profile', 'control_keys', 'control_cmds'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"key_profile" : {
 					"title": "Keys Layout",

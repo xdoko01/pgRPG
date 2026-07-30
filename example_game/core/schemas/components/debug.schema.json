@@ -31,7 +31,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the Debug component class - 'collision', 'movement', 'sight', 'hearing'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"collision" : {
 					"title": "Collision Zone Display Params",

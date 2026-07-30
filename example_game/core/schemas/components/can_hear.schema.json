@@ -21,7 +21,7 @@
 			"description" : "Parameters of the CanHear component class - 'distance_px' or 'distance_tiles' (provide one; defaults to 10 tiles if neither is given), 'ent_within_earshot'.",
 
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"distance_px" : {
 					"title": "Distance",

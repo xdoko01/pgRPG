@@ -22,7 +22,7 @@
 			
 			"type": "object",
 			"required": ["dest_map"],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"dest_x" : {
 					"title": "X-axis position",

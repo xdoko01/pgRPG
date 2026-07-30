@@ -23,7 +23,7 @@
 			
 			"type": "object",
 			"required": ["map"],
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"x" : {
 					"title": "X-axis position",

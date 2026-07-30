@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the SoundFXOnGeneration component class - 'sound'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"required": ["sound"],
 			"properties": {
 				"sound" : {

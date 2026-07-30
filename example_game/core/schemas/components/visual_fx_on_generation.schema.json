@@ -19,7 +19,7 @@
 			"title": "Component parameters",
 			"description" : "Parameters of the VisualFXOnGeneration component class - 'effect'.",
 			"type": "object",
-			"$ref": "#/$defs/cond_params",
+			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"required": ["effect"],
 			"properties": {
 				"effect" : {
