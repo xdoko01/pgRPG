@@ -105,8 +105,8 @@ documenting it.
 | Capability | Status | Note |
 |---|---|---|
 | `$schema` editor validation | **PARTIAL** | Works for `scene`, `entity`, `template`, `component`. `processors`, `maps`, `dialogs`, `handlers` are declared as untyped arrays, so `processor.schema.json` and `command.schema.json` are never reached from the scene schema |
-| `definitions.schema.json#/basics/class_def` | **BROKEN** | Regex uses `\(`/`\)` as literal parens, requiring a leading `(`. Runtime-verified to match nothing. `$ref`d by nothing, so harmless |
-| `definitions.schema.json#/basics/template_str_def` / `template_list_def` | **BROKEN** | Same regex mistake, and these **are** `$ref`d from `template.schema.json`. Also uses Draft 2020-12 `prefixItems` in a Draft-07 document |
+| `definitions.schema.json#/definitions/class_def` | **WORKING** | Fixed in [#95](https://github.com/xdoko01/pgRPG/issues/95); moved out of the non-standard top-level `basics` key. Matches all 54 `module:ClassName` strings in the corpus. Still `$ref`d by nothing, so its only exercise is `test_every_class_string_matches_class_def` |
+| Template references (`#/definitions/template_ref`) | **WORKING** | Fixed in [#95](https://github.com/xdoko01/pgRPG/issues/95). `basics/template_str_def` / `template_list_def` / `template_def` are gone — they could match nothing (`\(` is a literal paren in ECMA-262, not grouping) and their tuple form allowed only `[name, {kwargs}]`. `template.schema.json` now shares the one `template_ref` that `entity.schema.json` already used, covering all four list forms `parse_fnc_list` accepts. 1349/1349 corpus references validate |
 | **`"template"` (singular) in an entity definition** | **BROKEN** | `_update_entity` reads `"templates"`. Seven shipped files get this wrong: `resources/entities/controls/*.json` (all 7). Harmless there only because the parent `controls.json` adds an empty `Controllable` the child overwrites anyway |
 | `"template"` (singular) in a **btree node** | **WORKING** | Correct key for `create_tree` — the two are genuinely different |
 | Dev console | **WORKING** | 13 commands + `.scr` scripts |
