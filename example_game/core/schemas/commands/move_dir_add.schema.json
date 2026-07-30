@@ -1,6 +1,6 @@
 {
 	"$id": "move_dir_add.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_dir_add Command",
 	"description": "Move to specified direction ('up', 'down', 'left', 'right'). Supports adding moves to already existing.",

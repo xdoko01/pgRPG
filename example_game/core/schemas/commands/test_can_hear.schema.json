@@ -1,6 +1,6 @@
 {
 	"$id": "test_can_hear.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "test_can_hear command",
 	"description": "Test if any of the given entities are within earshot. Returns SUCCESS if at least one is heard.",

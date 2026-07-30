@@ -1,6 +1,6 @@
 {
 	"$id": "move_auto.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_auto command",
 	"description": "Continue movement in the same direction.",

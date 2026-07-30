@@ -1,6 +1,6 @@
 {
 	"$id": "sensor_system/generate_entities_within_earshot_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "GenerateEntitiesWithinEarshotProcessor / GenerateEntitiesWithinEarshotFullProcessor processor",
 	"description": "Processor: GenerateEntitiesWithinEarshotProcessor / GenerateEntitiesWithinEarshotFullProcessor.",
 	"oneOf": [

@@ -1,6 +1,6 @@
 {
 	"$id": "scorable_on_damage.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "ScorableOnDamage Component",
 	"description": "Schema validating the ScorableOnDamage component.",

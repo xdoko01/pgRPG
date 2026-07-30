@@ -1,6 +1,6 @@
 {
 	"$id": "controllable.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "Controllable Component",
 	"description": "Schema validating the Controllable component.",
@@ -52,15 +52,13 @@
 				},
 				"control_keys" : {
 					"title": "Control Keys",
-					"description": "Keys assigned to actions.",
-					"type": "object",
-					"required": ["LEFT", "RIGHT", "UP", "DOWN", "ATTACK"]
+					"description": "Keys assigned to actions. Partial - the component falls back to the configured defaults for any action left out.",
+					"type": "object"
 				},
 				"control_cmds" : {
 					"title": "Control Commands",
-					"description": "List of commands assigned to actions.",
+					"description": "List of commands assigned to actions. Partial - the component falls back to the configured defaults for any action left out.",
 					"type": "object",
-					"required": ["LEFT", "RIGHT", "UP", "DOWN", "ATTACK"],
 					"properties": {
 						"left": {"type": "array", "items": {"$ref": "../command.schema.json"}},
 						"right": {"type": "array", "items": {"$ref": "../command.schema.json"}},

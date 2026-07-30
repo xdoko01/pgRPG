@@ -1,6 +1,6 @@
 {
 	"$id": "sensor_system/generate_entities_in_sight_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "GenerateEntitiesInSightProcessor / GenerateEntitiesInSightFullProcessor processor",
 	"description": "Processor: GenerateEntitiesInSightProcessor / GenerateEntitiesInSightFullProcessor.",
 	"oneOf": [

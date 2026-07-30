@@ -1,6 +1,6 @@
 {
 	"$id": "drop_item.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "drop_item command",
 	"description": "Drop an item from the entity's inventory.",

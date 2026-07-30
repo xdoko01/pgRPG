@@ -1,6 +1,6 @@
 {
 	"$id": "sound_fx_on_arm_weapon.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "SoundFXOnArmWeapon Component",
 	"description": "Schema validating the SoundFXOnArmWeapon component.",

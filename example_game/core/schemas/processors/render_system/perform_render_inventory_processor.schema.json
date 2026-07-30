@@ -1,6 +1,6 @@
 {
 	"$id": "render_system/perform_render_inventory_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "PerformRenderInventoryProcessor processor",
 	"description": "Processor: PerformRenderInventoryProcessor.",
 	"oneOf": [

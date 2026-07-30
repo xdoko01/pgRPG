@@ -20,6 +20,16 @@ dependencies = [
     "toml"
 ]
 
+[project.optional-dependencies]
+# Install with: pip install -e .[test]
+# jsonschema validates the authoring schemas under example_game/core/schemas/
+# against the game resources. Tests that need it skip when it is absent, so the
+# suite still runs on a bare install.
+test = [
+    "pytest",
+    "jsonschema>=4.18"
+]
+
 [tool.setuptools.packages.find]
 include = ["pgrpg*"]
 exclude = ["experiments*", "example_game*"]

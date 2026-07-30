@@ -1,6 +1,6 @@
 {
 	"$id": "animation_system/perform_action_idle_animation_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "PerformActionIdleAnimationProcessor processor",
 	"description": "Processor: PerformActionIdleAnimationProcessor.",
 	"oneOf": [

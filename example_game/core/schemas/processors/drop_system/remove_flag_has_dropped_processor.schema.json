@@ -1,6 +1,6 @@
 {
 	"$id": "drop_system/remove_flag_has_dropped_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "RemoveFlagHasDroppedProcessor processor",
 	"description": "Processor: RemoveFlagHasDroppedProcessor.",
 	"oneOf": [

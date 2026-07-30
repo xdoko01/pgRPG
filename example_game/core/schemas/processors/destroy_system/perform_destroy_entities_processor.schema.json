@@ -1,6 +1,6 @@
 {
 	"$id": "destroy_system/perform_destroy_entities_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "PerformDestroyEntitiesProcessor processor",
 	"description": "Processor: PerformDestroyEntitiesProcessor.",
 	"oneOf": [

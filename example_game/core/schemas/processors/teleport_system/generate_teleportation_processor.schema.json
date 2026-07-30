@@ -1,6 +1,6 @@
 {
 	"$id": "teleport_system/generate_teleportation_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "GenerateTeleportationProcessor processor",
 	"description": "Processor: GenerateTeleportationProcessor.",
 	"oneOf": [

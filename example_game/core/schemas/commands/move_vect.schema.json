@@ -1,6 +1,6 @@
 {
 	"$id": "move_vect.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_vect command",
 	"description": "Move by specified vector (in px).",

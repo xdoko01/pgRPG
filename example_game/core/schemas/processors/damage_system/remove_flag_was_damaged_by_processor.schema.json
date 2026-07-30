@@ -1,6 +1,6 @@
 {
 	"$id": "damage_system/remove_flag_was_damaged_by_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "RemoveFlagWasDamagedByProcessor processor",
 	"description": "Processor: RemoveFlagWasDamagedByProcessor.",
 	"oneOf": [

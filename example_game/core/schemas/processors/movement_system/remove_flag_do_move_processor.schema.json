@@ -1,6 +1,6 @@
 {
 	"$id": "movement_system/remove_flag_do_move_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "RemoveFlagDoMoveProcessor processor",
 	"description": "Processor: RemoveFlagDoMoveProcessor.",
 	"oneOf": [
