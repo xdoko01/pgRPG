@@ -4,52 +4,21 @@
 
 	"description": "File with definitions",
 
-	"basics": {
+	"definitions" : {
+
 		"class_def": {
 			"title": "Class definition",
-			"description": "String representation of a class in given package and module",
-			"examples": "movable:Movable",
-
-			"type": "string",
-			"pattern": "^\\([a-z]+\\.\\)*[a-z]+:[A-Z][a-z]+$"
-		},
-		"template_str_def": {
-			"title": "Template String definition",
-			"description": "String representation of a template with or without parameters",
+			"description": "Dotted module path and class name of a Python class, as 'module:ClassName' or 'package.module:ClassName'. Module parts are lower snake_case; the class name is CapWords and may carry consecutive capitals.",
 			"examples": [
-				"model/body/special/minotaur",  
-				"t_tile_pos(0, 0, test_arena_sand)"
+				"movable:Movable",
+				"renderable_model:RenderableModel",
+				"brain_ai:BrainAI",
+				"collision_system.generate:GenerateCollisionsProcessor"
 			],
 
 			"type": "string",
-			"pattern": "^\\([a-zA-Z0-9]+\\/\\)*[a-zA-Z0-9]+\\(( *.*)\\)$"
+			"pattern": "^([a-z0-9_]+\\.)*[a-z0-9_]+:[A-Za-z_][A-Za-z0-9_]*$"
 		},
-		"template_list_def": {
-			"title": "Template List definition",
-			"description": "List representation of a template with or without parameters",
-			"examples": [
-				["_special/guard", {"$path_in": [[0,0],[50,0]], "$list_of_enemies_in": []}]
-			],
-
-			"type": "array",
-			"prefixItems": [
-				{"type": "string", "pattern": "^\\([a-zA-Z0-9]+\\/\\)*[a-zA-Z0-9]+$"},
-				{"type": "object"}
-			],
-			"items": false
-		},
-		"template_def": {
-			"title": "Template Definition",
-			"description": "Representation of a template with or without parameters",
-
-			"oneOf": [
-				{"$ref": "#/basics/template_str_def"},
-				{"$ref": "#/basics/template_list_def"}
-			]
-		}
-	},
-
-	"definitions" : {
 
 		"template_var": {
 			"title": "Template Variable",
@@ -197,16 +166,19 @@
 			"examples": ["effects/explosion", "thing/item", "t_tile_pos(5, 5, test_arena_sand)"],
 
 			"type": "string",
-			"minLength": 1
+			"minLength": 1,
+			"pattern": "^([A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+(\\(.*\\))?$"
 		},
 
 		"template_ref": {
 			"title": "Template Reference",
-			"description": "A template to apply. Either a name string, optionally with parameters in brackets, or a [name, [args], {kwargs}] list. See pgrpg.functions.get_dict_params.",
+			"description": "A template to apply. Either a name string, optionally with parameters in brackets, or a list of [name], [name, [args]], [name, {kwargs}] or [name, [args], {kwargs}] - the four list forms pgrpg.functions.str_utils.parse_fnc_list accepts.",
 			"examples": [
 				"thing/item",
 				"t_tile_pos(5, 5, test_arena_sand)",
-				["thing/ammo/slash/regular_axe1_slash", ["$damage"]]
+				["thing/ammo/slash/regular_axe1_slash", ["$damage"]],
+				["thing/ammo_pack/shoot/iron_arrows_pack", {"$arrows_count": 10}],
+				["_special/guard", [], {"$enemies": ["player01"]}]
 			],
 
 			"anyOf": [
@@ -215,11 +187,19 @@
 					"type": "array",
 					"prefixItems": [
 						{ "$ref": "#/definitions/entity_template_path" },
-						{ "type": "array" },
+						{ "type": ["array", "object"] },
 						{ "type": "object" }
 					],
 					"minItems": 1,
-					"items": false
+					"items": false,
+
+					"allOf": [
+						{
+							"description": "With all three items present the second is positional args and must be a list; a lone second item may be either args or kwargs.",
+							"if": { "minItems": 3 },
+							"then": { "prefixItems": [true, { "type": "array" }] }
+						}
+					]
 				}
 			]
 		},

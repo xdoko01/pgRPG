@@ -30,7 +30,7 @@
 			"description": "Templates description",
 			"type": "array",
 			"items": {
-				"$ref": "definitions.schema.json#/basics/template_def"
+				"$ref": "definitions.schema.json#/definitions/template_ref"
 			},
 			"minItems": 0,
 			"uniqueItems": true

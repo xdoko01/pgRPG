@@ -12,6 +12,7 @@ violating, or if a known one gets worse.
 """
 
 import json
+import os
 from collections import Counter
 from pathlib import Path
 
@@ -185,6 +186,159 @@ def test_every_schema_is_a_valid_2020_12_schema():
         except Exception as exc:
             invalid.append(f"{path.relative_to(SCHEMA_ROOT)}: {exc}")
     assert not invalid, "invalid schemas:\n" + "\n".join(invalid)
+
+
+@pytest.fixture(scope="module")
+def resource_documents():
+    """Every parseable resource document, with its path."""
+    files = (
+        set(RESOURCES.rglob("*.jsonc"))
+        | set(RESOURCES.rglob("*.json"))
+        | set(RESOURCES.rglob("*.yaml"))
+    )
+    out = []
+    for path in sorted(files):
+        try:
+            out.append((path, get_dict_from_file(filepath=path)))
+        except Exception:
+            continue  # not a resource document; other tests cover parsing
+    return out
+
+
+def _template_references(node, out):
+    """Collect every string/list entry of a `templates` array.
+
+    Dict entries are skipped: a scene's `templates` holds whole template
+    *definitions*, while a template's or entity's `templates` holds *references*
+    to them. Only the latter are what `template_ref` describes.
+    """
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == "templates" and isinstance(value, list):
+                out.extend(item for item in value if not isinstance(item, dict))
+            _template_references(value, out)
+    elif isinstance(node, list):
+        for value in node:
+            _template_references(value, out)
+    return out
+
+
+def test_every_template_reference_validates(registry, resource_documents):
+    """Keep #95 fixed.
+
+    `template_ref` is reached from both entity.schema.json and
+    template.schema.json, so every template reference in the resources is
+    authored against it. The fragments it replaced could not match anything at
+    all - `\\(` and `\\)` are literal parens in ECMA-262, not grouping - and the
+    tuple form declared only [name, {kwargs}] where the loader
+    (pgrpg.functions.str_utils.parse_fnc_list) accepts four shapes.
+    """
+    validator = Draft202012Validator(
+        {"$ref": "definitions.schema.json#/definitions/template_ref"},
+        registry=registry,
+    )
+    failures = [
+        f"  {path}\n      {reference!r}\n      {error.message[:120]}"
+        for path, document in resource_documents
+        for reference in _template_references(document, [])
+        for error in validator.iter_errors(reference)
+    ]
+    references = [
+        r for _, d in resource_documents for r in _template_references(d, [])
+    ]
+    assert len(references) > 1000, "template references were not discovered"
+    assert not failures, "template references failing their schema:\n" + "\n".join(failures)
+
+
+def test_every_class_string_matches_class_def(registry, resource_documents):
+    """`class_def` must match the real 'module:ClassName' corpus.
+
+    It is `$ref`d by nothing today, so nothing else would notice it drifting -
+    and before #95 it matched none of these 54 strings.
+    """
+    validator = Draft202012Validator(
+        {"$ref": "definitions.schema.json#/definitions/class_def"},
+        registry=registry,
+    )
+
+    def walk(node, out):
+        if isinstance(node, dict):
+            if isinstance(node.get("type"), str) and "params" in node:
+                out.add(node["type"])
+            if isinstance(node.get("class"), str):
+                out.add(node["class"])
+            for value in node.values():
+                walk(value, out)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value, out)
+        return out
+
+    strings = set()
+    for _, document in resource_documents:
+        walk(document, strings)
+
+    assert len(strings) > 40, "class strings were not discovered"
+    failures = [
+        f"  {string}: {error.message[:120]}"
+        for string in sorted(strings)
+        for error in validator.iter_errors(string)
+    ]
+    assert not failures, "class strings failing class_def:\n" + "\n".join(failures)
+
+
+def test_every_ref_resolves():
+    """A `$ref` into a fragment that no longer exists fails open, not loud.
+
+    jsonschema raises on an unresolvable pointer, but only for the documents it
+    is actually asked to validate - a stale `$ref` on a rarely exercised branch
+    can sit unnoticed. #95 left one behind by design: the fragments once held
+    under a non-standard top-level `basics` key now live under `definitions`.
+    """
+    documents = {
+        path.relative_to(SCHEMA_ROOT).as_posix(): json.loads(
+            path.read_text(encoding="utf-8")
+        )
+        for path in sorted(SCHEMA_ROOT.rglob("*.json"))
+    }
+    unresolved = []
+
+    def resolve(filename, ref):
+        target, _, pointer = ref.partition("#")
+        if target.startswith(("http://", "https://")):
+            return
+        if target:
+            # Relative to the referring file, normalised so that '../' collapses
+            # into the same keys the registry uses.
+            key = Path(os.path.normpath(Path(filename).parent / target)).as_posix()
+        else:
+            key = filename
+        document = documents.get(key)
+        if document is None:
+            unresolved.append(f"{filename}: $ref {ref} - no such schema file")
+            return
+        node = document
+        for part in [p for p in pointer.split("/") if p]:
+            part = part.replace("~1", "/").replace("~0", "~")
+            if not isinstance(node, dict) or part not in node:
+                unresolved.append(f"{filename}: $ref {ref} - pointer is dangling")
+                return
+            node = node[part]
+
+    def walk(node, filename):
+        if isinstance(node, dict):
+            if isinstance(node.get("$ref"), str):
+                resolve(filename, node["$ref"])
+            for value in node.values():
+                walk(value, filename)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value, filename)
+
+    for filename, document in documents.items():
+        walk(document, filename)
+
+    assert not unresolved, "unresolvable $refs:\n  " + "\n  ".join(unresolved)
 
 
 def test_no_ref_sits_beside_keywords_it_would_suppress():
