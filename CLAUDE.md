@@ -1,418 +1,118 @@
-# CLAUDE.md
+# CLAUDE.md — pgrpg AI Agent Entry Point
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> Last updated: 2026-07-30
+> This file is the onboarding entry point for AI agents. It is **not** the knowledge base.
 
-## Project summary
+## What This Repo Is
 
-**pgrpg** is a Pygame-based 2D RPG game engine built around Entity–Component–System (ECS) architecture. All game logic, AI, scenes, and UI flows are defined in **JSON/YAML data files** — not in Python. The engine is an installable Python package consumed by a game project (e.g., `example_game/`).
+**pgrpg** is a Pygame-based 2D RPG engine built around an Entity–Component–System core. Its defining
+property is that **the game is data, not code**: scenes, entities, components, AI, dialogs, event
+handling and UI flow are declared in `.jsonc` / `.yaml` files, and Python supplies only the
+Components, Processors, Commands and Scripts those files name.
 
-Design priority: **clarity and readability over performance**.
+The engine is an installable package (`pgrpg`). `example_game/` is the reference game that consumes
+it and is **not** part of the distribution.
 
----
+Design priority: **clarity and readability over performance.**
 
-## Repository layout
+Some parts of the engine are half-built, superseded or provably broken. That is recorded as a neutral
+fact — see [`.claude/kb/SCOPE.md`](.claude/kb/SCOPE.md) for each capability's status before assuming a
+code path works.
 
-```
-pgrpg/                  — the engine package (published via pyproject.toml)
-  core/
-    main.py             — entry point: init() + run() game loop
-    engine.py           — scene loading pipeline + manager wiring
-    scene.py            — lightweight Scene data object
-    ecs/
-      __init__.py       — custom esper fork: World, Component, Processor base classes
-    managers/
-      ecs_manager.py    — ECS world wrapper; loads processors/templates/entities/components
-      event_manager.py  — event queue + JSON-defined handler dispatch
-      script_manager.py — lazy-loads Python script modules; executes json_logic action trees
-      command_manager.py— entity command queue (BTree/AI-generated commands)
-      map_manager.py    — Tiled tile map loading/management
-      dialog_manager.py — scriptable dialog flow definitions
-      message_manager.py— in-game message log
-      pathfind_manager.py— non-blocking pathfinding distributed across cycles
-    config/
-      gui.py            — pygame display / GUI manager (module-level singleton)
-      sound.py          — sound/music manager (module-level singleton)
-      states.py         — State enum + state machine
-    commands/
-      generators/
-        btree/          — behavior tree command generator
-        blist/          — ordered command list generator
-    events/event.py     — Event dataclass
-    states/state.py     — State enum (MAIN_MENU, GAME, CONSOLE, etc.)
-    maps/map.py         — Map wrapper around pytmx
-    models/model.py     — Model (sprite/animation data)
-    sounds/sound.py     — Sound wrapper
-  functions/            — pure utility functions
-    get_dict_from_file.py — load JSON/YAML with C-style comment support
-    json_logic.py       — JSON-encoded condition/action tree evaluator
-    translate.py        — replace entity alias strings with integer ECS IDs
-    get_dict_params.py  — fill template dicts with variable substitution
-    allow_deny_filters.py, dict_utils.py, str_utils.py, ...
-  utils/                — dev/authoring tools
-    entity_json_generator.py, generate_model_json_from_template.py, ...
+## Start Here
 
-example_game/           — reference game built on pgrpg (NOT part of the package)
-  game.py               — runnable entry point
-  config.jsonc          — game-specific config (overrides pgrpg defaults)
-  core/
-    components/         — game-specific Component classes (inherit pgrpg.core.ecs.Component)
-    processors/         — game-specific Processor classes (inherit pgrpg.core.ecs.Processor)
-    scripts/            — event action scripts (loaded lazily by ScriptManager)
-    commands/           — command implementations for CommandManager
-    states/             — state module implementations (main menu, pause, etc.)
-    console/            — in-game dev console commands and scripts
-  resources/
-    scenes/             — scene definition files (.jsonc / .yaml)
-      empty.jsonc       — minimal scene template
-      tests/00_render … 12_ai/  — numbered progressive test scenes
-      games/            — complete game scenes (sokoban, collect_coins, kill_all)
-    entities/           — reusable entity definition files
-    maps/               — Tiled map files (.tmx)
-    btrees/             — behavior tree definition files
-    dialogs/            — dialog flow definition files
-    images/, sounds/, music/, fonts/, frames/, models/
+The knowledge base lives in [`.claude/kb/`](.claude/kb/). Begin with
+[`.claude/kb/README.md`](.claude/kb/README.md) — the wiki home with a quick-lookup table, a domain map
+and links into every knowledge area.
 
-tests/                  — Python unit tests (pytest)
-```
-
----
-
-## Architecture
-
-### Module-level singletons
-
-All managers in `pgrpg/core/managers/` are **modules, not class instances**. There is no DI container — the engine wires them by passing a `game_functions` dict to `ecs_manager.initialize()` at startup. The old class-based versions are preserved as commented-out code in each manager file.
-
-### State machine
-
-`pgrpg/core/config/states.py` holds the `State` enum. Each state (MAIN_MENU, GAME, CONSOLE, PAUSE_GAME, …) maps to a state module with a `run(key_events, key_pressed, dt)` method. `state_manager.change_state()` switches between them each frame.
-
-### ECS (esper fork)
-
-`pgrpg/core/ecs/__init__.py` is a modified esper 1.3 fork with:
-- **Processor groups** — processors can be added to named groups and processed independently
-- **Execution throttling** — `exec_cycle_step` lets a processor run every N cycles instead of every frame
-- **Extended queries** — `get_components_ex` / `get_components_exs` / `get_components_opt` for include/exclude/optional component filtering
-- **`SkipProcessorExecution`** exception to skip a processor's logic without an error
-
-**Component** — inherit `pgrpg.core.ecs.Component`, use `__slots__` for memory efficiency. Implement `reinit()` for display config changes and `pre_save()` / `post_load()` for serialization.
-
-**Processor** — inherit `pgrpg.core.ecs.Processor`, implement `process(**kwargs)` (call `super().process()` first to handle cycle throttling).
-
-### Scene loading pipeline
-
-`engine.load_scene_from_def()` walks `load_scene_def_fncs` — an ordered list of `[json_path, handler_fn]` pairs:
-
-```
-prereqs             → recursively load dependency scenes
-cleanup/processors  → remove processors matching pattern
-cleanup/maps        → remove maps matching pattern
-cleanup/templates   → remove templates matching pattern
-cleanup/entities    → remove entities matching pattern
-cleanup/dialogs     → remove dialogs matching pattern
-cleanup/handlers    → remove handlers matching pattern
-processors          → register Processors into the ECS World
-maps                → load Tiled maps
-dialogs             → load dialog flow definitions
-templates           → load entity templates (parameterised)
-entities (×1)       → register all entities first (so aliases exist)
-entities (×2)       → fill entities with components (aliases now resolve)
-entities/…/handlers → load handlers embedded inside component params
-handlers            → load top-level event handlers
-```
-
-### Per-frame data flow
-
-```
-pygame events + keys
-  → state_module.run()
-    → ecs_manager.process()     ← all Processors tick in priority order
-      Processors emit:
-        → event_manager.add_event()     (game events)
-        → command_manager.add_command() (entity commands / AI)
-      → command_manager.process_commands()
-      → event_manager.process_events()
-        → match event_type → handler(s) defined in scene JSON
-          → script_manager.execute_event_actions()
-            → translate(alias → entity_id)
-            → json_logic(actions)
-              → execute_script(name)  ← lazy-loaded Python script module
-→ gui_manager.flip()
-```
-
-### Entity aliases
-
-Entities have string aliases in JSON (e.g. `"player"`, `"enemy_1"`). Before any script executes, `script_manager` calls `translate()` to replace those strings with integer ECS entity IDs. This means **aliases must be fully registered before any handler fires**.
-
----
-
-## Configuration
-
-Two config files are merged at startup:
-
-1. `pgrpg/core/config/default.jsonc` — engine defaults (do not edit directly)
-2. `<game>/config.jsonc` — game overrides, passed as `config_file` argument
-
-Key config sections:
-
-| Section | Purpose |
+| If your task is… | Read |
 |---|---|
-| `DISPLAY` | Resolution, FPS, fullscreen, window title |
-| `FILEPATHS` | `GAME_PATH`, `pgrpg_PATH`, and all resource sub-paths |
-| `MODULEPATHS` | Python module paths for components, processors, scripts, commands, states, console commands |
-| `KEYS` | Key bindings |
-| `GAME` | Game-specific constants (speed, tile size, timers) |
+| Understand how the program starts or what one frame does | [`kb/core/bootstrap-and-loop.md`](.claude/kb/core/bootstrap-and-loop.md) |
+| Understand how a `.jsonc` file becomes a live world | [`kb/core/scene-pipeline.md`](.claude/kb/core/scene-pipeline.md) |
+| Write or change a Component | [`kb/ecs/components.md`](.claude/kb/ecs/components.md) |
+| Write or change a Processor | [`kb/ecs/processors.md`](.claude/kb/ecs/processors.md) |
+| Author a scene, entity, template or component params | [`kb/authoring/`](.claude/kb/authoring/index.md) |
+| Author AI (`cmd_tree` / `cmd_list`) | [`kb/authoring/ai-definitions.md`](.claude/kb/authoring/ai-definitions.md) |
+| Author event handlers / `json_logic` actions | [`kb/authoring/handlers-and-actions.md`](.claude/kb/authoring/handlers-and-actions.md) |
+| Find a component / processor / command / event name | [`kb/reference/index.md`](.claude/kb/reference/index.md) |
+| Work out whether something is actually implemented | [`kb/SCOPE.md`](.claude/kb/SCOPE.md) |
 
-`FILEPATHS.GAME_PATH` and `FILEPATHS.pgrpg_PATH` are **mandatory**.
+Maintenance rules for the knowledge base (where facts go, provenance labels, deduplication) are in
+[`.claude/kb/RULES.md`](.claude/kb/RULES.md). **Read Rule 12 before finishing any task that changes
+engine behaviour.**
 
-`MODULEPATHS` entries control where the engine looks for game code. Example:
-```json
-"COMPONENT_MODULE_PATH": "core.components"  // → example_game.core.components.*
+## Repository Layout
+
+```
+pgrpg/                  the engine package (published via pyproject.toml)
+  core/
+    main.py             init() + run() — the game loop
+    engine.py           scene loading pipeline + manager wiring
+    scene.py            Scene metadata object
+    ecs/__init__.py     modified esper 1.3 fork: World, Component, Processor
+    config/             config load()/init(), defaults.jsonc, states, gui, sound, console
+    managers/           8 module-level singletons (ecs, event, script, command,
+                        map, dialog, message, pathfind)
+    commands/           Command types + generators/{btree,blist}
+    events/  maps/  models/  messages/  pathfinding/  sounds/
+  functions/            pure utilities (json_logic, translate, get_dict_params, …)
+  utils/                authoring/dev tools (not used at runtime)
+
+example_game/           the reference game — NOT part of the package
+  game.py               runnable entry point
+  config.jsonc          game config, overrides pgrpg defaults
+  core/
+    components/         88 Component classes
+    processors/         22 *_system/ packages
+    commands/           38 command modules
+    scripts/            event action scripts
+    states/             9 state modules
+    console/            dev console commands + .scr scripts
+    schemas/            JSON Schemas for editor validation
+  resources/
+    scenes/             78 scene files — tests/00_render … 12_ai, games/, UI/
+    entities/           ~2 500 reusable entity/template files
+    btrees/  dialogs/  maps/  models/  images/  sounds/  music/  fonts/  frames/
+
+tests/                  pytest suite — 186 tests
+docs/                   current design docs (ADR_001, CHANGELOG_ARCHITECTURE) + docs/old/
+experiments/            scratch prototypes — NOT imported anywhere; do not treat as reference
 ```
 
-### Sprite resolution — one value, applied at load time
+## Running and Testing
 
-`GAME.TILE_RES_PX` (default `64`, set in `defaults.jsonc`) is the single resolution the
-engine renders at. **All art is scaled to it once, when the asset is loaded** — Tiled tile
-images in `pgrpg/core/maps/map.py` and animated models in `pgrpg/core/models/model.py`
-alike.
-
-The native resolution of a source asset is therefore not significant. Author art at
-whatever resolution suits it; the engine normalizes. In this repo the tilesets are 32×32
-and nearly every model is 64×64, and both render correctly at any `TILE_RES_PX`.
-
-The same value defines the world grid: entity positions are stored in pixels and converted
-to tile coordinates by integer division by `TILE_RES_PX`. It also sizes inventory slots and
-converts `distance_tiles` to pixels in `CanSee` / `CanHear`.
-
-This is why components that describe world geometry accept **tile-relative** params and
-convert them at construction: `Position` (`tile_x`), `Teleport` (`tile_dest_x`), `CanSee` /
-`CanHear` (`distance_tiles`), `HasTargetPosition`, and `Collidable`
-(`x_tiles` / `y_tiles` / `dx_tiles` / `dy_tiles`). Prefer those forms when authoring
-entities. Absolute pixel params still exist and are never scaled — use them only when a
-value must be a fixed pixel size regardless of resolution.
-
-Never hardcode a pixel size for a sprite, tile, cull margin or UI slot — read
-`GAME["TILE_RES_PX"]` or derive from it. `tests/core/maps/test_map.py` and
-`tests/core/models/test_model.py` assert correct rendering at 32, 64 and 96 px, so a
-hardcoded size will fail the suite.
-
-Two limitations worth knowing:
-
-- **Set it at start-up, not at runtime.** The engine's reinit path — `main.reinit()`, used by
-  the settings screen and the `change_res` / `toggle_fullscreen` console commands — is scoped
-  to *display* configuration. It mutates the config dicts in place, so a changed
-  `TILE_RES_PX` does reach every module, but nothing re-normalizes assets that are already
-  loaded: `RenderableModel` implements no `reinit()`, and maps are neither components nor
-  processors so the reinit sweep never sees them. The result is a half-applied state — grid
-  maths, collisions and cull margins at the new size, tile and sprite images plus
-  `map.width` / `map.height` still at the old one. Only `Camera` and `FlagShowInventory`
-  implement `reinit()`. Nothing in the UI exposes `TILE_RES_PX`, so this is unreachable in
-  normal play; change the value in config and restart.
-- **One grid cell per model.** A model cannot declare a footprint larger than a single
-  cell; anything authored bigger is squashed into one.
-
----
-
-## Scene file format
-
-Scene files are `.jsonc` (JSON with C-style `// comments`) or `.yaml`. Top-level keys match the scene loading pipeline:
-
-```jsonc
-{
-    "id": "my_scene",
-    "title": "My Scene",
-    "description": "...",
-    "objective": "...",
-
-    "prereqs": [],                  // other scene files to load first
-
-    "cleanup": {                    // UNIX-wildcard patterns for removal
-        "processors": [],
-        "maps": [], "templates": [], "entities": [],
-        "dialogs": [], "handlers": []
-    },
-
-    "processors": [
-        // ["module.ClassName", {params}]         ← default group
-        // ["group_id", "module.ClassName", {params}]  ← named group
-        ["render_system.some_processor:SomeProcessor", {"param": "value"}]
-    ],
-
-    "maps": [...],
-    "dialogs": [...],
-    "templates": [...],
-    "entities": [...],
-
-    "handlers": [
-        ["EVENT_TYPE", {
-            "id": "handler_id",
-            "actions": ["SCRIPT", "script_name", {"arg": "value"}]
-        }]
-    ]
-}
-```
-
-Entity definition inside `entities`:
-```jsonc
-{
-    "id": "player",
-    "components": [
-        {"type": "Position", "params": {"x": 5, "y": 5}},
-        {"type": "Brain",    "params": {"commands": [[null, "move", {"dx": 64}]]}}
-    ]
-}
-```
-
----
-
-## Writing Components
-
-```python
-from pgrpg.core.ecs import Component
-
-class MyComponent(Component):
-    __slots__ = ['value', 'active']
-
-    def __init__(self, value=0, active=True):
-        self.value = value
-        self.active = active
-
-    def reinit(self):
-        pass  # called on display config change
-```
-
-Place in the path matching `MODULEPATHS.COMPONENT_MODULE_PATH` (e.g. `example_game/core/components/my_component.py`).
-
-Reference in JSON: `{"type": "MyComponent", "params": {"value": 42}}`
-
----
-
-## Writing Processors
-
-```python
-from pgrpg.core.ecs import Processor, SkipProcessorExecution
-import example_game.core.components as c
-
-class MyProcessor(Processor):
-
-    def __init__(self, game_functions: dict, **kwargs):
-        super().__init__(**kwargs)
-        self._add_event = game_functions["FNC_ADD_EVENT"]
-
-    def process(self, events, keys, dt, **kwargs):
-        # Handles exec_cycle_step throttling. The throttle is signalled by
-        # SkipProcessorExecution, which every processor MUST catch itself:
-        # World._process does not, so letting it escape would abort every
-        # later processor in the same group for this cycle.
-        try:
-            super().process()
-        except SkipProcessorExecution:
-            return
-
-        for ent, [pos, mov] in self.world.get_components(c.Position, c.Movable):
-            # ... do work ...
-            pass
-```
-
-Place in `MODULEPATHS.PROCESSOR_MODULE_PATH`. Reference in scene JSON:
-```jsonc
-["my_processor_module:MyProcessor", {"step": 2}]
-```
-
-The `game_functions` dict keys available to processors are defined in `engine.py:init()`.
-
----
-
-## Writing Scripts (event action handlers)
-
-Scripts are Python modules loaded lazily by `ScriptManager`. Each must expose an `initialize(register, name)` function:
-
-```python
-def initialize(register, name):
-    register(_run, name)
-
-def _run(event, **kwargs):
-    # event.params contains the event parameters
-    # kwargs are the action arguments from JSON
-    pass
-```
-
-Place in `MODULEPATHS.SCRIPT_MODULE_PATH`. Reference in handler JSON:
-```jsonc
-"actions": ["SCRIPT", "my_script_module", {"arg": "value"}]
-```
-
----
-
-## AI: Brain + Commands
-
-Entities with a `Brain` component hold a command list. Each entry is a tuple:
-```python
-[exception_goto_index, "command_name", {"param": "value"}]
-```
-
-The `BrainProcessor` advances the brain's index each frame, adds the current command to `command_manager`, and moves to the next on success or jumps to `exception_goto_index` on failure.
-
-Command modules live in `MODULEPATHS.COMMAND_MODULE_PATH`. For more complex AI, `BTreeAI` and `BListAI` components use behavior trees (`resources/btrees/`) or parameterised command lists.
-
----
-
-## Running the example game
+Always from the **repository root** — `FILEPATHS.GAME_PATH` is relative and
+`pgrpg/core/config/defaults.jsonc` is a hardcoded relative path.
 
 ```bash
-# Install dependencies
 pip install -e .
 
-# Run with default scene (sokoban)
-python example_game/game.py
+python example_game/game.py                                # → dev console
+python example_game/game.py -s MAIN_MENU                   # → main menu
+python example_game/game.py -f games/sokoban/sokoban.jsonc  # → a scene (path relative to SCENE_PATH)
 
-# Run a specific scene (path is relative to SCENE_PATH in config, not project root)
-python example_game/game.py -f tests/01_movements/test_movement_01.jsonc
-python example_game/game.py -f games/sokoban/sokoban.jsonc
-
-# Start into main menu
-python example_game/game.py -s MAIN_MENU
-
-# Start into the dev console
-python example_game/game.py   # (default, no scene_file set)
+pytest tests/                                              # 186 tests, ~2 s
+python -m core.components.position -v                      # doctests, run from example_game/
 ```
 
-The in-game dev console (toggle with F9 by default) supports commands and `.scr` scripts for ad-hoc inspection and testing.
+The in-game dev console (F9) is the main introspection tool: `get_entities`, `get_components`,
+`get_processors`, `get_events`, `proc_perf`, `load_scene`.
 
----
+## Hard Rules
 
-## Testing
+1. **Never run `git commit` or `git push`.** The repository owner commits. Report the files you
+   changed.
+2. **Never hardcode a pixel size** for a sprite, tile, cull margin or UI slot. Read
+   `GAME["TILE_RES_PX"]` or derive from it — the test suite asserts correct rendering at 32, 64 and
+   96 px. See [`kb/_shared/resolution.md`](.claude/kb/_shared/resolution.md).
+3. **Every Processor must catch `SkipProcessorExecution` itself.** `World._process` does not, so an
+   escaping exception aborts every later processor in the group for that frame.
+4. **Components use `__slots__`** — memory and the base `__str__` both depend on it.
+5. **Managers are modules, not classes.** Do not instantiate them; call their functions.
+6. **Update the knowledge base in the same change** as any source change that alters behaviour it
+   describes ([`kb/RULES.md`](.claude/kb/RULES.md) Rule 12).
+7. **Do not use `experiments/` as a reference.** `experiments/ecs/` is an older whole copy of the
+   engine and is not imported by anything.
 
-```bash
-# Run all tests
-pytest tests/
-
-# Run a single test by name
-pytest tests/test_ecs.py::test_processor_execution_control
-
-# Run doctests in a component module
-python -m example_game.core.components.brain -v
-```
-
----
-
-## JSON Schemas
-
-JSON Schema (Draft-07) definitions for all components, commands, and processors live in `example_game/core/schemas/`. They are auto-generated from Python class signatures via `pgrpg/utils/` tools and can be used in editors for validation and auto-complete when authoring `.jsonc` scene/entity files.
-
-Top-level schemas: `scene.schema.json`, `entity.schema.json`, `template.schema.json`, `component.schema.json`, `command.schema.json`.
-
----
-
-## Key conventions
-
-- **Readability over performance** — prefer clear names and explicit code.
-- **No new files unless necessary** — extend existing components/processors.
-- **Aliases everywhere** — use entity string aliases in JSON; the engine resolves them to IDs automatically.
-- **UNIX wildcard patterns** in `cleanup` sections (`"enemy_*"`) for bulk removal when reloading scenes.
-- **C-style comments** (`// ...`) are supported in all `.jsonc` files.
-- **Processor priority** — higher number = processed first. Default group is `"default"`.
-- **One resolution** — all art is scaled to `GAME.TILE_RES_PX` at load time; never hardcode a sprite, tile or UI pixel size.
-- **`__slots__`** in Components — required for memory efficiency and the `__str__` implementation.
-- Managers are **modules, not classes** — do not instantiate them; call their functions directly.
+Fuller editing conventions — docstring style, naming, comment style, data-file conventions — are in
+[`.claude/kb/_shared/conventions.md`](.claude/kb/_shared/conventions.md).

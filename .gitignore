@@ -16,3 +16,6 @@ venv/
 # Ignore distro
 **/dist
 **/pgrpg.egg-info
+
+# Claude Code per-user settings. The knowledge base in .claude/kb/ IS tracked.
+.claude/settings.local.json
