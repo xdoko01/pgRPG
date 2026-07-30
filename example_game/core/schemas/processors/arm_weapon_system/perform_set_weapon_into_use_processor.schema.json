@@ -1,6 +1,6 @@
 {
 	"$id": "arm_weapon_system/perform_set_weapon_into_use_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "PerformSetWeaponIntoUseProcessor processor",
 	"description": "Processor: PerformSetWeaponIntoUseProcessor.",
 	"oneOf": [

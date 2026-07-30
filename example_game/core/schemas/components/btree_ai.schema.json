@@ -1,6 +1,6 @@
 {
 	"$id": "btree_ai.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "BTreeAI Component",
 	"description": "Assigns an AI as a behavioral tree to the entity",

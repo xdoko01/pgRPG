@@ -1,6 +1,6 @@
 {
 	"$id": "inventory_action.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "inventory_action command",
 	"description": "Perform the currently selected inventory action (use/activate highlighted item).",

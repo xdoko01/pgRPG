@@ -1,6 +1,6 @@
 {
 	"$id": "toggle_controls.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "toggle_controls command",
 	"description": "Swap the entity's active control mapping (keys and feedback) to a new set.",

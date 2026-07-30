@@ -1,6 +1,6 @@
 {
 	"$id": "pickup_system/remove_flag_is_about_to_pick_entity_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "RemoveFlagIsAboutToPickEntityProcessor processor",
 	"description": "Processor: RemoveFlagIsAboutToPickEntityProcessor.",
 	"oneOf": [

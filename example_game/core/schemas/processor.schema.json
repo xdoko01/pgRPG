@@ -1,6 +1,6 @@
 {
 	"$id": "processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "Processor",
 	"description": "Schema validating processors in scene files. A processor entry is an array with an optional group name, a module:ClassName reference string, and a params object.",
 	"oneOf": [

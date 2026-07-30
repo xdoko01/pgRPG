@@ -1,6 +1,6 @@
 {
 	"$id": "move_to_target.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_to_target command",
 	"description": "Move to the position of certain entity on the current map.",

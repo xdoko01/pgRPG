@@ -1,6 +1,6 @@
 {
 	"$id": "pick_item.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "pick_item command",
 	"description": "Pick up an item and add it to the entity's inventory.",

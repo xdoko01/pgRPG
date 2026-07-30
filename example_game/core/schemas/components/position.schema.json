@@ -1,6 +1,6 @@
 {
 	"$id": "position.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "Position Component",
 	"description": "Schema validating the Position component.",

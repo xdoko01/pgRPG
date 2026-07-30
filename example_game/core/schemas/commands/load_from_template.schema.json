@@ -1,6 +1,6 @@
 {
 	"$id": "load_from_template.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "load_from_template command",
 	"description": "Instantiate a new entity from a template definition.",

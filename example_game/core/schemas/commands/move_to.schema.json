@@ -1,6 +1,6 @@
 {
 	"$id": "move_to.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_to command",
 	"description": "Move to a tile position on the current map using pathfinding.",

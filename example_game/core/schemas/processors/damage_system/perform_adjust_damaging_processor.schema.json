@@ -1,6 +1,6 @@
 {
 	"$id": "damage_system/perform_adjust_damaging_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "PerformAdjustDamagingProcessor processor",
 	"description": "Processor: PerformAdjustDamagingProcessor.",
 	"oneOf": [

@@ -1,6 +1,6 @@
 {
 	"$id": "teleportable.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "Teleportable Component",
 	"description": "Schema validating the Teleportable component.",
@@ -21,7 +21,6 @@
 			"description" : "Parameters of the Positon component class - 'keys'.",
 			
 			"type": "object",
-			"required": ["keys"],
 			"allOf": [ { "$ref": "#/$defs/cond_params" } ],
 			"properties": {
 				"keys" : {

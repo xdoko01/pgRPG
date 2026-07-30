@@ -1,6 +1,6 @@
 {
 	"$id": "move_to_pos_target_vect.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_to_pos_target_vect command",
 	"description": "Move towards a target entity position using a direction vector (no pathfinding).",

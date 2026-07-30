@@ -1,6 +1,6 @@
 {
 	"$id": "test_damaged.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "test_damaged command",
 	"description": "Test if this entity has been damaged (optionally by specific entities). Returns SUCCESS if damaged.",
