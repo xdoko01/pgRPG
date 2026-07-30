@@ -177,7 +177,7 @@
             "in_game_console": {
                 "class": "logging.StreamHandler",
                 "formatter": "console_short",
-                "stream": "ext://pgrpg.core.managers.console_manager" // Module containing write function
+				"stream": "ext://pgrpg.core.config.console"
             },
             "file_handler_comp": {
                 "class": "logging.FileHandler",
