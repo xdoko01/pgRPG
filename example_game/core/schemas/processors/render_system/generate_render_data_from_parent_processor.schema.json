@@ -1,6 +1,6 @@
 {
 	"$id": "render_system/generate_render_data_from_parent_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "GenerateRenderDataFromParentProcessor processor",
 	"description": "Processor: GenerateRenderDataFromParentProcessor.",
 	"oneOf": [

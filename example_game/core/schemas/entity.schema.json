@@ -1,32 +1,39 @@
 {
 	"$id": "entity.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"description": "Schema validating entity",
 	"title": "Entity Schema",
 
+	"allOf": [ { "$ref": "#/$defs/entity_body" } ],
 	"required": ["id"],
-	"properties": {
-		"id": {
-			"description": "Entity unique id",
-			"type": "string"
-		},
-		"templates": {
-			"description": "Templates description",
-			"type": "array",
-			"items": {
-			  "type": "string"
-			},
-			"minItems": 0,
-			"uniqueItems": true
-		},
-		"components": {
-			"description": "Components list",
-			"type": "array",
-			"items":{
-				"$ref": "component.schema.json"
-			},
-			"minItems": 0,
-			"uniqueItems": true
+
+	"$defs": {
+		"entity_body": {
+			"title": "Entity body",
+			"description": "The shape of an entity definition without requiring an 'id'. Referenced directly where an entity is described but not registered by alias - a Factory prescription, for instance, where ecs_manager reads entity_def.get('id', None).",
+
+			"properties": {
+				"id": {
+					"description": "Entity unique id",
+					"type": "string"
+				},
+				"templates": {
+					"description": "Templates description",
+					"type": "array",
+					"items": { "$ref": "definitions.schema.json#/definitions/template_ref" },
+					"minItems": 0,
+					"uniqueItems": true
+				},
+				"components": {
+					"description": "Components list",
+					"type": "array",
+					"items":{
+						"$ref": "component.schema.json"
+					},
+					"minItems": 0,
+					"uniqueItems": true
+				}
+			}
 		}
 	}
 }

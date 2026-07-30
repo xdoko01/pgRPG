@@ -1,6 +1,6 @@
 {
 	"$id": "gui_pressable.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "Pressable Component",
 	"description": "Schema validating the Pressable component.",
@@ -31,7 +31,7 @@
 					"default": [],
 					"type": "array",
 					"items": {
-						"$ref": "../../schemas/command.schema.json"
+						"$ref": "../command.schema.json"
 					}
 				}
 			}

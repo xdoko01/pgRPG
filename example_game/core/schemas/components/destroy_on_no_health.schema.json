@@ -1,6 +1,6 @@
 {
 	"$id": "destroy_on_no_health.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "Destroy On No Health Component",
 	"description": "Schema validating the Destroy On No Health component.",

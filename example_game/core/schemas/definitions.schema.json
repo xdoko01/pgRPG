@@ -1,6 +1,6 @@
 {
 	"$id": "definitions.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"description": "File with definitions",
 
@@ -179,11 +179,49 @@
 
 		"entity_damage": {
 			"title": "Entity Damage",
-			"description": "Damage",
-			"examples": [100, 50, 1],
+			"description": "Damage. May also be a template variable, since entity and template definitions are parameterised before instantiation.",
+			"examples": [100, 50, 1, "$damage"],
 
-			"type": "integer",
-			"minimum": 0
+			"anyOf": [
+				{
+					"type": "integer",
+					"minimum": 0
+				},
+				{ "$ref": "#/definitions/template_var" }
+			]
+		},
+
+		"entity_template_path": {
+			"title": "Entity Template Path",
+			"description": "Path or id of an entity definition used as a template, relative to ENTITY_PATH and without the file extension. May carry parameters in brackets.",
+			"examples": ["effects/explosion", "thing/item", "t_tile_pos(5, 5, test_arena_sand)"],
+
+			"type": "string",
+			"minLength": 1
+		},
+
+		"template_ref": {
+			"title": "Template Reference",
+			"description": "A template to apply. Either a name string, optionally with parameters in brackets, or a [name, [args], {kwargs}] list. See pgrpg.functions.get_dict_params.",
+			"examples": [
+				"thing/item",
+				"t_tile_pos(5, 5, test_arena_sand)",
+				["thing/ammo/slash/regular_axe1_slash", ["$damage"]]
+			],
+
+			"anyOf": [
+				{ "$ref": "#/definitions/entity_template_path" },
+				{
+					"type": "array",
+					"prefixItems": [
+						{ "$ref": "#/definitions/entity_template_path" },
+						{ "type": "array" },
+						{ "type": "object" }
+					],
+					"minItems": 1,
+					"items": false
+				}
+			]
 		},
 
 		"entity_score": {

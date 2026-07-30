@@ -1,6 +1,6 @@
 {
 	"$id": "attack_system/generate_projectile_factory_data_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "GenerateProjectileFactoryDataProcessor processor",
 	"description": "Processor: GenerateProjectileFactoryDataProcessor.",
 	"oneOf": [

@@ -1,6 +1,6 @@
 {
 	"$id": "brain_ai.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "BrainAI Component",
 	"description": "Assigns an AI to the entity",

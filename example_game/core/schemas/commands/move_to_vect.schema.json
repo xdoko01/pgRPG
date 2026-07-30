@@ -1,6 +1,6 @@
 {
 	"$id": "move_to_vect.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "move_to_vect command",
 	"description": "Move to a pixel position on the current map using a direction vector.",

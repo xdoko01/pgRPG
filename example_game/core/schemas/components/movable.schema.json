@@ -1,6 +1,6 @@
 {
 	"$id": "movable.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "Movable Component",
 	"description": "Schema validating the Movable component.",
@@ -26,15 +26,23 @@
 			"properties": {
 				"velocity" : {
 					"title": "Velocity",
-					"description": "Speed of the movement.",
-					"type": "integer",
-					"exclusiveMinimum": 0
+					"description": "Speed of the movement. May also be a template variable, since entity and template definitions are parameterised before instantiation.",
+					"anyOf": [
+						{
+							"type": "integer",
+							"exclusiveMinimum": 0
+						},
+						{ "$ref": "../definitions.schema.json#/definitions/template_var" }
+					]
 				},
 				"accelerate" : {
 					"title": "Acceleration Rate",
-					"description": "Pace of acceleration.",
+					"description": "Pace of acceleration. May also be a template variable, since entity and template definitions are parameterised before instantiation.",
 					"default" : 0,
-					"type": "integer"
+					"anyOf": [
+						{ "type": "integer" },
+						{ "$ref": "../definitions.schema.json#/definitions/template_var" }
+					]
 				}
 			}
 		}

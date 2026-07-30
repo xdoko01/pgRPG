@@ -1,6 +1,6 @@
 {
 	"$id": "render_system/perform_clear_camera_processor.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "PerformClearCameraProcessor processor",
 	"description": "Processor: PerformClearCameraProcessor.",
 	"oneOf": [

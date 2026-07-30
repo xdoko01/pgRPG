@@ -1,6 +1,6 @@
 {
 	"$id": "visual_fx_on_collision.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "VisualFXOnCollision Component",
 	"description": "Schema validating the VisualFXOnCollision component.",
@@ -23,7 +23,7 @@
 			"required": ["effect"],
 			"properties": {
 				"effect" : {
-					"$ref": "../definitions.schema.json#/definitions/entity_model_file"
+					"$ref": "../definitions.schema.json#/definitions/entity_template_path"
 				},
 				"fixed_position": {
 					"type": "boolean"

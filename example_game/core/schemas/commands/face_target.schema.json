@@ -1,6 +1,6 @@
 {
 	"$id": "face_target.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "face_target command",
 	"description": "Rotate the entity to face towards a target entity.",

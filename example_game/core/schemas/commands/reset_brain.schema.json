@@ -1,6 +1,6 @@
 {
 	"$id": "reset_brain.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "reset_brain command",
 	"description": "Remove and substitute commands in entity's brain with new commands.",

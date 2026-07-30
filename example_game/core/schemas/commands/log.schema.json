@@ -1,6 +1,6 @@
 {
 	"$id": "log.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "log command",
 	"description": "Log a text message to the game logger.",

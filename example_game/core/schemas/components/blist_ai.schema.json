@@ -1,6 +1,6 @@
 {
 	"$id": "blist_ai.schema.json",
-	"$schema": "https://json-schema.org/draft-07/schema",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 
 	"title": "BListAI Component",
 	"description": "Assigns an AI in a form of a list of commands to the entity",
