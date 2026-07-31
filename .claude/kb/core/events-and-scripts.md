@@ -4,7 +4,7 @@
 > `pgrpg/core/managers/script_manager.py`, `pgrpg/core/events/event.py`,
 > `pgrpg/functions/json_logic.py`, `example_game/core/processors/event_system/game_events_processor.py`,
 > `example_game/core/scripts/*.py`; the emitted event-type set re-derived from every
-> `Event(...)` construction in `pgrpg/` and `example_game/` (#98) @ `d3b3bc58`
+> `Event(...)` construction in `pgrpg/` and `example_game/` (#98) @ `093af889`
 
 Events are how the ECS talks to the **data layer**. A processor detects something, enqueues an
 `Event`, and the scene file decides what happens — without any Python change.
