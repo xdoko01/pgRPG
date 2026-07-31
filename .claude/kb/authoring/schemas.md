@@ -2,8 +2,8 @@
 
 > Last updated: 2026-07-30 | Verified by: Source-verified
 > `example_game/core/schemas/{scene,entity,template,component,command,processor,definitions}.schema.json`
-> and `components/position.schema.json`; Runtime-verified — every template reference and every
-> `module:ClassName` string in `resources/` was validated against the fixed fragments (#95)
+> and `components/position.schema.json`; Runtime-verified — all 1349 template references and all 54
+> `module:ClassName` strings in `resources/` validate against the fixed fragments (#95) @ `14963a10`
 
 The schemas exist for **editor support while authoring**. Nothing in the engine validates against
 them at load time; the engine's validation is the `assert`/`ValueError` pattern inside each component
