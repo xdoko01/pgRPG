@@ -2,7 +2,7 @@
 
 > Last updated: 2026-07-30 | Verified by: Source-verified across `pgrpg/` and `example_game/`;
 > Runtime-verified where marked (unbound `finalize()` → `TypeError`; explicit `.toml` load →
-> `ValueError`; `pytest tests/` → 194 passed) @ `14963a10`
+> `ValueError`; `pytest tests/` → 194 passed) @ `093af889`
 
 This is the **single canonical source** for whether a capability actually works. It exists because
 several parts of this engine are half-built, superseded or provably broken, and an agent that assumes
@@ -118,7 +118,7 @@ documenting it.
 | `TILE_RES_PX` change at runtime | **BROKEN** | Grid maths follows, images do not. `RenderableModel` has no `reinit()`; maps are outside the reinit sweep. Set it in config and restart. Tracked as #76. [detail](_shared/resolution.md#set-it-at-start-up-only) |
 | `docs/old/`, `experiments/` | **SUPERSEDED** | `experiments/ecs/` is an older whole copy of the engine. Not imported anywhere; excluded from the package |
 | `schemas/components/_old/` | **SUPERSEDED** | Not referenced by `component.schema.json` |
-| `MESSAGES.ON_EVENT` templates for `KILL`, `WEARABLE_WEARED`, `PHASE_START` | **BROKEN** | No processor emits those types. The destroy system emits `KILLED`, not `KILL`. Tracked as #98 |
+| In-game message on `KILLED`, `ITEM_DROP`, `DESTROYED` | **BROKEN** | No `MESSAGES.ON_EVENT` template matches, so these emitted events are silent. [#98](https://github.com/xdoko01/pgRPG/issues/98) deleted the dead `KILL` / `WEARABLE_WEARED` / `PHASE_START` templates and pruned `Event.EVENT_TYPES` to the 18 emitted types, but deleted `KILL` rather than renaming it to `KILLED` — so kill messages remain absent. [detail](core/events-and-scripts.md#event-types-in-practice) |
 
 ## 6. Tests
 
