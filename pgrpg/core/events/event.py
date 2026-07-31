@@ -14,10 +14,18 @@ class Event:
 		params: Dict of additional event parameters.
 	"""
 
-	EVENT_TYPES = ['COLLISION', 'TELEPORTATION', 'ITEM_PICKUP',
-		 'WEARABLE_WEARED', 'WEAPON_ARMED', 'AMMO_PACK_ARMED', 'AMMO_PACK_DISARMED',
-		 'DAMAGE', 'KILL', 'SCORE',
-		 'SCENE_START', 'PHASE_START']
+	# Every type any processor actually emits, verified by grepping Event(...)
+	# constructions across pgrpg/ and example_game/ (#98). Documentation only:
+	# the assert below is disabled, and a scene may legitimately invent its own
+	# type (e.g. 'CUST_UI_CONFIRM', raised by the show_confirm_dlg script), so
+	# this list is not a closed set to validate against.
+	EVENT_TYPES = ['SCENE_START', 'COLLISION', 'TELEPORTATION',
+		 'ITEM_PICKUP', 'ITEM_DROP',
+		 'WEAPON_ARMED', 'WEAPON_DISARMED', 'WEAPON_SET_INTO_USE',
+		 'AMMO_PACK_ARMED', 'AMMO_PACK_DISARMED',
+		 'DAMAGE', 'KILLED', 'DESTROYED', 'SCORE',
+		 'ON_POS_TARGET', 'ON_BUTTON_PRESSED',
+		 'CAN_SEE', 'CAN_HEAR']
 
 	def __init__(self, event_type, generator_obj, other_obj, params={}):
 

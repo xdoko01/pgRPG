@@ -3,7 +3,8 @@
 > Last updated: 2026-07-30 | Verified by: Source-verified `pgrpg/core/managers/event_manager.py`,
 > `pgrpg/core/managers/script_manager.py`, `pgrpg/core/events/event.py`,
 > `pgrpg/functions/json_logic.py`, `example_game/core/processors/event_system/game_events_processor.py`,
-> `example_game/core/scripts/*.py` @ `c7b9a5f1`
+> `example_game/core/scripts/*.py`; the emitted event-type set re-derived from every
+> `Event(...)` construction in `pgrpg/` and `example_game/` (#98) @ `d3b3bc58`
 
 Events are how the ECS talks to the **data layer**. A processor detects something, enqueues an
 `Event`, and the scene file decides what happens — without any Python change.
@@ -78,7 +79,7 @@ game that is `GameEventsExProcessor`, placed explicitly in the scene's `processo
 
 ```jsonc
 ["event_system.game_events_processor:GameEventsExProcessor",
- {"process": ["SCENE_START", "PHASE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}]
+ {"process": ["SCENE_START", "ON_POS_TARGET", "CUST_UI_CONFIRM"]}]
 ```
 
 `process_events(process=None, ignore=None)` drains the whole queue every call:
@@ -210,9 +211,15 @@ Emitted by engine/game code (grepped from every `Event(...)` construction): `SCE
 `WEAPON_SET_INTO_USE`, `AMMO_PACK_ARMED`, `AMMO_PACK_DISARMED`, `DAMAGE`, `KILLED`, `DESTROYED`,
 `SCORE`, `ON_POS_TARGET`, `ON_BUTTON_PRESSED`, `CAN_SEE`, `CAN_HEAR`.
 
-`Event.EVENT_TYPES` and `MESSAGES.ON_EVENT` also list `WEARABLE_WEARED`, `KILL` and `PHASE_START`,
-none of which any processor emits. `KILL` in particular is dead — the destroy system emits `KILLED`,
-so the `KILL` message template never fires.
+`Event.EVENT_TYPES` is exactly that list since #98; it used to carry `WEARABLE_WEARED`, `KILL` and
+`PHASE_START`, which nothing emits. It remains **documentation only** — the `assert` in `Event.__init__`
+is commented out, and it cannot become a closed set while scenes invent their own types (see
+`CUST_UI_CONFIRM` below).
+
+> ⚠️ `KILLED` has **no** `MESSAGES.ON_EVENT` template, so a kill still produces no in-game message.
+> The dead `KILL` key was deleted rather than renamed. `ITEM_DROP`, `WEAPON_DISARMED`,
+> `WEAPON_SET_INTO_USE`, `DESTROYED`, `ON_POS_TARGET`, `ON_BUTTON_PRESSED` are silent for the same
+> reason; for `CAN_SEE` / `CAN_HEAR` that silence is deliberate.
 
 Handled in shipped scenes: `SCENE_START` (83 handlers), `WEAPON_ARMED`, `CUST_UI_CONFIRM`,
 `ITEM_PICKUP`, `ON_BUTTON_PRESSED`, `AMMO_PACK_ARMED`, `SCORE`, `DESTROYED`, `ON_POS_TARGET`.

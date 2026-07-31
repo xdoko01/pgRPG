@@ -28,8 +28,8 @@ class GameEventsExProcessor(Processor):
     def __init__(self, game_event_handler, *args, **kwargs):
         ''' Example of instance creation
 
-            processors.GameEventsExProcessor(process_game_events, ignore=('PHASE_START', 'SCENE_START'))
-            processors.GameEventsExProcessor(process_game_events, process=('PHASE_START', 'SCENE_START'))
+            processors.GameEventsExProcessor(process_game_events, ignore=('COLLISION', 'SCENE_START'))
+            processors.GameEventsExProcessor(process_game_events, process=('COLLISION', 'SCENE_START'))
         '''
 
         super().__init__(*args, **kwargs)

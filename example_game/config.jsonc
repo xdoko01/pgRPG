@@ -67,8 +67,7 @@
             "AMMO_PACK_DISARMED": ["Ammo pack {} was disarmed from {}.", ["generator_obj", "other_obj"]],
             "DAMAGE": ["Entity {} was hit by entity {}.", ["generator_obj", "other_obj"]],
             "SCORE": ["Entity {} has scored.", ["generator_obj"]],
-            "SCENE_START": ["Scene {} has started.", ["generator_obj"]],
-            "PHASE_START": ["Phase {} has started.", ["generator_obj"]]
+            "SCENE_START": ["Scene {} has started.", ["generator_obj"]]
 		},
 		"DEFAULT_TTL_MS" : 10000
 	},
