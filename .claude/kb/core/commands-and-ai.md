@@ -271,8 +271,17 @@ new_ai_struct['cmd_list']]`) before running the `cmd_factory` over the `command`
 the caller's definition would be consumed and could not be reused on restart or shared between
 entities.
 
-`loop_counter` is a **single** counter on the generator, not per line, so nested `Loop` lines in one
-list interfere. Use one loop per list, or a `BTree`, if you need nesting.
+`loop_counter` is a **single** counter on the generator, not one per line
+(`blist.py:112-118`, reset at `:172`). **Sequential loops are fine** — the counter is reset to 0 when
+a loop completes, so two loops one after another each get their full count. **Nested loops never
+terminate**: the inner loop resets the counter the outer loop is also reading, so the outer loop never
+reaches its `repeat` value.
+
+> Corrected 2026-07-30: previously stated that any two `Loop` lines in one list interfere.
+> Runtime-verified — sequential loops behave correctly; only nesting is broken, and it hangs rather
+> than miscounting.
+
+Use `Repeater` / `RepeatUntilFail` in a `BTree` if you need nested repetition.
 
 `BList.print()` highlights the running line in yellow.
 
