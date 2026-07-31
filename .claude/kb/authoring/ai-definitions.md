@@ -63,8 +63,10 @@ Indices are 0-based positions in the list. Running past either end finishes the 
 `get_command()` then returns `(None, False)` for the rest of the entity's life, and the entity stops
 acting. A `Goto` back to 0 is how you make it loop forever.
 
-`Loop` uses a **single** `loop_counter` on the generator, not one per line, so two `Loop` lines in the
-same list interfere. One loop per list, or use a `BTree`.
+`Loop` uses a **single** `loop_counter` on the generator, not one per line. Sequential loops are fine.
+**Do not nest loops** — a nested `Loop` never terminates, because the inner loop resets the counter the
+outer one is reading. Use a `BTree` `Repeater` for nested repetition. See
+[../SCOPE.md](../SCOPE.md).
 
 Minimal infinite command — the projectile idiom:
 
