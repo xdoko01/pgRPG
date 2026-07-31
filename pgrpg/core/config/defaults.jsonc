@@ -107,17 +107,7 @@
     //example collision - that would generat too much unncesessary messages)
     "MESSAGES": {
         "ON_EVENT": {
-            "TELEPORTATION": ["Entity {} was teleported using teleport {}.", ["generator_obj", "other_obj"]],
-            "ITEM_PICKUP": ["Entity {} was picked up by entity {}.", ["generator_obj", "other_obj"]],
-            "WEARABLE_WEARED": ["Entity {} weared {}.", ["generator_obj", "other_obj"]],
-            "WEAPON_ARMED": ["Entity {} picked up weapon {}.", ["other_obj", "generator_obj"]],
-            "AMMO_PACK_ARMED": ["Entity {} picked up ammo pack {}.", ["other_obj", "generator_obj"]],
-            "AMMO_PACK_DISARMED": ["Ammo pack {} was disarmed from {}.", ["generator_obj", "other_obj"]],
-            "DAMAGE": ["Entity {} was hit by entity {}.", ["generator_obj", "other_obj"]],
-            "SCORE": ["Entity {} has scored.", ["generator_obj"]],
-            "KILL": ["Entity {} was killed by entity {}.", ["other_obj", "generator_obj"]],
-            "SCENE_START": ["Scene {} has started.", ["generator_obj"]],
-            "PHASE_START": ["Phase {} has started.", ["generator_obj"]]
+            //"SCENE_START": ["Scene {} has started.", ["generator_obj"]]
         },
         "DEFAULT_TTL_MS" : 2000
     },
@@ -187,7 +177,7 @@
             "in_game_console": {
                 "class": "logging.StreamHandler",
                 "formatter": "console_short",
-                "stream": "ext://pgrpg.core.managers.console_manager" // Module containing write function
+				"stream": "ext://pgrpg.core.config.console"
             },
             "file_handler_comp": {
                 "class": "logging.FileHandler",

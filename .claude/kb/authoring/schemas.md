@@ -2,8 +2,8 @@
 
 > Last updated: 2026-07-30 | Verified by: Source-verified
 > `example_game/core/schemas/{scene,entity,template,component,command,processor,definitions}.schema.json`
-> and `components/position.schema.json`; Runtime-verified — the `class_def` and `template_str_def`
-> regex patterns were tested against real values and match nothing @ `c7b9a5f1`
+> and `components/position.schema.json`; Runtime-verified — every template reference and every
+> `module:ClassName` string in `resources/` was validated against the fixed fragments (#95)
 
 The schemas exist for **editor support while authoring**. Nothing in the engine validates against
 them at load time; the engine's validation is the `assert`/`ValueError` pattern inside each component
@@ -38,8 +38,11 @@ Put a `$schema` reference at the top of the scene file, with the right number of
 ```
 
 VS Code resolves relative `$schema` paths, giving hover documentation, completion and inline errors.
-This is the only mechanism — there is no CLI validation step and no test that validates the shipped
-scenes.
+That is the only mechanism *while authoring* — there is no CLI validation step. In CI,
+`tests/example_game/test_resource_schemas.py` sweeps the shipped `resources/` and validates every
+component definition against its per-component schema, every template reference against
+`#/definitions/template_ref`, and every `module:ClassName` string against `#/definitions/class_def`.
+It is a **ratchet**: `KNOWN_VIOLATIONS` records the component types still failing, as ceilings.
 
 ## What a per-component schema gives you
 
@@ -73,21 +76,41 @@ These matter because a schema that silently matches nothing gives no editor warn
 
 | Defect | Detail |
 |--------|--------|
-| **`definitions.schema.json#/basics/class_def` pattern matches nothing** | `^\([a-z]+\.\)*[a-z]+:[A-Z][a-z]+$` — `\(` and `\)` are **literal parentheses**, not a group, so the pattern demands a leading `(`. Tested: `movable:Movable`, `position:Position`, `renderable_model:RenderableModel` and `brain_ai:BrainAI` all fail. Even read as intended it would reject underscores and multi-capital class names. Currently `$ref`d by nothing, so harmless. |
-| **`template_str_def` / `template_list_def` patterns match nothing** | Same `\(...\)` mistake, plus a mandatory trailing `(...)` that plain paths like `model/body/special/minotaur` do not have. These **are** `$ref`d, from `template.schema.json`'s `templates` array via `#/basics/template_def`. |
-| **`prefixItems` / `items: false` in a Draft-07 document** | `template_list_def` uses Draft 2020-12 vocabulary. A Draft-07 validator ignores both keywords, so the tuple constraint has no effect. |
-| **`basics` is not a schema keyword** | `definitions.schema.json` puts fragments under a top-level `basics` key as well as the standard `definitions`. `$ref "#/basics/..."` resolves by JSON Pointer, so it works — but a validator will not treat those subschemas as definitions, and some tooling will not follow them. |
 | **`cleanup.processors` typed as `array of string`** | The loader requires `[group_id, "module:Class"]`. See [../core/scene-pipeline.md](../core/scene-pipeline.md#-cleanupprocessors-does-not-work). |
 | **`scene.schema.json` uses `minLength` on arrays** | `prereqs` has `"minLength": 0` where `minItems` is the array keyword. No-op. |
 | **`processors`, `maps`, `dialogs`, `handlers` are untyped arrays** | `scene.schema.json` declares them `"type": "array"` with no `items`, so nothing validates their contents — despite `processor.schema.json` and `command.schema.json` existing. Wiring those in is the single biggest available improvement. |
 
-A related class of bug was fixed recently: issue #80, *"`$ref` beside `properties`/`required`
-disabled params validation"* (commit `69ff7e92`). If a schema appears to validate nothing, check
-whether a sibling `$ref` is shadowing the local keywords.
+## One template reference definition, not two
+
+A template is applied either as a string (`"t_tile_pos(5, 5, test_arena_sand)"`) or as a list — the
+four forms `pgrpg.functions.str_utils.parse_fnc_list` accepts: `[name]`, `[name, [args]]`,
+`[name, {kwargs}]`, `[name, [args], {kwargs}]`. **`definitions.schema.json#/definitions/template_ref`
+is the single definition of that shape**, `$ref`d from both `entity.schema.json` and
+`template.schema.json`.
+
+Do not add a second one. The `basics/template_str_def` / `template_list_def` / `template_def` set
+removed in #95 was exactly that: a parallel definition that drifted until it matched nothing, while
+the copy next to it stayed correct.
+
+Note the distinction between two identically named keys:
+
+- a **scene's** `templates` holds whole template *definitions* (`template.schema.json` documents);
+- a **template's** or **entity's** `templates` holds *references* (`template_ref`).
+
+## Bugs of this shape, already fixed
+
+These share one failure mode — a schema that looks authoritative but validates less than it appears
+to, with no editor warning to say so.
+
+| Issue | What it was |
+|-------|-------------|
+| [#80](https://github.com/xdoko01/pgRPG/issues/80) | A `$ref` beside `properties`/`required` shadowed the local keywords, disabling params validation (commit `69ff7e92`). If a schema appears to validate nothing, check for a sibling `$ref`. |
+| [#83](https://github.com/xdoko01/pgRPG/issues/83) | Documents declared draft-07 while relying on `prefixItems`, which draft-07 ignores — tuple validation was silently off across 148 files. All schemas now declare `2020-12`. |
+| [#95](https://github.com/xdoko01/pgRPG/issues/95) | `\(` / `\)` used as grouping in three patterns; in ECMA-262 they are literal parens, so each pattern demanded a leading `(` and matched nothing. |
 
 ## Adding a schema for a new component
 
-1. Create `components/<module>.schema.json` with `$id`, `$schema` (draft-07), `title`,
+1. Create `components/<module>.schema.json` with `$id`, `$schema` (2020-12), `title`,
    `description`, `examples`, `required: ["type", "params"]`, `type` as a single-value `enum`, and
    per-param `properties`.
 2. Allow `template_var` alongside each param's real type, so the component can be used inside a
