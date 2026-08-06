@@ -20,7 +20,7 @@
 - **Managers are modules, not classes.** Call their functions; never instantiate (Hard Rule 5).
 - **Update the knowledge base in the same change** as any source change that alters behaviour it describes (Hard Rule 6, `kb/RULES.md` Rule 12). Task 12 collects this.
 - **Run everything from the repository root.** `FILEPATHS.GAME_PATH` is relative and `pgrpg/core/config/defaults.jsonc` is a hardcoded relative path.
-- Test command: `pytest tests/` — **186 tests currently pass; that number must never regress.**
+- Test command: `pytest tests/` — **194 tests currently pass on `master`; that number must never regress.** (`CLAUDE.md` still says 186; it is stale, verified 2026-08-06. Correcting it is part of Task 12.)
 - Design priority: **clarity and readability over performance.**
 - Do not use `experiments/` as a reference (Hard Rule 7).
 
@@ -174,7 +174,7 @@ Expected: **PASS**. If it fails, the harness is wrong, not the engine — fix th
 - [ ] **Step 5: Confirm the full suite is green**
 
 Run: `pytest tests/`
-Expected: all 186 existing tests pass, plus the 1 new test — 187 total. **Record the exact number printed.** Later tasks are specified as "the previous total plus N new tests" rather than absolute counts, so this figure is the baseline for every later check.
+Expected: all 194 existing tests pass, plus the 1 new test — 195 total. **Record the exact number printed.** Later tasks are specified as "the previous total plus N new tests" rather than absolute counts, so this figure is the baseline for every later check.
 
 - [ ] **Step 6: Checkpoint**
 
@@ -2577,6 +2577,13 @@ In `.claude/kb/reference/index.md`, add `PerformGUIDrawProcessor` and note the n
 
 In `.claude/kb/SCOPE.md`, move command record/playback to reproducible, and update the `TILE_RES_PX` entry — changing it no longer changes game speed, though it still requires a restart.
 
+- [ ] **Step 7b: Correct the stale test count in CLAUDE.md**
+
+`CLAUDE.md` states `tests/                  pytest suite — 186 tests`. The real
+figure on `master` was **194** before this plan and 242 after it (194 + 48).
+Update that line, and re-check the neighbouring counts in the same block (scene,
+entity, component and processor totals) rather than trusting them.
+
 - [ ] **Step 8: Verify the KB is internally consistent**
 
 Run:
@@ -2590,7 +2597,7 @@ Read each hit and confirm none still describes the old single-clock behaviour or
 - [ ] **Step 9: Final full verification**
 
 Run: `pytest tests/`
-Expected: the Task 11 total, unchanged — 186 original tests plus 48 added across this plan (1 + 8 + 7 + 14 + 5 + 4 + 7 + 2 from Tasks 1, 2, 3, 6, 7, 8, 9 and 11).
+Expected: the Task 11 total, unchanged — 194 original tests plus 48 added across this plan (1 + 8 + 7 + 14 + 5 + 4 + 7 + 2 from Tasks 1, 2, 3, 6, 7, 8, 9 and 11).
 
 Run: `python example_game/game.py -s MAIN_MENU`
 Expected: menu works, a scene loads from it, gameplay is smooth at the correct speed.
