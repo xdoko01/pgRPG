@@ -97,7 +97,18 @@
 		// config only - it would propagate a new number here, but already-loaded
 		// maps and models are not re-normalized, leaving grid maths and sprites
 		// at different sizes. See CLAUDE.md "Sprite resolution".
-		"TILE_RES_PX": 64
+		"TILE_RES_PX": 64,
+
+		// Simulation steps per second — the fixed timestep. The simulation
+		// advances only in chunks of 1000/SIM_HZ ms, so game speed is a
+		// property of the game rather than of the machine's frame rate.
+		// Rendering rate is separate: see DISPLAY.MAX_FPS.
+		"SIM_HZ": 60,
+
+		// Most simulation steps one real frame may run while catching up.
+		// Caps the work a long stall can schedule; simulated time beyond the
+		// cap is discarded rather than replayed. See pgrpg/core/timestep.py.
+		"MAX_CATCHUP_STEPS": 5
 	},
 
     //MESSAGES contain format of message that should be generated
