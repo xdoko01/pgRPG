@@ -67,7 +67,8 @@ def plan_steps(accumulator_ms: float,
     # A tiny epsilon guards against float error understating a budget that is
     # exactly (or almost exactly) a whole number of steps — e.g. repeatedly
     # summing 1000/60 can land a hair below the next multiple, which would
-    # otherwise bank a spurious near-full step and drift the sim clock.
+    # otherwise floor to one step short and drift the sim clock behind real
+    # time.
     steps = int((budget_ms + 1e-9) // step_ms)
 
     # Defensive: a caller passing an over-large accumulator cannot exceed the cap.
