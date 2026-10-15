@@ -508,19 +508,15 @@ class World:
         return [query for query in self._get_components_opt(*component_types, **kwargs)]
 
 
-    def try_component(self, entity: int, component_type: type[Component]) -> Optional[Component]:
-        """Return a Component for an Entity, or None if it doesn't exist."""
-        if component_type in self._entities[entity]:
-            return self._entities[entity][component_type]
-        else:
-            return None
+    def try_component(self, entity, component_type):
+        """Safely returns a component for an entity without throwing a KeyError."""
+        return self._entities.get(entity, {}).get(component_type)
 
-    def try_components(self, entity: int, *component_types: type):
-        """Yield all requested Components for an Entity, or None if any are missing."""
-        if all(comp_type in self._entities[entity] for comp_type in component_types):
-            yield [self._entities[entity][comp_type] for comp_type in component_types]
-        else:
-            return None
+    def try_components(self, entity):
+        """Safely returns all components for an entity or an empty dictionary."""
+        return self._entities.get(entity, {})
+
+
 
     def _clear_dead_entities(self):
         """Finalize deletion of any Entities that are marked dead.

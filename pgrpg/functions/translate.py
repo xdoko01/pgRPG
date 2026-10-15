@@ -28,14 +28,11 @@ def translate(trans_dict, value, prefix=''):
     """
     try:
         if isinstance(value, dict):
-            translated_dict = {}
-            for i_key, i_value in value.items():
-                translated_dict = {**translated_dict, **{i_key : translate(trans_dict, i_value, prefix)}}
-            return translated_dict
+            return {i_key: translate(trans_dict, i_value, prefix) for i_key, i_value in value.items()}
         elif isinstance(value, list):
             return [translate(trans_dict, item, prefix) for item in value]
         elif isinstance(value, tuple):
-            return tuple([translate(trans_dict, item, prefix) for item in value])
+            return tuple(translate(trans_dict, item, prefix) for item in value)
 
 
         # Extra part only due to prefix functionality.

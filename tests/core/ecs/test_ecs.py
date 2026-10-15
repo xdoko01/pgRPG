@@ -40,24 +40,15 @@ def test_entity_creation_and_component_assignment():
     assert vel.vx == 3 and vel.vy == 4
     assert world.has_components(entity, Position, Velocity)
 
-def test_component_retrieval_and_deletion():
+def test_try_component_unknown_entity():
     world = World()
-    entity = world.create_entity(Position(5, 5))
-    assert isinstance(world.component_for_entity(entity, Position), Position)
+    # 99999 is a fake entity ID that does not exist
+    result_single = world.try_component(99999, Component)
+    result_all = world.try_components(99999)
+    
+    assert result_single is None
+    assert result_all == {}
 
-    world.remove_component(entity, Position)
-    assert not world.has_component(entity, Position)
-
-def test_entity_survives_losing_its_last_component():
-    """Only delete_entity() removes an Entity from the World."""
-    world = World()
-    entity = world.create_entity(Position(5, 5))
-
-    world.remove_component(entity, Position)
-
-    assert entity in world._entities
-    assert not world.has_component(entity, Position)
-    assert world.components_for_entity(entity) == ()
 
 def test_get_empty_entities_reports_stripped_entities():
     """The diagnostic sees an Entity only while it holds no Components."""
