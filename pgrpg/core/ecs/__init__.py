@@ -69,6 +69,13 @@ class Processor:
     cycle = None # Added by xdoko01 to note the cycle of processor for debug reasons
     exec_cycle_step = None # Added by xdoko01 to note that the process fnc should be called every exec_cycle, ie. not every cycle
 
+    # Which of the two clocks drives this processor. 'sim' processors run on
+    # the fixed timestep; 'render' processors run once per real frame and may
+    # read the interpolation factor from kwargs['alpha']. Classification is a
+    # property of the processor, not of the scene that lists it, so scene
+    # files never mention it. See .claude/kb/ecs/processors.md.
+    STAGE = 'sim'
+
     def __init__(self, *args, **kwargs):
         """Initialize cycle counter and execution throttle.
 
@@ -156,8 +163,20 @@ class World:
         self._entities.clear()
         self.clear_cache()
 
+    def _group_keys(self, proc_group_id: str=None, stage: str=None) -> list:
+        """Return registry keys matching a group and/or stage.
+
+        ``None`` means "any", so ``_group_keys()`` returns every key.
+        """
+        return [key for key in self._processors
+                if (proc_group_id is None or key[0] == proc_group_id)
+                and (stage is None or key[1] == stage)]
+
     def add_processor(self, processor_instance: Processor, proc_group_id: str='default', priority=0) -> None:
         """Add a Processor instance to the World.
+
+        The processor lands in the group keyed by ``(proc_group_id, STAGE)``,
+        where ``STAGE`` comes from the processor's class.
 
         Args:
             processor_instance: A Processor subclass instance.
@@ -168,46 +187,49 @@ class World:
         processor_instance.priority = priority
         processor_instance.world = self
 
-        self._processors[proc_group_id].append(processor_instance) # changed by xdoko01 to support processor groups
-        self._processors[proc_group_id].sort(key=lambda proc: proc.priority, reverse=True) # changed by xdoko01 to support processor groups
+        key = (proc_group_id, processor_instance.STAGE)
+        self._processors[key].append(processor_instance)
+        self._processors[key].sort(key=lambda proc: proc.priority, reverse=True)
 
-        logger.debug(f'Processor instance "{processor_instance}" added to the processor group "{proc_group_id}".')
-        logger.debug(f'Processor Group "{proc_group_id}" now contains the following processors: "{self._processors[proc_group_id]}".')
+        logger.debug(f'Processor instance "{processor_instance}" added to the processor group "{key}".')
+        logger.debug(f'Processor Group "{key}" now contains the following processors: "{self._processors[key]}".')
 
-    def remove_processor(self, processor_type: Processor, proc_group_id: str='default') -> None:
+    def remove_processor(self, processor_type: Processor, proc_group_id: str='default', stage: str=None) -> None:
         """Remove a Processor from the World by type.
 
         Args:
             processor_type: The class type of the Processor to remove.
             proc_group_id: Group to remove the processor from.
+            stage: Stage to remove from; None means every stage of the group.
         """
-        #for processor in self._processors:
-        for processor in self._processors[proc_group_id]: # changed by xdoko01 to support processor groups
-            if type(processor) == processor_type:
-                processor.world = None
-                self._processors[proc_group_id].remove(processor) # changed by xdoko01 to suppoet processor groups
+        for key in self._group_keys(proc_group_id, stage):
+            for processor in self._processors[key].copy():
+                if type(processor) == processor_type:
+                    processor.world = None
+                    self._processors[key].remove(processor)
 
     def clear_processors(self) -> None:
         """Remove all processors from all groups."""
-        for proc_group_id, proc_group in self._processors.copy().items():
+        for key, proc_group in self._processors.copy().items():
             for processor in proc_group:
                 processor.world = None
-                self._processors[proc_group_id].remove(processor)
+                self._processors[key].remove(processor)
 
-    def get_processor(self, processor_type: type[Processor], proc_group_id: str='default') -> Processor:
+    def get_processor(self, processor_type: type[Processor], proc_group_id: str=None, stage: str=None) -> Processor:
         """Get a Processor instance by type.
 
         Args:
             processor_type: The Processor class type to retrieve.
-            proc_group_id: Group to search in.
+            proc_group_id: Group to search in; None searches every group.
+            stage: Stage to search in; None searches every stage.
 
         Returns:
             The matching Processor instance, or None if not found.
         """
-
-        for processor in self._processors[proc_group_id]:
-            if type(processor) == processor_type:
-                return processor
+        for key in self._group_keys(proc_group_id, stage):
+            for processor in self._processors[key]:
+                if type(processor) == processor_type:
+                    return processor
 
     def create_entity(self, *components) -> int:
         """Create a new Entity, optionally with initial Components.
@@ -542,52 +564,46 @@ class World:
         self._dead_entities.clear()
         self.clear_cache()
 
-    def _process(self, proc_group_id: str='default', *args, **kwargs):
-        
-        for processor in self._processors[proc_group_id]:
+    def _process(self, proc_group_id: str='default', stage: str='sim', *args, **kwargs):
+
+        for processor in self._processors[(proc_group_id, stage)]:
             processor.process(*args, **kwargs)
 
-    def _timed_process(self, proc_group_id: str='default', *args, **kwargs):
+    def _timed_process(self, proc_group_id: str='default', stage: str='sim', *args, **kwargs):
         """Track Processor execution time for benchmarking."""
-        
-        '''old code using time library
-        for processor in self._processors[proc_group_id]:
-            start_time = _time.process_time()
-            processor.process(*args, **kwargs)
-            process_time = int(round((_time.process_time() - start_time) * 1000, 2))
-            self.process_times[processor.__class__.__name__] = process_time
-        '''
 
-        for processor in self._processors[proc_group_id]:
+        for processor in self._processors[(proc_group_id, stage)]:
             start_time = pygame.time.get_ticks()
             processor.process(*args, **kwargs)
             process_time = pygame.time.get_ticks() - start_time
             self.process_times[processor.__class__.__name__] += process_time # cumulate the process times in ms
 
-    def process(self, proc_group_id: str='default', *args, **kwargs) -> None:
-        """Process all Processors in priority order, clearing dead entities first.
+    def process(self, proc_group_id: str='default', stage: str='sim', *args, **kwargs) -> None:
+        """Process one stage of one processor group, in priority order.
 
         Args:
             proc_group_id: Which processor group to run.
+            stage: Which stage of that group to run — 'sim' or 'render'.
             *args: Forwarded to each Processor's ``process()`` method.
             **kwargs: Forwarded to each Processor's ``process()`` method.
         """
         self._clear_dead_entities()
-        self._process(proc_group_id, *args, **kwargs)
+        self._process(proc_group_id, stage, *args, **kwargs)
 
-    def _finalize(self, proc_group_id: str='default', *args, **kwargs) -> None:
-        """Call finalize on all Processors in a group."""
-        for processor in self._processors[proc_group_id]:
+    def _finalize(self, key: tuple, *args, **kwargs) -> None:
+        """Call finalize on all Processors in one registry group."""
+        for processor in self._processors[key]:
             try:
                 processor.finalize(*args, **kwargs)
             except NotImplementedError:
                 raise ValueError(processor)
 
-    def finalize_group(self, proc_group_id: str='default', *args, **kwargs) -> None:
-        """Call finalize on all Processors in a specific group."""
-        self._finalize(proc_group_id=proc_group_id, *args, **kwargs)
+    def finalize_group(self, proc_group_id: str='default', stage: str=None, *args, **kwargs) -> None:
+        """Call finalize on all Processors in a group, across stages by default."""
+        for key in self._group_keys(proc_group_id, stage):
+            self._finalize(key, *args, **kwargs)
 
     def finalize(self, *args, **kwargs) -> None:
-        """Call finalize on all Processors across all groups."""
-        for proc_group_id in self._processors:
-            self.finalize_group(proc_group_id=proc_group_id, *args, **kwargs)
+        """Call finalize on all Processors across all groups and stages."""
+        for key in self._group_keys():
+            self._finalize(key, *args, **kwargs)

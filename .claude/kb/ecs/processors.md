@@ -1,9 +1,11 @@
 # Writing Processors
 
-> Last updated: 2026-07-30 | Verified by: Source-verified `pgrpg/core/ecs/__init__.py`,
+> Last updated: 2026-08-06 | Verified by: Source-verified `pgrpg/core/ecs/__init__.py`,
 > `pgrpg/core/managers/ecs_manager.py`,
 > `example_game/core/processors/command_system/*.py`,
-> `example_game/core/processors/event_system/game_events_processor.py` @ `c7b9a5f1`
+> `example_game/core/processors/event_system/game_events_processor.py` @ `c7b9a5f1`;
+> Test-verified `tests/core/ecs/test_processor_stages.py` (`STAGE` / registry keying, this task's
+> commit)
 
 A Processor is **behaviour only**. It queries the world for component signatures and acts.
 
@@ -14,6 +16,7 @@ class Processor:
     world = None
     cycle = None             # frames this processor has been ticked
     exec_cycle_step = None   # run every N cycles
+    STAGE = 'sim'             # which clock drives this processor — see "Stages" below
 
     def __init__(self, *args, **kwargs):
         self.cycle = 0
@@ -150,10 +153,50 @@ engine.ecs_manager.process(proc_group_id=proc_group_id, events=..., keys=..., dt
 
 So "pause" is a group containing only the render processors. Same mechanism for an inventory overlay.
 
+⚠️ Source-inferred — not runtime-verified as of 2026-08-06: `ecs_manager.process` now requires a
+`stage` keyword too (see "Stages" below) with no default, so this call site as shown is stale — a
+later task in the #74 sim/render-separation series is expected to update it to pass `stage`
+explicitly. Do not copy this snippet's `engine.ecs_manager.process(...)` call verbatim until that
+lands.
+
 **Priority**: `add_processor(instance, group, priority=0)` sorts each group descending, so **higher
 number runs first**. Nothing in the scene format currently sets priority — every registration uses
 the default 0, and ordering is therefore **the order of the `processors` list** (Python's sort is
 stable). Treat the list order as the schedule.
+
+## Stages
+
+Orthogonal to groups, every Processor also has a `STAGE` class attribute — `'sim'` (the default) or
+`'render'`. The registry key changed from `proc_group_id` to `(proc_group_id, stage)`
+(`World._processors`), so a scene's `processors` list needs no changes: a processor's stage is a
+property of its Python class, never something a scene file states.
+
+```python
+class MyRenderProcessor(Processor):
+    STAGE = 'render'
+    ...
+```
+
+- `World.add_processor(instance, proc_group_id='default')` files the instance under
+  `(proc_group_id, instance.STAGE)`.
+- `World.process(proc_group_id='default', stage='sim', *args, **kwargs)` runs exactly one
+  `(group, stage)` bucket.
+- `World.get_processor(processor_type, proc_group_id=None, stage=None)` — `None` means "search
+  every group / every stage". This is a **deliberate behaviour change**: before stages existed it
+  only searched the `'default'` group, so a `PREREQ` check (`ecs_manager.check_proc_in_world` calls
+  `get_processor` with no group at all) could never see a processor registered into `'pause'`.
+  Searching everything by default fixes that latent bug.
+- `World.remove_processor(processor_type, proc_group_id='default', stage=None)` and
+  `World.finalize_group(proc_group_id='default', stage=None, *args, **kwargs)` — `stage=None` means
+  every stage of that group.
+- `World.finalize()` reaches every group and every stage.
+- `World._group_keys(proc_group_id=None, stage=None)` is the shared key-filtering helper behind all
+  of the above.
+
+The intent (issue #74): simulation runs on a fixed timestep while rendering runs once per real
+frame, so one previously-mixed processor group can be split into a `'sim'` half and a `'render'`
+half without touching scene files. This task only creates the mechanism — nothing in the engine
+switches `stage` between `'sim'` and `'render'` yet.
 
 ## `PREREQ` dependency declarations
 

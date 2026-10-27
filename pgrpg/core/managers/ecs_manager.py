@@ -57,7 +57,16 @@ def component_for_entity(entity_id, component): return _world.component_for_enti
 def add_component(entity_id, new_component): return _world.add_component(entity_id, new_component)
 def try_component(entity_id, component): return _world.try_component(entity_id, component)
 def remove_component(entity_id, component): return _world.remove_component(entity_id, component)
-def process(proc_group_id, events, keys, dt: float, debug: bool):_world.process(proc_group_id=proc_group_id, events=events, keys=keys, dt=dt, debug=debug)
+def process(proc_group_id, stage, events, keys, dt: float, debug: bool, **kwargs):
+    """Run one stage of one processor group.
+
+    Args:
+        proc_group_id: Scene-authored processor group ('default', 'pause', …).
+        stage: 'sim' for fixed-timestep processors, 'render' for per-frame ones.
+        **kwargs: Extra values forwarded to processors, e.g. ``alpha``.
+    """
+    _world.process(proc_group_id=proc_group_id, stage=stage,
+                   events=events, keys=keys, dt=dt, debug=debug, **kwargs)
 
 # --- Processors ---
 
@@ -88,7 +97,8 @@ def load_processor(processor_def: list) -> None:
     logger.info(f'Processor "{processor_def}" initiated in processor group "{new_proc_group}".')
 
     # Log all the processors in the processor group
-    logger.info(f'Process group "{new_proc_group}" now contains following processors "{_world._processors[new_proc_group]}".')
+    key = (new_proc_group, new_proc_instance.STAGE)
+    logger.info(f'Process group "{key}" now contains following processors "{_world._processors[key]}".')
 
 
 def reinit_processors():
